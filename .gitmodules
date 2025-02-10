@@ -1,0 +1,3 @@
+[submodule "properties"]
+	path = properties
+	url = git@github.com:NB993/family-tree-properties.git

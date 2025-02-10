@@ -74,3 +74,12 @@ configurations {
     }
     querydsl.extendsFrom compileClasspath
 }
+
+processResources.dependsOn('copyProperties')
+
+task copyProperties(type: Copy) {
+    copy {
+        from './properties'
+        into './src/main/resources'
+    }
+}
