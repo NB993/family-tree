@@ -2,7 +2,7 @@ package io.jhchoe.familytree.common.exception;
 
 import org.springframework.http.HttpStatus;
 
-public enum CommonException implements BaseExceptionType {
+public enum CommonExceptionCode implements ExceptionCodeType {
 
     MISSING_PARAMETER("C001", "파라미터 누락.", HttpStatus.BAD_REQUEST),
     INVALID_PARAMETER("C002", "유효하지 않은 파라미터.", HttpStatus.BAD_REQUEST),
@@ -15,7 +15,7 @@ public enum CommonException implements BaseExceptionType {
     String message;
     HttpStatus status;
 
-    CommonException(
+    CommonExceptionCode(
         String code,
         String message,
         HttpStatus status

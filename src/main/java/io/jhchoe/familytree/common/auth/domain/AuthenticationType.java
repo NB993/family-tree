@@ -1,6 +1,6 @@
 package io.jhchoe.familytree.common.auth.domain;
 
-import io.jhchoe.familytree.common.exception.CommonException;
+import io.jhchoe.familytree.common.exception.CommonExceptionCode;
 import io.jhchoe.familytree.common.exception.FTException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -15,7 +15,7 @@ public enum AuthenticationType implements AttributeConverter<AuthenticationType,
     @Override
     public String convertToDatabaseColumn(AuthenticationType authenticationType) {
         if (ObjectUtils.isEmpty(authenticationType)) {
-            throw new FTException(CommonException.ENUM_CONVERT);
+            throw new FTException(CommonExceptionCode.ENUM_CONVERT);
         }
         return authenticationType.name();
     }
@@ -23,12 +23,12 @@ public enum AuthenticationType implements AttributeConverter<AuthenticationType,
     @Override
     public AuthenticationType convertToEntityAttribute(String dbData) {
         if (ObjectUtils.isEmpty(dbData)) {
-            throw new FTException(CommonException.ENUM_CONVERT);
+            throw new FTException(CommonExceptionCode.ENUM_CONVERT);
         }
         try {
             return AuthenticationType.valueOf(dbData);
         } catch (IllegalArgumentException e) {
-            throw new FTException(CommonException.ENUM_CONVERT);
+            throw new FTException(CommonExceptionCode.ENUM_CONVERT);
         }
     }
 }

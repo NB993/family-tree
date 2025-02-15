@@ -1,13 +1,13 @@
 package io.jhchoe.familytree.common.auth.exception;
 
-import io.jhchoe.familytree.common.exception.BaseExceptionType;
+import io.jhchoe.familytree.common.exception.ExceptionCodeType;
 import org.springframework.http.HttpStatus;
 
-public enum AuthExceptionCode implements BaseExceptionType {
+public enum AuthExceptionCode implements ExceptionCodeType {
 
-    USER_NOT_FOUND("A001", "인증 실패.", HttpStatus.UNAUTHORIZED),
-    ACCESS_DENIED("A002", "권한이 없습니다.", HttpStatus.FORBIDDEN),
-    ;
+    UNAUTHORIZED("A001", "인증 실패.", HttpStatus.UNAUTHORIZED),
+    USER_NOT_FOUND("A002", "인증 실패.", HttpStatus.UNAUTHORIZED),
+    ACCESS_DENIED("A003", "권한이 없습니다.", HttpStatus.FORBIDDEN);
 
     String code;
     String message;
@@ -21,16 +21,16 @@ public enum AuthExceptionCode implements BaseExceptionType {
 
     @Override
     public String getCode() {
-        return "";
+        return this.code;
     }
 
     @Override
     public String getMessage() {
-        return "";
+        return this.message;
     }
 
     @Override
     public HttpStatus getStatus() {
-        return null;
+        return this.status;
     }
 }

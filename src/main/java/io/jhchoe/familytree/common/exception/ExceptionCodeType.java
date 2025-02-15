@@ -2,7 +2,7 @@ package io.jhchoe.familytree.common.exception;
 
 import org.springframework.http.HttpStatus;
 
-public interface BaseExceptionType {
+public interface ExceptionCodeType {
 
     String getCode();
 

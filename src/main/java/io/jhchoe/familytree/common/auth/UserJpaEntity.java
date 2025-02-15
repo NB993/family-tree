@@ -2,7 +2,7 @@ package io.jhchoe.familytree.common.auth;
 
 import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
-import io.jhchoe.familytree.common.exception.CommonException;
+import io.jhchoe.familytree.common.exception.CommonExceptionCode;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.common.support.ModifierBaseEntity;
 import jakarta.persistence.Column;
@@ -59,7 +59,7 @@ public class UserJpaEntity extends ModifierBaseEntity {
         final String password
     ) {
         if (email == null || password == null) {
-            throw new FTException(CommonException.MISSING_PARAMETER, "email");
+            throw new FTException(CommonExceptionCode.MISSING_PARAMETER, "email");
         }
         return new UserJpaEntity(null, email, password, null, AuthenticationType.FORM_LOGIN, null, null, false);
     }

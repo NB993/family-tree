@@ -1,6 +1,5 @@
 package io.jhchoe.familytree.common.exception;
 
-import io.jhchoe.familytree.common.auth.exception.AuthException;
 import io.jhchoe.familytree.common.support.ApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -60,22 +59,11 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 인증/권한 예외
-     */
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(final AuthException e) {
-        log.error("[GlobalExceptionHandler][handleAuthenticationException] AuthenticationException 발생", e);
-        final ApiResponse<Void> response = ApiResponse.error(ErrorResponse.authError(e));
-        return ResponseEntity.status(e.getStatus())
-            .body(response);
-    }
-
-    /**
      * 비즈니스 예외
      */
     @ExceptionHandler(FTException.class)
     public ResponseEntity<ApiResponse<Void>> handleFTException(final FTException e) {
-        final ApiResponse<Void> response = ApiResponse.error(ErrorResponse.businessError(e));
+        final ApiResponse<Void> response = ApiResponse.error(ErrorResponse.commonException(e));
         return ResponseEntity.status(e.getStatus())
             .body(response);
     }

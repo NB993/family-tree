@@ -1,6 +1,5 @@
 package io.jhchoe.familytree.common.exception;
 
-import io.jhchoe.familytree.common.auth.exception.AuthException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
@@ -80,14 +79,7 @@ public class ErrorResponse {
     /**
      * 비즈니스 예외
      */
-    public static ErrorResponse businessError(final FTException e) {
-        return new ErrorResponse(e.getCode(), e.getMessage());
-    }
-
-    /**
-     * 인증/권한 예외
-     */
-    public static ErrorResponse authError(final AuthException e) {
+    public static ErrorResponse commonException(final FTException e) {
         return new ErrorResponse(e.getCode(), e.getMessage());
     }
 

@@ -1,8 +1,7 @@
 package io.jhchoe.familytree.common.auth;
 
 import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.common.auth.exception.AuthException;
-import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
+import io.jhchoe.familytree.common.exception.FTException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,7 +19,7 @@ public class UserService implements UserDetailsService {
     @Override
     public FTUser loadUserByUsername(String username) throws UsernameNotFoundException {
         UserJpaEntity userEntity = userRepository.findByEmail(username)
-            .orElseThrow(() -> new AuthException(AuthExceptionCode.USER_NOT_FOUND));
+            .orElseThrow(() -> FTException.NOT_FOUND);
 
         return FTUser.ofFormLoginUser(
             userEntity.getId(),
