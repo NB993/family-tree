@@ -30,6 +30,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/h2-console/**") // H2-console에 대한 CSRF 비활성화
             )
+            .exceptionHandling(customizer -> {
+                customizer.authenticationEntryPoint(ftSpringSecurityExceptionHandler);
+                customizer.accessDeniedHandler(ftSpringSecurityExceptionHandler);
+            })
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin()) // H2-console의 iframe 화면 허용
             )
