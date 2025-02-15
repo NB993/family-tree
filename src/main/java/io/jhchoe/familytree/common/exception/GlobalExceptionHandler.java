@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
      * 비즈니스 예외
      */
     @ExceptionHandler(FTException.class)
-    public ResponseEntity<ApiResponse<Void>> handleWddException(final FTException e) {
+    public ResponseEntity<ApiResponse<Void>> handleFTException(final FTException e) {
         final ApiResponse<Void> response = ApiResponse.error(ErrorResponse.businessError(e));
         return ResponseEntity.status(e.getStatus())
             .body(response);
