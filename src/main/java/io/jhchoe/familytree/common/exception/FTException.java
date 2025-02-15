@@ -14,7 +14,7 @@ public class FTException extends RuntimeException {
     public static final FTException DUPLICATED = new FTException(CommonExceptionCode.DUPLICATED);
     public static final FTException ENUM_CONVERT = new FTException(CommonExceptionCode.ENUM_CONVERT);
 
-    private static final String PARAMETER_MEESAGE_FORMAT = "%s -> [parameter]: %s";
+    private static final String PARAMETER_MESSAGE_FORMAT = "%s -> [parameter]: %s";
     private final ExceptionCodeType exceptionCodeType;
 
     public FTException(final ExceptionCodeType exceptionCodeType) {
@@ -23,7 +23,7 @@ public class FTException extends RuntimeException {
     }
 
     public FTException(final ExceptionCodeType exceptionCodeType, final String parameterName) {
-        super(String.format(PARAMETER_MEESAGE_FORMAT, exceptionCodeType.getMessage(), parameterName));
+        super(String.format(PARAMETER_MESSAGE_FORMAT, exceptionCodeType.getMessage(), parameterName));
         this.exceptionCodeType = exceptionCodeType;
     }
 

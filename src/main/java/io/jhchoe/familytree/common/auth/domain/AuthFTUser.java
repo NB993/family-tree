@@ -1,4 +1,4 @@
-package io.jhchoe.familytree.common.support;
+package io.jhchoe.familytree.common.auth.domain;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

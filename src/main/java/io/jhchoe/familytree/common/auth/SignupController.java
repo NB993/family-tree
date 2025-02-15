@@ -1,7 +1,7 @@
 package io.jhchoe.familytree.common.auth;
 
+import io.jhchoe.familytree.common.auth.domain.AuthFTUser;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.common.support.AuthFTUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
