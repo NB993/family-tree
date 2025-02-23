@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/signup").permitAll()
-                .requestMatchers("/", "/login/**").permitAll()
+                .requestMatchers("/", "/login").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )
@@ -38,7 +38,9 @@ public class SecurityConfig {
                 .frameOptions(frame -> frame.sameOrigin()) // H2-console의 iframe 화면 허용
             )
             .formLogin(form -> form
-                .defaultSuccessUrl("/success") // 로그인 성공 후 기본 이동 경로
+                .loginPage("/login")
+                .defaultSuccessUrl("/") // 로그인 성공 후 기본 이동 경로
+                .failureUrl("/login?error=true")
                 .permitAll() // 로그인 요청은 인증 없이 접근 가능
             )
             .logout(logout -> logout
