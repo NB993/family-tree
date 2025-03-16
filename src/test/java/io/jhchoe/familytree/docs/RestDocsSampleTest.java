@@ -1,31 +1,52 @@
 package io.jhchoe.familytree.docs;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import io.jhchoe.familytree.config.FTMockUser;
-import io.restassured.authentication.FormAuthConfig;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("[E2E Test] Rest Docs 생성 테스트")
-public class RestDocsSampleTest extends E2ETestBase {
+@DisplayName("[Docs Test] Rest Docs 생성 테스트")
+public class RestDocsSampleTest extends ApiDocsTestBase {
 
     @Test
     @FTMockUser
-    void sample() {
-        given().spec(this.spec)
-            .auth().form("ftuser@email.com", "password", new FormAuthConfig("/login", "username", "password"))
+    @DisplayName("테스트1")
+    void testOneDepth() {
+        RestAssuredMockMvc.given()
             .when()
-                .get("/api/test/e2e-rest-docs")
+            .get("/api/test/e2e-rest-docs")
             .then()
-                .statusCode(200)
-                .body("success", equalTo(true))
-                .body("data.name", equalTo("testName"))
-                .body("data.age", equalTo(10))
-                .body("data.dept", equalTo("testDept"))
-                .body("error", nullValue())
-                .log().all();
+            .statusCode(200)
+            .apply(document("domain",
+                responseFields(
+                    fieldWithPath("success").description("응답 성공 여부"),
+                    fieldWithPath("data.name").description("이름"),
+                    fieldWithPath("data.age").description("나이"),
+                    fieldWithPath("data.dept").description("부서명")
+                )
+            ));
+    }
+
+    @Test
+    @FTMockUser
+    @DisplayName("테스트2")
+    void testTwoDepth() {
+        RestAssuredMockMvc.given()
+            .when()
+            .get("/api/test/e2e-rest-docs-2")
+            .then()
+            .statusCode(200)
+            .apply(document("domain2",
+                responseFields(
+                    fieldWithPath("success").description("응답 성공 여부"),
+                    fieldWithPath("data.name").description("이름"),
+                    fieldWithPath("data.age").description("나이"),
+                    fieldWithPath("data.dept").description("부서명")
+                )
+            ));
     }
 }
