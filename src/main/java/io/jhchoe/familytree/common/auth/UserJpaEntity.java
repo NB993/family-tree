@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "user")
+@Entity(name = "users")
 public class UserJpaEntity extends ModifierBaseEntity {
 
     @Id
