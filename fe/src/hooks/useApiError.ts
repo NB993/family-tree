@@ -1,0 +1,72 @@
+import { useCallback } from 'react';
+import { ApiError, ErrorHandlers } from '../types/error';
+
+const defaultHandlers: ErrorHandlers = {
+  C001: {
+    handle: (error) => {
+      console.error('파라미터 누락:', error.message);
+    },
+    priority: 1
+  },
+  C002: {
+    handle: (error) => {
+      console.error('유효성 검사 실패:', error.message);
+    },
+    priority: 1
+  },
+  A001: {
+    handle: (error) => {
+      console.error('인증 실패:', error.message);
+      window.location.href = '/login';
+    },
+    priority: 2
+  },
+  A002: {
+    handle: (error) => {
+      console.error('권한 없음:', error.message);
+    },
+    priority: 2
+  }
+};
+
+export const useApiError = (customHandlers?: ErrorHandlers) => {
+  const handleError = useCallback((error: ApiError) => {
+    const code = error.code;
+    
+    // 커스텀 핸들러 확인
+    if (customHandlers?.[code]) {
+      customHandlers[code].handle(error);
+      return;
+    }
+
+    // 기본 핸들러 확인
+    if (defaultHandlers[code]) {
+      defaultHandlers[code].handle(error);
+      return;
+    }
+
+    // HTTP 상태 코드 기반 처리
+    switch (error.status) {
+      case 400:
+        console.error('잘못된 요청:', error.message);
+        break;
+      case 401:
+        console.error('인증이 필요합니다.');
+        window.location.href = '/login';
+        break;
+      case 403:
+        console.error('접근 권한이 없습니다.');
+        break;
+      case 404:
+        console.error('요청한 리소스를 찾을 수 없습니다.');
+        break;
+      case 500:
+        console.error('서버 오류가 발생했습니다.');
+        break;
+      default:
+        console.error('알 수 없는 오류가 발생했습니다.');
+    }
+  }, [customHandlers]);
+
+  return { handleError };
+}; 

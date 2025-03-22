@@ -28,11 +28,10 @@ public class FTSpringSecurityExceptionHandler implements AuthenticationEntryPoin
         AuthenticationException authException) throws IOException, ServletException {
 
         ErrorResponse errorResponse = ErrorResponse.commonException(FTException.UNAUTHORIZED);
-        ApiResponse<Void> apiResponse = ApiResponse.error(errorResponse);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        objectMapper.writeValue(response.getWriter(), apiResponse);
+        objectMapper.writeValue(response.getWriter(), errorResponse);
     }
 
     @Override
@@ -40,10 +39,9 @@ public class FTSpringSecurityExceptionHandler implements AuthenticationEntryPoin
         AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
         ErrorResponse errorResponse = ErrorResponse.commonException(FTException.ACCESS_DENIED);
-        ApiResponse<Void> apiResponse = ApiResponse.error(errorResponse);
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        objectMapper.writeValue(response.getWriter(), apiResponse);
+        objectMapper.writeValue(response.getWriter(), errorResponse);
     }
 }

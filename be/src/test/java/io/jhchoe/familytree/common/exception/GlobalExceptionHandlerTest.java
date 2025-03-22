@@ -41,10 +41,9 @@ class GlobalExceptionHandlerTest {
     void testHandleIllegalArgumentException() throws Exception {
         mockMvc.perform(get("/test/illegal-argument"))
             .andExpect(status().isBadRequest()) // 기본 처리 결과 확인
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.error.code").value("400"))
-            .andExpect(jsonPath("$.error.message", Matchers.containsString("Invalid argument")))
-            .andExpect(jsonPath("$.error.validations").isEmpty())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.message", Matchers.containsString("Invalid argument")))
+            .andExpect(jsonPath("$.validations").isEmpty())
             .andReturn();
     }
 
@@ -53,9 +52,8 @@ class GlobalExceptionHandlerTest {
     void unauthorized() throws Exception {
         mockMvc.perform(get("/test/ft-exception"))
             .andExpect(status().is(AuthExceptionCode.UNAUTHORIZED.getStatus().value()))
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.error.code").value(AuthExceptionCode.UNAUTHORIZED.getCode()))
-            .andExpect(jsonPath("$.error.message").value(AuthExceptionCode.UNAUTHORIZED.getMessage()))
+            .andExpect(jsonPath("$.code").value(AuthExceptionCode.UNAUTHORIZED.getCode()))
+            .andExpect(jsonPath("$.message").value(AuthExceptionCode.UNAUTHORIZED.getMessage()))
             .andReturn();
     }
 
@@ -65,9 +63,8 @@ class GlobalExceptionHandlerTest {
     void accessDenied() throws Exception {
         mockMvc.perform(get("/api/admin"))
             .andExpect(status().is(AuthExceptionCode.ACCESS_DENIED.getStatus().value()))
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.error.code").value(AuthExceptionCode.ACCESS_DENIED.getCode()))
-            .andExpect(jsonPath("$.error.message").value(AuthExceptionCode.ACCESS_DENIED.getMessage()))
+            .andExpect(jsonPath("$.code").value(AuthExceptionCode.ACCESS_DENIED.getCode()))
+            .andExpect(jsonPath("$.message").value(AuthExceptionCode.ACCESS_DENIED.getMessage()))
             .andReturn();
     }
 
@@ -79,10 +76,9 @@ class GlobalExceptionHandlerTest {
         mockMvc.perform(delete("/test/http-request-method-not-supported-exception")
                 .with(csrf()))
             .andExpect(status().isMethodNotAllowed()) // HTTP 405
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.error.code").value("405"))
-            .andExpect(jsonPath("$.error.message").isNotEmpty())
-            .andExpect(jsonPath("$.error.validations").isEmpty());
+            .andExpect(jsonPath("$.code").value("405"))
+            .andExpect(jsonPath("$.message").isNotEmpty())
+            .andExpect(jsonPath("$.validations").isEmpty());
     }
 
     @Test
@@ -93,10 +89,9 @@ class GlobalExceptionHandlerTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)) // ContentType 설정만 하고 Body 없음
             .andExpect(status().isBadRequest()) // HTTP 400
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.error.code").value("400"))
-            .andExpect(jsonPath("$.error.message").isNotEmpty())
-            .andExpect(jsonPath("$.error.validations").isEmpty());
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.message").isNotEmpty())
+            .andExpect(jsonPath("$.validations").isEmpty());
     }
 
     @Test
@@ -110,10 +105,9 @@ class GlobalExceptionHandlerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidBody))) // JSON Request Body 설정
             .andExpect(status().isBadRequest()) // HTTP 400
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.error.code").value("400"))
-            .andExpect(jsonPath("$.error.message").value("입력 조건을 위반하였습니다."))
-            .andExpect(jsonPath("$.error.validations", Matchers.hasSize(greaterThan(0))));
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.message").value("입력 조건을 위반하였습니다."))
+            .andExpect(jsonPath("$.validations", Matchers.hasSize(greaterThan(0))));
     }
 
     @Test
@@ -122,10 +116,9 @@ class GlobalExceptionHandlerTest {
     void testHandleFTException() throws Exception {
         mockMvc.perform(get("/test/ft-exception"))
             .andExpect(status().isBadRequest()) // FTException의 기본 상태 코드 확인
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.error.code").value("C001"))
-            .andExpect(jsonPath("$.error.message", Matchers.containsString("파라미터 누락.")))
-            .andExpect(jsonPath("$.error.validations").isEmpty())
+            .andExpect(jsonPath("$.code").value("C001"))
+            .andExpect(jsonPath("$.message", Matchers.containsString("파라미터 누락.")))
+            .andExpect(jsonPath("$.validations").isEmpty())
             .andReturn();
     }
 
@@ -135,9 +128,8 @@ class GlobalExceptionHandlerTest {
     void testHandleException() throws Exception {
         mockMvc.perform(get("/test/internal-server-error"))
             .andExpect(status().isInternalServerError()) // HTTP 500
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.error.code").value("500"))
-            .andExpect(jsonPath("$.error.message").value("서버 에러"))
-            .andExpect(jsonPath("$.error.validations").isEmpty());
+            .andExpect(jsonPath("$.code").value("500"))
+            .andExpect(jsonPath("$.message").value("서버 에러"))
+            .andExpect(jsonPath("$.validations").isEmpty());
     }
 }
