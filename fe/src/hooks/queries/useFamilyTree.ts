@@ -14,7 +14,7 @@ export const familyTreeKeys = {
 export function useFamilyTree() {
   return useQuery({
     queryKey: familyTreeKeys.all,
-    queryFn: () => FamilyTreeService.getInstance().getFamilyTree(),
+    queryFn: () => FamilyTreeService.getInstance().getFamily(),
   });
 }
 

@@ -6,6 +6,7 @@ import {
   UpdateFamilyMemberDto,
 } from "../../types/familyTree";
 import { PaginatedResponse } from "../../types/api";
+import {AxiosHeaders} from "axios";
 
 export class FamilyTreeService {
   private static instance: FamilyTreeService;
@@ -39,6 +40,7 @@ export class FamilyTreeService {
       `${this.BASE_URL}/members`,
       {
         params: { page, size },
+        headers: new AxiosHeaders({ 'Content-Type': 'application/json' }),
       }
     );
   }
