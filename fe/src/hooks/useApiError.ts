@@ -2,31 +2,13 @@ import { useCallback } from 'react';
 import { ApiError, ErrorHandlers } from '../types/error';
 
 const defaultHandlers: ErrorHandlers = {
-  C001: {
-    handle: (error) => {
-      console.error('파라미터 누락:', error.message);
-    },
-    priority: 1
-  },
-  C002: {
-    handle: (error) => {
-      console.error('유효성 검사 실패:', error.message);
-    },
-    priority: 1
-  },
-  A001: {
-    handle: (error) => {
+  C001: (error) => console.error('파라미터 누락:', error.message),
+  C002: (error) => console.error('유효성 검사 실패:', error.message),
+  A001: (error) => {
       console.error('인증 실패:', error.message);
       window.location.href = '/login';
-    },
-    priority: 2
   },
-  A002: {
-    handle: (error) => {
-      console.error('권한 없음:', error.message);
-    },
-    priority: 2
-  }
+  A002: (error) => console.error('권한 없음:', error.message),
 };
 
 export const useApiError = (customHandlers?: ErrorHandlers) => {
@@ -35,13 +17,13 @@ export const useApiError = (customHandlers?: ErrorHandlers) => {
     
     // 커스텀 핸들러 확인
     if (customHandlers?.[code]) {
-      customHandlers[code].handle(error);
+      customHandlers[code](error);
       return;
     }
 
     // 기본 핸들러 확인
     if (defaultHandlers[code]) {
-      defaultHandlers[code].handle(error);
+      defaultHandlers[code](error);
       return;
     }
 

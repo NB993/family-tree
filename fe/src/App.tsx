@@ -4,12 +4,7 @@ import { ApiClient } from './api/client';
 import { ErrorHandlers } from './types/error';
 
 const customHandlers: ErrorHandlers = {
-  S001: {
-    handle: (error) => {
-      console.error('학생 정보 없음:', error.message);
-    },
-    priority: 1
-  }
+  S001: (error) => console.error('커스텀 핸들러:', error.message),
 };
 
 function App() {

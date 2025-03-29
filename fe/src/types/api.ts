@@ -1,15 +1,3 @@
-export interface ApiResponse<T> {
-  data: T;
-  message?: string;
-  status: number;
-}
-
-export interface ApiError {
-  message: string;
-  code: string;
-  status: number;
-}
-
 export interface PaginationParams {
   page: number;
   size: number;
