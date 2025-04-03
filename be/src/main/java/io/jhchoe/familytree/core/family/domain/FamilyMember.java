@@ -90,7 +90,7 @@ public class FamilyMember {
         LocalDateTime birthday,
         String nationality
     ) {
-        return new FamilyMember(null, familyId, userId, name, profileUrl, birthday, nationality, MemberStatus.JOIN, null, null, null, null);
+        return new FamilyMember(null, familyId, userId, name, profileUrl, birthday, nationality, MemberStatus.ACTIVE, null, null, null, null);
     }
 
     /**

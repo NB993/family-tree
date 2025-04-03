@@ -7,5 +7,5 @@ public enum MemberStatus {
 
     BANNED,       // 강퇴
     SUSPENDED,    // 일시정지
-    JOIN; // 가입
+    ACTIVE;       // 가입
 }
