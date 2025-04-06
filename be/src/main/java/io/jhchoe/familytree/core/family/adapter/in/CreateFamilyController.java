@@ -2,7 +2,7 @@ package io.jhchoe.familytree.core.family.adapter.in;
 
 import io.jhchoe.familytree.common.auth.domain.AuthFTUser;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.core.family.adapter.in.request.FamilyCreateRequest;
+import io.jhchoe.familytree.core.family.adapter.in.request.CreateFamilyRequest;
 import io.jhchoe.familytree.core.family.application.port.in.CreateFamilyCommand;
 import io.jhchoe.familytree.core.family.application.port.in.CreateFamilyUseCase;
 import jakarta.validation.Valid;
@@ -24,12 +24,12 @@ public class CreateFamilyController {
     @PostMapping
     public ResponseEntity<Void> createFamily(
         @AuthFTUser FTUser ftUser,
-        @RequestBody @Valid FamilyCreateRequest familyCreateRequest
+        @RequestBody @Valid CreateFamilyRequest createFamilyRequest
     ) {
         CreateFamilyCommand command = new CreateFamilyCommand(
-            familyCreateRequest.name(),
-            familyCreateRequest.description(),
-            familyCreateRequest.profileUrl());
+            createFamilyRequest.name(),
+            createFamilyRequest.description(),
+            createFamilyRequest.profileUrl());
 
         createFamilyUseCase.create(command);
 
