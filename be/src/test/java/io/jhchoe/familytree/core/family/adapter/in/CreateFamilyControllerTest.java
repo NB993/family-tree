@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 @DisplayName("[Acceptance Test] FamilyControllerTest")
-class FamilyControllerTest extends AcceptanceTestBase {
+class CreateFamilyControllerTest extends AcceptanceTestBase {
 
     @FTMockUser
     @Test

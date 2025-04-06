@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.Getter;
 
 
@@ -90,6 +91,9 @@ public class FamilyMember {
         LocalDateTime birthday,
         String nationality
     ) {
+        Objects.requireNonNull(familyId, "familyId must not be null");
+        Objects.requireNonNull(userId, "userId must not be null");
+
         return new FamilyMember(null, familyId, userId, name, profileUrl, birthday, nationality, MemberStatus.ACTIVE, null, null, null, null);
     }
 
@@ -110,7 +114,7 @@ public class FamilyMember {
      * @param modifiedAt  수정 일시
      * @return 새로운 FamilyMember 인스턴스 (ID 및 audit 필드 포함)
      */
-    public static FamilyMember withId(
+    public static FamilyMember existingMember(
         Long id,
         Long familyId,
         Long userId,
@@ -124,6 +128,10 @@ public class FamilyMember {
         Long modifiedBy,
         LocalDateTime modifiedAt
     ) {
+        Objects.requireNonNull(id, "id must not be null");
+        Objects.requireNonNull(familyId, "familyId must not be null");
+        Objects.requireNonNull(userId, "userId must not be null");
+
         return new FamilyMember(id, familyId, userId, name, profileUrl, birthday, nationality, status, createdBy, createdAt, modifiedBy, modifiedAt);
     }
 }

@@ -5,6 +5,7 @@ import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.MemberStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -94,6 +95,8 @@ public class FamilyMemberEntity extends ModifierBaseEntity {
      * @return 변환된 FamilyMemberEntity 객체
      */
     public static FamilyMemberEntity from(FamilyMember familyMember) {
+        Objects.requireNonNull(familyMember, "familyMember must not be null");
+
         return new FamilyMemberEntity(
             familyMember.getId(),
             familyMember.getFamilyId(),
@@ -116,7 +119,7 @@ public class FamilyMemberEntity extends ModifierBaseEntity {
      * @return 변환된 FamilyMember 객체
      */
     public FamilyMember toFamilyMember() {
-        return FamilyMember.withId(
+        return FamilyMember.existingMember(
             id,
             familyId,
             userId,
