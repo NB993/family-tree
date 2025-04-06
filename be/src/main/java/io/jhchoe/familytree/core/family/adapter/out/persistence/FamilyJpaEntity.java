@@ -23,7 +23,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("deleted = false")
 @Entity(name = "family")
-public class FamilyEntity extends ModifierBaseEntity {
+public class FamilyJpaEntity extends ModifierBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +41,7 @@ public class FamilyEntity extends ModifierBaseEntity {
     @Column(name = "deleted")
     private boolean deleted;
 
-    private FamilyEntity(
+    private FamilyJpaEntity(
         final Long id,
         final String name,
         final String description,
@@ -64,8 +64,8 @@ public class FamilyEntity extends ModifierBaseEntity {
      * @param family 변환할 Family 객체
      * @return 변환된 FamilyEntity 객체
      */
-    public static FamilyEntity from(Family family) {
-        return new FamilyEntity(
+    public static FamilyJpaEntity from(Family family) {
+        return new FamilyJpaEntity(
             family.getId(),
             family.getName(),
             family.getDescription(),
@@ -84,5 +84,11 @@ public class FamilyEntity extends ModifierBaseEntity {
      */
     public Family toFamily() {
         return Family.withId(id, name, description, profileUrl, getCreatedBy(), getCreatedAt(), getModifiedBy(), getModifiedAt());
+    }
+
+    public void update(String name, String description, String profileUrl) {
+        this.name = name;
+        this.description = description;
+        this.profileUrl = profileUrl;
     }
 }

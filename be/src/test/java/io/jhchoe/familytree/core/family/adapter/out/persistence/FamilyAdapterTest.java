@@ -1,0 +1,107 @@
+package io.jhchoe.familytree.core.family.adapter.out.persistence;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import io.jhchoe.familytree.common.auth.domain.FTUser;
+import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.core.family.domain.Family;
+import java.util.Optional;
+import java.time.LocalDateTime;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
+
+@Import(FamilyAdapterTest.TestAuditConfig.class)
+@DataJpaTest
+@ActiveProfiles("test")
+@DisplayName("[Unit Test] FamilyAdapter")
+class FamilyAdapterTest {
+
+    @Autowired
+    private FamilyJpaRepository familyJpaRepository;
+
+    private FamilyAdapter sut;
+
+    @BeforeEach
+    void setUp() {
+        sut = new FamilyAdapter(familyJpaRepository);
+    }
+
+
+    @Test
+    @DisplayName("modifyFamily 메서드는 유효한 Family 인스턴스를 통해 데이터를 수정하고 ID를 반환해야 한다.")
+    void given_valid_family_when_modify_family_then_return_id() {
+        // given
+        Family family = Family.newFamily("Name", "Description", "http://example.com");
+        FamilyJpaEntity savedEntity = familyJpaRepository.save(FamilyJpaEntity.from(family));
+        Family modifyFamily = Family.withId(savedEntity.getId(), "Updated Name", "Updated Description",
+            "http://updated-url.com", savedEntity.getCreatedBy(), savedEntity.getCreatedAt(), 2L, LocalDateTime.now());
+
+        // when
+        Long updatedId = sut.modifyFamily(modifyFamily);
+
+        // then
+        assertThat(updatedId).isEqualTo(savedEntity.getId());
+
+        Optional<FamilyJpaEntity> updatedEntity = familyJpaRepository.findById(updatedId);
+        assertThat(updatedEntity).isPresent().get()
+            .satisfies(entity -> {
+                assertThat(entity.getName()).isEqualTo("Updated Name");
+                assertThat(entity.getDescription()).isEqualTo("Updated Description");
+                assertThat(entity.getProfileUrl()).isEqualTo("http://updated-url.com");
+                assertThat(entity.getModifiedBy()).isEqualTo(99L);
+            });
+    }
+
+    @Test
+    @DisplayName("modifyFamily 메서드는 존재하지 않는 Family ID로 요청 시 FTException을 발생시켜야 한다.")
+    void given_non_existent_family_id_when_modify_family_then_throw_ft_exception() {
+        // given
+        Family family = Family.withId(999L, "Name", "Description", "http://example.com", 1L, LocalDateTime.now(), 2L,
+            LocalDateTime.now());
+
+        // when & then
+        assertThatThrownBy(() -> sut.modifyFamily(family))
+            .isInstanceOf(FTException.class)
+            .hasMessageContaining("family");
+    }
+
+    @Test
+    @DisplayName("modifyFamily 메서드는 null 값이 전달되면 NullPointerException을 발생시켜야 한다.")
+    void given_null_family_when_modify_family_then_throw_null_pointer_exception() {
+        // given
+        Family family = null;
+
+        // when & then
+        assertThatThrownBy(() -> sut.modifyFamily(family))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessage("family must not be null");
+    }
+
+    @TestConfiguration
+    @EnableJpaAuditing
+    static class TestAuditConfig {
+        @Bean
+        public AuditorAware<Long> auditorAware() {
+            return () -> {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                if (authentication != null && authentication.isAuthenticated()
+                    && authentication.getPrincipal() instanceof FTUser) {
+                    return Optional.of(((FTUser) authentication.getPrincipal()).getId());
+                }
+                return Optional.of(99L); // 시스템 사용자 ID
+            };
+        }
+    }
+}

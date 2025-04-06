@@ -4,34 +4,33 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 
 /**
- * Family를 나타내는 클래스입니다.
- * Family 정보에는 ID, 이름, 설명, 프로필 URL, 생성자 정보, 생성 날짜,
- * 수정자 정보, 수정 날짜가 포함됩니다.
+ * Family를 나타내는 클래스입니다. 이 클래스는 Family의 주요 구성 요소인 ID, 이름, 설명, 프로필 URL, 생성자 정보, 생성 날짜, 수정자 정보, 수정 날짜를 포함하며, Family 객체 관리 및
+ * 동작 수행을 위한 메서드도 제공합니다.
  */
 @Getter
 public class Family {
 
-    private final Long id;
-    private final String name;
-    private final String description;
-    private final String profileUrl;
-    private final Long createdBy;
-    private final LocalDateTime createdAt;
-    private final Long modifiedBy;
-    private final LocalDateTime modifiedAt;
+    private Long id;
+    private String name;
+    private String description;
+    private String profileUrl;
+    private Long createdBy;
+    private LocalDateTime createdAt;
+    private Long modifiedBy;
+    private LocalDateTime modifiedAt;
 
-    
+
     /**
-     * Family 생성자.
+     * Family 객체를 생성하는 생성자입니다.
      *
-     * @param id 고유 식별자(ID)
-     * @param name Family 이름
-     * @param description Family에 대한 설명
-     * @param profileUrl Family의 프로필 이미지 URL
-     * @param createdBy 생성자의 ID
-     * @param createdAt 생성된 날짜와 시간
-     * @param modifiedBy 마지막 수정자의 ID
-     * @param modifiedAt 마지막 수정된 날짜와 시간
+     * @param id          Family의 고유 식별자
+     * @param name        Family의 이름
+     * @param description Family의 간단한 설명
+     * @param profileUrl  Family의 프로필 이미지 URL
+     * @param createdBy   Family를 최초로 생성한 사용자의 ID
+     * @param createdAt   Family가 생성된 날짜와 시간
+     * @param modifiedBy  Family를 마지막으로 수정한 사용자의 ID
+     * @param modifiedAt  Family가 마지막으로 수정된 날짜와 시간
      */
     private Family(
         Long id,
@@ -53,19 +52,19 @@ public class Family {
         this.modifiedAt = modifiedAt;
     }
 
-    
+
     /**
-     * ID와 함께 Family를 생성하는 정적 팩터리 메서드입니다.
+     * ID와 기타 상세 정보를 사용하여 Family 객체를 생성하는 정적 팩터리 메서드입니다.
      *
-     * @param id 고유 식별자(ID)
-     * @param name Family 이름
-     * @param description Family에 대한 설명
-     * @param profileUrl Family의 프로필 이미지 URL
-     * @param createdBy 생성자의 ID
-     * @param createdAt 생성된 날짜와 시간
-     * @param modifiedBy 마지막 수정자의 ID
-     * @param modifiedAt 마지막 수정된 날짜와 시간
-     * @return Family 객체
+     * @param id          Family의 고유 식별자
+     * @param name        Family의 이름
+     * @param description Family의 간단한 설명
+     * @param profileUrl  Family의 프로필 이미지 URL
+     * @param createdBy   Family를 최초로 생성한 사용자의 ID
+     * @param createdAt   Family가 생성된 날짜와 시간
+     * @param modifiedBy  Family를 마지막으로 수정한 사용자의 ID
+     * @param modifiedAt  Family가 마지막으로 수정된 날짜와 시간
+     * @return 생성된 Family 객체
      */
     public static Family withId(
         Long id,
@@ -82,12 +81,12 @@ public class Family {
 
 
     /**
-     * 새로운 Family를 생성하는 정적 팩터리 메서드입니다.
+     * 초기 값으로 Family 객체를 생성하는 정적 팩터리 메서드입니다. ID, 생성자 정보, 생성 날짜, 수정자 정보 및 수정 날짜는 null로 설정됩니다.
      *
-     * @param name Family 이름
-     * @param description Family에 대한 설명
-     * @param profileUrl Family의 프로필 이미지 URL
-     * @return Family 객체
+     * @param name        Family의 이름
+     * @param description Family의 간단한 설명
+     * @param profileUrl  Family의 프로필 이미지 URL
+     * @return 초기화된 새로운 Family 객체
      */
     public static Family newFamily(
         String name,
@@ -95,5 +94,19 @@ public class Family {
         String profileUrl
     ) {
         return new Family(null, name, description, profileUrl, null, null, null, null);
+    }
+
+
+    /**
+     * Family의 이름, 설명 및 프로필 URL을 업데이트합니다.
+     *
+     * @param name        변경할 Family 이름
+     * @param description 변경할 Family 설명
+     * @param profileUrl  변경할 Family 프로필 이미지 URL
+     */
+    public void update(String name, String description, String profileUrl) {
+        this.name = name;
+        this.description = description;
+        this.profileUrl = profileUrl;
     }
 }

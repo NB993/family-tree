@@ -35,7 +35,7 @@ class FamilyMemberEntityTest {
         );
 
         // when
-        FamilyMemberEntity result = FamilyMemberEntity.from(familyMember);
+        FamilyMemberJpaEntity result = FamilyMemberJpaEntity.from(familyMember);
 
         // then
         assertThat(result).isNotNull();
@@ -60,7 +60,7 @@ class FamilyMemberEntityTest {
         FamilyMember familyMember = null;
 
         // when & then
-        assertThatThrownBy(() -> FamilyMemberEntity.from(familyMember))
+        assertThatThrownBy(() -> FamilyMemberJpaEntity.from(familyMember))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("familyMember must not be null");
     }

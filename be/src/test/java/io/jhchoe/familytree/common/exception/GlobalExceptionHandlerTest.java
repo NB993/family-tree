@@ -1,135 +1,144 @@
 package io.jhchoe.familytree.common.exception;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
-import io.jhchoe.familytree.common.config.FTSpringSecurityExceptionHandler;
-import io.jhchoe.familytree.common.config.SecurityConfig;
 import io.jhchoe.familytree.common.exception.ControllerStub.TestRequestBody;
+import io.jhchoe.familytree.config.FTMockUser;
+import io.jhchoe.familytree.docs.AcceptanceTestBase;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import java.util.List;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 import static org.hamcrest.Matchers.greaterThan;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.*;
 
 @DisplayName("[Integration Test] GlobalExceptionHandler")
-@WebMvcTest(ControllerStub.class)
-@Import({GlobalExceptionHandler.class, SecurityConfig.class, FTSpringSecurityExceptionHandler.class, ObjectMapper.class})
-class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest extends AcceptanceTestBase {
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private MockMvc mockMvc;
-
+    @FTMockUser
     @Test
-    @DisplayName("IllegalArgumentException")
-    @WithMockUser
-    void testHandleIllegalArgumentException() throws Exception {
-        mockMvc.perform(get("/test/illegal-argument"))
-            .andExpect(status().isBadRequest()) // 기본 처리 결과 확인
-            .andExpect(jsonPath("$.code").value("400"))
-            .andExpect(jsonPath("$.message", Matchers.containsString("Invalid argument")))
-            .andExpect(jsonPath("$.validations").isEmpty())
-            .andReturn();
+    @DisplayName("잘못된 인자를 전달한 경우 IllegalArgumentException이 발생해야 한다.")
+    void given_invalid_argument_when_get_then_illegal_argument_exception() {
+        RestAssuredMockMvc
+            .given()
+            .when()
+            .get("/test/illegal-argument")
+            .then()
+            .statusCode(400) // 기본 처리 결과 확인
+            .body("code", equalTo("400"))
+            .body("message", containsString("Invalid argument"))
+            .body("validations", empty());
     }
 
     @Test
-    @DisplayName("미인증 사용자가 접근 시 AuthExceptionCode.UNAUTHORIZED 반환")
-    void unauthorized() throws Exception {
-        mockMvc.perform(get("/test/ft-exception"))
-            .andExpect(status().is(AuthExceptionCode.UNAUTHORIZED.getStatus().value()))
-            .andExpect(jsonPath("$.code").value(AuthExceptionCode.UNAUTHORIZED.getCode()))
-            .andExpect(jsonPath("$.message").value(AuthExceptionCode.UNAUTHORIZED.getMessage()))
-            .andReturn();
+    @DisplayName("미인증 사용자가 접근 시 UNAUTHORIZED 코드와 메시지가 반환되어야 한다.")
+    void given_unauthenticated_user_when_access_then_return_unauthorized() {
+        RestAssuredMockMvc
+            .given()
+            .when()
+            .get("/test/ft-exception")
+            .then()
+            .statusCode(AuthExceptionCode.UNAUTHORIZED.getStatus().value())
+            .body("code", equalTo(AuthExceptionCode.UNAUTHORIZED.getCode()))
+            .body("message", equalTo(AuthExceptionCode.UNAUTHORIZED.getMessage()));
     }
 
-    @Test
-    @DisplayName("권한 없는 사용자가 접근 시 AuthExceptionCode.ACCESS_DENIED 반환")
     @WithMockUser(username = "user", roles = {"USER"})
-    void accessDenied() throws Exception {
-        mockMvc.perform(get("/api/admin"))
-            .andExpect(status().is(AuthExceptionCode.ACCESS_DENIED.getStatus().value()))
-            .andExpect(jsonPath("$.code").value(AuthExceptionCode.ACCESS_DENIED.getCode()))
-            .andExpect(jsonPath("$.message").value(AuthExceptionCode.ACCESS_DENIED.getMessage()))
-            .andReturn();
+    @Test
+    @DisplayName("권한 없는 사용자가 접근 시 ACCESS_DENIED 코드와 메시지가 반환되어야 한다.")
+    void given_forbidden_user_when_access_then_return_access_denied() {
+        RestAssuredMockMvc
+            .given()
+            .when()
+            .get("/api/admin")
+            .then()
+            .statusCode(AuthExceptionCode.ACCESS_DENIED.getStatus().value())
+            .body("code", equalTo(AuthExceptionCode.ACCESS_DENIED.getCode()))
+            .body("message", equalTo(AuthExceptionCode.ACCESS_DENIED.getMessage()));
     }
 
+    @FTMockUser
     @Test
-    @DisplayName("handleHttpRequestMethodNotSupportedException 테스트")
-    @WithMockUser
-    void testHandleHttpRequestMethodNotSupportedException() throws Exception {
-        //GET 엔드포인트에 DELETE 메서드로 요청
-        mockMvc.perform(delete("/test/http-request-method-not-supported-exception")
-                .with(csrf()))
-            .andExpect(status().isMethodNotAllowed()) // HTTP 405
-            .andExpect(jsonPath("$.code").value("405"))
-            .andExpect(jsonPath("$.message").isNotEmpty())
-            .andExpect(jsonPath("$.validations").isEmpty());
+    @DisplayName("지원되지 않는 HTTP 메서드를 호출한 경우 405 상태 코드를 반환해야 한다.")
+    void given_unsupported_http_method_when_called_then_return_405_status_code() {
+        RestAssuredMockMvc
+            .given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+            .when()
+            .delete("/test/http-request-method-not-supported-exception")
+            .then()
+            .statusCode(405) // HTTP 405
+            .body("code", equalTo("405"))
+            .body("message", not(empty()))
+            .body("validations", empty());
     }
 
+    @FTMockUser
     @Test
-    @DisplayName("handleHttpMessageNotReadableException 테스트")
-    @WithMockUser
-    void testHandleHttpMessageNotReadableException() throws Exception {
-        mockMvc.perform(post("/test/http-message-not-readable-exception")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)) // ContentType 설정만 하고 Body 없음
-            .andExpect(status().isBadRequest()) // HTTP 400
-            .andExpect(jsonPath("$.code").value("400"))
-            .andExpect(jsonPath("$.message").isNotEmpty())
-            .andExpect(jsonPath("$.validations").isEmpty());
+    @DisplayName("읽을 수 없는 HTTP 메시지가 전달된 경우 400 상태 코드를 반환해야 한다.")
+    void given_unreadable_http_message_when_post_then_return_400_status_code() {
+        RestAssuredMockMvc
+            .given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+            .contentType(MediaType.APPLICATION_JSON_VALUE) // ContentType 설정만 하고 Body 없음
+            .when()
+            .post("/test/http-message-not-readable-exception")
+            .then()
+            .statusCode(400) // HTTP 400
+            .body("code", equalTo("400"))
+            .body("message", not(empty()))
+            .body("validations", empty());
     }
 
-    @Test
-    @DisplayName("handleMethodArgumentNotValidException 테스트")
     @WithMockUser
-    void testHandleMethodArgumentNotValidException() throws Exception {
+    @Test
+    @DisplayName("유효하지 않은 JSON 요청 본문이 들어오면 403 코드와 메시지가 반환되어야 한다.")
+    void given_invalid_request_body_when_post_then_return_403_status_code() {
         TestRequestBody invalidBody = new TestRequestBody("1234", -1, List.of());
 
-        mockMvc.perform(post("/test/method-argument-not-valid")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidBody))) // JSON Request Body 설정
-            .andExpect(status().isBadRequest()) // HTTP 400
-            .andExpect(jsonPath("$.code").value("400"))
-            .andExpect(jsonPath("$.message").value("입력 조건을 위반하였습니다."))
-            .andExpect(jsonPath("$.validations", Matchers.hasSize(greaterThan(0))));
+        RestAssuredMockMvc
+            .given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(invalidBody) // JSON Request Body 설정
+            .when()
+            .post("/test/method-argument-not-valid")
+            .then()
+            .statusCode(400) // HTTP 400
+            .body("code", equalTo("400"))
+            .body("message", equalTo("입력 조건을 위반하였습니다."))
+            .body("validations.size()", greaterThan(0));
+    }
+
+    @WithMockUser
+    @Test
+    @DisplayName("FTException이 발생한 경우 코드와 기본 메시지를 반환해야 한다.")
+    void given_ft_exception_when_get_then_return_default_response() {
+        RestAssuredMockMvc
+            .given()
+            .when()
+            .get("/test/ft-exception")
+            .then()
+            .statusCode(400) // FTException의 기본 상태 코드 확인
+            .body("code", equalTo("C001"))
+            .body("message", containsString("파라미터 누락."))
+            .body("validations", empty());
     }
 
     @Test
-    @DisplayName("handleFTException 테스트")
+    @DisplayName("예기치 않은 서버 오류가 발생한 경우 500 코드와 메시지가 반환되어야 한다.")
     @WithMockUser
-    void testHandleFTException() throws Exception {
-        mockMvc.perform(get("/test/ft-exception"))
-            .andExpect(status().isBadRequest()) // FTException의 기본 상태 코드 확인
-            .andExpect(jsonPath("$.code").value("C001"))
-            .andExpect(jsonPath("$.message", Matchers.containsString("파라미터 누락.")))
-            .andExpect(jsonPath("$.validations").isEmpty())
-            .andReturn();
-    }
-
-    @Test
-    @DisplayName("handleException 테스트")
-    @WithMockUser
-    void testHandleException() throws Exception {
-        mockMvc.perform(get("/test/internal-server-error"))
-            .andExpect(status().isInternalServerError()) // HTTP 500
-            .andExpect(jsonPath("$.code").value("500"))
-            .andExpect(jsonPath("$.message").value("서버 에러"))
-            .andExpect(jsonPath("$.validations").isEmpty());
+    void given_unexpected_error_when_get_then_return_internal_server_error() {
+        RestAssuredMockMvc
+            .given()
+            .when()
+            .get("/test/internal-server-error")
+            .then()
+            .statusCode(500) // HTTP 500
+            .body("code", equalTo("500"))
+            .body("message", equalTo("서버 에러"));
     }
 }

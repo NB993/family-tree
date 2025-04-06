@@ -20,7 +20,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("deleted = false")
 @Entity(name = "family_member")
-public class FamilyMemberEntity extends ModifierBaseEntity {
+public class FamilyMemberJpaEntity extends ModifierBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,7 +63,7 @@ public class FamilyMemberEntity extends ModifierBaseEntity {
      * @param modifiedBy  수정한 사용자 ID
      * @param modifiedAt  수정 일시
      */
-    private FamilyMemberEntity(
+    private FamilyMemberJpaEntity(
         Long id,
         Long familyId,
         Long userId,
@@ -94,10 +94,10 @@ public class FamilyMemberEntity extends ModifierBaseEntity {
      * @param familyMember 변환할 FamilyMember 객체
      * @return 변환된 FamilyMemberEntity 객체
      */
-    public static FamilyMemberEntity from(FamilyMember familyMember) {
+    public static FamilyMemberJpaEntity from(FamilyMember familyMember) {
         Objects.requireNonNull(familyMember, "familyMember must not be null");
 
-        return new FamilyMemberEntity(
+        return new FamilyMemberJpaEntity(
             familyMember.getId(),
             familyMember.getFamilyId(),
             familyMember.getUserId(),
