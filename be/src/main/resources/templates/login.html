@@ -4,21 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
+    <style>
+        .oauth-btn {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 4px;
+            color: white;
+            text-decoration: none;
+        }
+        .google-btn {
+            background-color: #DB4437;
+        }
+        .kakao-btn {
+            background-color: #FEE500;
+            color: #000;
+        }
+    </style>
 </head>
 <body>
-    <h1>로그인</h1>
-    <form action="/login" method="post">
-        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-        <label for="username">아이디:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">비밀번호:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">로그인</button>
-    </form>
-    <div style="color: red;">
-        <p th:if="${error != null and !error.isEmpty()}" th:text="${error}"></p>
-    </div>
+<h1>로그인</h1>
+<form action="/login" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+    <label for="username">아이디:</label>
+    <input type="text" id="username" name="username" required>
+    <br>
+    <label for="password">비밀번호:</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <button type="submit">로그인</button>
+</form>
+<div style="color: red;">
+    <p th:if="${error != null and !error.isEmpty()}" th:text="${error}"></p>
+</div>
+
+<div style="margin-top: 20px;">
+    <h2>소셜 로그인</h2>
+    <a href="/oauth2/authorization/google" class="oauth-btn google-btn">구글 로그인</a>
+    <br>
+    <a href="/oauth2/authorization/kakao" class="oauth-btn kakao-btn">카카오 로그인</a>
+</div>
+
+<div style="margin-top: 20px;">
+    <p>계정이 없으신가요? <a href="/signup">회원가입</a></p>
+</div>
 </body>
 </html>

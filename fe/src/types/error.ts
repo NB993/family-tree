@@ -5,15 +5,16 @@
  * @property {string} code - 오류 코드 (예: C001, A002, S003 등).
  * @property {string} message - 상세한 오류 메시지.
  * @property {number} status - HTTP 상태 코드 (예: 400, 404, 500 등).
+ * @property {string} traceId -
  * @property {FieldError[]} [validations] - 유효성 검증 오류가 있을 경우, 각 필드에 대한 상세 오류 정보를 포함하는 배열.
  */
 export interface ApiError {
   code: string;
   message: string;
   status: number;
+  traceId?: string;
   validations?: FieldError[];
 }
-
 
 /**
  * FieldError 인터페이스
@@ -26,7 +27,7 @@ export interface ApiError {
 // FieldError 정의
 export interface FieldError {
   field: string;
-  value: unknown;
+  value: any;
   message: string;
 }
 

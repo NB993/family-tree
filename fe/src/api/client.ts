@@ -12,12 +12,14 @@ import {ApiError, FieldError} from "../types/error";
  * 속성 설명:
  * - `code`: 에러 유형 또는 범주를 고유하게 식별하는 문자열입니다. ex) 'C001'
  * - `message`: 에러를 설명하는 사람 읽을 수 있는 메시지입니다.
+ * - `traceId`: 요청을 추적하기 위한 고유 식별자입니다.
  * - `validations` (선택): 검증 실패에 대한 추가적인 문맥을 제공하는 필드별 에러 배열입니다.
  */
 interface ErrorResponse {
   error: {
     code: string;
     message: string;
+    traceId: string;
     validations?: FieldError[];
   };
 }
@@ -93,6 +95,7 @@ export class ApiClient {
             const apiError: ApiError = {
               code: data.error.code,
               message: data.error.message,
+              traceId: data.error.traceId,
               validations: data.error.validations,
               status
             };

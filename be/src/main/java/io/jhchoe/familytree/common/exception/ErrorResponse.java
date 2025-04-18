@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,11 +18,13 @@ public class ErrorResponse {
 
     private final String code;
     private final String message;
+    private final String traceId;
     private List<FieldError<?>> validations = new ArrayList<>();
 
     private ErrorResponse(final String code, final String message) {
         this.code = code;
         this.message = message;
+        this.traceId = generateTraceId();
     }
 
     private ErrorResponse(
@@ -31,7 +34,16 @@ public class ErrorResponse {
     ) {
         this.code = code;
         this.message = message;
+        this.traceId = generateTraceId();
         this.validations = validations;
+    }
+
+    /**
+     * 모든 오류 응답에 사용할 고유한 추적 ID를 생성합니다.
+     * @return UUID 기반의 고유 문자열
+     */
+    private static String generateTraceId() {
+        return UUID.randomUUID().toString();
     }
 
     public static ErrorResponse badRequest(final IllegalArgumentException e) {
