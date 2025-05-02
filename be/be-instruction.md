@@ -1,5 +1,17 @@
 # 백엔드 개발 지침서
 
+## 기술 스택 및 버전
+- Java: Java 21 (LTS)
+- Spring Boot: 3.4.2
+- Spring Data JPA: Spring Boot 의존성 버전
+- Spring Security: Spring Boot 의존성 버전
+- 데이터베이스: H2(개발), MySQL 8.0(운영)
+- Lombok: 1.18.30
+- JUnit 5: Spring Boot 의존성 버전
+- AssertJ: 3.24.2
+- Rest Assured: 5.5.1
+- Spring REST Docs: 3.0.3
+
 ## 아키텍처 개요
 
 본 프로젝트는 헥사고날 아키텍처(Hexagonal Architecture) 기반의 클린 코드 구조를 따르며, Spring Boot 프레임워크를 활용합니다. 이 구조는 도메인 로직을 핵심으로 두고, 외부 시스템과의 상호 작용을 포트와 어댑터를 통해 분리하여 관리합니다.
@@ -99,6 +111,36 @@ io.jhchoe.familytree/
     - 엔티티와 도메인 객체 간 변환 메서드를 구현합니다
     - JPA 리포지토리는 Spring Data JPA 인터페이스로 정의합니다
 
+## 엔티티-도메인 변환 패턴
+
+### 변환 책임
+- 엔티티→도메인 변환: JpaEntity 클래스의 `toXxx()` 메서드 담당
+- 도메인→엔티티 변환: JpaEntity 클래스의 정적 `from(xxx)` 메서드 담당
+
+### 변환 메서드 시그니처
+```java
+// 도메인 → 엔티티 변환
+public static XxxJpaEntity from(Xxx domainObject) {
+    Objects.requireNonNull(domainObject, "domainObject must not be null");
+    // 변환 로직
+    return new XxxJpaEntity(...);
+}
+
+// 엔티티 → 도메인 변환
+public Xxx toXxx() {
+    // 변환 로직
+    return Xxx.withId(...);
+}
+```
+
+### 컬렉션 처리
+- 컬렉션은 항상 방어적 복사 수행
+- 빈 컬렉션은 `Collections.emptyList()`로 반환 (null 반환 금지)
+
+### 순환 참조 처리
+- 양방향 관계에서는 한쪽에서만 변환 수행
+- 필요한 경우 ID만 참조하는 가벼운 객체 사용
+
 ## 예외 처리 가이드라인
 
 - **위치**: `common/exception/`
@@ -171,9 +213,67 @@ io.jhchoe.familytree/
     - Spring Data JPA Auditing을 통해 생성/수정 정보를 자동 관리합니다
     - `@CreatedBy`, `@LastModifiedBy` 값은 현재 인증된 사용자 ID로 설정됩니다
 
+## 도메인 이벤트 처리
+
+### 이벤트 정의 및 발행
+- 도메인 이벤트는 `core/{도메인명}/domain/event` 패키지에 정의
+- 이벤트 클래스는 `{동작}{도메인}Event` 형식으로 명명 (예: `FamilyCreatedEvent`)
+- 이벤트는 불변(immutable) 객체로 구현
+- 모든 이벤트는 Spring ApplicationEventPublisher를 통해 발행
+
+### 이벤트 구독
+- 이벤트 핸들러는 `core/{도메인명}/application/eventhandler` 패키지에 정의
+- `@EventListener` 어노테이션을 사용하여 이벤트 구독
+- 트랜잭션 전파 설정은 `@TransactionalEventListener`로 명시
+
+```java
+// 이벤트 정의 예시
+public record FamilyCreatedEvent(Long familyId, String name, LocalDateTime createdAt) {
+    public static FamilyCreatedEvent from(Family family) {
+        return new FamilyCreatedEvent(
+            family.getId(), 
+            family.getName(), 
+            family.getCreatedAt()
+        );
+    }
+}
+
+// 이벤트 발행 예시 (서비스 클래스 내)
+@Autowired
+private ApplicationEventPublisher eventPublisher;
+
+@Transactional
+public Long create(CreateFamilyCommand command) {
+    // 비즈니스 로직
+    Family family = Family.newFamily(...);
+    Long id = createFamilyPort.create(family);
+    
+    // 이벤트 발행
+    eventPublisher.publishEvent(FamilyCreatedEvent.from(family));
+    
+    return id;
+}
+
+// 이벤트 구독 예시
+@Component
+@RequiredArgsConstructor
+public class FamilyEventHandler {
+    private final NotificationPort notificationPort;
+    
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleFamilyCreated(FamilyCreatedEvent event) {
+        notificationPort.sendNotification(
+            NotificationType.FAMILY_CREATED,
+            event.familyId(),
+            "새로운 가족이 생성되었습니다: " + event.name()
+        );
+    }
+}
+```
+
 ## 코드 스타일 가이드라인
 
-- Java 17 이상의 기능을 활용합니다
+- Java 21 이상의 기능을 활용합니다
 - Lombok을 사용하여 보일러플레이트 코드를 최소화합니다
 - 불변 객체와 함수형 프로그래밍 스타일을 권장합니다
 - 메서드 매개변수는 `final` 키워드를 사용합니다
