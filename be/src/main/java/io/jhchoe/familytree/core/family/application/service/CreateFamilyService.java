@@ -14,16 +14,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class FamilyService implements CreateFamilyUseCase {
+public class CreateFamilyService implements CreateFamilyUseCase {
 
     private final CreateFamilyPort createFamilyPort;
 
     /**
-     * 주어진 CreateFamilyCommand를 기반으로 새로운 Family를 생성하고 저장합니다.
-     *
-     * @param command Family 생성을 위한 명령 객체 (null 불가)
-     * @return 생성된 Family의 ID
-     * @throws NullPointerException command가 null인 경우 예외가 발생합니다.
+     * {@inheritDoc}
      */
     @Override
     public Long create(CreateFamilyCommand command) {

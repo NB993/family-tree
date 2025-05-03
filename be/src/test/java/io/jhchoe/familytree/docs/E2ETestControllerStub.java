@@ -2,10 +2,10 @@ package io.jhchoe.familytree.docs;
 
 import io.jhchoe.familytree.common.auth.domain.AuthFTUser;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.common.support.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class E2ETestControllerStub {
 
     @GetMapping("/api/test/e2e-rest-docs")
-    public ApiResponse<E2ETestResponseBody> e2eTest(@AuthFTUser FTUser user) {
+    public ResponseEntity<E2ETestResponseBody> e2eTest(@AuthFTUser FTUser user) {
         E2ETestResponseBody body = new E2ETestResponseBody("이름", 20, "부서");
-        return ApiResponse.success(body);
+        return ResponseEntity.ok(body);
     }
 
     @GetMapping("/api/test/e2e-rest-docs-2")
-    public ApiResponse<E2ETestResponseBody> e2eTest2(@AuthFTUser FTUser user) {
+    public ResponseEntity<E2ETestResponseBody> e2eTest2(@AuthFTUser FTUser user) {
         E2ETestResponseBody body = new E2ETestResponseBody("이름", 20, "부서");
-        return ApiResponse.success(body);
+        return ResponseEntity.ok(body);
     }
 
     @Getter

@@ -1,10 +1,8 @@
 package io.jhchoe.familytree.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.common.exception.ErrorResponse;
 import io.jhchoe.familytree.common.exception.FTException;
-import io.jhchoe.familytree.common.support.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

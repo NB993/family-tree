@@ -17,13 +17,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayName("[Unit Test] FamilyService")
 @ExtendWith(MockitoExtension.class)
-class FamilyServiceTest {
+class CreateFamilyServiceTest {
 
     @Mock
     private CreateFamilyPort createFamilyPort;
 
     @InjectMocks
-    private FamilyService sut;
+    private CreateFamilyService sut;
 
     @Test
     @DisplayName("create 메서드는 정상적인 CreateFamilyCommand를 입력받아 저장 후 Family ID를 반환해야 한다.")

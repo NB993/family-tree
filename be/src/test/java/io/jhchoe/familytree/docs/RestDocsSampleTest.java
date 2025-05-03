@@ -23,10 +23,9 @@ public class RestDocsSampleTest extends ApiDocsTestBase {
             .statusCode(200)
             .apply(document("domain",
                 responseFields(
-                    fieldWithPath("success").description("응답 성공 여부"),
-                    fieldWithPath("data.name").description("이름"),
-                    fieldWithPath("data.age").description("나이"),
-                    fieldWithPath("data.dept").description("부서명")
+                    fieldWithPath("name").description("이름"),
+                    fieldWithPath("age").description("나이"),
+                    fieldWithPath("dept").description("부서명")
                 )
             ));
     }
@@ -42,10 +41,9 @@ public class RestDocsSampleTest extends ApiDocsTestBase {
             .statusCode(200)
             .apply(document("domain2",
                 responseFields(
-                    fieldWithPath("success").description("응답 성공 여부"),
-                    fieldWithPath("data.name").description("이름"),
-                    fieldWithPath("data.age").description("나이"),
-                    fieldWithPath("data.dept").description("부서명")
+                    fieldWithPath("name").description("이름"),
+                    fieldWithPath("age").description("나이"),
+                    fieldWithPath("dept").description("부서명")
                 )
             ));
     }
