@@ -459,6 +459,7 @@ public class FindFamilyService implements SaveFamilyUseCase, FindFamilyUseCase {
   - `@RestController`, `@RequestMapping` 어노테이션을 사용합니다
   - 입력 유효성 검증은 `@Valid` 어노테이션으로 수행합니다
   - 유스케이스에서 응답받은 데이터는 `{행동}{도메인}Response` Dto로 변환하여 응답합니다.
+  - 인바운드 어댑터에 선언되는 HTTP API 경로는 항상 prefix로 `/api`를 붙입니다.
 
 **예시: SaveFamilyController 클래스**
 
@@ -661,6 +662,7 @@ public Xxx toXxx() {
   - 각 테스트는 하나의 기능/시나리오만 검증합니다
   - Mockito를 사용한 의존성 모킹을 통해 격리된 테스트를 작성합니다
   - 매개변수화 테스트는 `@ParameterizedTest`와 함께 사용합니다
+  - 테스트 대상(sut)에 Mock Bean을 주입해야 하는 경우 `@MockitoBean`을 사용합니다.
 
 ### 인수 테스트 (Acceptance Test)
 
@@ -670,7 +672,7 @@ public Xxx toXxx() {
   - RestAssured와 MockMvc를 조합하여 End-to-End 테스트를 작성합니다
   - 성공/실패 케이스를 모두 테스트합니다
   - `@SpringBootTest` 어노테이션으로 통합 테스트 환경을 설정합니다
-  - 필요한 빈은 `@MockitoBean`으로 모킹합니다
+  - 인수테스트는 mock을 사용하지 않고 테스트를 수행합니다
   - 테스트 사용자 인증은 `@FTMockUser` 커스텀 어노테이션을 사용합니다
 
 ### REST Docs 테스트
@@ -764,12 +766,18 @@ public class FamilyEventHandler {
 ## 코드 스타일 가이드라인
 
 - Java 21 이상의 기능을 활용합니다
-- Lombok을 사용하여 보일러플레이트 코드를 최소화합니다
+- Lombok을 사용하여 보일러플레이트 코드를 최소화하되, Getter, Setter만 사용합니다. 단, Response Dto의 경우 Builder 사용을 허용합니다
+- Request/Response Dto는 record 타입을 사용합니다
 - 불변 객체와 함수형 프로그래밍 스타일을 권장합니다
 - 메서드 매개변수는 `final` 키워드를 사용합니다
-- 모든 클래스와 메서드에 JavaDoc을 작성합니다
+- 모든 클래스와 메서드에 JavaDoc을 작성합니다. 인터페이스를 구현하는 쪽에서는 `{@inheritDoc}` 을 사용하여 인터페이스에 작성된 주석을 재사용하도록 합니다
+- 메서드 내에서 return 분기 처리가 있는 경우 기본적으로 빠른 return 문을 사용합니다. 단, 가독성을 고려하여 변경할 수 있습니다
+- 조건문은 기본적으로 긍정문으로 작성합니다. 단, 가독성을 고려하여 변경할 수 있습니다
+- 메서드 시그니처에 인자가 3개 이상 선언된 경우 첫 번째 인자부터 모든 인자를 줄바꿈하여 선언합니다
+- 가능한 한 접근제어자의 범위를 좁게 선언합니다
 - 상수는 대문자 스네이크 케이스(UPPER_SNAKE_CASE)로 명명합니다
 - 도메인 객체의 유효성 검증은 생성자 또는 팩토리 메서드에서 수행합니다
+- 개발한 비즈니스 로직은 `be/README.md` 파일에 문서화합니다. 이때 각 도메인간 내용을 적절히 연계하여 작성합니다
 
 ## 개발 검증 체크리스트
 
@@ -779,7 +787,7 @@ public class FamilyEventHandler {
 2. [ ] 포트와 어댑터가 명확하게 분리되어 있습니까?
 3. [ ] 모든 클래스가 단일 책임 원칙을 준수합니까?
 4. [ ] 예외는 적절한 ExceptionCode로 처리됩니까?
-5. [ ] 단위 테스트와 인수 테스트가 작성되었습니까?
+5. [ ] 단위 테스트와 인수 테스트, REST Docs 테스트가 작성되었습니까?
 6. [ ] API 문서화가 REST Docs를 통해 수행되었습니까?
 7. [ ] 명명 규칙이 일관되게 적용되었습니까?
 
