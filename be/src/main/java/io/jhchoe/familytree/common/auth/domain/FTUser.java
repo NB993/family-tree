@@ -21,6 +21,37 @@ public class FTUser extends User implements OAuth2User {
     private final Map<String, Object> attributes;
     private final OAuth2Provider oAuth2Provider;
 
+    /**
+     * OAuth2UserInfo를 사용하여 FTUser 객체 생성
+     * 
+     * @param id 사용자 ID
+     * @param userInfo OAuth2 사용자 정보
+     * @param oAuth2Provider OAuth2 제공자
+     * @param attributes OAuth2 속성 맵
+     * @return 생성된 FTUser 객체
+     */
+    public static FTUser ofOAuth2User(
+        final Long id,
+        final OAuth2UserInfo userInfo,
+        final OAuth2Provider oAuth2Provider,
+        final Map<String, Object> attributes
+    ) {
+        return new FTUser(
+            id,
+            userInfo.getName(),
+            userInfo.getEmail(),
+            "",
+            userInfo.getEmail(),
+            AuthenticationType.OAUTH2,
+            oAuth2Provider,
+            List.of(new SimpleGrantedAuthority(UserRole.USER.getValue())),
+            attributes
+        );
+    }
+    
+    /**
+     * 이전 방식과의 호환성을 위한 메서드 (하위 호환성 유지)
+     */
     public static FTUser ofOAuth2User(
         final Long id,
         final String name,
@@ -28,17 +59,22 @@ public class FTUser extends User implements OAuth2User {
         final OAuth2Provider oAuth2Provider,
         final Map<String, Object> attributes
     ) {
-        return new FTUser(
-            id,
-            name,
-            email, // username으로 email 사용
-            "", // OAuth2 사용자는 비밀번호 없음
-            email,
-            AuthenticationType.OAUTH2,
-            oAuth2Provider,
-            List.of(new SimpleGrantedAuthority(UserRole.USER.getValue())),
-            attributes
-        );
+        OAuth2UserInfo userInfo;
+        
+        switch (oAuth2Provider) {
+            case GOOGLE:
+                userInfo = new GoogleUserInfo(attributes);
+                break;
+            case KAKAO:
+                userInfo = new KakaoUserInfo(attributes);
+                break;
+            default:
+                // 기본 구현 또는 커스텀 UserInfo
+                userInfo = new DefaultOAuth2UserInfo(name, email, attributes);
+                break;
+        }
+        
+        return ofOAuth2User(id, userInfo, oAuth2Provider, attributes);
     }
 
     public static FTUser ofFormLoginUser(
@@ -87,9 +123,6 @@ public class FTUser extends User implements OAuth2User {
 
     @Override
     public String getName() {
-        //todo OAuth2 유저의 경우 name속성,
-        // firstName, lastName
-        // name
         return this.name;
     }
 

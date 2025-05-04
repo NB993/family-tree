@@ -1,5 +1,7 @@
-package io.jhchoe.familytree.common.auth;
+package io.jhchoe.familytree.common.auth.service;
 
+import io.jhchoe.familytree.common.auth.UserJpaEntity;
+import io.jhchoe.familytree.common.auth.UserRepository;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.exception.FTException;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
-package io.jhchoe.familytree.common.auth;
+package io.jhchoe.familytree.common.auth.controller;
 
+import io.jhchoe.familytree.common.auth.service.UserService;
 import io.jhchoe.familytree.common.auth.domain.AuthFTUser;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import lombok.RequiredArgsConstructor;
@@ -54,5 +55,11 @@ public class SignupController {
             model.addAttribute("error", "로그인에 실패했습니다. 아이디와 비밀번호를 확인하세요.");
         }
         return "login"; // login.html 반환
+    }
+
+    @GetMapping
+    @ResponseBody
+    public String index() {
+        return "로그인성공";
     }
 }

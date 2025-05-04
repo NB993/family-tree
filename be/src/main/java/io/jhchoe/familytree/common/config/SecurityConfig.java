@@ -1,5 +1,6 @@
 package io.jhchoe.familytree.common.config;
 
+import io.jhchoe.familytree.common.auth.service.OAuth2UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final FTSpringSecurityExceptionHandler ftSpringSecurityExceptionHandler;
+    private final OAuth2UserServiceImpl oAuth2UserService; // 추가
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -42,6 +44,14 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/") // 로그인 성공 후 기본 이동 경로
                 .failureUrl("/login?error=true")
                 .permitAll() // 로그인 요청은 인증 없이 접근 가능
+            )
+            .oauth2Login(oauth2 -> oauth2 // OAuth2 로그인 설정 추가
+                .loginPage("/login")
+                .defaultSuccessUrl("/")
+                .failureUrl("/login?error=true")
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(oAuth2UserService)
+                )
             )
             .logout(logout -> logout
                 .logoutUrl("/logout") // 로그아웃 경로

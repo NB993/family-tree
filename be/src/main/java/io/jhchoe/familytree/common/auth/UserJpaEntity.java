@@ -49,6 +49,29 @@ public class UserJpaEntity extends ModifierBaseEntity {
     private boolean deleted;
 
     /**
+     * OAuth2 로그인 기반의 회원 가입용 팩토리 메서드
+     * @param email 회원 가입 사용자의 이메일 주소 (필수)
+     * @param name 사용자 이름 (옵션)
+     * @param profileUrl 사용자 프로필 이미지 URL (옵션)
+     * @param oAuth2Provider OAuth2 제공자 (필수)
+     * @return 생성된 UserJpaEntity 객체
+     */
+    public static UserJpaEntity ofOAuth2User(
+        final String email,
+        final String name,
+        final String profileUrl,
+        final OAuth2Provider oAuth2Provider
+    ) {
+        if (email == null) {
+            throw new FTException(CommonExceptionCode.MISSING_PARAMETER, "email");
+        }
+        if (oAuth2Provider == null) {
+            throw new FTException(CommonExceptionCode.MISSING_PARAMETER, "oAuth2Provider");
+        }
+        return new UserJpaEntity(null, email, null, oAuth2Provider, AuthenticationType.OAUTH2, profileUrl, name, false);
+    }
+
+    /**
      * 폼 로그인 기반의 회원 가입용 팩토리 메서드
      * @param email 회원 가입 사용자의 이메일 주소 (필수)
      * @param password 회원 가입 사용자의 비밀번호 (필수)
@@ -58,8 +81,11 @@ public class UserJpaEntity extends ModifierBaseEntity {
         final String email,
         final String password
     ) {
-        if (email == null || password == null) {
+        if (email == null) {
             throw new FTException(CommonExceptionCode.MISSING_PARAMETER, "email");
+        }
+        if (password == null) {
+            throw new FTException(CommonExceptionCode.MISSING_PARAMETER, "password");
         }
         return new UserJpaEntity(null, email, password, null, AuthenticationType.FORM_LOGIN, null, null, false);
     }

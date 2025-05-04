@@ -1,0 +1,131 @@
+package io.jhchoe.familytree.common.auth.service;
+
+import io.jhchoe.familytree.common.auth.UserJpaEntity;
+import io.jhchoe.familytree.common.auth.UserRepository;
+import io.jhchoe.familytree.common.auth.domain.FTUser;
+import io.jhchoe.familytree.common.auth.domain.GoogleUserInfo;
+import io.jhchoe.familytree.common.auth.domain.KakaoUserInfo;
+import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
+import io.jhchoe.familytree.common.auth.domain.OAuth2UserInfo;
+import io.jhchoe.familytree.common.exception.CommonExceptionCode;
+import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.common.util.MaskingUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
+
+/**
+ * OAuth2 인증 후 사용자 정보를 처리하는 서비스
+ */
+@Slf4j
+@Service
+public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
+
+    private final UserRepository userRepository;
+
+    public OAuth2UserServiceImpl(UserRepository userRepository) {
+        super();
+        this.userRepository = userRepository;
+    }
+
+    /**
+     * OAuth2 인증 후 사용자 정보를 로드하고 필요한 경우 새로운 사용자를 생성합니다.
+     *
+     * @param userRequest OAuth2 인증 요청 정보를 포함한 객체
+     * @return FTUser 사용자 정보
+     * @throws OAuth2AuthenticationException 인증 과정에서 발생한 예외
+     */
+    @Override
+    @Transactional
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        try {
+            OAuth2User oAuth2User = super.loadUser(userRequest);
+
+            // OAuth2 제공자 결정 (registrationId로 구분: "google", "kakao" 등)
+            String registrationId = userRequest.getClientRegistration().getRegistrationId();
+            OAuth2Provider provider = getProvider(registrationId);
+
+            // OAuth2 제공자별 사용자 속성 파싱
+            OAuth2UserInfo userInfo = extractUserInfo(registrationId, oAuth2User.getAttributes());
+
+            // DB에서 사용자 조회 또는 생성
+            UserJpaEntity userEntity = userRepository.findByEmail(userInfo.getEmail())
+                .orElseGet(() -> {
+                    log.info("새로운 OAuth2 사용자 생성: [Provider: {}] [Masked Email: {}] [Masked Name: {}]",
+                        provider,
+                        MaskingUtils.maskEmail(userInfo.getEmail()),
+                        userInfo.getName() != null ? MaskingUtils.maskName(userInfo.getName()) : "없음");
+                    return createUser(userInfo, provider);
+                });
+
+            // 다른 OAuth2 제공자로 이미 가입한 경우 기존에 가입한 제공자로 로그인 유도
+            if (!userEntity.getOAuth2Provider().equals(provider)) {
+                // todo 원티드처럼 기존에 가입한 provider 로 로그인할 수 있게 페이지를 전환해주는 방식?
+                throw FTException.DUPLICATED;
+            }
+
+            log.info("OAuth2 로그인 성공: [User ID: {}] [Provider: {}]", userEntity.getId(), provider);
+            return FTUser.ofOAuth2User(
+                userEntity.getId(),
+                userEntity.getName(),
+                userEntity.getEmail(),
+                provider,
+                oAuth2User.getAttributes()
+            );
+        } catch (Exception e) {
+            log.error("OAuth2 로그인 처리 중 오류 발생: [Provider: {}] [Error: {}]",
+                userRequest.getClientRegistration().getRegistrationId(),
+                e.getMessage(),
+                e);
+            throw e;
+        }
+    }
+
+    /**
+     * 새로운 OAuth2 사용자를 생성합니다.
+     */
+    private UserJpaEntity createUser(OAuth2UserInfo userInfo, OAuth2Provider provider) {
+        UserJpaEntity userEntity = UserJpaEntity.ofOAuth2User(
+            userInfo.getEmail(),
+            userInfo.getName(),
+            userInfo.getImageUrl(),
+            provider
+        );
+        return userRepository.save(userEntity);
+    }
+
+    /**
+     * 제공자 ID(registrationId)를 기반으로 OAuth2Provider 열거형을 반환합니다.
+     */
+    private OAuth2Provider getProvider(String registrationId) {
+        return switch (registrationId.toLowerCase()) {
+            case "google" -> OAuth2Provider.GOOGLE;
+            case "kakao" -> OAuth2Provider.KAKAO;
+            default -> {
+                log.warn("지원하지 않는 OAuth2 제공자 요청: {}", registrationId);
+                throw new IllegalArgumentException("지원하지 않는 OAuth2 제공자입니다: " + registrationId);
+            }
+        };
+    }
+
+    /**
+     * OAuth2 제공자별로 다른 사용자 정보 구조를 처리합니다.
+     */
+    private OAuth2UserInfo extractUserInfo(String registrationId, Map<String, Object> attributes) {
+        return switch (registrationId.toLowerCase()) {
+            case "google" -> new GoogleUserInfo(attributes);
+            case "kakao" -> new KakaoUserInfo(attributes);
+            default -> {
+                log.warn("지원하지 않는 OAuth2 제공자의 사용자 정보 처리 요청: {}", registrationId);
+                throw new IllegalArgumentException("지원하지 않는 OAuth2 제공자입니다: " + registrationId);
+            }
+        };
+    }
+}
+
