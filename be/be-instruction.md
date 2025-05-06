@@ -453,13 +453,14 @@ public class FindFamilyService implements SaveFamilyUseCase, FindFamilyUseCase {
 - **명명 규칙**: `{행동}{도메인}Controller` (예: `FindFamilyController`, `SaveFamilyController`)
 - **개발 지침**:
   - 모든 API 엔드포인트는 `/api/`로 시작합니다
-  - 컨트롤러 메서드는 요청 객체를 커맨드/쿼리 객체로 변환합니다
+  - 컨트롤러 메서드는 요청 객체를 커맨드/쿼리 객체로 변환하는 역할만 담당합니다
   - 인바운드 포트(유스케이스)를 호출하여 비즈니스 로직을 실행합니다
-  - 응답은 `ResponseEntity<T>` 를 사용합니다.
+  - 컨트롤러는 비즈니스 로직 처리나 예외 발생을 담당하지 않습니다 - 이는 서비스 계층의 책임입니다
+  - 유스케이스에서 응답받은 도메인 객체는 단순히 `{행동}{도메인}Response` DTO로 변환만 합니다
+  - 응답은 `ResponseEntity<T>` 를 사용합니다
   - `@RestController`, `@RequestMapping` 어노테이션을 사용합니다
   - 입력 유효성 검증은 `@Valid` 어노테이션으로 수행합니다
-  - 유스케이스에서 응답받은 데이터는 `{행동}{도메인}Response` Dto로 변환하여 응답합니다.
-  - 인바운드 어댑터에 선언되는 HTTP API 경로는 항상 prefix로 `/api`를 붙입니다.
+  - 인바운드 어댑터에 선언되는 HTTP API 경로는 항상 prefix로 `/api`를 붙입니다
 
 **예시: SaveFamilyController 클래스**
 
@@ -662,7 +663,7 @@ public Xxx toXxx() {
   - 각 테스트는 하나의 기능/시나리오만 검증합니다
   - Mockito를 사용한 의존성 모킹을 통해 격리된 테스트를 작성합니다
   - 매개변수화 테스트는 `@ParameterizedTest`와 함께 사용합니다
-  - 테스트 대상(sut)에 Mock Bean을 주입해야 하는 경우 `@MockitoBean`을 사용합니다.
+  - Mock Bean을 사용해야 하는 경우 `@MockitoBean`을 사용합니다 - `@MockBean`은 사용하지 않음
 
 ### 인수 테스트 (Acceptance Test)
 
