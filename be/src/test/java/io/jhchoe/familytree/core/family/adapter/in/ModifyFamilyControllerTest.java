@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.adapter.in;
 
 import io.jhchoe.familytree.config.FTMockUser;
+import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyCommand;
 import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyUseCase;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
@@ -8,6 +9,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +23,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
     @MockitoBean
     private ModifyFamilyUseCase modifyFamilyUseCase;
 
-    @FTMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("modifyFamily 메서드는 유효한 request를 받으면 성공적으로 수정 후 상태코드 200을 응답해야 한다.")
     void given_valid_request_when_modifyFamily_then_return_status_200() {
@@ -45,7 +47,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .statusCode(200);
     }
 
-    @FTMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("modifyFamily 메서드는 이름이 없는 경우 상태코드 400을 응답해야 한다.")
     void given_request_without_name_when_modifyFamily_then_return_status_400() {
@@ -68,7 +70,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .statusCode(400);
     }
 
-    @FTMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("modifyFamily 메서드는 이름이 100자를 초과하는 경우 상태코드 400을 응답해야 한다.")
     void given_request_with_name_over_100_chars_when_modifyFamily_then_return_status_400() {
@@ -90,7 +92,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .statusCode(400);
     }
 
-    @FTMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("modifyFamily 메서드는 설명이 200자를 초과하는 경우 상태코드 400을 응답해야 한다.")
     void given_request_with_description_over_200_chars_when_modifyFamily_then_return_status_400() {
@@ -112,7 +114,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .statusCode(400);
     }
 
-    @FTMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("modifyFamily 메서드는 프로필 URL이 유효하지 않은 경우 상태코드 400을 응답해야 한다.")
     void given_request_with_invalid_profile_url_when_modifyFamily_then_return_status_400() {

@@ -4,7 +4,7 @@ import io.jhchoe.familytree.core.user.domain.User;
 import java.time.LocalDateTime;
 
 /**
- * 사용자 조회 응답을 위한 DTO 클래스입니다.
+ * 사용자 조회 응답 DTO
  */
 public record FindUserResponse(
     Long id,
@@ -15,10 +15,10 @@ public record FindUserResponse(
     LocalDateTime modifiedAt
 ) {
     /**
-     * User 도메인 객체로부터 응답 DTO를 생성합니다.
+     * User 도메인 객체를 FindUserResponse로 변환
      *
      * @param user 변환할 User 도메인 객체
-     * @return 생성된 FindUserResponse 객체
+     * @return 변환된 응답 DTO
      */
     public static FindUserResponse from(User user) {
         return new FindUserResponse(

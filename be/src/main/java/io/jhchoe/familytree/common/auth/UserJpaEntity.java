@@ -2,9 +2,11 @@ package io.jhchoe.familytree.common.auth;
 
 import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
+import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.exception.CommonExceptionCode;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.common.support.ModifierBaseEntity;
+import io.jhchoe.familytree.core.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +17,9 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,96 +33,109 @@ public class UserJpaEntity extends ModifierBaseEntity {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password")
-    private String password;
+    @Column(name = "name")
+    private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "oauth2_provider", columnDefinition = "varchar(255)")
-    private OAuth2Provider oAuth2Provider;
+    @Column(name = "profile_url")
+    private String profileUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "authentication_type", nullable = false, columnDefinition = "varchar(255)")
     private AuthenticationType authenticationType;
 
-    @Column(name = "profile_url")
-    private String profileUrl;
-
-    @Column(name = "name")
-    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "oauth2_provider", columnDefinition = "varchar(255)")
+    private OAuth2Provider oAuth2Provider;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, columnDefinition = "varchar(255)")
+    private UserRole role;
 
     @Column(name = "deleted")
     private boolean deleted;
 
     /**
      * OAuth2 로그인 기반의 회원 가입용 팩토리 메서드
-     * @param email 회원 가입 사용자의 이메일 주소 (필수)
-     * @param name 사용자 이름 (옵션)
-     * @param profileUrl 사용자 프로필 이미지 URL (옵션)
-     * @param oAuth2Provider OAuth2 제공자 (필수)
      * @return 생성된 UserJpaEntity 객체
      */
-    public static UserJpaEntity ofOAuth2User(
-        final String email,
-        final String name,
-        final String profileUrl,
-        final OAuth2Provider oAuth2Provider
-    ) {
-        if (email == null) {
-            throw new FTException(CommonExceptionCode.MISSING_PARAMETER, "email");
-        }
-        if (oAuth2Provider == null) {
-            throw new FTException(CommonExceptionCode.MISSING_PARAMETER, "oAuth2Provider");
-        }
-        return new UserJpaEntity(null, email, null, oAuth2Provider, AuthenticationType.OAUTH2, profileUrl, name, false);
-    }
+    public static UserJpaEntity ofOAuth2User(User user) {
+        Objects.requireNonNull(user, "user must not be null");
 
-    /**
-     * 폼 로그인 기반의 회원 가입용 팩토리 메서드
-     * @param email 회원 가입 사용자의 이메일 주소 (필수)
-     * @param password 회원 가입 사용자의 비밀번호 (필수)
-     * @return
-     */
-    public static UserJpaEntity ofFormLoginUser(
-        final String email,
-        final String password
-    ) {
-        if (email == null) {
-            throw new FTException(CommonExceptionCode.MISSING_PARAMETER, "email");
-        }
-        if (password == null) {
-            throw new FTException(CommonExceptionCode.MISSING_PARAMETER, "password");
-        }
-        return new UserJpaEntity(null, email, password, null, AuthenticationType.FORM_LOGIN, null, null, false);
+        return new UserJpaEntity(
+                user.getId(),
+                user.getEmail(),
+                user.getName(),
+                user.getProfileUrl(),
+                user.getAuthenticationType(),
+                user.getOAuth2Provider(),
+                user.getRole(),
+                user.isDeleted(),
+                user.getCreatedBy(),
+                user.getCreatedAt(),
+                user.getModifiedBy(),
+                user.getModifiedAt()
+        );
     }
 
     /**
      * 조회용 생성자
      * @param id
      * @param email
-     * @param password
-     * @param oAuth2Provider
-     * @param authenticationType
-     * @param profileUrl
      * @param name
+     * @param profileUrl
+     * @param authenticationType
+     * @param oAuth2Provider
+     * @param role
      * @param deleted
+     * @param createdBy
+     * @param createdAt
+     * @param modifiedBy
+     * @param modifiedAt
      */
     private UserJpaEntity(
         final Long id,
         final String email,
-        final String password,
-        final OAuth2Provider oAuth2Provider,
-        final AuthenticationType authenticationType,
-        final String profileUrl,
         final String name,
-        final boolean deleted
+        final String profileUrl,
+        final AuthenticationType authenticationType,
+        final OAuth2Provider oAuth2Provider,
+        final UserRole role,
+        final boolean deleted,
+        final Long createdBy,
+        final LocalDateTime createdAt,
+        final Long modifiedBy,
+        final LocalDateTime modifiedAt
     ) {
+        super(createdBy, createdAt, modifiedBy, modifiedAt);
         this.id = id;
         this.email = email;
-        this.password = password;
-        this.oAuth2Provider = oAuth2Provider;
-        this.authenticationType = authenticationType;
-        this.profileUrl = profileUrl;
         this.name = name;
+        this.profileUrl = profileUrl;
+        this.authenticationType = authenticationType;
+        this.oAuth2Provider = oAuth2Provider;
+        this.role = role;
         this.deleted = deleted;
+    }
+
+    /**
+     * UserJpaEntity를 User 도메인 객체로 변환
+     *
+     * @return 변환된 User 도메인 객체
+     */
+    public User toUser() {
+        return User.withId(
+                id,
+                email,
+                name,
+                profileUrl,
+                authenticationType,
+                oAuth2Provider,
+                role,
+                deleted,
+                getCreatedBy(),
+                getCreatedAt(),
+                getModifiedBy(),
+                getModifiedAt()
+        );
     }
 }

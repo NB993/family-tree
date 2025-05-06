@@ -5,15 +5,17 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import io.jhchoe.familytree.config.FTMockUser;
+import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.test.context.support.WithMockUser;
 
 @DisplayName("[Docs Test] Rest Docs 생성 테스트")
 public class RestDocsSampleTest extends ApiDocsTestBase {
 
     @Test
-    @FTMockUser
+    @WithMockOAuth2User
     @DisplayName("테스트1")
     void testOneDepth() {
         RestAssuredMockMvc.given()
@@ -31,7 +33,7 @@ public class RestDocsSampleTest extends ApiDocsTestBase {
     }
 
     @Test
-    @FTMockUser
+    @WithMockOAuth2User
     @DisplayName("테스트2")
     void testTwoDepth() {
         RestAssuredMockMvc.given()

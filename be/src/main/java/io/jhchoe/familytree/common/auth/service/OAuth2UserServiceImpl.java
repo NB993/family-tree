@@ -1,15 +1,11 @@
 package io.jhchoe.familytree.common.auth.service;
 
 import io.jhchoe.familytree.common.auth.UserJpaEntity;
-import io.jhchoe.familytree.common.auth.UserRepository;
-import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.common.auth.domain.GoogleUserInfo;
-import io.jhchoe.familytree.common.auth.domain.KakaoUserInfo;
-import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
-import io.jhchoe.familytree.common.auth.domain.OAuth2UserInfo;
-import io.jhchoe.familytree.common.exception.CommonExceptionCode;
+import io.jhchoe.familytree.common.auth.UserJpaRepository;
+import io.jhchoe.familytree.common.auth.domain.*;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.common.util.MaskingUtils;
+import io.jhchoe.familytree.core.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -18,6 +14,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -27,11 +24,11 @@ import java.util.Map;
 @Service
 public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
 
-    public OAuth2UserServiceImpl(UserRepository userRepository) {
+    public OAuth2UserServiceImpl(UserJpaRepository userJpaRepository) {
         super();
-        this.userRepository = userRepository;
+        this.userJpaRepository = userJpaRepository;
     }
 
     /**
@@ -55,7 +52,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
             OAuth2UserInfo userInfo = extractUserInfo(registrationId, oAuth2User.getAttributes());
 
             // DB에서 사용자 조회 또는 생성
-            UserJpaEntity userEntity = userRepository.findByEmail(userInfo.getEmail())
+            UserJpaEntity userEntity = userJpaRepository.findByEmail(userInfo.getEmail())
                 .orElseGet(() -> {
                     log.info("새로운 OAuth2 사용자 생성: [Provider: {}] [Masked Email: {}] [Masked Name: {}]",
                         provider,
@@ -91,13 +88,10 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
      * 새로운 OAuth2 사용자를 생성합니다.
      */
     private UserJpaEntity createUser(OAuth2UserInfo userInfo, OAuth2Provider provider) {
-        UserJpaEntity userEntity = UserJpaEntity.ofOAuth2User(
-            userInfo.getEmail(),
-            userInfo.getName(),
-            userInfo.getImageUrl(),
-            provider
-        );
-        return userRepository.save(userEntity);
+        User user = User.newUser(userInfo.getEmail(), userInfo.getName(), userInfo.getImageUrl(),
+                AuthenticationType.OAUTH2, provider, UserRole.USER, false, 0L, LocalDateTime.now(), 0L, LocalDateTime.now());
+
+        return userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
     }
 
     /**

@@ -3,6 +3,7 @@ package io.jhchoe.familytree.common.exception;
 import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.common.exception.ControllerStub.TestRequestBody;
 import io.jhchoe.familytree.config.FTMockUser;
+import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import java.util.List;
@@ -18,7 +19,7 @@ import static org.hamcrest.Matchers.*;
 @DisplayName("[Integration Test] GlobalExceptionHandler")
 class GlobalExceptionHandlerTest extends AcceptanceTestBase {
 
-    @FTMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("잘못된 인자를 전달한 경우 IllegalArgumentException이 발생해야 한다.")
     void given_invalid_argument_when_get_then_illegal_argument_exception() {
@@ -46,7 +47,7 @@ class GlobalExceptionHandlerTest extends AcceptanceTestBase {
             .body("message", equalTo(AuthExceptionCode.UNAUTHORIZED.getMessage()));
     }
 
-    @WithMockUser(username = "user", roles = {"USER"})
+    @WithMockOAuth2User
     @Test
     @DisplayName("권한 없는 사용자가 접근 시 ACCESS_DENIED 코드와 메시지가 반환되어야 한다.")
     void given_forbidden_user_when_access_then_return_access_denied() {
@@ -60,7 +61,7 @@ class GlobalExceptionHandlerTest extends AcceptanceTestBase {
             .body("message", equalTo(AuthExceptionCode.ACCESS_DENIED.getMessage()));
     }
 
-    @FTMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("지원되지 않는 HTTP 메서드를 호출한 경우 405 상태 코드를 반환해야 한다.")
     void given_unsupported_http_method_when_called_then_return_405_status_code() {
@@ -76,7 +77,7 @@ class GlobalExceptionHandlerTest extends AcceptanceTestBase {
             .body("validations", empty());
     }
 
-    @FTMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("읽을 수 없는 HTTP 메시지가 전달된 경우 400 상태 코드를 반환해야 한다.")
     void given_unreadable_http_message_when_post_then_return_400_status_code() {
@@ -93,7 +94,7 @@ class GlobalExceptionHandlerTest extends AcceptanceTestBase {
             .body("validations", empty());
     }
 
-    @WithMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("유효하지 않은 JSON 요청 본문이 들어오면 403 코드와 메시지가 반환되어야 한다.")
     void given_invalid_request_body_when_post_then_return_403_status_code() {
@@ -113,7 +114,7 @@ class GlobalExceptionHandlerTest extends AcceptanceTestBase {
             .body("validations.size()", greaterThan(0));
     }
 
-    @WithMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("FTException이 발생한 경우 코드와 기본 메시지를 반환해야 한다.")
     void given_ft_exception_when_get_then_return_default_response() {
@@ -130,7 +131,7 @@ class GlobalExceptionHandlerTest extends AcceptanceTestBase {
 
     @Test
     @DisplayName("예기치 않은 서버 오류가 발생한 경우 500 코드와 메시지가 반환되어야 한다.")
-    @WithMockUser
+    @WithMockOAuth2User
     void given_unexpected_error_when_get_then_return_internal_server_error() {
         RestAssuredMockMvc
             .given()

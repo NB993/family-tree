@@ -3,8 +3,10 @@ package io.jhchoe.familytree.core.family.adapter.in;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasItem;
 
+import io.jhchoe.familytree.config.WithMockOAuth2User;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 import io.jhchoe.familytree.config.FTMockUser;
@@ -17,7 +19,7 @@ import org.springframework.http.MediaType;
 @DisplayName("[Acceptance Test] FamilyControllerTest")
 class CreateFamilyControllerTest extends AcceptanceTestBase {
 
-    @FTMockUser
+    @WithMockOAuth2User
     @Test
     @DisplayName("Family 생성 성공 테스트")
     void testCreateFamily() {
@@ -36,7 +38,7 @@ class CreateFamilyControllerTest extends AcceptanceTestBase {
             .statusCode(201);
     }
 
-    @FTMockUser
+    @WithMockOAuth2User
     @ValueSource(strings = {"", " ", "\\t", "\\n"})
     @ParameterizedTest
     @DisplayName("Family 생성시 이름을 입력하지 않으면 예외를 응답한다.")

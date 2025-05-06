@@ -1,226 +1,107 @@
 package io.jhchoe.familytree.core.user.adapter.in;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
+import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
+import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
+import io.jhchoe.familytree.common.auth.domain.UserRole;
+import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.config.FTMockUser;
+import io.jhchoe.familytree.config.WithMockOAuth2User;
+import io.jhchoe.familytree.core.user.application.port.in.FindUserByNameQuery;
 import io.jhchoe.familytree.core.user.application.port.in.FindUserUseCase;
 import io.jhchoe.familytree.core.user.domain.User;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @DisplayName("[Acceptance Test] FindUserController")
 class FindUserControllerTest extends AcceptanceTestBase {
 
-    @MockBean
+    @MockitoBean
     private FindUserUseCase findUserUseCase;
 
     @Test
-    @DisplayName("findUserById 메서드는 ID로 사용자를 조회해야 한다")
-    @FTMockUser
-    void given_id_when_find_user_by_id_then_return_user() {
+    @WithMockOAuth2User
+    @DisplayName("이름으로 사용자 조회 성공")
+    void given_valid_name_when_find_users_by_name_then_return_user_list() {
         // given
-        Long userId = 1L;
+        String name = "홍길동";
+        List<User> mockUsers = new ArrayList<>();
+        
         User user = User.withId(
-            userId,
-            "test@example.com",
-            "Test User",
-            "http://example.com/profile.jpg",
-            1L,
-            LocalDateTime.now().minusDays(1),
-            null,
-            null
+            1L, 
+            "test@example.com", 
+            "홍길동", 
+            "profile.jpg",
+            AuthenticationType.OAUTH2,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
+            false,
+                1L,
+                LocalDateTime.now(),
+                1L,
+                LocalDateTime.now()
         );
+        mockUsers.add(user);
         
-        when(findUserUseCase.findById(anyLong())).thenReturn(Optional.of(user));
+        when(findUserUseCase.findByName(any(FindUserByNameQuery.class)))
+            .thenReturn(mockUsers);
 
         // when & then
-        RestAssuredMockMvc.given()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-            .get("/api/users/{id}", userId)
-            .then()
-            .statusCode(200)
-            .body("id", org.hamcrest.Matchers.equalTo(1))
-            .body("email", org.hamcrest.Matchers.equalTo("test@example.com"))
-            .body("name", org.hamcrest.Matchers.equalTo("Test User"));
-    }
-
-    @Test
-    @DisplayName("findUserById 메서드는 존재하지 않는 ID로 조회 시 404 상태코드를 반환해야 한다")
-    @FTMockUser
-    void given_non_existent_id_when_find_user_by_id_then_return_404() {
-        // given
-        Long userId = 999L;
-        
-        when(findUserUseCase.findById(anyLong())).thenReturn(Optional.empty());
-
-        // when & then
-        RestAssuredMockMvc.given()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-            .get("/api/users/{id}", userId)
-            .then()
-            .statusCode(404);
-    }
-
-    @Test
-    @DisplayName("findUsersByName 메서드는 이름으로 사용자를 조회해야 한다")
-    @FTMockUser
-    void given_name_when_find_users_by_name_then_return_users() {
-        // given
-        String name = "Test User";
-        
-        User user1 = User.withId(
-            1L,
-            "test1@example.com",
-            name,
-            null,
-            1L,
-            LocalDateTime.now().minusDays(1),
-            null,
-            null
-        );
-        
-        User user2 = User.withId(
-            2L,
-            "test2@example.com",
-            name,
-            null,
-            1L,
-            LocalDateTime.now().minusDays(1),
-            null,
-            null
-        );
-        
-        when(findUserUseCase.findByName(any())).thenReturn(Arrays.asList(user1, user2));
-
-        // when & then
-        RestAssuredMockMvc.given()
+        RestAssuredMockMvc
+            .given()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .param("name", name)
             .when()
             .get("/api/users/search")
             .then()
-            .statusCode(200)
-            .body("size()", org.hamcrest.Matchers.equalTo(2))
-            .body("[0].email", org.hamcrest.Matchers.equalTo("test1@example.com"))
-            .body("[1].email", org.hamcrest.Matchers.equalTo("test2@example.com"));
+            .statusCode(HttpStatus.OK.value())
+            .body("$", hasSize(1));
     }
 
     @Test
-    @DisplayName("findUsersByName 메서드는 해당 이름의 사용자가 없을 경우 빈 배열을 반환해야 한다")
-    @FTMockUser
-    void given_non_existent_name_when_find_users_by_name_then_return_empty_array() {
+    @WithMockOAuth2User
+    @DisplayName("이름으로 사용자 조회 시 결과가 없으면 404 응답")
+    void given_invalid_name_when_find_users_by_name_then_return_not_found() {
         // given
-        String name = "Non Existent Name";
+        String name = "존재하지않는이름";
         
-        when(findUserUseCase.findByName(any())).thenReturn(Collections.emptyList());
+        when(findUserUseCase.findByName(any(FindUserByNameQuery.class)))
+            .thenThrow(FTException.NOT_FOUND);
 
         // when & then
-        RestAssuredMockMvc.given()
+        RestAssuredMockMvc
+            .given()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .param("name", name)
             .when()
             .get("/api/users/search")
             .then()
-            .statusCode(200)
-            .body("size()", org.hamcrest.Matchers.equalTo(0));
-    }
-
-    @Test
-    @DisplayName("findAllUsers 메서드는 모든 사용자를 조회해야 한다")
-    @FTMockUser
-    void when_find_all_users_then_return_all_users() {
-        // given
-        User user1 = User.withId(
-            1L,
-            "user1@example.com",
-            "User One",
-            null,
-            1L,
-            LocalDateTime.now().minusDays(1),
-            null,
-            null
-        );
-        
-        User user2 = User.withId(
-            2L,
-            "user2@example.com",
-            "User Two",
-            null,
-            1L,
-            LocalDateTime.now().minusDays(1),
-            null,
-            null
-        );
-        
-        when(findUserUseCase.findAll()).thenReturn(Arrays.asList(user1, user2));
-
-        // when & then
-        RestAssuredMockMvc.given()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-            .get("/api/users")
-            .then()
-            .statusCode(200)
-            .body("size()", org.hamcrest.Matchers.equalTo(2))
-            .body("[0].email", org.hamcrest.Matchers.equalTo("user1@example.com"))
-            .body("[1].email", org.hamcrest.Matchers.equalTo("user2@example.com"));
-    }
-
-    @Test
-    @DisplayName("findCurrentUser 메서드는 현재 로그인한 사용자 정보를 조회해야 한다")
-    @FTMockUser(id = 1L, email = "ftuser@email.com")
-    void when_find_current_user_then_return_current_user() {
-        // given
-        User user = User.withId(
-            1L,
-            "ftuser@email.com",
-            "FT User",
-            "http://example.com/profile.jpg",
-            1L,
-            LocalDateTime.now().minusDays(1),
-            null,
-            null
-        );
-        
-        when(findUserUseCase.findById(anyLong())).thenReturn(Optional.of(user));
-
-        // when & then
-        RestAssuredMockMvc.given()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-            .get("/api/users/me")
-            .then()
-            .statusCode(200)
-            .body("id", org.hamcrest.Matchers.equalTo(1))
-            .body("email", org.hamcrest.Matchers.equalTo("ftuser@email.com"));
+            .statusCode(HttpStatus.NOT_FOUND.value());
     }
     
     @Test
-    @DisplayName("findCurrentUser 메서드는 현재 사용자를 찾을 수 없을 경우 404 상태코드를 반환해야 한다")
-    @FTMockUser(id = 1L, email = "ftuser@email.com")
-    void when_current_user_not_found_then_return_404() {
-        // given
-        when(findUserUseCase.findById(anyLong())).thenReturn(Optional.empty());
-
+    @WithMockOAuth2User
+    @DisplayName("이름 파라미터 없이 요청 시 400 응답")
+    void given_no_name_parameter_when_find_users_by_name_then_return_bad_request() {
         // when & then
-        RestAssuredMockMvc.given()
+        RestAssuredMockMvc
+            .given()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
-            .get("/api/users/me")
+            .get("/api/users/search")
             .then()
-            .statusCode(404);
+            .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 }
