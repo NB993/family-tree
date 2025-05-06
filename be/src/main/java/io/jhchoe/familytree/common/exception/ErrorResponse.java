@@ -12,6 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 
 @Getter
 public class ErrorResponse {
@@ -86,6 +87,15 @@ public class ErrorResponse {
             .collect(Collectors.toList());
 
         return new ErrorResponse("400", "입력 조건을 위반하였습니다.", fieldErrors);
+    }
+
+    /**
+     * 요청된 필수 매개변수 누락 예외
+     */
+    public static ErrorResponse badRequest(final MissingServletRequestParameterException e) {
+        String parameterName = e.getParameterName();
+        String errorMessage = String.format("'%s' 파라미터가 누락되었습니다.", parameterName);
+        return new ErrorResponse("400", errorMessage);
     }
 
     /**

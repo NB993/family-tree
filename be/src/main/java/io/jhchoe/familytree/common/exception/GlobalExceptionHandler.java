@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -90,6 +91,23 @@ public class GlobalExceptionHandler {
             errorResponse.getTraceId(),
             request.getRequestURI(),
             request.getMethod(),
+            e.getMessage());
+        return ResponseEntity
+            .badRequest()
+            .body(errorResponse);
+    }
+
+    /**
+     * 요청된 필수 매개변수 누락 예외
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(final MissingServletRequestParameterException e, HttpServletRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.badRequest(e);
+        log.warn("Missing Request Parameter: [TraceId: {}] [Path: {}] [Method: {}] [Parameter: {}] [Error: {}]", 
+            errorResponse.getTraceId(),
+            request.getRequestURI(),
+            request.getMethod(),
+            e.getParameterName(),
             e.getMessage());
         return ResponseEntity
             .badRequest()
