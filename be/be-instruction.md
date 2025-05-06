@@ -674,7 +674,7 @@ public Xxx toXxx() {
   - 성공/실패 케이스를 모두 테스트합니다
   - `@SpringBootTest` 어노테이션으로 통합 테스트 환경을 설정합니다
   - 인수테스트는 mock을 사용하지 않고 테스트를 수행합니다
-  - 테스트 사용자 인증은 `@FTMockUser` 커스텀 어노테이션을 사용합니다
+  - 테스트 사용자 인증은 `@WithMockOAuth2User` 어노테이션을 사용합니다
 
 ### REST Docs 테스트
 
