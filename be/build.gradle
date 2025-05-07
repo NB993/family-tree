@@ -6,7 +6,7 @@ plugins {
 }
 
 configurations {
-    asciidoctorExtension //REST Docs
+    asciidoctorExtensions //REST Docs
 }
 
 group = 'io.jhchoe'
@@ -52,7 +52,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.springframework.restdocs:spring-restdocs-restassured'
-    asciidoctorExtension 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:3.0.3'
     testImplementation 'io.rest-assured:rest-assured:5.5.1'
     testImplementation 'io.rest-assured:spring-mock-mvc:5.5.1'
@@ -66,7 +66,7 @@ tasks.named('test') {
 
 processResources.dependsOn('copyProperties')
 
-task copyProperties(type: Copy) {
+tasks.register('copyProperties', Copy) {
     copy {
         from './properties'
         into './src/main/resources'
@@ -97,4 +97,24 @@ asciidoctor { // asciidoctor 태스크는
             // snippetsDir 속성에 담긴 값을 사용해 스니펫 파일을 include하여 사용할 수 있다. ex include::{snippets}/...
             'source-highlighter': 'highlight.js' // 코드 블록을 하이라이팅하기 위해 highlight.js를 사용한다.
     )
+}
+
+tasks.register('copyApiDocs', Copy) {
+    description = 'API 문서를 정적 리소스 디렉토리로 복사'
+    group = 'Documentation'
+
+    // 운영 환경에는 API 문서가 포함되지 않도록 제한(onlyIf는 task를 중단시키는 효력이 있다).
+    def isProd = System.getProperty('spring.profiles.active')?.contains('prod') ?: false
+    onlyIf { !isProd }
+
+    from("${buildDir}/docs/asciidoc")
+    into("src/main/resources/static/docs")
+
+    // asciidoctor 태스크가 완료된 후 실행
+    dependsOn asciidoctor
+}
+
+// build 태스크가 실행되기 전에 copyApiDocs 태스크가 먼저 실행되어야 함을 지정
+tasks.named('build') {
+    dependsOn copyApiDocs
 }
