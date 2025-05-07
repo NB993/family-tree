@@ -22,6 +22,7 @@ public class SecurityConfig {
             .httpBasic(basic -> basic.disable())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/favicon.ico").permitAll()
+                .requestMatchers("/docs/**").permitAll() // API 문서 접근 허용
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/signup").permitAll()

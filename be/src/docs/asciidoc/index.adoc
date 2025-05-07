@@ -1,0 +1,31 @@
+= Family Tree API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[overview]]
+== 개요
+
+Family Tree 애플리케이션의 REST API 문서입니다.
+
+[[user-api]]
+== 사용자 API
+
+사용자 정보 조회 및 관리를 위한 API입니다.
+
+[[user-get-current-oauth2]]
+=== OAuth2 인증된 사용자 정보 조회
+
+OAuth2로 인증된 사용자의 정보를 조회합니다. 추가적인 제공자 정보가 포함됩니다.
+
+==== HTTP 요청
+include::{snippets}/user/me-oauth2/http-request.adoc[]
+
+==== HTTP 응답
+include::{snippets}/user/me-oauth2/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/user/me-oauth2/response-fields.adoc[]
