@@ -667,8 +667,8 @@ public Xxx toXxx() {
 
 ### 인수 테스트 (Acceptance Test)
 
-- **위치**: `src/test/java/{도메인 패키지}/adapter/in/`
-- **명명 규칙**: `{컨트롤러}Test`
+- **위치**: 해당 컨트롤러가 있는 패키지
+- **명명 규칙**: `{행동}{도메인명}AcceptanceTest`
 - **개발 지침**:
   - RestAssured와 MockMvc를 조합하여 End-to-End 테스트를 작성합니다
   - 성공/실패 케이스를 모두 테스트합니다
@@ -678,8 +678,8 @@ public Xxx toXxx() {
 
 ### REST Docs 테스트
 
-- **위치**: `src/test/java/{도메인 패키지}/docs/`
-- **명명 규칙**: `{도메인}DocsTest`
+- **위치**: 해당 컨트롤러가 있는 패키지
+- **명명 규칙**: `{행동}{도메인명}DocsTest`
 - **개발 지침**:
   - Spring REST Docs를 사용하여 API 문서를 자동 생성합니다
   - 문서화 대상 엔드포인트별로 테스트 메서드를 작성합니다
