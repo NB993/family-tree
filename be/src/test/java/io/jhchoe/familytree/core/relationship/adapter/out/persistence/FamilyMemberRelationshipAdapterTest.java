@@ -6,9 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationship;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationshipType;
-import java.time.LocalDateTime;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationship;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationshipType;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayName("[Unit Test] FamilyRelationshipAdapter")
 @ExtendWith(MockitoExtension.class)
-class FamilyRelationshipAdapterTest {
+class FamilyMemberRelationshipAdapterTest {
 
     @Mock
     private FamilyRelationshipJpaRepository familyRelationshipJpaRepository;
@@ -36,10 +35,10 @@ class FamilyRelationshipAdapterTest {
         Long familyId = 2L;
         Long fromMemberId = 3L;
         Long toMemberId = 4L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String description = "부모 관계";
         
-        FamilyRelationship relationship = FamilyRelationship.createRelationship(
+        FamilyMemberRelationship relationship = FamilyMemberRelationship.createRelationship(
             familyId,
             fromMemberId,
             toMemberId,
@@ -66,7 +65,7 @@ class FamilyRelationshipAdapterTest {
     @DisplayName("saveRelationship 메서드는 null을 받으면 예외를 발생시켜야 한다")
     void given_null_relationship_when_save_relationship_then_throw_exception() {
         // given
-        FamilyRelationship relationship = null;
+        FamilyMemberRelationship relationship = null;
 
         // when & then
         assertThatThrownBy(() -> sut.saveRelationship(relationship))
@@ -82,7 +81,7 @@ class FamilyRelationshipAdapterTest {
         Long familyId = 2L;
         Long fromMemberId = 3L;
         Long toMemberId = 4L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String description = "부모 관계";
         
         FamilyRelationshipJpaEntity entity = new FamilyRelationshipJpaEntity();
@@ -98,7 +97,7 @@ class FamilyRelationshipAdapterTest {
             .thenReturn(Optional.of(entity));
 
         // when
-        Optional<FamilyRelationship> result = sut.findRelationship(familyId, fromMemberId, toMemberId);
+        Optional<FamilyMemberRelationship> result = sut.findRelationship(familyId, fromMemberId, toMemberId);
 
         // then
         assertThat(result).isPresent();
@@ -126,7 +125,7 @@ class FamilyRelationshipAdapterTest {
             .thenReturn(Optional.empty());
 
         // when
-        Optional<FamilyRelationship> result = sut.findRelationship(familyId, fromMemberId, toMemberId);
+        Optional<FamilyMemberRelationship> result = sut.findRelationship(familyId, fromMemberId, toMemberId);
 
         // then
         assertThat(result).isEmpty();
@@ -188,7 +187,7 @@ class FamilyRelationshipAdapterTest {
         entity1.setFamilyId(familyId);
         entity1.setFromMemberId(fromMemberId);
         entity1.setToMemberId(4L);
-        entity1.setRelationshipType(FamilyRelationshipType.PARENT);
+        entity1.setRelationshipType(FamilyMemberRelationshipType.PARENT);
         entity1.setDescription("부모 관계");
         
         FamilyRelationshipJpaEntity entity2 = new FamilyRelationshipJpaEntity();
@@ -196,7 +195,7 @@ class FamilyRelationshipAdapterTest {
         entity2.setFamilyId(familyId);
         entity2.setFromMemberId(fromMemberId);
         entity2.setToMemberId(6L);
-        entity2.setRelationshipType(FamilyRelationshipType.SIBLING);
+        entity2.setRelationshipType(FamilyMemberRelationshipType.SIBLING);
         entity2.setDescription("형제 관계");
         
         List<FamilyRelationshipJpaEntity> entities = List.of(entity1, entity2);
@@ -205,7 +204,7 @@ class FamilyRelationshipAdapterTest {
             .thenReturn(entities);
 
         // when
-        List<FamilyRelationship> result = sut.findAllRelationshipsByMember(familyId, fromMemberId);
+        List<FamilyMemberRelationship> result = sut.findAllRelationshipsByMember(familyId, fromMemberId);
 
         // then
         assertThat(result).hasSize(2);
@@ -213,13 +212,13 @@ class FamilyRelationshipAdapterTest {
         assertThat(result.get(0).getFamilyId()).isEqualTo(familyId);
         assertThat(result.get(0).getFromMemberId()).isEqualTo(fromMemberId);
         assertThat(result.get(0).getToMemberId()).isEqualTo(4L);
-        assertThat(result.get(0).getRelationshipType()).isEqualTo(FamilyRelationshipType.PARENT);
+        assertThat(result.get(0).getRelationshipType()).isEqualTo(FamilyMemberRelationshipType.PARENT);
         
         assertThat(result.get(1).getId()).isEqualTo(5L);
         assertThat(result.get(1).getFamilyId()).isEqualTo(familyId);
         assertThat(result.get(1).getFromMemberId()).isEqualTo(fromMemberId);
         assertThat(result.get(1).getToMemberId()).isEqualTo(6L);
-        assertThat(result.get(1).getRelationshipType()).isEqualTo(FamilyRelationshipType.SIBLING);
+        assertThat(result.get(1).getRelationshipType()).isEqualTo(FamilyMemberRelationshipType.SIBLING);
         
         verify(familyRelationshipJpaRepository).findAllByFamilyIdAndFromMemberId(familyId, fromMemberId);
     }
@@ -235,7 +234,7 @@ class FamilyRelationshipAdapterTest {
             .thenReturn(List.of());
 
         // when
-        List<FamilyRelationship> result = sut.findAllRelationshipsByMember(familyId, fromMemberId);
+        List<FamilyMemberRelationship> result = sut.findAllRelationshipsByMember(familyId, fromMemberId);
 
         // then
         assertThat(result).isEmpty();

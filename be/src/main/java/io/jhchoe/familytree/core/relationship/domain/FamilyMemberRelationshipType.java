@@ -1,10 +1,10 @@
 package io.jhchoe.familytree.core.relationship.domain;
 
 /**
- * 가족 관계 타입을 정의하는 열거형 클래스입니다.
+ * 가족 구성원 관계 타입을 정의하는 열거형 클래스입니다.
  * 각 가족 구성원 간의 관계를 나타냅니다.
  */
-public enum FamilyRelationshipType {
+public enum FamilyMemberRelationshipType {
     /**
      * 부모-자녀 관계 (부모 → 자녀)
      */
@@ -57,7 +57,7 @@ public enum FamilyRelationshipType {
     
     private final String displayName;
     
-    FamilyRelationshipType(String displayName) {
+    FamilyMemberRelationshipType(String displayName) {
         this.displayName = displayName;
     }
     

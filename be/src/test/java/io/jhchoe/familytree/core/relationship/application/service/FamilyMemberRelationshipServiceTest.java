@@ -7,13 +7,13 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.jhchoe.familytree.core.relationship.application.port.in.DefineFamilyRelationshipCommand;
-import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyRelationshipQuery;
-import io.jhchoe.familytree.core.relationship.application.port.in.FindMemberRelationshipsQuery;
+import io.jhchoe.familytree.core.relationship.application.port.in.SaveFamilyMemberRelationshipCommand;
+import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyMemberRelationshipQuery;
+import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyMemberRelationshipsQuery;
 import io.jhchoe.familytree.core.relationship.application.port.out.FindFamilyRelationshipPort;
 import io.jhchoe.familytree.core.relationship.application.port.out.SaveFamilyRelationshipPort;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationship;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationshipType;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationship;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationshipType;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayName("[Unit Test] FamilyRelationshipService")
 @ExtendWith(MockitoExtension.class)
-class FamilyRelationshipServiceTest {
+class FamilyMemberRelationshipServiceTest {
 
     @Mock
     private SaveFamilyRelationshipPort saveFamilyRelationshipPort;
@@ -34,21 +34,21 @@ class FamilyRelationshipServiceTest {
     private FindFamilyRelationshipPort findFamilyRelationshipPort;
 
     @InjectMocks
-    private FamilyRelationshipService sut;
+    private FindFamilyMemberRelationshipService sut;
 
     @Test
-    @DisplayName("defineRelationship 메서드는 기존 관계가 없을 때 새 관계를 생성해야 한다")
-    void given_no_existing_relationship_when_define_relationship_then_create_new_relationship() {
+    @DisplayName("saveRelationship 메서드는 기존 관계가 없을 때 새 관계를 생성해야 한다")
+    void given_no_existing_relationship_when_save_relationship_then_create_new_relationship() {
         // given
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String customRelationship = null;
         String description = "새로운 관계";
         Long expectedId = 4L;
         
-        DefineFamilyRelationshipCommand command = new DefineFamilyRelationshipCommand(
+        SaveFamilyMemberRelationshipCommand command = new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,
@@ -60,34 +60,34 @@ class FamilyRelationshipServiceTest {
         when(findFamilyRelationshipPort.findRelationship(familyId, fromMemberId, toMemberId))
             .thenReturn(Optional.empty());
         
-        when(saveFamilyRelationshipPort.saveRelationship(any(FamilyRelationship.class)))
+        when(saveFamilyRelationshipPort.saveRelationship(any(FamilyMemberRelationship.class)))
             .thenReturn(expectedId);
 
         // when
-        Long result = sut.defineRelationship(command);
+        Long result = sut.saveRelationship(command);
 
         // then
         assertThat(result).isEqualTo(expectedId);
         verify(findFamilyRelationshipPort).findRelationship(familyId, fromMemberId, toMemberId);
-        verify(saveFamilyRelationshipPort).saveRelationship(any(FamilyRelationship.class));
+        verify(saveFamilyRelationshipPort).saveRelationship(any(FamilyMemberRelationship.class));
     }
 
     @Test
-    @DisplayName("defineRelationship 메서드는 기존 관계가 있을 때 관계를 업데이트해야 한다")
-    void given_existing_relationship_when_define_relationship_then_update_relationship() {
+    @DisplayName("saveRelationship 메서드는 기존 관계가 있을 때 관계를 업데이트해야 한다")
+    void given_existing_relationship_when_save_relationship_then_update_relationship() {
         // given
         Long relationshipId = 1L;
         Long familyId = 2L;
         Long fromMemberId = 3L;
         Long toMemberId = 4L;
-        FamilyRelationshipType originalType = FamilyRelationshipType.PARENT;
-        FamilyRelationshipType newType = FamilyRelationshipType.GRANDPARENT;
+        FamilyMemberRelationshipType originalType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType newType = FamilyMemberRelationshipType.GRANDPARENT;
         String originalCustom = null;
         String newCustom = null;
         String originalDesc = "원래 설명";
         String newDesc = "새로운 설명";
         
-        FamilyRelationship existingRelationship = FamilyRelationship.withId(
+        FamilyMemberRelationship existingRelationship = FamilyMemberRelationship.withId(
             relationshipId,
             familyId,
             fromMemberId,
@@ -101,7 +101,7 @@ class FamilyRelationshipServiceTest {
             null
         );
         
-        DefineFamilyRelationshipCommand command = new DefineFamilyRelationshipCommand(
+        SaveFamilyMemberRelationshipCommand command = new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,
@@ -113,26 +113,26 @@ class FamilyRelationshipServiceTest {
         when(findFamilyRelationshipPort.findRelationship(familyId, fromMemberId, toMemberId))
             .thenReturn(Optional.of(existingRelationship));
         
-        when(saveFamilyRelationshipPort.saveRelationship(any(FamilyRelationship.class)))
+        when(saveFamilyRelationshipPort.saveRelationship(any(FamilyMemberRelationship.class)))
             .thenReturn(relationshipId);
 
         // when
-        Long result = sut.defineRelationship(command);
+        Long result = sut.saveRelationship(command);
 
         // then
         assertThat(result).isEqualTo(relationshipId);
         verify(findFamilyRelationshipPort).findRelationship(familyId, fromMemberId, toMemberId);
-        verify(saveFamilyRelationshipPort).saveRelationship(any(FamilyRelationship.class));
+        verify(saveFamilyRelationshipPort).saveRelationship(any(FamilyMemberRelationship.class));
     }
 
     @Test
-    @DisplayName("defineRelationship 메서드는 command가 null이면 예외를 발생시켜야 한다")
-    void given_null_command_when_define_relationship_then_throw_exception() {
+    @DisplayName("saveRelationship 메서드는 command가 null이면 예외를 발생시켜야 한다")
+    void given_null_command_when_save_relationship_then_throw_exception() {
         // given
-        DefineFamilyRelationshipCommand command = null;
+        SaveFamilyMemberRelationshipCommand command = null;
 
         // when & then
-        assertThatThrownBy(() -> sut.defineRelationship(command))
+        assertThatThrownBy(() -> sut.saveRelationship(command))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("command must not be null");
     }
@@ -144,18 +144,18 @@ class FamilyRelationshipServiceTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FindFamilyRelationshipQuery query = new FindFamilyRelationshipQuery(
+        FindFamilyMemberRelationshipQuery query = new FindFamilyMemberRelationshipQuery(
             familyId,
             fromMemberId,
             toMemberId
         );
         
-        FamilyRelationship expectedRelationship = FamilyRelationship.withId(
+        FamilyMemberRelationship expectedRelationship = FamilyMemberRelationship.withId(
             4L,
             familyId,
             fromMemberId,
             toMemberId,
-            FamilyRelationshipType.PARENT,
+            FamilyMemberRelationshipType.PARENT,
             null,
             "설명",
             null,
@@ -168,7 +168,7 @@ class FamilyRelationshipServiceTest {
             .thenReturn(Optional.of(expectedRelationship));
 
         // when
-        Optional<FamilyRelationship> result = sut.findRelationship(query);
+        Optional<FamilyMemberRelationship> result = sut.findRelationship(query);
 
         // then
         assertThat(result).isPresent();
@@ -180,7 +180,7 @@ class FamilyRelationshipServiceTest {
     @DisplayName("findRelationship 메서드는 query가 null이면 예외를 발생시켜야 한다")
     void given_null_query_when_find_relationship_then_throw_exception() {
         // given
-        FindFamilyRelationshipQuery query = null;
+        FindFamilyMemberRelationshipQuery query = null;
 
         // when & then
         assertThatThrownBy(() -> sut.findRelationship(query))
@@ -194,17 +194,17 @@ class FamilyRelationshipServiceTest {
         // given
         Long familyId = 1L;
         Long fromMemberId = 2L;
-        FindMemberRelationshipsQuery query = new FindMemberRelationshipsQuery(
+        FindFamilyMemberRelationshipsQuery query = new FindFamilyMemberRelationshipsQuery(
             familyId,
             fromMemberId
         );
         
-        FamilyRelationship relationship1 = FamilyRelationship.withId(
+        FamilyMemberRelationship relationship1 = FamilyMemberRelationship.withId(
             3L,
             familyId,
             fromMemberId,
             4L,
-            FamilyRelationshipType.PARENT,
+            FamilyMemberRelationshipType.PARENT,
             null,
             "설명1",
             null,
@@ -213,12 +213,12 @@ class FamilyRelationshipServiceTest {
             null
         );
         
-        FamilyRelationship relationship2 = FamilyRelationship.withId(
+        FamilyMemberRelationship relationship2 = FamilyMemberRelationship.withId(
             5L,
             familyId,
             fromMemberId,
             6L,
-            FamilyRelationshipType.SIBLING,
+            FamilyMemberRelationshipType.SIBLING,
             null,
             "설명2",
             null,
@@ -227,13 +227,13 @@ class FamilyRelationshipServiceTest {
             null
         );
         
-        List<FamilyRelationship> expectedRelationships = List.of(relationship1, relationship2);
+        List<FamilyMemberRelationship> expectedRelationships = List.of(relationship1, relationship2);
         
         when(findFamilyRelationshipPort.findAllRelationshipsByMember(familyId, fromMemberId))
             .thenReturn(expectedRelationships);
 
         // when
-        List<FamilyRelationship> result = sut.findAllRelationshipsByMember(query);
+        List<FamilyMemberRelationship> result = sut.findAllRelationshipsByMember(query);
 
         // then
         assertThat(result).hasSize(2);
@@ -245,7 +245,7 @@ class FamilyRelationshipServiceTest {
     @DisplayName("findAllRelationshipsByMember 메서드는 query가 null이면 예외를 발생시켜야 한다")
     void given_null_query_when_find_all_relationships_by_member_then_throw_exception() {
         // given
-        FindMemberRelationshipsQuery query = null;
+        FindFamilyMemberRelationshipsQuery query = null;
 
         // when & then
         assertThatThrownBy(() -> sut.findAllRelationshipsByMember(query))

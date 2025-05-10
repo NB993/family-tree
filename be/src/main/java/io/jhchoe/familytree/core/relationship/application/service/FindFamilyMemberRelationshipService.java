@@ -1,13 +1,13 @@
 package io.jhchoe.familytree.core.relationship.application.service;
 
-import io.jhchoe.familytree.core.relationship.application.port.in.DefineFamilyRelationshipCommand;
-import io.jhchoe.familytree.core.relationship.application.port.in.DefineFamilyRelationshipUseCase;
-import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyRelationshipQuery;
-import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyRelationshipUseCase;
-import io.jhchoe.familytree.core.relationship.application.port.in.FindMemberRelationshipsQuery;
+import io.jhchoe.familytree.core.relationship.application.port.in.SaveFamilyMemberRelationshipCommand;
+import io.jhchoe.familytree.core.relationship.application.port.in.SaveFamilyMemberRelationshipUseCase;
+import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyMemberRelationshipQuery;
+import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyMemberRelationshipUseCase;
+import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyMemberRelationshipsQuery;
 import io.jhchoe.familytree.core.relationship.application.port.out.FindFamilyRelationshipPort;
 import io.jhchoe.familytree.core.relationship.application.port.out.SaveFamilyRelationshipPort;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationship;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationship;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,8 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class FamilyRelationshipService implements DefineFamilyRelationshipUseCase, FindFamilyRelationshipUseCase {
-    
+public class FindFamilyMemberRelationshipService implements SaveFamilyMemberRelationshipUseCase,
+    FindFamilyMemberRelationshipUseCase {
+
     private final SaveFamilyRelationshipPort saveFamilyRelationshipPort;
     private final FindFamilyRelationshipPort findFamilyRelationshipPort;
     
@@ -30,17 +31,17 @@ public class FamilyRelationshipService implements DefineFamilyRelationshipUseCas
      */
     @Override
     @Transactional
-    public Long defineRelationship(DefineFamilyRelationshipCommand command) {
+    public Long saveRelationship(SaveFamilyMemberRelationshipCommand command) {
         Objects.requireNonNull(command, "command must not be null");
         
         // 기존 관계가 있는지 확인
-        Optional<FamilyRelationship> existingRelationship = findFamilyRelationshipPort.findRelationship(
+        Optional<FamilyMemberRelationship> existingRelationship = findFamilyRelationshipPort.findRelationship(
             command.getFamilyId(),
             command.getFromMemberId(),
             command.getToMemberId()
         );
         
-        FamilyRelationship relationship;
+        FamilyMemberRelationship relationship;
         if (existingRelationship.isPresent()) {
             // 기존 관계 업데이트
             relationship = existingRelationship.get().updateRelationship(
@@ -50,7 +51,7 @@ public class FamilyRelationshipService implements DefineFamilyRelationshipUseCas
             );
         } else {
             // 새 관계 생성
-            relationship = FamilyRelationship.createRelationship(
+            relationship = FamilyMemberRelationship.createRelationship(
                 command.getFamilyId(),
                 command.getFromMemberId(),
                 command.getToMemberId(),
@@ -68,7 +69,7 @@ public class FamilyRelationshipService implements DefineFamilyRelationshipUseCas
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<FamilyRelationship> findRelationship(FindFamilyRelationshipQuery query) {
+    public Optional<FamilyMemberRelationship> findRelationship(FindFamilyMemberRelationshipQuery query) {
         Objects.requireNonNull(query, "query must not be null");
         
         return findFamilyRelationshipPort.findRelationship(
@@ -83,9 +84,9 @@ public class FamilyRelationshipService implements DefineFamilyRelationshipUseCas
      */
     @Override
     @Transactional(readOnly = true)
-    public List<FamilyRelationship> findAllRelationshipsByMember(FindMemberRelationshipsQuery query) {
+    public List<FamilyMemberRelationship> findAllRelationshipsByMember(FindFamilyMemberRelationshipsQuery query) {
         Objects.requireNonNull(query, "query must not be null");
-        
+
         return findFamilyRelationshipPort.findAllRelationshipsByMember(
             query.getFamilyId(),
             query.getFromMemberId()

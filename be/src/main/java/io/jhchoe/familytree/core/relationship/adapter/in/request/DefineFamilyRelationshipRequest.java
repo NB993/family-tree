@@ -1,6 +1,6 @@
 package io.jhchoe.familytree.core.relationship.adapter.in.request;
 
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationshipType;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationshipType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -12,7 +12,7 @@ public record DefineFamilyRelationshipRequest(
     Long toMemberId,
     
     @NotNull(message = "관계 유형은 필수입니다")
-    FamilyRelationshipType relationshipType,
+    FamilyMemberRelationshipType relationshipType,
     
     @Size(max = 50, message = "사용자 정의 관계명은 50자 이내로 작성해주세요")
     String customRelationship,

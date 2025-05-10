@@ -6,14 +6,15 @@ import io.jhchoe.familytree.common.exception.CommonExceptionCode;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.out.LoadFamilyPort;
 import io.jhchoe.familytree.core.relationship.adapter.in.request.DefineFamilyRelationshipRequest;
-import io.jhchoe.familytree.core.relationship.adapter.in.response.FamilyRelationshipResponse;
-import io.jhchoe.familytree.core.relationship.application.port.in.DefineFamilyRelationshipCommand;
-import io.jhchoe.familytree.core.relationship.application.port.in.DefineFamilyRelationshipUseCase;
-import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyRelationshipQuery;
-import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyRelationshipUseCase;
-import io.jhchoe.familytree.core.relationship.application.port.in.FindMemberRelationshipsQuery;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationship;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationshipType;
+import io.jhchoe.familytree.core.relationship.adapter.in.response.FamilyMemberRelationshipResponse;
+import io.jhchoe.familytree.core.relationship.adapter.in.response.FamilyMemberRelationshipTypeResponse;
+import io.jhchoe.familytree.core.relationship.application.port.in.SaveFamilyMemberRelationshipCommand;
+import io.jhchoe.familytree.core.relationship.application.port.in.SaveFamilyMemberRelationshipUseCase;
+import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyMemberRelationshipQuery;
+import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyMemberRelationshipUseCase;
+import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyMemberRelationshipsQuery;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationship;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationshipType;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,8 +36,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FamilyRelationshipController {
 
-    private final DefineFamilyRelationshipUseCase defineFamilyRelationshipUseCase;
-    private final FindFamilyRelationshipUseCase findFamilyRelationshipUseCase;
+    private final SaveFamilyMemberRelationshipUseCase saveFamilyMemberRelationshipUseCase;
+    private final FindFamilyMemberRelationshipUseCase findFamilyMemberRelationshipUseCase;
     private final LoadFamilyPort loadFamilyPort;
 
     /**
@@ -48,7 +49,7 @@ public class FamilyRelationshipController {
      * @return 생성/수정된 가족 관계 정보
      */
     @PostMapping
-    public ResponseEntity<FamilyRelationshipResponse> defineRelationship(
+    public ResponseEntity<FamilyMemberRelationshipResponse> saveRelationship(
         @AuthFTUser FTUser ftUser,
         @PathVariable Long memberId,
         @Valid @RequestBody DefineFamilyRelationshipRequest request
@@ -60,7 +61,7 @@ public class FamilyRelationshipController {
         Long familyId = 1L; // 임시 값, 실제로는 구성원 ID로 가족 ID 조회
         
         // 2. Command 객체 생성
-        DefineFamilyRelationshipCommand command = new DefineFamilyRelationshipCommand(
+        SaveFamilyMemberRelationshipCommand command = new SaveFamilyMemberRelationshipCommand(
             familyId,
             memberId, // 현재 로그인한 사용자의 구성원 ID
             request.toMemberId(), // 관계를 정의할 대상 ID
@@ -70,22 +71,22 @@ public class FamilyRelationshipController {
         );
         
         // 3. 유스케이스 실행
-        Long relationshipId = defineFamilyRelationshipUseCase.defineRelationship(command);
+        Long relationshipId = saveFamilyMemberRelationshipUseCase.saveRelationship(command);
         
         // 4. 생성/수정된 관계 조회
-        FindFamilyRelationshipQuery query = new FindFamilyRelationshipQuery(
+        FindFamilyMemberRelationshipQuery query = new FindFamilyMemberRelationshipQuery(
             familyId,
             memberId,
             request.toMemberId()
         );
         
-        FamilyRelationship relationship = findFamilyRelationshipUseCase.findRelationship(query)
+        FamilyMemberRelationship relationship = findFamilyMemberRelationshipUseCase.findRelationship(query)
             .orElseThrow(() -> new FTException(CommonExceptionCode.NOT_FOUND, "relationship"));
         
         // 5. 응답 반환
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(FamilyRelationshipResponse.from(relationship));
+            .body(FamilyMemberRelationshipResponse.from(relationship));
     }
     
     /**
@@ -96,7 +97,7 @@ public class FamilyRelationshipController {
      * @return 가족 관계 목록
      */
     @GetMapping
-    public ResponseEntity<List<FamilyRelationshipResponse>> getAllRelationships(
+    public ResponseEntity<List<FamilyMemberRelationshipResponse>> getAllRelationships(
         @AuthFTUser FTUser ftUser,
         @PathVariable Long memberId
     ) {
@@ -107,17 +108,17 @@ public class FamilyRelationshipController {
         Long familyId = 1L; // 임시 값, 실제로는 구성원 ID로 가족 ID 조회
         
         // 2. 쿼리 객체 생성
-        FindMemberRelationshipsQuery query = new FindMemberRelationshipsQuery(
+        FindFamilyMemberRelationshipsQuery query = new FindFamilyMemberRelationshipsQuery(
             familyId,
             memberId
         );
         
         // 3. 유스케이스 실행
-        List<FamilyRelationship> relationships = findFamilyRelationshipUseCase.findAllRelationshipsByMember(query);
+        List<FamilyMemberRelationship> relationships = findFamilyMemberRelationshipUseCase.findAllRelationshipsByMember(query);
         
         // 4. 응답 반환
-        List<FamilyRelationshipResponse> responses = relationships.stream()
-            .map(FamilyRelationshipResponse::from)
+        List<FamilyMemberRelationshipResponse> responses = relationships.stream()
+            .map(FamilyMemberRelationshipResponse::from)
             .collect(Collectors.toList());
         
         return ResponseEntity.ok(responses);
@@ -132,7 +133,7 @@ public class FamilyRelationshipController {
      * @return 가족 관계 정보
      */
     @GetMapping("/{toMemberId}")
-    public ResponseEntity<FamilyRelationshipResponse> getRelationship(
+    public ResponseEntity<FamilyMemberRelationshipResponse> getRelationship(
         @AuthFTUser FTUser ftUser,
         @PathVariable Long memberId,
         @PathVariable Long toMemberId
@@ -144,18 +145,18 @@ public class FamilyRelationshipController {
         Long familyId = 1L; // 임시 값, 실제로는 구성원 ID로 가족 ID 조회
         
         // 2. 쿼리 객체 생성
-        FindFamilyRelationshipQuery query = new FindFamilyRelationshipQuery(
+        FindFamilyMemberRelationshipQuery query = new FindFamilyMemberRelationshipQuery(
             familyId,
             memberId,
             toMemberId
         );
         
         // 3. 유스케이스 실행
-        FamilyRelationship relationship = findFamilyRelationshipUseCase.findRelationship(query)
+        FamilyMemberRelationship relationship = findFamilyMemberRelationshipUseCase.findRelationship(query)
             .orElseThrow(() -> new FTException(CommonExceptionCode.NOT_FOUND, "relationship"));
         
         // 4. 응답 반환
-        return ResponseEntity.ok(FamilyRelationshipResponse.from(relationship));
+        return ResponseEntity.ok(FamilyMemberRelationshipResponse.from(relationship));
     }
     
     /**
@@ -164,9 +165,9 @@ public class FamilyRelationshipController {
      * @return 가족 관계 타입 목록
      */
     @GetMapping("/types")
-    public ResponseEntity<List<RelationshipTypeDto>> getRelationshipTypes() {
-        List<RelationshipTypeDto> types = List.of(FamilyRelationshipType.values()).stream()
-            .map(type -> new RelationshipTypeDto(
+    public ResponseEntity<List<FamilyMemberRelationshipTypeResponse>> getRelationshipTypes() {
+        List<FamilyMemberRelationshipTypeResponse> types = List.of(FamilyMemberRelationshipType.values()).stream()
+            .map(type -> new FamilyMemberRelationshipTypeResponse(
                 type.name(),
                 type.getDisplayName()
             ))
@@ -174,9 +175,4 @@ public class FamilyRelationshipController {
         
         return ResponseEntity.ok(types);
     }
-    
-    /**
-     * 관계 타입 DTO 레코드
-     */
-    private record RelationshipTypeDto(String code, String displayName) {}
 }

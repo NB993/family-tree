@@ -7,13 +7,13 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import io.jhchoe.familytree.config.FTMockUser;
+import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.core.family.application.port.out.LoadFamilyPort;
 import io.jhchoe.familytree.core.relationship.adapter.in.request.DefineFamilyRelationshipRequest;
-import io.jhchoe.familytree.core.relationship.application.port.in.DefineFamilyRelationshipUseCase;
-import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyRelationshipUseCase;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationship;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationshipType;
+import io.jhchoe.familytree.core.relationship.application.port.in.SaveFamilyMemberRelationshipUseCase;
+import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyMemberRelationshipUseCase;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationship;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationshipType;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import java.time.LocalDateTime;
@@ -26,25 +26,25 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
 @DisplayName("[Acceptance Test] FamilyRelationshipController")
-class FamilyRelationshipControllerTest extends AcceptanceTestBase {
+class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
 
     @MockBean
-    private DefineFamilyRelationshipUseCase defineFamilyRelationshipUseCase;
+    private SaveFamilyMemberRelationshipUseCase saveFamilyMemberRelationshipUseCase;
 
     @MockBean
-    private FindFamilyRelationshipUseCase findFamilyRelationshipUseCase;
+    private FindFamilyMemberRelationshipUseCase findFamilyMemberRelationshipUseCase;
 
     @MockBean
     private LoadFamilyPort loadFamilyPort;
 
     @Test
-    @FTMockUser
-    @DisplayName("defineRelationship 메서드는 유효한 요청을 받으면 관계를 정의하고 상태 코드 200을 반환해야 한다")
-    void given_valid_request_when_define_relationship_then_return_status_200() {
+    @WithMockOAuth2User
+    @DisplayName("saveRelationship 메서드는 유효한 요청을 받으면 관계를 정의하고 상태 코드 200을 반환해야 한다")
+    void given_valid_request_when_save_relationship_then_return_status_200() {
         // given
         Long memberId = 1L;
         Long toMemberId = 2L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String description = "부모 관계";
         Long relationshipId = 3L;
         
@@ -55,10 +55,10 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
             description
         );
         
-        when(defineFamilyRelationshipUseCase.defineRelationship(any()))
+        when(saveFamilyMemberRelationshipUseCase.saveRelationship(any()))
             .thenReturn(relationshipId);
         
-        FamilyRelationship relationship = FamilyRelationship.withId(
+        FamilyMemberRelationship relationship = FamilyMemberRelationship.withId(
             relationshipId,
             1L, // 임시 familyId
             memberId,
@@ -72,7 +72,7 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
             LocalDateTime.now()
         );
         
-        when(findFamilyRelationshipUseCase.findRelationship(any()))
+        when(findFamilyMemberRelationshipUseCase.findRelationship(any()))
             .thenReturn(Optional.of(relationship));
 
         // when & then
@@ -93,13 +93,13 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
     }
 
     @Test
-    @FTMockUser
-    @DisplayName("defineRelationship 메서드는 CUSTOM 타입 요청을 받으면 커스텀 관계를 정의하고 상태 코드 200을 반환해야 한다")
-    void given_custom_type_request_when_define_relationship_then_return_status_200() {
+    @WithMockOAuth2User
+    @DisplayName("saveRelationship 메서드는 CUSTOM 타입 요청을 받으면 커스텀 관계를 정의하고 상태 코드 200을 반환해야 한다")
+    void given_custom_type_request_when_save_relationship_then_return_status_200() {
         // given
         Long memberId = 1L;
         Long toMemberId = 2L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.CUSTOM;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.CUSTOM;
         String customRelationship = "친가 쪽 큰아버지";
         String description = "아버지의 형제";
         Long relationshipId = 3L;
@@ -111,10 +111,10 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
             description
         );
         
-        when(defineFamilyRelationshipUseCase.defineRelationship(any()))
+        when(saveFamilyMemberRelationshipUseCase.saveRelationship(any()))
             .thenReturn(relationshipId);
         
-        FamilyRelationship relationship = FamilyRelationship.withId(
+        FamilyMemberRelationship relationship = FamilyMemberRelationship.withId(
             relationshipId,
             1L, // 임시 familyId
             memberId,
@@ -128,7 +128,7 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
             LocalDateTime.now()
         );
         
-        when(findFamilyRelationshipUseCase.findRelationship(any()))
+        when(findFamilyMemberRelationshipUseCase.findRelationship(any()))
             .thenReturn(Optional.of(relationship));
 
         // when & then
@@ -150,9 +150,9 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
     }
 
     @Test
-    @FTMockUser
-    @DisplayName("defineRelationship 메서드는 유효하지 않은 요청을 받으면 상태 코드 400을 반환해야 한다")
-    void given_invalid_request_when_define_relationship_then_return_status_400() {
+    @WithMockOAuth2User
+    @DisplayName("saveRelationship 메서드는 유효하지 않은 요청을 받으면 상태 코드 400을 반환해야 한다")
+    void given_invalid_request_when_save_relationship_then_return_status_400() {
         // given
         Long memberId = 1L;
         DefineFamilyRelationshipRequest request = new DefineFamilyRelationshipRequest(
@@ -181,12 +181,12 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
         Long memberId = 1L;
         Long familyId = 1L;
         
-        FamilyRelationship relationship1 = FamilyRelationship.withId(
+        FamilyMemberRelationship relationship1 = FamilyMemberRelationship.withId(
             2L,
             familyId,
             memberId,
             3L,
-            FamilyRelationshipType.PARENT,
+            FamilyMemberRelationshipType.PARENT,
             null,
             "부모 관계",
             100L,
@@ -195,12 +195,12 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
             LocalDateTime.now()
         );
         
-        FamilyRelationship relationship2 = FamilyRelationship.withId(
+        FamilyMemberRelationship relationship2 = FamilyMemberRelationship.withId(
             4L,
             familyId,
             memberId,
             5L,
-            FamilyRelationshipType.SIBLING,
+            FamilyMemberRelationshipType.SIBLING,
             null,
             "형제 관계",
             100L,
@@ -209,9 +209,9 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
             LocalDateTime.now()
         );
         
-        List<FamilyRelationship> relationships = List.of(relationship1, relationship2);
+        List<FamilyMemberRelationship> relationships = List.of(relationship1, relationship2);
         
-        when(findFamilyRelationshipUseCase.findAllRelationshipsByMember(any()))
+        when(findFamilyMemberRelationshipUseCase.findAllRelationshipsByMember(any()))
             .thenReturn(relationships);
 
         // when & then
@@ -241,12 +241,12 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
         Long toMemberId = 2L;
         Long familyId = 1L;
         
-        FamilyRelationship relationship = FamilyRelationship.withId(
+        FamilyMemberRelationship relationship = FamilyMemberRelationship.withId(
             3L,
             familyId,
             memberId,
             toMemberId,
-            FamilyRelationshipType.PARENT,
+            FamilyMemberRelationshipType.PARENT,
             null,
             "부모 관계",
             100L,
@@ -255,7 +255,7 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
             LocalDateTime.now()
         );
         
-        when(findFamilyRelationshipUseCase.findRelationship(any()))
+        when(findFamilyMemberRelationshipUseCase.findRelationship(any()))
             .thenReturn(Optional.of(relationship));
 
         // when & then
@@ -284,7 +284,7 @@ class FamilyRelationshipControllerTest extends AcceptanceTestBase {
             .get("/api/family-tree/members/1/relationships/types")
             .then()
             .statusCode(200)
-            .body("$", hasSize(FamilyRelationshipType.values().length))
+            .body("$", hasSize(FamilyMemberRelationshipType.values().length))
             .body("[0].code", is(notNullValue()))
             .body("[0].displayName", is(notNullValue()));
     }

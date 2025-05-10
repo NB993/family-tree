@@ -1,10 +1,8 @@
 package io.jhchoe.familytree.core.relationship.adapter.out.persistence;
 
-import io.jhchoe.familytree.common.exception.CommonExceptionCode;
-import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.relationship.application.port.out.FindFamilyRelationshipPort;
 import io.jhchoe.familytree.core.relationship.application.port.out.SaveFamilyRelationshipPort;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationship;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationship;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,7 +23,7 @@ public class FamilyRelationshipAdapter implements SaveFamilyRelationshipPort, Fi
      * {@inheritDoc}
      */
     @Override
-    public Long saveRelationship(FamilyRelationship relationship) {
+    public Long saveRelationship(FamilyMemberRelationship relationship) {
         Objects.requireNonNull(relationship, "relationship must not be null");
         
         FamilyRelationshipJpaEntity entity = FamilyRelationshipJpaEntity.from(relationship);
@@ -36,7 +34,7 @@ public class FamilyRelationshipAdapter implements SaveFamilyRelationshipPort, Fi
      * {@inheritDoc}
      */
     @Override
-    public Optional<FamilyRelationship> findRelationship(Long familyId, Long fromMemberId, Long toMemberId) {
+    public Optional<FamilyMemberRelationship> findRelationship(Long familyId, Long fromMemberId, Long toMemberId) {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(fromMemberId, "fromMemberId must not be null");
         Objects.requireNonNull(toMemberId, "toMemberId must not be null");
@@ -50,7 +48,7 @@ public class FamilyRelationshipAdapter implements SaveFamilyRelationshipPort, Fi
      * {@inheritDoc}
      */
     @Override
-    public List<FamilyRelationship> findAllRelationshipsByMember(Long familyId, Long fromMemberId) {
+    public List<FamilyMemberRelationship> findAllRelationshipsByMember(Long familyId, Long fromMemberId) {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(fromMemberId, "fromMemberId must not be null");
         

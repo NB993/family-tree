@@ -9,13 +9,13 @@ import lombok.Getter;
  * 한 사용자가 다른 가족 구성원과의 관계를 개인적으로 정의할 수 있습니다.
  */
 @Getter
-public class FamilyRelationship {
+public class FamilyMemberRelationship {
 
     private final Long id;
     private final Long familyId;
     private final Long fromMemberId;
     private final Long toMemberId;
-    private final FamilyRelationshipType relationshipType;
+    private final FamilyMemberRelationshipType relationshipType;
     private final String customRelationship;
     private final String description;
     private final Long createdBy;
@@ -38,12 +38,12 @@ public class FamilyRelationship {
      * @param modifiedBy         수정자 ID
      * @param modifiedAt         수정 시간
      */
-    private FamilyRelationship(
+    private FamilyMemberRelationship(
         Long id, 
         Long familyId,
         Long fromMemberId,
         Long toMemberId,
-        FamilyRelationshipType relationshipType,
+        FamilyMemberRelationshipType relationshipType,
         String customRelationship,
         String description,
         Long createdBy,
@@ -75,17 +75,17 @@ public class FamilyRelationship {
      * @param description        부가 설명 (선택)
      * @return 새로운 FamilyRelationship 인스턴스
      */
-    public static FamilyRelationship createRelationship(
+    public static FamilyMemberRelationship createRelationship(
         Long familyId,
         Long fromMemberId,
         Long toMemberId,
-        FamilyRelationshipType relationshipType,
+        FamilyMemberRelationshipType relationshipType,
         String customRelationship,
         String description
     ) {
         validateRelationshipCreation(familyId, fromMemberId, toMemberId, relationshipType, customRelationship);
         
-        return new FamilyRelationship(
+        return new FamilyMemberRelationship(
             null,
             familyId,
             fromMemberId,
@@ -116,12 +116,12 @@ public class FamilyRelationship {
      * @param modifiedAt         수정 시간
      * @return 기존 데이터로 구성된 FamilyRelationship 인스턴스
      */
-    public static FamilyRelationship withId(
+    public static FamilyMemberRelationship withId(
         Long id,
         Long familyId,
         Long fromMemberId,
         Long toMemberId,
-        FamilyRelationshipType relationshipType,
+        FamilyMemberRelationshipType relationshipType,
         String customRelationship,
         String description,
         Long createdBy,
@@ -132,7 +132,7 @@ public class FamilyRelationship {
         Objects.requireNonNull(id, "id must not be null");
         validateRelationshipCreation(familyId, fromMemberId, toMemberId, relationshipType, customRelationship);
         
-        return new FamilyRelationship(
+        return new FamilyMemberRelationship(
             id,
             familyId,
             fromMemberId,
@@ -155,14 +155,14 @@ public class FamilyRelationship {
      * @param description        새 설명
      * @return 업데이트된 FamilyRelationship 객체
      */
-    public FamilyRelationship updateRelationship(
-        FamilyRelationshipType relationshipType,
+    public FamilyMemberRelationship updateRelationship(
+        FamilyMemberRelationshipType relationshipType,
         String customRelationship,
         String description
     ) {
         validateRelationshipType(relationshipType, customRelationship);
         
-        return new FamilyRelationship(
+        return new FamilyMemberRelationship(
             this.id,
             this.familyId,
             this.fromMemberId,
@@ -184,7 +184,7 @@ public class FamilyRelationship {
         Long familyId,
         Long fromMemberId,
         Long toMemberId,
-        FamilyRelationshipType relationshipType,
+        FamilyMemberRelationshipType relationshipType,
         String customRelationship
     ) {
         Objects.requireNonNull(familyId, "familyId must not be null");
@@ -202,12 +202,12 @@ public class FamilyRelationship {
      * 관계 타입의 유효성을 검증합니다.
      */
     private static void validateRelationshipType(
-        FamilyRelationshipType relationshipType,
+        FamilyMemberRelationshipType relationshipType,
         String customRelationship
     ) {
         Objects.requireNonNull(relationshipType, "relationshipType must not be null");
         
-        if (relationshipType == FamilyRelationshipType.CUSTOM) {
+        if (relationshipType == FamilyMemberRelationshipType.CUSTOM) {
             if (customRelationship == null || customRelationship.isBlank()) {
                 throw new IllegalArgumentException("CUSTOM 관계 타입을 선택한 경우 customRelationship은 필수입니다");
             }

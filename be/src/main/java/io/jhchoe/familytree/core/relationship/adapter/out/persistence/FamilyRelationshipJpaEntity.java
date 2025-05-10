@@ -1,8 +1,8 @@
 package io.jhchoe.familytree.core.relationship.adapter.out.persistence;
 
 import io.jhchoe.familytree.common.support.ModifierBaseEntity;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationship;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationshipType;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationship;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationshipType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -51,7 +51,7 @@ public class FamilyRelationshipJpaEntity extends ModifierBaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "relationship_type", nullable = false)
-    private FamilyRelationshipType relationshipType;
+    private FamilyMemberRelationshipType relationshipType;
 
     @Column(name = "custom_relationship")
     private String customRelationship;
@@ -82,7 +82,7 @@ public class FamilyRelationshipJpaEntity extends ModifierBaseEntity {
         Long familyId,
         Long fromMemberId,
         Long toMemberId,
-        FamilyRelationshipType relationshipType,
+        FamilyMemberRelationshipType relationshipType,
         String customRelationship,
         String description,
         Long createdBy,
@@ -106,7 +106,7 @@ public class FamilyRelationshipJpaEntity extends ModifierBaseEntity {
      * @param relationship 가족 관계 도메인 객체
      * @return 변환된 JPA 엔티티
      */
-    public static FamilyRelationshipJpaEntity from(FamilyRelationship relationship) {
+    public static FamilyRelationshipJpaEntity from(FamilyMemberRelationship relationship) {
         Objects.requireNonNull(relationship, "relationship must not be null");
 
         return new FamilyRelationshipJpaEntity(
@@ -129,8 +129,8 @@ public class FamilyRelationshipJpaEntity extends ModifierBaseEntity {
      *
      * @return 변환된 도메인 객체
      */
-    public FamilyRelationship toFamilyRelationship() {
-        return FamilyRelationship.withId(
+    public FamilyMemberRelationship toFamilyRelationship() {
+        return FamilyMemberRelationship.withId(
             id,
             familyId,
             fromMemberId,

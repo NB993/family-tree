@@ -1,18 +1,18 @@
 package io.jhchoe.familytree.core.relationship.adapter.in.response;
 
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationship;
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationshipType;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationship;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationshipType;
 import java.time.LocalDateTime;
 
 /**
  * 가족 관계 정보 응답 DTO입니다.
  */
-public record FamilyRelationshipResponse(
+public record FamilyMemberRelationshipResponse(
     Long id,
     Long familyId,
     Long fromMemberId,
     Long toMemberId,
-    FamilyRelationshipType relationshipType,
+    FamilyMemberRelationshipType relationshipType,
     String relationshipDisplayName,
     String customRelationship,
     String description,
@@ -25,15 +25,15 @@ public record FamilyRelationshipResponse(
      * @param relationship 가족 관계 도메인 객체
      * @return 생성된 응답 DTO
      */
-    public static FamilyRelationshipResponse from(FamilyRelationship relationship) {
-        FamilyRelationshipType type = relationship.getRelationshipType();
+    public static FamilyMemberRelationshipResponse from(FamilyMemberRelationship relationship) {
+        FamilyMemberRelationshipType type = relationship.getRelationshipType();
         String displayName = type.getDisplayName();
         
-        if (type == FamilyRelationshipType.CUSTOM && relationship.getCustomRelationship() != null) {
+        if (type == FamilyMemberRelationshipType.CUSTOM && relationship.getCustomRelationship() != null) {
             displayName = relationship.getCustomRelationship();
         }
         
-        return new FamilyRelationshipResponse(
+        return new FamilyMemberRelationshipResponse(
             relationship.getId(),
             relationship.getFamilyId(),
             relationship.getFromMemberId(),

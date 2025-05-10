@@ -3,14 +3,14 @@ package io.jhchoe.familytree.core.relationship.application.port.in;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationshipType;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationshipType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayName("[Unit Test] DefineFamilyRelationshipCommand")
-class DefineFamilyRelationshipCommandTest {
+class SaveFamilyMemberRelationshipCommandTest {
 
     @Test
     @DisplayName("유효한 입력값으로 명령 객체를 생성할 수 있다")
@@ -19,12 +19,12 @@ class DefineFamilyRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String customRelationship = null;
         String description = "부모 관계";
 
         // when
-        DefineFamilyRelationshipCommand command = new DefineFamilyRelationshipCommand(
+        SaveFamilyMemberRelationshipCommand command = new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,
@@ -50,12 +50,12 @@ class DefineFamilyRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.CUSTOM;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.CUSTOM;
         String customRelationship = "큰아버지";
         String description = "아버지의 형제";
 
         // when
-        DefineFamilyRelationshipCommand command = new DefineFamilyRelationshipCommand(
+        SaveFamilyMemberRelationshipCommand command = new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,
@@ -77,12 +77,12 @@ class DefineFamilyRelationshipCommandTest {
         Long familyId = null;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String customRelationship = null;
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,
@@ -101,12 +101,12 @@ class DefineFamilyRelationshipCommandTest {
         // given
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String customRelationship = null;
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             invalidFamilyId,
             fromMemberId,
             toMemberId,
@@ -125,12 +125,12 @@ class DefineFamilyRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = null;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String customRelationship = null;
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,
@@ -149,12 +149,12 @@ class DefineFamilyRelationshipCommandTest {
         // given
         Long familyId = 1L;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String customRelationship = null;
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             familyId,
             invalidFromMemberId,
             toMemberId,
@@ -173,12 +173,12 @@ class DefineFamilyRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = null;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String customRelationship = null;
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,
@@ -197,12 +197,12 @@ class DefineFamilyRelationshipCommandTest {
         // given
         Long familyId = 1L;
         Long fromMemberId = 2L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String customRelationship = null;
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             invalidToMemberId,
@@ -220,12 +220,12 @@ class DefineFamilyRelationshipCommandTest {
         // given
         Long familyId = 1L;
         Long memberId = 2L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String customRelationship = null;
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             familyId,
             memberId,
             memberId,
@@ -244,12 +244,12 @@ class DefineFamilyRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = null;
+        FamilyMemberRelationshipType relationshipType = null;
         String customRelationship = null;
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,
@@ -268,12 +268,12 @@ class DefineFamilyRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.CUSTOM;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.CUSTOM;
         String customRelationship = null;
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,
@@ -292,12 +292,12 @@ class DefineFamilyRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.CUSTOM;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.CUSTOM;
         String customRelationship = "";
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,
@@ -316,12 +316,12 @@ class DefineFamilyRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyRelationshipType relationshipType = FamilyRelationshipType.CUSTOM;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.CUSTOM;
         String customRelationship = "a".repeat(51); // 51자
         String description = "부모 관계";
 
         // when & then
-        assertThatThrownBy(() -> new DefineFamilyRelationshipCommand(
+        assertThatThrownBy(() -> new SaveFamilyMemberRelationshipCommand(
             familyId,
             fromMemberId,
             toMemberId,

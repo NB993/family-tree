@@ -6,7 +6,7 @@ import lombok.Getter;
  * 특정 가족 관계 조회 쿼리 객체입니다.
  */
 @Getter
-public class FindFamilyRelationshipQuery {
+public class FindFamilyMemberRelationshipQuery {
 
     private final Long familyId;
     private final Long fromMemberId;
@@ -19,7 +19,7 @@ public class FindFamilyRelationshipQuery {
      * @param fromMemberId 관계를 정의한 구성원 ID
      * @param toMemberId   관계가 정의된 대상 구성원 ID
      */
-    public FindFamilyRelationshipQuery(Long familyId, Long fromMemberId, Long toMemberId) {
+    public FindFamilyMemberRelationshipQuery(Long familyId, Long fromMemberId, Long toMemberId) {
         validateParams(familyId, fromMemberId, toMemberId);
         
         this.familyId = familyId;

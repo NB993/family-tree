@@ -9,7 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayName("[Unit Test] FindMemberRelationshipsQuery")
-class FindMemberRelationshipsQueryTest {
+class FindFamilyMemberRelationshipsQueryTest {
 
     @Test
     @DisplayName("유효한 입력값으로 쿼리 객체를 생성할 수 있다")
@@ -19,7 +19,7 @@ class FindMemberRelationshipsQueryTest {
         Long fromMemberId = 2L;
 
         // when
-        FindMemberRelationshipsQuery query = new FindMemberRelationshipsQuery(familyId, fromMemberId);
+        FindFamilyMemberRelationshipsQuery query = new FindFamilyMemberRelationshipsQuery(familyId, fromMemberId);
 
         // then
         assertThat(query).isNotNull();
@@ -35,7 +35,7 @@ class FindMemberRelationshipsQueryTest {
         Long fromMemberId = 2L;
 
         // when & then
-        assertThatThrownBy(() -> new FindMemberRelationshipsQuery(familyId, fromMemberId))
+        assertThatThrownBy(() -> new FindFamilyMemberRelationshipsQuery(familyId, fromMemberId))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("유효한 가족 ID가 필요합니다.");
     }
@@ -48,7 +48,7 @@ class FindMemberRelationshipsQueryTest {
         Long fromMemberId = 2L;
 
         // when & then
-        assertThatThrownBy(() -> new FindMemberRelationshipsQuery(invalidFamilyId, fromMemberId))
+        assertThatThrownBy(() -> new FindFamilyMemberRelationshipsQuery(invalidFamilyId, fromMemberId))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("유효한 가족 ID가 필요합니다.");
     }
@@ -61,7 +61,7 @@ class FindMemberRelationshipsQueryTest {
         Long fromMemberId = null;
 
         // when & then
-        assertThatThrownBy(() -> new FindMemberRelationshipsQuery(familyId, fromMemberId))
+        assertThatThrownBy(() -> new FindFamilyMemberRelationshipsQuery(familyId, fromMemberId))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("유효한 구성원 ID가 필요합니다.");
     }
@@ -74,7 +74,7 @@ class FindMemberRelationshipsQueryTest {
         Long familyId = 1L;
 
         // when & then
-        assertThatThrownBy(() -> new FindMemberRelationshipsQuery(familyId, invalidFromMemberId))
+        assertThatThrownBy(() -> new FindFamilyMemberRelationshipsQuery(familyId, invalidFromMemberId))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("유효한 구성원 ID가 필요합니다.");
     }

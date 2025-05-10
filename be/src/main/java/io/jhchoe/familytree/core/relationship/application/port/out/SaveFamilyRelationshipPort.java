@@ -1,6 +1,6 @@
 package io.jhchoe.familytree.core.relationship.application.port.out;
 
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationship;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationship;
 
 /**
  * 가족 관계 저장 포트 인터페이스입니다.
@@ -13,5 +13,5 @@ public interface SaveFamilyRelationshipPort {
      * @param relationship 저장할 가족 관계 도메인 객체
      * @return 저장된 가족 관계의 ID
      */
-    Long saveRelationship(FamilyRelationship relationship);
+    Long saveRelationship(FamilyMemberRelationship relationship);
 }

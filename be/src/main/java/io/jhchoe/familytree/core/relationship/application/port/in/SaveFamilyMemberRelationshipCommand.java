@@ -1,18 +1,18 @@
 package io.jhchoe.familytree.core.relationship.application.port.in;
 
-import io.jhchoe.familytree.core.relationship.domain.FamilyRelationshipType;
+import io.jhchoe.familytree.core.relationship.domain.FamilyMemberRelationshipType;
 import lombok.Getter;
 
 /**
  * 가족 관계 정의 명령 객체입니다.
  */
 @Getter
-public class DefineFamilyRelationshipCommand {
+public class SaveFamilyMemberRelationshipCommand {
 
     private final Long familyId;
     private final Long fromMemberId;
     private final Long toMemberId;
-    private final FamilyRelationshipType relationshipType;
+    private final FamilyMemberRelationshipType relationshipType;
     private final String customRelationship;
     private final String description;
 
@@ -26,11 +26,11 @@ public class DefineFamilyRelationshipCommand {
      * @param customRelationship 사용자 정의 관계명 (relationshipType이 CUSTOM인 경우 필수)
      * @param description        부가 설명 (선택)
      */
-    public DefineFamilyRelationshipCommand(
+    public SaveFamilyMemberRelationshipCommand(
         Long familyId,
         Long fromMemberId,
         Long toMemberId,
-        FamilyRelationshipType relationshipType,
+        FamilyMemberRelationshipType relationshipType,
         String customRelationship,
         String description
     ) {
@@ -73,12 +73,12 @@ public class DefineFamilyRelationshipCommand {
         }
     }
 
-    private void validateRelationshipType(FamilyRelationshipType relationshipType, String customRelationship) {
+    private void validateRelationshipType(FamilyMemberRelationshipType relationshipType, String customRelationship) {
         if (relationshipType == null) {
             throw new IllegalArgumentException("관계 유형은 필수입니다.");
         }
         
-        if (relationshipType == FamilyRelationshipType.CUSTOM) {
+        if (relationshipType == FamilyMemberRelationshipType.CUSTOM) {
             if (customRelationship == null || customRelationship.isBlank()) {
                 throw new IllegalArgumentException("CUSTOM 관계 유형을 선택한 경우 사용자 정의 관계명은 필수입니다.");
             }
