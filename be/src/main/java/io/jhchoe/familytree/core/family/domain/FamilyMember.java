@@ -21,7 +21,7 @@ public class FamilyMember {
     private final String profileUrl;
     private final LocalDateTime birthday;
     private final String nationality;
-    private final MemberStatus status;
+    private final FamilyMemberStatus status;
     private final Long createdBy;
     private final LocalDateTime createdAt;
     private final Long modifiedBy;
@@ -51,7 +51,7 @@ public class FamilyMember {
         String profileUrl,
         LocalDateTime birthday,
         String nationality,
-        MemberStatus status,
+        FamilyMemberStatus status,
         Long createdBy,
         LocalDateTime createdAt,
         Long modifiedBy,
@@ -94,7 +94,7 @@ public class FamilyMember {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
 
-        return new FamilyMember(null, familyId, userId, name, profileUrl, birthday, nationality, MemberStatus.ACTIVE, null, null, null, null);
+        return new FamilyMember(null, familyId, userId, name, profileUrl, birthday, nationality, FamilyMemberStatus.ACTIVE, null, null, null, null);
     }
 
     /**
@@ -122,7 +122,7 @@ public class FamilyMember {
         String profileUrl,
         LocalDateTime birthday,
         String nationality,
-        MemberStatus status,
+        FamilyMemberStatus status,
         Long createdBy,
         LocalDateTime createdAt,
         Long modifiedBy,

@@ -33,7 +33,7 @@ class FamilyMemberTest {
         assertThat(result.getProfileUrl()).isEqualTo(profileUrl);
         assertThat(result.getBirthday()).isEqualTo(birthday);
         assertThat(result.getNationality()).isEqualTo(nationality);
-        assertThat(result.getStatus()).isEqualTo(MemberStatus.ACTIVE);
+        assertThat(result.getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE);
     }
 
     @Test
@@ -101,7 +101,7 @@ class FamilyMemberTest {
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
         String nationality = "US";
-        MemberStatus status = MemberStatus.ACTIVE;
+        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
         Long createdBy = 3L;
         LocalDateTime createdAt = LocalDateTime.now();
         Long modifiedBy = 4L;
@@ -138,7 +138,7 @@ class FamilyMemberTest {
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
         String nationality = "US";
-        MemberStatus status = MemberStatus.ACTIVE;
+        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
         Long createdBy = null;
         LocalDateTime createdAt = null;
         Long modifiedBy = null;
@@ -163,7 +163,7 @@ class FamilyMemberTest {
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
         String nationality = "US";
-        MemberStatus status = MemberStatus.ACTIVE;
+        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
         Long createdBy = null;
         LocalDateTime createdAt = null;
         Long modifiedBy = null;
@@ -188,7 +188,7 @@ class FamilyMemberTest {
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
         String nationality = "US";
-        MemberStatus status = MemberStatus.ACTIVE;
+        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
         Long createdBy = null;
         LocalDateTime createdAt = null;
         Long modifiedBy = null;

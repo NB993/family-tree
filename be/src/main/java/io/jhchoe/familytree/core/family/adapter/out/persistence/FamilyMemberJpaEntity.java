@@ -2,7 +2,7 @@ package io.jhchoe.familytree.core.family.adapter.out.persistence;
 
 import io.jhchoe.familytree.common.support.ModifierBaseEntity;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
-import io.jhchoe.familytree.core.family.domain.MemberStatus;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -45,7 +45,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
     private String nationality;
 
     @Column(name = "status")
-    private MemberStatus status;
+    private FamilyMemberStatus status;
 
     /**
      * FamilyMemberEntity 전체 필드를 초기화하는 생성자.
@@ -71,7 +71,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         String profileUrl,
         LocalDateTime birthday,
         String nationality,
-        MemberStatus status,
+        FamilyMemberStatus status,
         Long createdBy,
         LocalDateTime createdAt,
         Long modifiedBy,

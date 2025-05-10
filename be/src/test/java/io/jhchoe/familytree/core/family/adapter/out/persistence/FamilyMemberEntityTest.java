@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
-import io.jhchoe.familytree.core.family.domain.MemberStatus;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class FamilyMemberEntityTest {
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.now();
         String nationality = "Korean";
-        MemberStatus status = MemberStatus.ACTIVE;
+        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
         Long createdBy = 1001L;
         LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
         Long modifiedBy = 1002L;
