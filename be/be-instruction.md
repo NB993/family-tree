@@ -61,16 +61,16 @@ io.jhchoe.familytree/
 
 ### 계층별 명명 규칙
 
-| 계층        | 접두사 | 중간부분 | 접미사           | 예시                                     |
-|-----------|--------|----------|---------------|----------------------------------------|
-| 인바운드 포트   | Find, Save, Modify, Delete | 도메인명 | UseCase       | `FindFamilyUseCase`                    |
-| 아웃바운드 포트  | Find, Save, Modify, Delete | 도메인명 | Port          | `FindFamilyPort`                       |
-| 서비스       | 없음 또는 UseCase의 접두사 | 도메인명 | Service       | `FamilyService`, `FindFamilyService`   |
-| 인바운드 어댑터  | Find, Save, Modify, Delete | 도메인명 | Controller    | `FindFamilyController`                 |
+| 계층       | 접두사 | 중간부분 | 접미사           | 예시                                     |
+|----------|--------|----------|---------------|----------------------------------------|
+| 인바운드 포트  | Find, Save, Modify, Delete | 도메인명 | UseCase       | `FindFamilyUseCase`                    |
+| 아웃바운드 포트 | Find, Save, Modify, Delete | 도메인명 | Port          | `FindFamilyPort`                       |
+| 서비스      | 없음 또는 UseCase의 접두사 | 도메인명 | Service       | `FamilyService`, `FindFamilyService`   |
+| 인바운드 어댑터 | Find, Save, Modify, Delete | 도메인명 | Controller    | `FindFamilyController`                 |
 | 아웃바운드 어댑터 | 없음 | 도메인명 | Adapter       | `FamilyAdapter`                        |
-| JPA 엔티티   | 없음 | 도메인명 | JpaEntity     | `FamilyJpaEntity`                      |
-| 요청 DTO    | Find, Save, Modify, Delete | 도메인명 | Request       | `SaveFamilyRequest`                    |
-| 응답 DTO    | Find, Save, Modify, Delete | 도메인명 | Response      | `FindFamilyResponse`                   |
+| JPA 엔티티  | 없음 | 도메인명 | JpaEntity     | `FamilyJpaEntity`                      |
+| 요청 DTO   | Find, Save, Modify, Delete | 도메인명 | Request       | `SaveFamilyRequest`                    |
+| 응답 DTO   | Find, Save, Modify, Delete | 도메인명 | Response      | `FindFamilyResponse`                   |
 | 커맨드/쿼리 객체 | Find, Save, Modify, Delete | 도메인명 | Command/Query | `SaveFamilyCommand`, `FindFamilyQuery` |
 
 ## 계층별 구성 및 개발 지침
@@ -179,11 +179,13 @@ public class Family {
 - **위치**: `core/{도메인명}/application/port/in/`
 - **역할**: 애플리케이션이 외부에 제공하는 기능 인터페이스 정의
 - **명명 규칙**: `{행동}{도메인}UseCase` (예: `FindFamilyUseCase`, `SaveFamilyUseCase`)
+- **메서드명 규칙**: 등록 - save, 조회 - find, 수정 - modify, 삭제 - delete
 - **개발 지침**:
   - 각 유스케이스는 단일 메서드를 가진 인터페이스로 정의합니다
   - 입력 파라미터는 `{행동}{도메인}Command` 또는 `{행동}{도메인}Query` 객체로 캡슐화합니다
   - Command 객체는 생성자에서 유효성 검증을 수행합니다
   - 반환 타입은 도메인 객체 또는 ID(식별자)를 우선 사용합니다
+  - 유스케이스 메서드는 Optional 타입을 리턴하지 않습니다. Optional 데이터에 대한 분기 처리는 구현체 Service 클래스의 메서드 내부에서 처리합니다.
 
 **예시: FindFamilyUseCase 인터페이스**
 
@@ -328,6 +330,7 @@ public class SaveFamilyCommand {
 - **위치**: `core/{도메인명}/application/port/out/`
 - **역할**: 외부 시스템과의 상호작용을 위한 인터페이스 정의
 - **명명 규칙**: `{행동}{도메인}Port` (예: `LoadFamilyPort`, `CreateFamilyPort`)
+- **메서드명 규칙**: 등록 - save, 조회 - find, 수정 - modify, 삭제 - delete.
 - **개발 지침**:
   - 인터페이스는 최소한의 기능만 정의합니다
   - 도메인 객체 타입을 파라미터와 반환 타입으로 사용합니다
@@ -352,7 +355,7 @@ public interface FindFamilyPort {
      * @param id 조회할 Family의 고유 식별자
      * @return 조회된 Family 객체를 포함하는 Optional, 존재하지 않는 경우 빈 Optional 반환
      */
-    Optional<Family> findFamily(Long id);
+    Optional<Family> find(Long id);
 }
 ```
 
@@ -451,11 +454,14 @@ public class FindFamilyService implements SaveFamilyUseCase, FindFamilyUseCase {
 - **위치**: `core/{도메인명}/adapter/in/`
 - **역할**: 외부 요청을 애플리케이션 코어와 연결
 - **명명 규칙**: `{행동}{도메인}Controller` (예: `FindFamilyController`, `SaveFamilyController`)
+- **메서드명 규칙**: 등록 - save, 조회 - find, 수정 - modify, 삭제 - delete.
 - **개발 지침**:
   - 모든 API 엔드포인트는 `/api/`로 시작합니다
   - 컨트롤러 메서드는 요청 객체를 커맨드/쿼리 객체로 변환하는 역할만 담당합니다
   - 인바운드 포트(유스케이스)를 호출하여 비즈니스 로직을 실행합니다
   - 컨트롤러는 비즈니스 로직 처리나 예외 발생을 담당하지 않습니다 - 이는 서비스 계층의 책임입니다
+  - UseCase 인터페이스 메서드는 Optional 타입을 리턴하지 않습니다. Optional 데이터에 대한 분기 처리는 구현체 Service 클래스의 역할이므로 인바운트 어댑터에서는 Optional에 대한 분기 처리를 담당하지 않습니다.
+  - 인바운트 어댑터의 역할은 Request Dto를 application 계층으로 전달할 Command 또는 Query 정보로 변환하는 역할, 그리고 UseCase가 응답해준 데이터를 Response Dto로 변환하여 응답하는 역할만 수행합니다.
   - 유스케이스에서 응답받은 도메인 객체는 단순히 `{행동}{도메인}Response` DTO로 변환만 합니다
   - 응답은 `ResponseEntity<T>` 를 사용합니다
   - `@RestController`, `@RequestMapping` 어노테이션을 사용합니다
@@ -498,7 +504,7 @@ public class SaveFamilyController {
      * @return 생성된 Family의 ID
      */
     @PostMapping
-    public ResponseEntity<Long> saveFamily(
+    public ResponseEntity<Long> save(
                         @AuthFTUser FTUser ftUser,
         @RequestBody @Valid SaveFamilyRequest request
     ) {
@@ -573,7 +579,7 @@ public class FindFamilyController {
      * @return 조회된 Family 정보
      */
     @GetMapping("/{id}")
-    public ResponseEntity<FindFamilyResponse> findFamily(@PathVariable Long id) {
+    public ResponseEntity<FindFamilyResponse> find(@PathVariable Long id) {
         FindFamilyQuery query = new FindFamilyQuery(id);
         
         Family family = findFamilyUseCase.findById(query);
