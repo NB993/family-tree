@@ -675,6 +675,7 @@ public Xxx toXxx() {
   - `@SpringBootTest` 어노테이션으로 통합 테스트 환경을 설정합니다
   - 인수테스트는 mock을 사용하지 않고 테스트를 수행합니다
   - 테스트 사용자 인증은 `@WithMockOAuth2User` 어노테이션을 사용합니다
+  - Mock Bean을 사용해야 하는 경우 `@MockitoBean`을 사용합니다 - `@MockBean`은 사용하지 않음
 
 ### REST Docs 테스트
 
@@ -686,6 +687,7 @@ public Xxx toXxx() {
   - 요청/응답 필드를 명시적으로 문서화합니다
   - API에서 발생 가능한 모든 예외 코드를 문서화합니다
   - `ApiDocsTestBase` 클래스를 상속받아 문서화 환경을 구성합니다
+  - Mock Bean을 사용해야 하는 경우 `@MockitoBean`을 사용합니다 - `@MockBean`은 사용하지 않음
 
 ## 공통 컴포넌트 가이드라인
 
