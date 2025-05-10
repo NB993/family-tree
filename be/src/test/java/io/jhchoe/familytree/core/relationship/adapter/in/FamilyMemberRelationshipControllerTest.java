@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import io.jhchoe.familytree.config.WithMockOAuth2User;
-import io.jhchoe.familytree.core.family.application.port.out.LoadFamilyPort;
 import io.jhchoe.familytree.core.relationship.adapter.in.request.DefineFamilyRelationshipRequest;
 import io.jhchoe.familytree.core.relationship.application.port.in.SaveFamilyMemberRelationshipUseCase;
 import io.jhchoe.familytree.core.relationship.application.port.in.FindFamilyMemberRelationshipUseCase;
@@ -21,21 +20,18 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @DisplayName("[Acceptance Test] FamilyRelationshipController")
 class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
 
-    @MockBean
+    @MockitoBean
     private SaveFamilyMemberRelationshipUseCase saveFamilyMemberRelationshipUseCase;
 
-    @MockBean
+    @MockitoBean
     private FindFamilyMemberRelationshipUseCase findFamilyMemberRelationshipUseCase;
-
-    @MockBean
-    private LoadFamilyPort loadFamilyPort;
 
     @Test
     @WithMockOAuth2User
@@ -78,6 +74,7 @@ class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
         // when & then
         RestAssuredMockMvc
             .given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(request)
             .when()
@@ -134,6 +131,7 @@ class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
         // when & then
         RestAssuredMockMvc
             .given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(request)
             .when()
@@ -165,6 +163,7 @@ class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
         // when & then
         RestAssuredMockMvc
             .given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(request)
             .when()
@@ -174,7 +173,7 @@ class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
     }
 
     @Test
-    @FTMockUser
+    @WithMockOAuth2User
     @DisplayName("getAllRelationships 메서드는 구성원의 모든 관계를 조회하고 상태 코드 200을 반환해야 한다")
     void given_member_id_when_get_all_relationships_then_return_status_200() {
         // given
@@ -233,7 +232,7 @@ class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
     }
 
     @Test
-    @FTMockUser
+    @WithMockOAuth2User
     @DisplayName("getRelationship 메서드는 두 구성원 간의 관계를 조회하고 상태 코드 200을 반환해야 한다")
     void given_member_ids_when_get_relationship_then_return_status_200() {
         // given
@@ -274,7 +273,7 @@ class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
     }
 
     @Test
-    @FTMockUser
+    @WithMockOAuth2User
     @DisplayName("getRelationshipTypes 메서드는 모든 관계 타입을 조회하고 상태 코드 200을 반환해야 한다")
     void when_get_relationship_types_then_return_status_200() {
         // when & then
