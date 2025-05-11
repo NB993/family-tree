@@ -41,6 +41,13 @@ public class FamilyAdapter implements SaveFamilyPort, ModifyFamilyPort, FindFami
         return familyJpaRepository.findById(id).map(FamilyJpaEntity::toFamily);
     }
 
+    @Override
+    public boolean existsById(Long id) {
+        Objects.requireNonNull(id, "id must not be null");
+
+        return familyJpaRepository.existsById(id);
+    }
+
     /**
      * Family 데이터를 수정하고 저장된 Family의 ID를 반환합니다.
      *

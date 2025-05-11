@@ -15,4 +15,6 @@ public interface FindFamilyPort {
      * @return 조회된 Family 객체를 포함하는 Optional, 존재하지 않는 경우 빈 Optional 반환
      */
     Optional<Family> findById(Long id);
+
+    boolean existsById(Long id);
 }
