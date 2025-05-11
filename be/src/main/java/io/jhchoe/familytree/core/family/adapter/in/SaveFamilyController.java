@@ -2,9 +2,9 @@ package io.jhchoe.familytree.core.family.adapter.in;
 
 import io.jhchoe.familytree.common.auth.domain.AuthFTUser;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.core.family.adapter.in.request.CreateFamilyRequest;
-import io.jhchoe.familytree.core.family.application.port.in.CreateFamilyCommand;
-import io.jhchoe.familytree.core.family.application.port.in.CreateFamilyUseCase;
+import io.jhchoe.familytree.core.family.adapter.in.request.SaveFamilyRequest;
+import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyCommand;
+import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,21 +17,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/family")
 @RestController
-public class CreateFamilyController {
+public class SaveFamilyController {
 
-    private final CreateFamilyUseCase createFamilyUseCase;
+    private final SaveFamilyUseCase saveFamilyUseCase;
 
     @PostMapping
-    public ResponseEntity<Void> createFamily(
+    public ResponseEntity<Void> saveFamily(
         @AuthFTUser FTUser ftUser,
-        @RequestBody @Valid CreateFamilyRequest createFamilyRequest
+        @RequestBody @Valid SaveFamilyRequest saveFamilyRequest
     ) {
-        CreateFamilyCommand command = new CreateFamilyCommand(
-            createFamilyRequest.name(),
-            createFamilyRequest.description(),
-            createFamilyRequest.profileUrl());
+        SaveFamilyCommand command = new SaveFamilyCommand(
+            saveFamilyRequest.name(),
+            saveFamilyRequest.description(),
+            saveFamilyRequest.profileUrl());
 
-        createFamilyUseCase.create(command);
+        saveFamilyUseCase.save(command);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

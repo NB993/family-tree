@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("[Unit Test] CreateFamilyCommand")
-class CreateFamilyCommandTest {
+class SaveFamilyCommandTest {
 
     @Test
     @DisplayName("name이 null일 경우 예외를 발생시킨다.")
@@ -18,7 +18,7 @@ class CreateFamilyCommandTest {
     
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            new CreateFamilyCommand(name, profileUrl, description)
+            new SaveFamilyCommand(name, profileUrl, description)
         );
     
         // then
@@ -35,7 +35,7 @@ class CreateFamilyCommandTest {
     
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            new CreateFamilyCommand(name, profileUrl, description)
+            new SaveFamilyCommand(name, profileUrl, description)
         );
     
         // then
@@ -52,7 +52,7 @@ class CreateFamilyCommandTest {
     
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            new CreateFamilyCommand(longName, profileUrl, description)
+            new SaveFamilyCommand(longName, profileUrl, description)
         );
     
         // then
@@ -69,7 +69,7 @@ class CreateFamilyCommandTest {
     
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            new CreateFamilyCommand(name, profileUrl, description)
+            new SaveFamilyCommand(name, profileUrl, description)
         );
     
         // then
@@ -86,7 +86,7 @@ class CreateFamilyCommandTest {
     
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            new CreateFamilyCommand(name, profileUrl, longDescription)
+            new SaveFamilyCommand(name, profileUrl, longDescription)
         );
     
         // then
@@ -102,7 +102,7 @@ class CreateFamilyCommandTest {
         String description = "Valid description";
     
         // when
-        CreateFamilyCommand command = new CreateFamilyCommand(name, profileUrl, description);
+        SaveFamilyCommand command = new SaveFamilyCommand(name, profileUrl, description);
     
         // then
         assertEquals("Valid Name", command.getName());
@@ -119,7 +119,7 @@ class CreateFamilyCommandTest {
         String description = null;
     
         // when
-        CreateFamilyCommand command = new CreateFamilyCommand(name, profileUrl, description);
+        SaveFamilyCommand command = new SaveFamilyCommand(name, profileUrl, description);
     
         // then
         assertEquals("Valid Name", command.getName());

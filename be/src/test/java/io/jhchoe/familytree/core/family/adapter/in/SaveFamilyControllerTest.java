@@ -17,12 +17,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 @DisplayName("[Acceptance Test] FamilyControllerTest")
-class CreateFamilyControllerTest extends AcceptanceTestBase {
+class SaveFamilyControllerTest extends AcceptanceTestBase {
 
     @WithMockOAuth2User
     @Test
     @DisplayName("Family 생성 성공 테스트")
-    void testCreateFamily() {
+    void testSaveFamily() {
         RestAssuredMockMvc
             .given()
             .contentType(MediaType.APPLICATION_JSON)
@@ -42,7 +42,7 @@ class CreateFamilyControllerTest extends AcceptanceTestBase {
     @ValueSource(strings = {"", " ", "\\t", "\\n"})
     @ParameterizedTest
     @DisplayName("Family 생성시 이름을 입력하지 않으면 예외를 응답한다.")
-    void test_createFamily_fail_when_name_is_empty(String emptyName) {
+    void test_saveFamily_fail_when_name_is_empty(String emptyName) {
         RestAssuredMockMvc
             .given()
             .contentType(MediaType.APPLICATION_JSON)

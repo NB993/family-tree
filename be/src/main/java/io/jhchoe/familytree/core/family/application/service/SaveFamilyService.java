@@ -1,8 +1,8 @@
 package io.jhchoe.familytree.core.family.application.service;
 
-import io.jhchoe.familytree.core.family.application.port.in.CreateFamilyCommand;
-import io.jhchoe.familytree.core.family.application.port.in.CreateFamilyUseCase;
-import io.jhchoe.familytree.core.family.application.port.out.CreateFamilyPort;
+import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyCommand;
+import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyUseCase;
+import io.jhchoe.familytree.core.family.application.port.out.SaveFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -14,18 +14,18 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class CreateFamilyService implements CreateFamilyUseCase {
+public class SaveFamilyService implements SaveFamilyUseCase {
 
-    private final CreateFamilyPort createFamilyPort;
+    private final SaveFamilyPort saveFamilyPort;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long create(CreateFamilyCommand command) {
+    public Long save(SaveFamilyCommand command) {
         Objects.requireNonNull(command, "command must not be null");
 
         Family family = Family.newFamily(command.getName(), command.getDescription(), command.getProfileUrl());
-        return createFamilyPort.create(family);
+        return saveFamilyPort.save(family);
     }
 }

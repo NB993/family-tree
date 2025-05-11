@@ -7,7 +7,7 @@ import lombok.Getter;
  * 이 클래스는 Family의 이름, 프로필 URL, 설명 정보를 포함합니다.
  */
 @Getter
-public class CreateFamilyCommand {
+public class SaveFamilyCommand {
 
     private final String name;
     private String profileUrl;
@@ -21,7 +21,7 @@ public class CreateFamilyCommand {
      * @param description Family 설명 (선택, 최대 길이: 200자)
      * @throws IllegalArgumentException 입력 값이 유효하지 않을 경우 예외가 발생합니다.
      */
-    public CreateFamilyCommand(String name, String profileUrl, String description) {
+    public SaveFamilyCommand(String name, String profileUrl, String description) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Family 이름을 입력해주세요.");
         }
