@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyCommand;
-import io.jhchoe.familytree.core.family.application.port.out.LoadFamilyPort;
+import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ModifyFamilyServiceTest {
 
     @Mock
-    private LoadFamilyPort loadFamilyPort;
+    private FindFamilyPort findFamilyPort;
 
     @Mock
     private ModifyFamilyPort modifyFamilyPort;
@@ -42,7 +42,7 @@ class ModifyFamilyServiceTest {
         Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", null,
             null, null, null);
 
-        when(loadFamilyPort.loadFamily(familyId)).thenReturn(Optional.of(family));
+        when(findFamilyPort.findById(familyId)).thenReturn(Optional.of(family));
         when(modifyFamilyPort.modifyFamily(family)).thenReturn(familyId);
 
         // when
@@ -72,7 +72,7 @@ class ModifyFamilyServiceTest {
         ModifyFamilyCommand command = new ModifyFamilyCommand(familyId, "Updated Name", "http://example.com/profile",
             "Updated Description");
 
-        when(loadFamilyPort.loadFamily(familyId)).thenReturn(Optional.empty());
+        when(findFamilyPort.findById(familyId)).thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> sut.modify(command))
@@ -89,7 +89,7 @@ class ModifyFamilyServiceTest {
         Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", null,
             null, null, null);
 
-        when(loadFamilyPort.loadFamily(familyId)).thenReturn(Optional.of(family));
+        when(findFamilyPort.findById(familyId)).thenReturn(Optional.of(family));
         when(modifyFamilyPort.modifyFamily(any(Family.class))).thenThrow(RuntimeException.class);
 
         // when & then

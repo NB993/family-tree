@@ -4,7 +4,7 @@ import io.jhchoe.familytree.common.exception.CommonExceptionCode;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyCommand;
 import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyUseCase;
-import io.jhchoe.familytree.core.family.application.port.out.LoadFamilyPort;
+import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
 import java.util.Objects;
@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ModifyFamilyService implements ModifyFamilyUseCase {
 
-    private final LoadFamilyPort loadFamilyPort;
+    private final FindFamilyPort findFamilyPort;
     private final ModifyFamilyPort modifyFamilyPort;
 
     
@@ -32,7 +32,7 @@ public class ModifyFamilyService implements ModifyFamilyUseCase {
     public Long modify(ModifyFamilyCommand command) {
         Objects.requireNonNull(command, "command must not be null");
 
-        Family family = loadFamilyPort.loadFamily(command.getId())
+        Family family = findFamilyPort.findById(command.getId())
             .orElseThrow(() -> new FTException(CommonExceptionCode.NOT_FOUND, "family"));
         family.update(command.getName(), command.getDescription(), command.getProfileUrl());
 

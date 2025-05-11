@@ -3,12 +3,11 @@ package io.jhchoe.familytree.core.family.adapter.out.persistence;
 import io.jhchoe.familytree.common.exception.CommonExceptionCode;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.out.CreateFamilyPort;
-import io.jhchoe.familytree.core.family.application.port.out.LoadFamilyPort;
+import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
 import java.util.Objects;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class FamilyAdapter implements CreateFamilyPort, ModifyFamilyPort, LoadFamilyPort {
+public class FamilyAdapter implements CreateFamilyPort, ModifyFamilyPort, FindFamilyPort {
 
     private final FamilyJpaRepository familyJpaRepository;
 
@@ -38,7 +37,7 @@ public class FamilyAdapter implements CreateFamilyPort, ModifyFamilyPort, LoadFa
     }
 
     @Override
-    public Optional<Family> loadFamily(Long id) {
+    public Optional<Family> findById(Long id) {
         return familyJpaRepository.findById(id).map(FamilyJpaEntity::toFamily);
     }
 
