@@ -28,8 +28,8 @@ class FamilyMemberRelationshipAdapterTest {
     private FamilyMemberMemberRelationshipAdapter sut;
 
     @Test
-    @DisplayName("saveRelationship 메서드는 유효한 관계 객체를 받으면 저장하고 ID를 반환해야 한다")
-    void given_valid_relationship_when_save_relationship_then_return_id() {
+    @DisplayName("save 메서드는 유효한 관계 객체를 받으면 저장하고 ID를 반환해야 한다")
+    void given_valid_relationship_when_save_then_return_id() {
         // given
         Long expectedId = 1L;
         Long familyId = 2L;
@@ -54,7 +54,7 @@ class FamilyMemberRelationshipAdapterTest {
             .thenReturn(savedEntity);
 
         // when
-        Long result = sut.saveRelationship(relationship);
+        Long result = sut.save(relationship);
 
         // then
         assertThat(result).isEqualTo(expectedId);
@@ -62,13 +62,13 @@ class FamilyMemberRelationshipAdapterTest {
     }
 
     @Test
-    @DisplayName("saveRelationship 메서드는 null을 받으면 예외를 발생시켜야 한다")
-    void given_null_relationship_when_save_relationship_then_throw_exception() {
+    @DisplayName("save 메서드는 null을 받으면 예외를 발생시켜야 한다")
+    void given_null_relationship_when_save_then_throw_exception() {
         // given
         FamilyMemberRelationship relationship = null;
 
         // when & then
-        assertThatThrownBy(() -> sut.saveRelationship(relationship))
+        assertThatThrownBy(() -> sut.save(relationship))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("relationship must not be null");
     }

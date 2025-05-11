@@ -14,5 +14,5 @@ public interface SaveFamilyMemberRelationshipUseCase {
      * @return 저장된 가족 관계의 ID
      * @throws FTException 현재 사용자가 가족의 구성원이 아닌 경우 또는 관계 저장에 실패한 경우
      */
-    Long saveRelationship(SaveFamilyMemberRelationshipCommand command);
+    Long save(SaveFamilyMemberRelationshipCommand command);
 }

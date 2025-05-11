@@ -46,4 +46,14 @@ public record FamilyMemberRelationshipResponse(
             relationship.getModifiedAt()
         );
     }
+
+    /**
+     * 가족 관계 정보 저장 요청에 대한 응답 DTO를 생성합니다.
+     *
+     * @param id 저장에 성공한 FamilyMemberRelationship 고유 식별자
+     * @return 생성된 응답 DTO
+     */
+    public static FamilyMemberRelationshipResponse saveResponse(Long id) {
+        return new FamilyMemberRelationshipResponse(id, null, null, null, null, null, null, null, null, null);
+    }
 }

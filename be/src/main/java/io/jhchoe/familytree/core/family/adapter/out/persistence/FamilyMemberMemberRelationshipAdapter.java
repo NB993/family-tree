@@ -23,10 +23,10 @@ public class FamilyMemberMemberRelationshipAdapter implements SaveFamilyMemberRe
      * {@inheritDoc}
      */
     @Override
-    public Long saveRelationship(FamilyMemberRelationship relationship) {
-        Objects.requireNonNull(relationship, "relationship must not be null");
+    public Long save(FamilyMemberRelationship familyMemberRelationship) {
+        Objects.requireNonNull(familyMemberRelationship, "relationship must not be null");
         
-        FamilyRelationshipJpaEntity entity = FamilyRelationshipJpaEntity.from(relationship);
+        FamilyRelationshipJpaEntity entity = FamilyRelationshipJpaEntity.from(familyMemberRelationship);
         return familyRelationshipJpaRepository.save(entity).getId();
     }
 

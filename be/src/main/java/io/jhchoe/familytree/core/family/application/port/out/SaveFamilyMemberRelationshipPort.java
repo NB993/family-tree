@@ -11,8 +11,8 @@ public interface SaveFamilyMemberRelationshipPort {
     /**
      * 가족 관계 정보를 저장합니다.
      *
-     * @param relationship 저장할 가족 관계 도메인 객체
+     * @param familyMemberRelationship 저장할 가족 구성원 관계 도메인 객체
      * @return 저장된 가족 관계의 ID
      */
-    Long saveRelationship(FamilyMemberRelationship relationship);
+    Long save(FamilyMemberRelationship familyMemberRelationship);
 }

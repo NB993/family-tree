@@ -8,6 +8,9 @@ import jakarta.validation.constraints.Size;
  * 가족 관계 정의 요청 DTO입니다.
  */
 public record SaveFamilyMemberRelationshipRequest(
+    @NotNull(message = "가족 ID는 필수입니다")
+    Long familyId,
+
     @NotNull(message = "관계를 정의할 대상 구성원 ID는 필수입니다")
     Long toMemberId,
     
