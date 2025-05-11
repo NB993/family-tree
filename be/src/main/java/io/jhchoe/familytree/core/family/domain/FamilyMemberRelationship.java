@@ -75,7 +75,7 @@ public class FamilyMemberRelationship {
      * @param description        부가 설명 (선택)
      * @return 새로운 FamilyRelationship 인스턴스
      */
-    public static FamilyMemberRelationship createRelationship(
+    public static FamilyMemberRelationship newRelationship(
         Long familyId,
         Long fromMemberId,
         Long toMemberId,
@@ -155,7 +155,7 @@ public class FamilyMemberRelationship {
      * @param description        새 설명
      * @return 업데이트된 FamilyRelationship 객체
      */
-    public FamilyMemberRelationship updateRelationship(
+    public FamilyMemberRelationship update(
         FamilyMemberRelationshipType relationshipType,
         String customRelationship,
         String description

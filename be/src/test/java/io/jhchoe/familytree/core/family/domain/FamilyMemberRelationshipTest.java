@@ -22,7 +22,7 @@ class FamilyMemberRelationshipTest {
         String description = "관계 설명";
 
         // when
-        FamilyMemberRelationship result = FamilyMemberRelationship.createRelationship(
+        FamilyMemberRelationship result = FamilyMemberRelationship.newRelationship(
             familyId,
             fromMemberId,
             toMemberId,
@@ -58,7 +58,7 @@ class FamilyMemberRelationshipTest {
         String description = "관계 설명";
 
         // when
-        FamilyMemberRelationship result = FamilyMemberRelationship.createRelationship(
+        FamilyMemberRelationship result = FamilyMemberRelationship.newRelationship(
             familyId,
             fromMemberId,
             toMemberId,
@@ -85,7 +85,7 @@ class FamilyMemberRelationshipTest {
         String description = "관계 설명";
 
         // when & then
-        assertThatThrownBy(() -> FamilyMemberRelationship.createRelationship(
+        assertThatThrownBy(() -> FamilyMemberRelationship.newRelationship(
             familyId,
             fromMemberId,
             toMemberId,
@@ -109,7 +109,7 @@ class FamilyMemberRelationshipTest {
         String description = "관계 설명";
 
         // when & then
-        assertThatThrownBy(() -> FamilyMemberRelationship.createRelationship(
+        assertThatThrownBy(() -> FamilyMemberRelationship.newRelationship(
             familyId,
             fromMemberId,
             toMemberId,
@@ -133,7 +133,7 @@ class FamilyMemberRelationshipTest {
         String description = "관계 설명";
 
         // when & then
-        assertThatThrownBy(() -> FamilyMemberRelationship.createRelationship(
+        assertThatThrownBy(() -> FamilyMemberRelationship.newRelationship(
             familyId,
             fromMemberId,
             toMemberId,
@@ -157,7 +157,7 @@ class FamilyMemberRelationshipTest {
         String description = "관계 설명";
 
         // when & then
-        assertThatThrownBy(() -> FamilyMemberRelationship.createRelationship(
+        assertThatThrownBy(() -> FamilyMemberRelationship.newRelationship(
             familyId,
             fromMemberId,
             toMemberId,
@@ -181,7 +181,7 @@ class FamilyMemberRelationshipTest {
         String description = "관계 설명";
 
         // when & then
-        assertThatThrownBy(() -> FamilyMemberRelationship.createRelationship(
+        assertThatThrownBy(() -> FamilyMemberRelationship.newRelationship(
             familyId,
             fromMemberId,
             toMemberId,
@@ -205,7 +205,7 @@ class FamilyMemberRelationshipTest {
         String description = "관계 설명";
 
         // when & then
-        assertThatThrownBy(() -> FamilyMemberRelationship.createRelationship(
+        assertThatThrownBy(() -> FamilyMemberRelationship.newRelationship(
             familyId,
             fromMemberId,
             toMemberId,
@@ -221,7 +221,7 @@ class FamilyMemberRelationshipTest {
     @DisplayName("updateRelationship 메서드는 관계 타입과 설명을 업데이트해야 한다")
     void given_relationship_when_update_relationship_then_return_updated_relationship() {
         // given
-        FamilyMemberRelationship original = FamilyMemberRelationship.createRelationship(
+        FamilyMemberRelationship original = FamilyMemberRelationship.newRelationship(
             1L,
             2L,
             3L,
@@ -235,7 +235,7 @@ class FamilyMemberRelationshipTest {
         String newDescription = "새로운 설명";
 
         // when
-        FamilyMemberRelationship updated = original.updateRelationship(
+        FamilyMemberRelationship updated = original.update(
             newType,
             newCustomRelationship,
             newDescription
@@ -256,7 +256,7 @@ class FamilyMemberRelationshipTest {
     @DisplayName("updateRelationship 메서드는 CUSTOM 타입으로 변경하고 customRelationship을 제공하면 업데이트해야 한다")
     void given_relationship_when_update_to_custom_type_then_return_updated_relationship() {
         // given
-        FamilyMemberRelationship original = FamilyMemberRelationship.createRelationship(
+        FamilyMemberRelationship original = FamilyMemberRelationship.newRelationship(
             1L,
             2L,
             3L,
@@ -270,7 +270,7 @@ class FamilyMemberRelationshipTest {
         String newDescription = "새로운 설명";
 
         // when
-        FamilyMemberRelationship updated = original.updateRelationship(
+        FamilyMemberRelationship updated = original.update(
             newType,
             newCustomRelationship,
             newDescription
@@ -287,7 +287,7 @@ class FamilyMemberRelationshipTest {
     @DisplayName("updateRelationship 메서드는 relationshipType이 null이면 예외를 발생시켜야 한다")
     void given_null_relationship_type_when_update_relationship_then_throw_exception() {
         // given
-        FamilyMemberRelationship original = FamilyMemberRelationship.createRelationship(
+        FamilyMemberRelationship original = FamilyMemberRelationship.newRelationship(
             1L,
             2L,
             3L,
@@ -301,7 +301,7 @@ class FamilyMemberRelationshipTest {
         String newDescription = "새로운 설명";
 
         // when & then
-        assertThatThrownBy(() -> original.updateRelationship(
+        assertThatThrownBy(() -> original.update(
             newType,
             newCustomRelationship,
             newDescription
@@ -314,7 +314,7 @@ class FamilyMemberRelationshipTest {
     @DisplayName("updateRelationship 메서드는 CUSTOM 타입으로 변경하고 customRelationship이 null이면 예외를 발생시켜야 한다")
     void given_custom_type_without_name_when_update_relationship_then_throw_exception() {
         // given
-        FamilyMemberRelationship original = FamilyMemberRelationship.createRelationship(
+        FamilyMemberRelationship original = FamilyMemberRelationship.newRelationship(
             1L,
             2L,
             3L,
@@ -328,7 +328,7 @@ class FamilyMemberRelationshipTest {
         String newDescription = "새로운 설명";
 
         // when & then
-        assertThatThrownBy(() -> original.updateRelationship(
+        assertThatThrownBy(() -> original.update(
             newType,
             newCustomRelationship,
             newDescription

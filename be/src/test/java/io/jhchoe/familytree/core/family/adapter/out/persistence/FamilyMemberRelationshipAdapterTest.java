@@ -38,7 +38,7 @@ class FamilyMemberRelationshipAdapterTest {
         FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
         String description = "부모 관계";
         
-        FamilyMemberRelationship relationship = FamilyMemberRelationship.createRelationship(
+        FamilyMemberRelationship relationship = FamilyMemberRelationship.newRelationship(
             familyId,
             fromMemberId,
             toMemberId,
