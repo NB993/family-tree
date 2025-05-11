@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.config.TestAuditConfig;
 import io.jhchoe.familytree.core.family.domain.Family;
 import java.util.Optional;
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-@Import(FamilyAdapterTest.TestAuditConfig.class)
+@Import(TestAuditConfig.class)
 @DataJpaTest
 @ActiveProfiles("test")
 @DisplayName("[Unit Test] FamilyAdapter")
@@ -87,21 +88,5 @@ class FamilyAdapterTest {
         assertThatThrownBy(() -> sut.modifyFamily(family))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("family must not be null");
-    }
-
-    @TestConfiguration
-    @EnableJpaAuditing
-    static class TestAuditConfig {
-        @Bean
-        public AuditorAware<Long> auditorAware() {
-            return () -> {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (authentication != null && authentication.isAuthenticated()
-                    && authentication.getPrincipal() instanceof FTUser) {
-                    return Optional.of(((FTUser) authentication.getPrincipal()).getId());
-                }
-                return Optional.of(99L); // 시스템 사용자 ID
-            };
-        }
     }
 }
