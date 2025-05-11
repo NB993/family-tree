@@ -18,7 +18,6 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("deleted = false")
 @Entity(name = "family_member")
 public class FamilyMemberJpaEntity extends ModifierBaseEntity {
 
