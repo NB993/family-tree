@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * 가족 관계 JPA 리포지토리 인터페이스입니다.
  */
-public interface FamilyRelationshipJpaRepository extends JpaRepository<FamilyRelationshipJpaEntity, Long> {
+public interface FamilyMemberRelationshipJpaRepository extends JpaRepository<FamilyMemberRelationshipJpaEntity, Long> {
     
     /**
      * 특정 구성원 간의 관계를 조회합니다.
@@ -17,7 +17,7 @@ public interface FamilyRelationshipJpaRepository extends JpaRepository<FamilyRel
      * @param toMemberId   관계가 정의된 대상 구성원 ID
      * @return 조회된 가족 관계 JPA 엔티티
      */
-    Optional<FamilyRelationshipJpaEntity> findByFamilyIdAndFromMemberIdAndToMemberId(
+    Optional<FamilyMemberRelationshipJpaEntity> findByFamilyIdAndFromMemberIdAndToMemberId(
         Long familyId,
         Long fromMemberId,
         Long toMemberId
@@ -30,5 +30,5 @@ public interface FamilyRelationshipJpaRepository extends JpaRepository<FamilyRel
      * @param fromMemberId 관계를 정의한 구성원 ID
      * @return 조회된 가족 관계 JPA 엔티티 목록
      */
-    List<FamilyRelationshipJpaEntity> findAllByFamilyIdAndFromMemberId(Long familyId, Long fromMemberId);
+    List<FamilyMemberRelationshipJpaEntity> findAllByFamilyIdAndFromMemberId(Long familyId, Long fromMemberId);
 }

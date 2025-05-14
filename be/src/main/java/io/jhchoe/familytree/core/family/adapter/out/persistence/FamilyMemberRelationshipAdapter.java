@@ -26,7 +26,7 @@ public class FamilyMemberMemberRelationshipAdapter implements SaveFamilyMemberRe
     public Long save(FamilyMemberRelationship familyMemberRelationship) {
         Objects.requireNonNull(familyMemberRelationship, "relationship must not be null");
         
-        FamilyRelationshipJpaEntity entity = FamilyRelationshipJpaEntity.from(familyMemberRelationship);
+        FamilyMemberRelationshipJpaEntity entity = FamilyMemberRelationshipJpaEntity.from(familyMemberRelationship);
         return familyRelationshipJpaRepository.save(entity).getId();
     }
 
@@ -41,7 +41,7 @@ public class FamilyMemberMemberRelationshipAdapter implements SaveFamilyMemberRe
         
         return familyRelationshipJpaRepository
             .findByFamilyIdAndFromMemberIdAndToMemberId(familyId, fromMemberId, toMemberId)
-            .map(FamilyRelationshipJpaEntity::toFamilyRelationship);
+            .map(FamilyMemberRelationshipJpaEntity::toFamilyRelationship);
     }
 
     /**
@@ -55,7 +55,7 @@ public class FamilyMemberMemberRelationshipAdapter implements SaveFamilyMemberRe
         return familyRelationshipJpaRepository
             .findAllByFamilyIdAndFromMemberId(familyId, fromMemberId)
             .stream()
-            .map(FamilyRelationshipJpaEntity::toFamilyRelationship)
+            .map(FamilyMemberRelationshipJpaEntity::toFamilyRelationship)
             .collect(Collectors.toList());
     }
 }

@@ -17,14 +17,12 @@ import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
 /**
  * 가족 관계 정보를 저장하는 JPA 엔티티입니다.
  */
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("deleted = false")
 @Entity(name = "family_relationship")
@@ -34,7 +32,7 @@ import org.hibernate.annotations.SQLRestriction;
         columnNames = {"family_id", "from_member_id", "to_member_id"}
     )
 })
-public class FamilyRelationshipJpaEntity extends ModifierBaseEntity {
+public class FamilyMemberRelationshipJpaEntity extends ModifierBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,7 +75,7 @@ public class FamilyRelationshipJpaEntity extends ModifierBaseEntity {
      * @param modifiedBy         수정자 ID
      * @param modifiedAt         수정 시간
      */
-    private FamilyRelationshipJpaEntity(
+    private FamilyMemberRelationshipJpaEntity(
         Long id,
         Long familyId,
         Long fromMemberId,
@@ -106,10 +104,10 @@ public class FamilyRelationshipJpaEntity extends ModifierBaseEntity {
      * @param relationship 가족 관계 도메인 객체
      * @return 변환된 JPA 엔티티
      */
-    public static FamilyRelationshipJpaEntity from(FamilyMemberRelationship relationship) {
+    public static FamilyMemberRelationshipJpaEntity from(FamilyMemberRelationship relationship) {
         Objects.requireNonNull(relationship, "relationship must not be null");
 
-        return new FamilyRelationshipJpaEntity(
+        return new FamilyMemberRelationshipJpaEntity(
             relationship.getId(),
             relationship.getFamilyId(),
             relationship.getFromMemberId(),
