@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @DisplayName("[Acceptance Test] FamilyRelationshipController")
-class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
+class FindFamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
 
     @MockitoBean
     private SaveFamilyMemberRelationshipUseCase saveFamilyMemberRelationshipUseCase;
@@ -36,7 +36,7 @@ class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
         // given
         Long memberId = 1L;
         Long familyId = 1L;
-        
+
         FamilyMemberRelationship relationship1 = FamilyMemberRelationship.withId(
             2L,
             familyId,
