@@ -24,11 +24,10 @@ import org.hibernate.annotations.SQLRestriction;
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("deleted = false")
-@Entity(name = "family_relationship")
+@Entity(name = "family_member_relationship")
 @Table(uniqueConstraints = {
     @UniqueConstraint(
-        name = "uk_family_relationship",
+        name = "uk_family_member_relationship",
         columnNames = {"family_id", "from_member_id", "to_member_id"}
     )
 })
