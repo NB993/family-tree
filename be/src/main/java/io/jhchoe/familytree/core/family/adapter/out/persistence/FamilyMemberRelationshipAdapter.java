@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class FamilyMemberMemberRelationshipAdapter implements SaveFamilyMemberRelationshipPort, FindFamilyMemberRelationshipPort {
+public class FamilyMemberRelationshipAdapter implements SaveFamilyMemberRelationshipPort, FindFamilyMemberRelationshipPort {
 
-    private final FamilyRelationshipJpaRepository familyRelationshipJpaRepository;
+    private final FamilyMemberRelationshipJpaRepository familyMemberRelationshipJpaRepository;
 
     /**
      * {@inheritDoc}
@@ -27,19 +27,19 @@ public class FamilyMemberMemberRelationshipAdapter implements SaveFamilyMemberRe
         Objects.requireNonNull(familyMemberRelationship, "relationship must not be null");
         
         FamilyMemberRelationshipJpaEntity entity = FamilyMemberRelationshipJpaEntity.from(familyMemberRelationship);
-        return familyRelationshipJpaRepository.save(entity).getId();
+        return familyMemberRelationshipJpaRepository.save(entity).getId();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Optional<FamilyMemberRelationship> findRelationship(Long familyId, Long fromMemberId, Long toMemberId) {
+    public Optional<FamilyMemberRelationship> findByFamilyIdAndFromMemberIdAndToMemberId(Long familyId, Long fromMemberId, Long toMemberId) {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(fromMemberId, "fromMemberId must not be null");
         Objects.requireNonNull(toMemberId, "toMemberId must not be null");
         
-        return familyRelationshipJpaRepository
+        return familyMemberRelationshipJpaRepository
             .findByFamilyIdAndFromMemberIdAndToMemberId(familyId, fromMemberId, toMemberId)
             .map(FamilyMemberRelationshipJpaEntity::toFamilyRelationship);
     }
@@ -48,11 +48,11 @@ public class FamilyMemberMemberRelationshipAdapter implements SaveFamilyMemberRe
      * {@inheritDoc}
      */
     @Override
-    public List<FamilyMemberRelationship> findAllRelationshipsByMember(Long familyId, Long fromMemberId) {
+    public List<FamilyMemberRelationship> findAllByFamilyIdAndFromMemberId(Long familyId, Long fromMemberId) {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(fromMemberId, "fromMemberId must not be null");
         
-        return familyRelationshipJpaRepository
+        return familyMemberRelationshipJpaRepository
             .findAllByFamilyIdAndFromMemberId(familyId, fromMemberId)
             .stream()
             .map(FamilyMemberRelationshipJpaEntity::toFamilyRelationship)

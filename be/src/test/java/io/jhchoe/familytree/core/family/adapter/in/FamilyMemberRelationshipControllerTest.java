@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import io.jhchoe.familytree.config.WithMockOAuth2User;
-import io.jhchoe.familytree.core.family.adapter.in.request.SaveFamilyMemberRelationshipRequest;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberRelationshipUseCase;
 import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyMemberRelationshipUseCase;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
@@ -68,7 +67,7 @@ class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
         
         List<FamilyMemberRelationship> relationships = List.of(relationship1, relationship2);
         
-        when(findFamilyMemberRelationshipUseCase.findAllRelationshipsByMember(any()))
+        when(findFamilyMemberRelationshipUseCase.findAll(any()))
             .thenReturn(relationships);
 
         // when & then
@@ -112,8 +111,8 @@ class FamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
             LocalDateTime.now()
         );
         
-        when(findFamilyMemberRelationshipUseCase.findRelationship(any()))
-            .thenReturn(Optional.of(relationship));
+        when(findFamilyMemberRelationshipUseCase.find(any()))
+            .thenReturn(relationship);
 
         // when & then
         RestAssuredMockMvc

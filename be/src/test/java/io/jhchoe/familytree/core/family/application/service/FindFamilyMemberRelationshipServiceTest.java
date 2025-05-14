@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberRelationshipQuery;
-import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberRelationshipsQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindAllFamilyMemberRelationshipsQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberRelationshipPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationshipType;
@@ -19,9 +19,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@DisplayName("[Unit Test] FamilyRelationshipService")
+@DisplayName("[Unit Test] FindFamilyMemberRelationshipServiceTest")
 @ExtendWith(MockitoExtension.class)
-class FamilyMemberRelationshipServiceTest {
+class FindFamilyMemberRelationshipServiceTest {
 
     @Mock
     private FindFamilyMemberRelationshipPort findFamilyMemberRelationshipPort;
@@ -30,8 +30,8 @@ class FamilyMemberRelationshipServiceTest {
     private FindFamilyMemberRelationshipService sut;
 
     @Test
-    @DisplayName("findRelationship 메서드는 query에 맞는 관계를 찾아 반환해야 한다")
-    void given_valid_query_when_find_relationship_then_return_relationship() {
+    @DisplayName("find 메서드는 query에 맞는 관계를 찾아 반환해야 한다")
+    void given_valid_query_when_find_then_return_relationship() {
         // given
         Long familyId = 1L;
         Long fromMemberId = 2L;
@@ -56,37 +56,36 @@ class FamilyMemberRelationshipServiceTest {
             null
         );
         
-        when(findFamilyMemberRelationshipPort.findRelationship(familyId, fromMemberId, toMemberId))
+        when(findFamilyMemberRelationshipPort.findByFamilyIdAndFromMemberIdAndToMemberId(familyId, fromMemberId, toMemberId))
             .thenReturn(Optional.of(expectedRelationship));
 
         // when
-        Optional<FamilyMemberRelationship> result = sut.findRelationship(query);
+        FamilyMemberRelationship result = sut.find(query);
 
         // then
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(expectedRelationship);
-        verify(findFamilyMemberRelationshipPort).findRelationship(familyId, fromMemberId, toMemberId);
+        assertThat(result).isEqualTo(expectedRelationship);
+        verify(findFamilyMemberRelationshipPort).findByFamilyIdAndFromMemberIdAndToMemberId(familyId, fromMemberId, toMemberId);
     }
 
     @Test
-    @DisplayName("findRelationship 메서드는 query가 null이면 예외를 발생시켜야 한다")
-    void given_null_query_when_find_relationship_then_throw_exception() {
+    @DisplayName("find 메서드는 query가 null이면 예외를 발생시켜야 한다")
+    void given_null_query_when_find_then_throw_exception() {
         // given
         FindFamilyMemberRelationshipQuery query = null;
 
         // when & then
-        assertThatThrownBy(() -> sut.findRelationship(query))
+        assertThatThrownBy(() -> sut.find(query))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("query must not be null");
     }
 
     @Test
-    @DisplayName("findAllRelationshipsByMember 메서드는 query에 맞는 모든 관계를 찾아 반환해야 한다")
-    void given_valid_query_when_find_all_relationships_by_member_then_return_relationships() {
+    @DisplayName("findAll 메서드는 query에 맞는 모든 관계를 찾아 반환해야 한다")
+    void given_valid_query_when_find_all_by_member_then_return_relationships() {
         // given
         Long familyId = 1L;
         Long fromMemberId = 2L;
-        FindFamilyMemberRelationshipsQuery query = new FindFamilyMemberRelationshipsQuery(
+        FindAllFamilyMemberRelationshipsQuery query = new FindAllFamilyMemberRelationshipsQuery(
             familyId,
             fromMemberId
         );
@@ -121,26 +120,26 @@ class FamilyMemberRelationshipServiceTest {
         
         List<FamilyMemberRelationship> expectedRelationships = List.of(relationship1, relationship2);
         
-        when(findFamilyMemberRelationshipPort.findAllRelationshipsByMember(familyId, fromMemberId))
+        when(findFamilyMemberRelationshipPort.findAllByFamilyIdAndFromMemberId(familyId, fromMemberId))
             .thenReturn(expectedRelationships);
 
         // when
-        List<FamilyMemberRelationship> result = sut.findAllRelationshipsByMember(query);
+        List<FamilyMemberRelationship> result = sut.findAll(query);
 
         // then
         assertThat(result).hasSize(2);
         assertThat(result).containsExactlyInAnyOrderElementsOf(expectedRelationships);
-        verify(findFamilyMemberRelationshipPort).findAllRelationshipsByMember(familyId, fromMemberId);
+        verify(findFamilyMemberRelationshipPort).findAllByFamilyIdAndFromMemberId(familyId, fromMemberId);
     }
 
     @Test
-    @DisplayName("findAllRelationshipsByMember 메서드는 query가 null이면 예외를 발생시켜야 한다")
-    void given_null_query_when_find_all_relationships_by_member_then_throw_exception() {
+    @DisplayName("findAll 메서드는 query가 null이면 예외를 발생시켜야 한다")
+    void given_null_query_when_find_all_by_member_then_throw_exception() {
         // given
-        FindFamilyMemberRelationshipsQuery query = null;
+        FindAllFamilyMemberRelationshipsQuery query = null;
 
         // when & then
-        assertThatThrownBy(() -> sut.findAllRelationshipsByMember(query))
+        assertThatThrownBy(() -> sut.findAll(query))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("query must not be null");
     }

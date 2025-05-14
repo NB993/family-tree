@@ -17,7 +17,7 @@ public interface FindFamilyMemberRelationshipPort {
      * @param toMemberId   관계가 정의된 대상 구성원 ID
      * @return 조회된 가족 관계 정보
      */
-    Optional<FamilyMemberRelationship> findRelationship(Long familyId, Long fromMemberId, Long toMemberId);
+    Optional<FamilyMemberRelationship> findByFamilyIdAndFromMemberIdAndToMemberId(Long familyId, Long fromMemberId, Long toMemberId);
     
     /**
      * 특정 구성원이 정의한 모든 관계를 조회합니다.
@@ -26,5 +26,5 @@ public interface FindFamilyMemberRelationshipPort {
      * @param fromMemberId 관계를 정의한 구성원 ID
      * @return 조회된 가족 관계 목록
      */
-    List<FamilyMemberRelationship> findAllRelationshipsByMember(Long familyId, Long fromMemberId);
+    List<FamilyMemberRelationship> findAllByFamilyIdAndFromMemberId(Long familyId, Long fromMemberId);
 }

@@ -1,14 +1,13 @@
 package io.jhchoe.familytree.core.family.application.service;
 
-import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
+import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberRelationshipQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberRelationshipUseCase;
-import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberRelationshipsQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindAllFamilyMemberRelationshipsQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberRelationshipPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,21 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class FindFamilyMemberRelationshipService implements FindFamilyMemberRelationshipUseCase {
 
     private final FindFamilyMemberRelationshipPort findFamilyMemberRelationshipPort;
-    private final FamilyMemberJpaRepository familyMemberRepository;
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<FamilyMemberRelationship> findRelationship(FindFamilyMemberRelationshipQuery query) {
+    public FamilyMemberRelationship find(FindFamilyMemberRelationshipQuery query) {
         Objects.requireNonNull(query, "query must not be null");
-        
-        return findFamilyMemberRelationshipPort.findRelationship(
+        return findFamilyMemberRelationshipPort.findByFamilyIdAndFromMemberIdAndToMemberId(
             query.getFamilyId(),
             query.getFromMemberId(),
             query.getToMemberId()
-        );
+        ).orElseThrow(() -> FTException.NOT_FOUND);
     }
     
     /**
@@ -43,10 +40,10 @@ public class FindFamilyMemberRelationshipService implements FindFamilyMemberRela
      */
     @Override
     @Transactional(readOnly = true)
-    public List<FamilyMemberRelationship> findAllRelationshipsByMember(FindFamilyMemberRelationshipsQuery query) {
+    public List<FamilyMemberRelationship> findAll(FindAllFamilyMemberRelationshipsQuery query) {
         Objects.requireNonNull(query, "query must not be null");
 
-        return findFamilyMemberRelationshipPort.findAllRelationshipsByMember(
+        return findFamilyMemberRelationshipPort.findAllByFamilyIdAndFromMemberId(
             query.getFamilyId(),
             query.getFromMemberId()
         );
