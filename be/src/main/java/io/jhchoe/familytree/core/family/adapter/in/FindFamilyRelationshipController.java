@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 가족 관계 관리 컨트롤러입니다.
  */
 @RestController
-@RequestMapping("/api/families/{familyId}/members")
+@RequestMapping("/api/families")
 @RequiredArgsConstructor
 public class FindFamilyRelationshipController {
 
@@ -36,7 +36,7 @@ public class FindFamilyRelationshipController {
      * @param ftUser   현재 인증된 사용자
      * @return 가족 관계 목록
      */
-    @GetMapping("/relationships")
+    @GetMapping("/{familyId}/members/relationships")
     public ResponseEntity<List<FamilyMemberRelationshipResponse>> findAllFamilyMemberRelationships(
         @AuthFTUser FTUser ftUser,
         @PathVariable Long familyId
@@ -59,7 +59,7 @@ public class FindFamilyRelationshipController {
      * @param ftUser    현재 인증된 사용자
      * @return 가족 관계 정보
      */
-    @GetMapping("/{toMemberId}/relationships")
+    @GetMapping("/{familyId}/members/{toMemberId}/relationships")
     public ResponseEntity<FamilyMemberRelationshipResponse> findFamilyMemberRelationship(
         @AuthFTUser FTUser ftUser,
         @PathVariable Long familyId,
@@ -79,7 +79,7 @@ public class FindFamilyRelationshipController {
      *
      * @return 가족 관계 타입 목록
      */
-    @GetMapping("/relationship-types")
+    @GetMapping("/members/relationship-types")
     public ResponseEntity<List<FamilyMemberRelationshipTypeResponse>> findRelationshipTypes() {
         List<FamilyMemberRelationshipTypeResponse> types = List.of(FamilyMemberRelationshipType.values()).stream()
             .map(type -> new FamilyMemberRelationshipTypeResponse(
