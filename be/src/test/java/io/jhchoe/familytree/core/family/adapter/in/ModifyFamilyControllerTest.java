@@ -65,7 +65,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
                 }
                 """)
             .when()
-            .put("/api/v1/families/{id}", familyId)
+            .put("/api/families/{id}", familyId)
             .then()
             .statusCode(200);
 
@@ -75,7 +75,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         RestAssuredMockMvc
             .given()
             .when()
-            .get("/api/v1/families/{id}", familyId)
+            .get("/api/families/{id}", familyId)
             .then()
             .statusCode(200)
             .body("id", equalTo(familyId.intValue()))
@@ -118,17 +118,17 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
                 }
                 """)
             .when()
-            .put("/api/v1/families/{id}", familyId)
+            .put("/api/families/{id}", familyId)
             .then()
             .statusCode(400);
 
         // 데이터베이스 변경이 없는지 확인
         FamilyJpaEntity notUpdatedFamily = familyJpaRepository.findById(familyId).orElseThrow();
-        
+
         RestAssuredMockMvc
             .given()
             .when()
-            .get("/api/v1/families/{id}", familyId)
+            .get("/api/families/{id}", familyId)
             .then()
             .statusCode(200)
             .body("id", equalTo(familyId.intValue()))
@@ -167,17 +167,17 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
                 }
                 """, "a".repeat(101)))
             .when()
-            .put("/api/v1/families/{id}", familyId)
+            .put("/api/families/{id}", familyId)
             .then()
             .statusCode(400);
 
         // 데이터베이스 변경이 없는지 확인
         FamilyJpaEntity notUpdatedFamily = familyJpaRepository.findById(familyId).orElseThrow();
-        
+
         RestAssuredMockMvc
             .given()
             .when()
-            .get("/api/v1/families/{id}", familyId)
+            .get("/api/families/{id}", familyId)
             .then()
             .statusCode(200)
             .body("id", equalTo(familyId.intValue()))
@@ -216,17 +216,17 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
                 }
                 """, "a".repeat(201)))
             .when()
-            .put("/api/v1/families/{id}", familyId)
+            .put("/api/families/{id}", familyId)
             .then()
             .statusCode(400);
 
         // 데이터베이스 변경이 없는지 확인
         FamilyJpaEntity notUpdatedFamily = familyJpaRepository.findById(familyId).orElseThrow();
-        
+
         RestAssuredMockMvc
             .given()
             .when()
-            .get("/api/v1/families/{id}", familyId)
+            .get("/api/families/{id}", familyId)
             .then()
             .statusCode(200)
             .body("id", equalTo(familyId.intValue()))
@@ -265,17 +265,17 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
                 }
                 """)
             .when()
-            .put("/api/v1/families/{id}", familyId)
+            .put("/api/families/{id}", familyId)
             .then()
             .statusCode(400);
 
         // 데이터베이스 변경이 없는지 확인
         FamilyJpaEntity notUpdatedFamily = familyJpaRepository.findById(familyId).orElseThrow();
-        
+
         RestAssuredMockMvc
             .given()
             .when()
-            .get("/api/v1/families/{id}", familyId)
+            .get("/api/families/{id}", familyId)
             .then()
             .statusCode(200)
             .body("id", equalTo(familyId.intValue()))

@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/families")
+@RequestMapping("/api/families")
 public class ModifyFamilyController {
 
     private final ModifyFamilyUseCase modifyFamilyUseCase;
