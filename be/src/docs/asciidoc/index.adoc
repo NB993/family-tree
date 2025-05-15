@@ -29,3 +29,22 @@ include::{snippets}/user/me-oauth2/http-response.adoc[]
 
 ==== 응답 필드
 include::{snippets}/user/me-oauth2/response-fields.adoc[]
+
+[[family-api]]
+== 가족 API
+
+가족 정보 조회 및 관리를 위한 API입니다.
+
+[[family-save-family]]
+=== 새로운 가족 생성
+
+새로운 가족을 생성합니다. 가족 이름은 필수 항목이며, 설명과 프로필 이미지 URL은 선택적으로 제공할 수 있습니다.
+
+==== HTTP 요청
+include::{snippets}/family/save-family/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/family/save-family/request-fields.adoc[]
+
+==== HTTP 응답
+include::{snippets}/family/save-family/http-response.adoc[]
