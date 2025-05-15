@@ -3,7 +3,7 @@
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
-:toclevels: 2
+:toclevels: 3
 :sectlinks:
 
 [[overview]]
@@ -35,16 +35,46 @@ include::{snippets}/user/me-oauth2/response-fields.adoc[]
 
 가족 정보 조회 및 관리를 위한 API입니다.
 
-[[family-save-family]]
+[[family-save]]
 === 새로운 가족 생성
 
 새로운 가족을 생성합니다. 가족 이름은 필수 항목이며, 설명과 프로필 이미지 URL은 선택적으로 제공할 수 있습니다.
 
-==== HTTP 요청
-include::{snippets}/family/save-family/http-request.adoc[]
+==== 정상 요청 및 응답
+===== HTTP 요청
+include::{snippets}/family/save/http-request.adoc[]
 
-==== 요청 필드
-include::{snippets}/family/save-family/request-fields.adoc[]
+===== 요청 필드
+include::{snippets}/family/save/request-fields.adoc[]
 
-==== HTTP 응답
-include::{snippets}/family/save-family/http-response.adoc[]
+===== HTTP 응답
+include::{snippets}/family/save/http-response.adoc[]
+
+==== 오류 응답
+[[family-save-invalid-request]]
+===== 이름 필드 유효성 검증 실패
+
+가족 이름이 비어있거나 유효하지 않은 경우의 오류 응답입니다.
+
+====== HTTP 요청
+include::{snippets}/family/save-invalid-request/http-request.adoc[]
+
+====== HTTP 응답
+include::{snippets}/family/save-invalid-request/http-response.adoc[]
+
+====== 응답 필드
+include::{snippets}/family/save-invalid-request/response-fields.adoc[]
+
+[[family-save-invalid-profile-url]]
+===== 프로필 URL 형식 유효성 검증 실패
+
+프로필 URL이 http:// 또는 https://로 시작하지 않는 경우의 오류 응답입니다.
+
+====== HTTP 요청
+include::{snippets}/family/save-invalid-profile-url/http-request.adoc[]
+
+====== HTTP 응답
+include::{snippets}/family/save-invalid-profile-url/http-response.adoc[]
+
+====== 응답 필드
+include::{snippets}/family/save-invalid-profile-url/response-fields.adoc[]
