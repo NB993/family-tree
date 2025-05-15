@@ -11,7 +11,6 @@ import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaReposit
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,10 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.transaction.annotation.Transactional;
 
 @DisplayName("[Acceptance Test] ModifyFamilyControllerTest")
-@Transactional
 class ModifyFamilyControllerTest extends AcceptanceTestBase {
 
     @Autowired
@@ -68,9 +65,6 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .put("/api/families/{id}", familyId)
             .then()
             .statusCode(200);
-
-        // 데이터베이스에 실제로 변경이 적용되었는지 확인
-        FamilyJpaEntity updatedFamily = familyJpaRepository.findById(familyId).orElseThrow();
 
         RestAssuredMockMvc
             .given()
@@ -122,9 +116,6 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .then()
             .statusCode(400);
 
-        // 데이터베이스 변경이 없는지 확인
-        FamilyJpaEntity notUpdatedFamily = familyJpaRepository.findById(familyId).orElseThrow();
-
         RestAssuredMockMvc
             .given()
             .when()
@@ -170,9 +161,6 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .put("/api/families/{id}", familyId)
             .then()
             .statusCode(400);
-
-        // 데이터베이스 변경이 없는지 확인
-        FamilyJpaEntity notUpdatedFamily = familyJpaRepository.findById(familyId).orElseThrow();
 
         RestAssuredMockMvc
             .given()
@@ -220,9 +208,6 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .then()
             .statusCode(400);
 
-        // 데이터베이스 변경이 없는지 확인
-        FamilyJpaEntity notUpdatedFamily = familyJpaRepository.findById(familyId).orElseThrow();
-
         RestAssuredMockMvc
             .given()
             .when()
@@ -268,9 +253,6 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .put("/api/families/{id}", familyId)
             .then()
             .statusCode(400);
-
-        // 데이터베이스 변경이 없는지 확인
-        FamilyJpaEntity notUpdatedFamily = familyJpaRepository.findById(familyId).orElseThrow();
 
         RestAssuredMockMvc
             .given()
