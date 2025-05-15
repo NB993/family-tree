@@ -694,10 +694,10 @@ public Xxx toXxx() {
   - API에서 발생 가능한 모든 예외 코드를 문서화합니다
     - 예외발생 가능 포인트
       - API Path Variable
-      - API Request DTO (`/in/XxxXxxRequest`)
-      - `application/port/in/XxxXxxCommand`
-      - `application/port/in/XxxXxxQuery`
-      - `application/port/in/XxxXxxUseCase`
+      - API Request DTO (`xxx/adapter/in/XxxXxxRequest`)
+      - `xxx/application/port/in/XxxXxxCommand`
+      - `xxx/application/port/in/XxxXxxQuery`
+      - `xxx/application/port/in/XxxXxxUseCase`
   - `ApiDocsTestBase` 클래스를 상속받아 문서화 환경을 구성합니다
   - Mock Bean을 사용해야 하는 경우 `@MockitoBean`을 사용합니다 - `@MockBean`은 사용하지 않음
 
