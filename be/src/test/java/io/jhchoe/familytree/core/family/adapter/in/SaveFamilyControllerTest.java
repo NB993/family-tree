@@ -1,28 +1,48 @@
 package io.jhchoe.familytree.core.family.adapter.in;
 
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.hasItem;
 
 import io.jhchoe.familytree.config.WithMockOAuth2User;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-
-import io.jhchoe.familytree.config.FTMockUser;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 @DisplayName("[Acceptance Test] FamilyControllerTest")
 class SaveFamilyControllerTest extends AcceptanceTestBase {
 
     @WithMockOAuth2User
     @Test
-    @DisplayName("Family 생성 성공 테스트")
-    void testSaveFamily() {
+    @DisplayName("Family 생성 요청 시 성공하면 201 상태코드를 반환한다")
+    void test_save_family_success() {
+        // given & when & then
+        RestAssuredMockMvc
+            .given()
+            .contentType(MediaType.APPLICATION_JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+            .body("""
+                {
+                    "name": "family name",
+                    "description": "family description",
+                    "profileUrl": "https://example.com/profile.jpg"
+                }
+                """)
+            .when()
+            .post("/api/family")
+            .then()
+            .statusCode(201)
+            .body("id", greaterThan(0));
+    }
+
+    @WithMockOAuth2User
+    @Test
+    @DisplayName("Family 생성 요청 시 필수값인 name만 전송해도 성공한다")
+    void test_save_family_success_with_only_name() {
+        // given & when & then
         RestAssuredMockMvc
             .given()
             .contentType(MediaType.APPLICATION_JSON)
@@ -35,14 +55,16 @@ class SaveFamilyControllerTest extends AcceptanceTestBase {
             .when()
             .post("/api/family")
             .then()
-            .statusCode(201);
+            .statusCode(201)
+            .body("id", greaterThan(0));
     }
 
     @WithMockOAuth2User
     @ValueSource(strings = {"", " ", "\\t", "\\n"})
     @ParameterizedTest
-    @DisplayName("Family 생성시 이름을 입력하지 않으면 예외를 응답한다.")
-    void test_saveFamily_fail_when_name_is_empty(String emptyName) {
+    @DisplayName("Family 생성 시 이름을 입력하지 않으면 400 상태코드와 유효성 검증 오류를 반환한다")
+    void test_save_family_fail_when_name_is_empty(String emptyName) {
+        // given & when & then
         RestAssuredMockMvc
             .given()
             .contentType(MediaType.APPLICATION_JSON)
@@ -60,5 +82,45 @@ class SaveFamilyControllerTest extends AcceptanceTestBase {
             .body("validations.find { it.field == 'name' }.message",
                 not(emptyOrNullString())) // 해당 필드의 message가 비어있지 않음
             .statusCode(400);
+    }
+    
+    @WithMockOAuth2User
+    @Test
+    @DisplayName("Family 생성 시 프로필 URL이 http:// 또는 https://로 시작하지 않으면 400 상태코드를 반환한다")
+    void test_save_family_fail_when_profile_url_is_invalid() {
+        // given & when & then
+        RestAssuredMockMvc
+            .given()
+            .contentType(MediaType.APPLICATION_JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+            .body("""
+                {
+                    "name": "family name",
+                    "profileUrl": "invalid-url"
+                }
+                """)
+            .when()
+            .post("/api/family")
+            .then()
+            .statusCode(400);
+    }
+    
+    @Test
+    @DisplayName("Family 생성 시 인증되지 않은 사용자는 401 상태코드를 반환한다")
+    void test_save_family_fail_when_user_is_not_authenticated() {
+        // given & when & then
+        RestAssuredMockMvc
+            .given()
+            .contentType(MediaType.APPLICATION_JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+            .body("""
+                {
+                    "name": "family name"
+                }
+                """)
+            .when()
+            .post("/api/family")
+            .then()
+            .statusCode(401);
     }
 }
