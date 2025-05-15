@@ -683,7 +683,7 @@ public Xxx toXxx() {
   - 테스트 사용자 인증은 `@WithMockOAuth2User` 어노테이션을 사용합니다
   - Mock Bean을 사용해야 하는 경우 `@MockitoBean`을 사용합니다 - `@MockBean`은 사용하지 않음
 
-### REST Docs 테스트
+### API 문서 테스트
 
 - **위치**: 해당 컨트롤러가 있는 패키지
 - **명명 규칙**: `{행동}{도메인명}DocsTest`
@@ -692,6 +692,12 @@ public Xxx toXxx() {
   - 문서화 대상 엔드포인트별로 테스트 메서드를 작성합니다
   - 요청/응답 필드를 명시적으로 문서화합니다
   - API에서 발생 가능한 모든 예외 코드를 문서화합니다
+    - 예외발생 가능 포인트
+      - API Path Variable
+      - API Request DTO (`/in/XxxXxxRequest`)
+      - `application/port/in/XxxXxxCommand`
+      - `application/port/in/XxxXxxQuery`
+      - `application/port/in/XxxXxxUseCase`
   - `ApiDocsTestBase` 클래스를 상속받아 문서화 환경을 구성합니다
   - Mock Bean을 사용해야 하는 경우 `@MockitoBean`을 사용합니다 - `@MockBean`은 사용하지 않음
 
