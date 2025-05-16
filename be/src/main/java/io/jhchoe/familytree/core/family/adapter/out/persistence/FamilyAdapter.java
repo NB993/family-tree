@@ -6,6 +6,7 @@ import io.jhchoe.familytree.core.family.application.port.out.SaveFamilyPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,13 @@ public class FamilyAdapter implements SaveFamilyPort, ModifyFamilyPort, FindFami
         Objects.requireNonNull(id, "id must not be null");
 
         return familyJpaRepository.existsById(id);
+    }
+
+    @Override
+    public List<Family> findByNameLike(String name) {
+        Objects.requireNonNull(name, "name must not be null");
+
+        return List.of();
     }
 
     /**

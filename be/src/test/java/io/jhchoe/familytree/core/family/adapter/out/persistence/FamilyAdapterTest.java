@@ -3,10 +3,10 @@ package io.jhchoe.familytree.core.family.adapter.out.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.config.TestAuditConfig;
 import io.jhchoe.familytree.core.family.domain.Family;
+import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,13 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.AuditorAware;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 @Import(TestAuditConfig.class)

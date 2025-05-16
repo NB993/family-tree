@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.application.port.out;
 
 import io.jhchoe.familytree.core.family.domain.Family;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,4 +18,12 @@ public interface FindFamilyPort {
     Optional<Family> findById(Long id);
 
     boolean existsById(Long id);
+
+    /**
+     * 입력된 name을 포함하는 Family 엔티티를 조회합니다.
+     *
+     * @param name 조회할 Family이 포함할 이름
+     * @return 조회된 Family 목록
+     */
+    List<Family> findByNameLike(String name);
 }

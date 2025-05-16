@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameLikeQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +29,7 @@ public class FindFamilyServiceTest {
     private FindFamilyService sut;
 
     @Test
-    @DisplayName("find 메서드는 id와 일치하는 Family를 찾아 반환해야 한다")
+    @DisplayName("findById 메서드는 id와 일치하는 Family를 찾아 반환해야 한다")
     void given_valid_id_when_find_ById_then_return_family() {
         // given
         Long familyId = 1L;
@@ -72,7 +74,7 @@ public class FindFamilyServiceTest {
     }
 
     @Test
-    @DisplayName("find 메서드는 id와 일치하는 Family를 찾지 못한 경우 예외를 발생시켜야 한다.")
+    @DisplayName("findById 메서드는 id와 일치하는 Family를 찾지 못한 경우 예외를 발생시켜야 한다.")
     void given_invalid_id_when_find_ById_then_throw_exception() {
         // given
         Long notSavedFamilyId = 999L;
@@ -85,5 +87,52 @@ public class FindFamilyServiceTest {
         assertThatThrownBy(() -> sut.findById(notSavedFamilyId))
             .isInstanceOf(FTException.class)
             .hasMessage("대상을 찾지 못했습니다.");
+    }
+
+    @Test
+    @DisplayName("findByNameLike 메서드는 query가 null이라면 예외를 발생시켜야 한다.")
+    void given_null_query_when_find_by_name_in_then_throw_exception() {
+        // given
+        FindFamilyByNameLikeQuery query = null;
+
+        // when & then
+        assertThatThrownBy(() -> sut.findByNameLike(query))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessage("query must not be null");
+    }
+
+    @Test
+    @DisplayName("findByNameLike 메서드는 전달받은 name을 포함하는 Family를 찾지 못한 경우 빈 List를 리턴해야 한다.")
+    void given_non_like_name_when_find_by_name_like_then_return_empty_list() {
+        // given
+        FindFamilyByNameLikeQuery nonLikeNameQuery = new FindFamilyByNameLikeQuery("어느 Family도 포함하지 않는 이름");
+
+        // when
+        when(findFamilyPort.findByNameLike(nonLikeNameQuery.getName()))
+            .thenReturn(List.of());
+
+        // then
+        List<Family> families = sut.findByNameLike(nonLikeNameQuery);
+        assertThat(families).isEmpty();;
+    }
+
+    @Test
+    @DisplayName("findByNameLike 메서드는 전달받은 name을 포함하는 Family를 찾아서 반환해야 한다.")
+    void given_name_when_find_by_name_in_then_return_family_list() {
+        // given
+        FindFamilyByNameLikeQuery nonLikeNameQuery = new FindFamilyByNameLikeQuery("가족");
+
+        Family family = Family.newFamily("가족 이름1", "설명", "프로필 url");
+        Family family2 = Family.newFamily("가족 이름2", "설명", "프로필 url");
+
+        // when
+        when(findFamilyPort.findByNameLike(nonLikeNameQuery.getName()))
+            .thenReturn(List.of(family, family2));
+
+        // then
+        List<Family> families = sut.findByNameLike(nonLikeNameQuery);
+        assertThat(families).hasSize(2);
+        assertThat(families).extracting("name")
+            .containsExactlyInAnyOrder("가족 이름1", "가족 이름2");
     }
 }
