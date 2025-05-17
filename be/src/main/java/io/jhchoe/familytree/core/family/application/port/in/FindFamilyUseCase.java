@@ -22,5 +22,5 @@ public interface FindFamilyUseCase {
      * @param query Family 이름 검색에 필요한 입력 데이터를 포함하는 쿼리 객체
      * @return 조회된 Family 목록, 해당하는 Family가 없을 경우 빈 목록을 반환
      */
-    List<Family> findByNameLike(FindFamilyByNameLikeQuery query);
+    List<Family> findByNameContaining(FindFamilyByNameContainingQuery query);
 }

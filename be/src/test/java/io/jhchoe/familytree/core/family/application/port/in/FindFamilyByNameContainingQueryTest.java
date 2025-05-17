@@ -9,7 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class FindFamilyByNameLikeQueryTest {
+class FindFamilyByNameContainingQueryTest {
 
     @Test
     @DisplayName("유효한 이름으로 쿼리 객체를 생성할 수 있다")
@@ -18,7 +18,7 @@ class FindFamilyByNameLikeQueryTest {
         String validName = "테스트 가족";
 
         // when
-        FindFamilyByNameLikeQuery query = new FindFamilyByNameLikeQuery(validName);
+        FindFamilyByNameContainingQuery query = new FindFamilyByNameContainingQuery(validName);
 
         // then
         assertThat(query.getName()).isEqualTo(validName);
@@ -26,11 +26,11 @@ class FindFamilyByNameLikeQueryTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    @DisplayName("이름이 null 또는 빈 문자열인 경우 예외가 발생한다")
+    @DisplayName("이름이 null 또는 빈 문자열인 경우 \"\"로 생성된다.")
     void create_query_with_null_and_empty_name(String nullAndEmptyName) {
-        assertThatThrownBy(() -> new FindFamilyByNameLikeQuery(nullAndEmptyName))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Family 이름은 필수입니다.");
+        FindFamilyByNameContainingQuery query = new FindFamilyByNameContainingQuery(nullAndEmptyName);
+
+        assertThat(query.getName()).isEqualTo("");
     }
 
     @ParameterizedTest
@@ -44,10 +44,10 @@ class FindFamilyByNameLikeQueryTest {
         "\f",          // 폼 피드
         " \t\n\r\f "   // 다양한 공백 문자 조합
     })
-    @DisplayName("이름이 공백 문자열인 경우 예외가 발생한다")
+    @DisplayName("이름이 공백 문자열인 경우 \"\"로 생성된다.")
     void create_query_with_blank_name(String blankName) {
-        assertThatThrownBy(() -> new FindFamilyByNameLikeQuery(blankName))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Family 이름은 필수입니다.");
+        FindFamilyByNameContainingQuery query = new FindFamilyByNameContainingQuery(blankName);
+
+        assertThat(query.getName()).isEqualTo("");
     }
 }

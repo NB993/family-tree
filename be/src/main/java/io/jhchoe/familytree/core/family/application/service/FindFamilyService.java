@@ -1,7 +1,7 @@
 package io.jhchoe.familytree.core.family.application.service;
 
 import io.jhchoe.familytree.common.exception.FTException;
-import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameLikeQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameContainingQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyUseCase;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
@@ -33,9 +33,9 @@ public class FindFamilyService implements FindFamilyUseCase {
      * {@inheritDoc}
      */
     @Override
-    public List<Family> findByNameLike(FindFamilyByNameLikeQuery query) {
+    public List<Family> findByNameContaining(FindFamilyByNameContainingQuery query) {
         Objects.requireNonNull(query, "query must not be null");
 
-        return findFamilyPort.findByNameLike(query.getName());
+        return findFamilyPort.findByNameContaining(query.getName());
     }
 }

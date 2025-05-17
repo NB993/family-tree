@@ -25,5 +25,5 @@ public interface FindFamilyPort {
      * @param name 조회할 Family이 포함할 이름
      * @return 조회된 Family 목록
      */
-    List<Family> findByNameLike(String name);
+    List<Family> findByNameContaining(String name);
 }

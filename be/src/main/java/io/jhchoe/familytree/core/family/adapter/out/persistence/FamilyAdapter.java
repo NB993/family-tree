@@ -57,10 +57,10 @@ public class FamilyAdapter implements SaveFamilyPort, ModifyFamilyPort, FindFami
      * @return 조회된 Family 목록
      */
     @Override
-    public List<Family> findByNameLike(String name) {
-        Objects.requireNonNull(name, "name must not be null");
+    public List<Family> findByNameContaining(String name) {
+        String nonNullName = Objects.requireNonNullElse(name, "");
+        List<FamilyJpaEntity> families = familyJpaRepository.findByNameContaining(nonNullName);
 
-        List<FamilyJpaEntity> families = familyJpaRepository.findByNameContaining(name);
         return families.stream()
             .map(FamilyJpaEntity::toFamily)
             .collect(Collectors.toList());

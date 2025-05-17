@@ -85,20 +85,29 @@ class FamilyAdapterTest {
     }
 
     @Test
-    @DisplayName("findByNameIn 메서드는 null 값이 전달되면 예외를 발생시켜야 한다.")
-    void given_null_name_when_find_by_name_in_then_throw_exception() {
+    @DisplayName("findByNameContaining 메서드는 null 값이 전달되면 \"\"로 치환하여 조회한다.")
+    void given_null_name_when_find_by_name_containing_then_throw_exception() {
         // given
         String name = null;
 
+        Family family = Family.newFamily("가족 이름", "Description", "http://example.com");
+        FamilyJpaEntity savedEntity = familyJpaRepository.save(FamilyJpaEntity.from(family));
+
+        // when
+        List<Family> families = sut.findByNameContaining(null);
+
+        // then
         // when & then
-        assertThatThrownBy(() -> sut.findByNameLike(name))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("name must not be null");
+        assertThat(families).hasSize(1);
+        assertThat(families).extracting("name").containsExactlyInAnyOrder("가족 이름");
+        assertThat(families).extracting("description").containsExactlyInAnyOrder("Description");
+        assertThat(families).extracting("profileUrl").containsExactlyInAnyOrder("http://example.com");
+
     }
 
     @Test
-    @DisplayName("findByNameIn 메서드는 name을 전달받으면 해당 name을 포함한 Family 목록을 응답해야 한다.")
-    void given_name_when_find_by_name_in_then_return_family_list() {
+    @DisplayName("findByNameContaining 메서드는 name을 전달받으면 해당 name을 포함한 Family 목록을 응답해야 한다.")
+    void given_name_when_find_by_name_containing_then_return_family_list() {
         // given
         Family family1 = Family.newFamily("가족 이름1", "Description", "http://example.com");
         Family family2 = Family.newFamily("가족 이름2", "Description", "http://example.com");
@@ -106,7 +115,7 @@ class FamilyAdapterTest {
         FamilyJpaEntity savedEntity2 = familyJpaRepository.save(FamilyJpaEntity.from(family2));
 
         // when
-        List<Family> families = sut.findByNameLike("가족");
+        List<Family> families = sut.findByNameContaining("가족");
 
         // when & then
         assertThat(families).hasSize(2);
