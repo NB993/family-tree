@@ -9,6 +9,7 @@ import io.jhchoe.familytree.core.family.domain.Family;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -49,11 +50,20 @@ public class FamilyAdapter implements SaveFamilyPort, ModifyFamilyPort, FindFami
         return familyJpaRepository.existsById(id);
     }
 
+    /**
+     * 전달받은 name을 Family name으로 포함하고 있는 Family 목록을 조회하여 응답합니다.
+     *
+     * @param name 조회할 Family이 포함할 이름
+     * @return 조회된 Family 목록
+     */
     @Override
     public List<Family> findByNameLike(String name) {
         Objects.requireNonNull(name, "name must not be null");
 
-        return List.of();
+        List<FamilyJpaEntity> families = familyJpaRepository.findByNameContaining(name);
+        return families.stream()
+            .map(FamilyJpaEntity::toFamily)
+            .collect(Collectors.toList());
     }
 
     /**

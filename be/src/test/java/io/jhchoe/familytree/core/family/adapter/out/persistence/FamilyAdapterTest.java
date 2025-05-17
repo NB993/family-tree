@@ -83,4 +83,34 @@ class FamilyAdapterTest {
             .isInstanceOf(NullPointerException.class)
             .hasMessage("family must not be null");
     }
+
+    @Test
+    @DisplayName("findByNameIn 메서드는 null 값이 전달되면 예외를 발생시켜야 한다.")
+    void given_null_name_when_find_by_name_in_then_throw_exception() {
+        // given
+        String name = null;
+
+        // when & then
+        assertThatThrownBy(() -> sut.findByNameLike(name))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessage("name must not be null");
+    }
+
+    @Test
+    @DisplayName("findByNameIn 메서드는 name을 전달받으면 해당 name을 포함한 Family 목록을 응답해야 한다.")
+    void given_name_when_find_by_name_in_then_return_family_list() {
+        // given
+        Family family1 = Family.newFamily("가족 이름1", "Description", "http://example.com");
+        Family family2 = Family.newFamily("가족 이름2", "Description", "http://example.com");
+        FamilyJpaEntity savedEntity1 = familyJpaRepository.save(FamilyJpaEntity.from(family1));
+        FamilyJpaEntity savedEntity2 = familyJpaRepository.save(FamilyJpaEntity.from(family2));
+
+        // when
+        List<Family> families = sut.findByNameLike("가족");
+
+        // when & then
+        assertThat(families).hasSize(2);
+        assertThat(families).extracting("name")
+            .containsExactlyInAnyOrder("가족 이름1", "가족 이름2");
+    }
 }
