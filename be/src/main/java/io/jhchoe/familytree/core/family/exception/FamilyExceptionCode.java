@@ -8,7 +8,12 @@ import org.springframework.http.HttpStatus;
  */
 public enum FamilyExceptionCode implements ExceptionCodeType {
 
-    NOT_FAMILY_MEMBER("F001", "가족 구성원만 접근할 수 있습니다.", HttpStatus.FORBIDDEN);
+    NOT_FAMILY_MEMBER("F001", "가족 구성원만 접근할 수 있습니다.", HttpStatus.FORBIDDEN),
+    FAMILY_NOT_FOUND("F002", "존재하지 않는 패밀리입니다.", HttpStatus.NOT_FOUND),
+    ALREADY_JOINED_FAMILY("F003", "이미 가입된 패밀리입니다.", HttpStatus.CONFLICT),
+    JOIN_REQUEST_ALREADY_PENDING("F004", "가입 신청을 처리중이에요.", HttpStatus.CONFLICT),
+    EXCEEDED_FAMILY_JOIN_LIMIT("F005", "최대 패밀리 가입 수를 초과했습니다.", HttpStatus.BAD_REQUEST),
+    JOIN_REQUEST_REJECTED("F006", "가입 신청이 불가능합니다.", HttpStatus.FORBIDDEN);
 
     private final String code;
     private final String message;
