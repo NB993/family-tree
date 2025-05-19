@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequest;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequestStatus;
 import io.jhchoe.familytree.helper.AdapterTestBase;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -64,16 +65,18 @@ class FamilyJoinRequestAdapterTest extends AdapterTestBase {
         Long familyId = 1L;
         Long requesterId = 2L;
         
-        FamilyJoinRequestJpaEntity entity1 = new FamilyJoinRequestJpaEntity();
-        entity1.setFamilyId(familyId);
-        entity1.setRequesterId(requesterId);
-        entity1.setStatus(FamilyJoinRequestStatus.REJECTED);
+        // 첫 번째 가입 신청(거절됨)
+        FamilyJoinRequest rejectedRequest = FamilyJoinRequest.newRequest(
+            null, familyId, requesterId, FamilyJoinRequestStatus.REJECTED, null, null, null, null
+        );
+        FamilyJoinRequestJpaEntity entity1 = FamilyJoinRequestJpaEntity.from(rejectedRequest);
         familyJoinRequestJpaRepository.save(entity1);
         
-        FamilyJoinRequestJpaEntity entity2 = new FamilyJoinRequestJpaEntity();
-        entity2.setFamilyId(familyId);
-        entity2.setRequesterId(requesterId);
-        entity2.setStatus(FamilyJoinRequestStatus.PENDING);
+        // 두 번째 가입 신청(대기 중)
+        FamilyJoinRequest pendingRequest = FamilyJoinRequest.withId(
+            null, familyId, requesterId, FamilyJoinRequestStatus.PENDING, null, null, null, null
+        );
+        FamilyJoinRequestJpaEntity entity2 = FamilyJoinRequestJpaEntity.from(pendingRequest);
         familyJoinRequestJpaRepository.save(entity2);
 
         // when

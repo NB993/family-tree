@@ -56,41 +56,42 @@ class FamilyJoinRequestJpaEntityTest {
         LocalDateTime modifiedAt = LocalDateTime.of(2023, 1, 2, 0, 0);
         Long modifiedBy = 3L;
 
-        FamilyJoinRequestJpaEntity entity = new FamilyJoinRequestJpaEntity();
-        entity.setId(id);
-        entity.setFamilyId(familyId);
-        entity.setRequesterId(requesterId);
-        entity.setStatus(status);
-        entity.setDeleted(false);
-        entity.setCreatedBy(createdBy);
-        entity.setCreatedAt(createdAt);
-        entity.setModifiedBy(modifiedBy);
-        entity.setModifiedAt(modifiedAt);
+        // JPA 엔티티를 도메인 객체로 변환하여 테스트 설정
+        FamilyJoinRequest domain = FamilyJoinRequest.withId(
+            id, familyId, requesterId, status, createdAt, createdBy, modifiedAt, modifiedBy
+        );
+        FamilyJoinRequestJpaEntity entity = FamilyJoinRequestJpaEntity.from(domain);
 
         // when
-        FamilyJoinRequest domain = entity.toFamilyJoinRequest();
+        FamilyJoinRequest result = entity.toFamilyJoinRequest();
 
         // then
-        assertThat(domain.getId()).isEqualTo(id);
-        assertThat(domain.getFamilyId()).isEqualTo(familyId);
-        assertThat(domain.getRequesterId()).isEqualTo(requesterId);
-        assertThat(domain.getStatus()).isEqualTo(status);
-        assertThat(domain.getCreatedAt()).isEqualTo(createdAt);
-        assertThat(domain.getCreatedBy()).isEqualTo(createdBy);
-        assertThat(domain.getModifiedAt()).isEqualTo(modifiedAt);
-        assertThat(domain.getModifiedBy()).isEqualTo(modifiedBy);
+        assertThat(result.getId()).isEqualTo(id);
+        assertThat(result.getFamilyId()).isEqualTo(familyId);
+        assertThat(result.getRequesterId()).isEqualTo(requesterId);
+        assertThat(result.getStatus()).isEqualTo(status);
+        assertThat(result.getCreatedAt()).isEqualTo(createdAt);
+        assertThat(result.getCreatedBy()).isEqualTo(createdBy);
+        assertThat(result.getModifiedAt()).isEqualTo(modifiedAt);
+        assertThat(result.getModifiedBy()).isEqualTo(modifiedBy);
     }
 
     @Test
-    @DisplayName("생성된 엔티티의 deleted 필드는 false로 설정된다")
-    void deleted_field_is_false_by_default() {
+    @DisplayName("새로운 가입 신청을 JPA 엔티티로 변환할 수 있다")
+    void convert_new_request_to_jpa_entity() {
         // given
-        FamilyJoinRequest domain = FamilyJoinRequest.newRequest(1L, 2L);
+        Long familyId = 1L;
+        Long requesterId = 2L;
+        FamilyJoinRequest newRequest = FamilyJoinRequest.newRequest(familyId, requesterId);
 
         // when
-        FamilyJoinRequestJpaEntity entity = FamilyJoinRequestJpaEntity.from(domain);
+        FamilyJoinRequestJpaEntity entity = FamilyJoinRequestJpaEntity.from(newRequest);
 
         // then
+        assertThat(entity.getId()).isNull();
+        assertThat(entity.getFamilyId()).isEqualTo(familyId);
+        assertThat(entity.getRequesterId()).isEqualTo(requesterId);
+        assertThat(entity.getStatus()).isEqualTo(FamilyJoinRequestStatus.PENDING);
         assertThat(entity.isDeleted()).isFalse();
     }
 }

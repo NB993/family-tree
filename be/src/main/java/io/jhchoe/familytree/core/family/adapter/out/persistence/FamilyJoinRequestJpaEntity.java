@@ -14,13 +14,11 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
 /**
  * Family 가입 신청 정보를 나타내는 JPA 엔티티 클래스입니다.
  */
-@Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("deleted = false")

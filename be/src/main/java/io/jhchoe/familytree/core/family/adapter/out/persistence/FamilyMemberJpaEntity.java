@@ -9,14 +9,12 @@ import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
 /**
  * FamilyMemberEntity 클래스는 FamilyMember 도메인 객체를 데이터베이스에 저장하기 위한 엔티티입니다.
  */
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "family_member")
 public class FamilyMemberJpaEntity extends ModifierBaseEntity {
@@ -132,5 +130,16 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
             getModifiedBy(),
             getModifiedAt()
         );
+    }
+    
+    /**
+     * 테스트 목적으로만 사용되는 상태 설정자 메서드.
+     * 참고: 이 메서드는 테스트에서만 사용되어야 하며, 실제 비즈니스 로직에서는 사용하지 않습니다.
+     * 올바른 상태 변경 방법은 도메인 모델의 메서드를 통해 이루어져야 합니다.
+     *
+     * @param status 설정할 상태
+     */
+    void setStatus(FamilyMemberStatus status) {
+        this.status = status;
     }
 }

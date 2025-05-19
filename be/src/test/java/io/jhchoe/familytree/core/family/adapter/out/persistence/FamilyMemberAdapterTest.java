@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.helper.AdapterTestBase;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -93,16 +94,16 @@ class FamilyMemberAdapterTest extends AdapterTestBase {
         Long userId = 1L;
         
         // 활성 상태 FamilyMember 생성
-        createFamilyMember(1L, userId, FamilyMemberStatus.ACTIVE);
-        createFamilyMember(2L, userId, FamilyMemberStatus.ACTIVE);
-        createFamilyMember(3L, userId, FamilyMemberStatus.ACTIVE);
+        createFamilyMemberWithStatus(1L, userId, "Member 1", FamilyMemberStatus.ACTIVE);
+        createFamilyMemberWithStatus(2L, userId, "Member 2", FamilyMemberStatus.ACTIVE);
+        createFamilyMemberWithStatus(3L, userId, "Member 3", FamilyMemberStatus.ACTIVE);
         
         // 비활성 상태 FamilyMember 생성
-        createFamilyMember(4L, userId, FamilyMemberStatus.BANNED);
-        createFamilyMember(5L, userId, FamilyMemberStatus.SUSPENDED);
+        createFamilyMemberWithStatus(4L, userId, "Member 4", FamilyMemberStatus.BANNED);
+        createFamilyMemberWithStatus(5L, userId, "Member 5", FamilyMemberStatus.SUSPENDED);
         
         // 다른 사용자의 활성 상태 FamilyMember 생성
-        createFamilyMember(6L, 2L, FamilyMemberStatus.ACTIVE);
+        createFamilyMemberWithStatus(6L, 2L, "Member 6", FamilyMemberStatus.ACTIVE);
 
         // when
         int count = sut.countActiveByUserId(userId);
@@ -136,12 +137,40 @@ class FamilyMemberAdapterTest extends AdapterTestBase {
             .hasMessageContaining("userId must not be null");
     }
     
-    private void createFamilyMember(Long familyId, Long userId, FamilyMemberStatus status) {
-        FamilyMemberJpaEntity entity = new FamilyMemberJpaEntity();
-        entity.setFamilyId(familyId);
-        entity.setUserId(userId);
-        entity.setName("Member " + familyId);
-        entity.setStatus(status);
-        familyMemberJpaRepository.save(entity);
+    /**
+     * 테스트용 헬퍼 메서드: 특정 상태를 가진 FamilyMember를 생성합니다.
+     * 참고: 이 방식은 테스트에서만 사용해야 합니다. 도메인 엔티티를 우선 생성 후 저장하는 것이 
+     * setter 사용을 피하는 정상적인 방법이지만, 테스트 코드에서는 현재 도메인 클래스에 상태를 설정하는
+     * 메서드가 없어 불가피하게 리플렉션을 사용했습니다.
+     */
+    private void createFamilyMemberWithStatus(Long familyId, Long userId, String name, FamilyMemberStatus status) {
+        try {
+            // 일단 기본 FamilyMember 도메인 객체 생성
+            FamilyMember member = FamilyMember.newMember(
+                familyId,
+                userId,
+                name,
+                null, // profileUrl
+                null, // birthday
+                null  // nationality
+            );
+            
+            // 도메인 객체로부터 JPA 엔티티 생성
+            FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
+            
+            // 저장
+            FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
+            
+            // 리플렉션을 사용해 status 필드에 접근하여 설정
+            // 참고: 테스트 코드에서만 사용되어야 하는 방식입니다
+            Field statusField = FamilyMemberJpaEntity.class.getDeclaredField("status");
+            statusField.setAccessible(true);
+            statusField.set(savedEntity, status);
+            
+            // 변경된 엔티티 저장
+            familyMemberJpaRepository.save(savedEntity);
+        } catch (Exception e) {
+            throw new RuntimeException("테스트 데이터 생성 중 오류 발생: " + e.getMessage(), e);
+        }
     }
 }
