@@ -2,19 +2,17 @@ package io.jhchoe.familytree.core.family.adapter.in;
 
 import io.jhchoe.familytree.common.auth.domain.AuthFTUser;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.core.family.adapter.in.request.ModifyFamilyRequest;
 import io.jhchoe.familytree.core.family.adapter.in.response.FindFamilyResponse;
+import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameContainingQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyUseCase;
-import io.jhchoe.familytree.core.family.application.service.FindFamilyService;
 import io.jhchoe.familytree.core.family.domain.Family;
-import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,5 +30,19 @@ public class FindFamilyController {
         Family family = findFamilyUseCase.findById(id);
 
         return ResponseEntity.ok(FindFamilyResponse.from(family));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<FindFamilyResponse>> findFamilies(
+        @AuthFTUser FTUser ftUser,
+        @RequestParam String name
+    ) {
+        FindFamilyByNameContainingQuery query = new FindFamilyByNameContainingQuery(name);
+        List<Family> families = findFamilyUseCase.findByNameContaining(query);
+        List<FindFamilyResponse> results = families.stream()
+            .map(FindFamilyResponse::from)
+            .toList();
+
+        return ResponseEntity.ok(results);
     }
 }
