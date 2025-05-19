@@ -14,7 +14,7 @@
 
 
 ## 개발 단계
-- [ ] application 계층 개발
+- [x] application 계층 개발
 - [ ] adapter/out 계층 개발
 - [ ] adapter/in 계층 개발
 
