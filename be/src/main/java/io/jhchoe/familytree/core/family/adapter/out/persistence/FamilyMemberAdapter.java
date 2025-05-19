@@ -18,4 +18,12 @@ public class FamilyMemberAdapter implements FindFamilyMemberPort {
 
         return familyMemberJpaRepository.existsByFamilyIdAndUserId(familyId, userId);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int countActiveByUserId(Long userId) {
+        return 0;
+    }
 }

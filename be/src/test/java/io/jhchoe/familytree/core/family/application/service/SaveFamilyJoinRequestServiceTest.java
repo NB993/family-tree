@@ -59,7 +59,7 @@ class SaveFamilyJoinRequestServiceTest {
         when(findFamilyMemberPort.existsByFamilyIdAndUserId(familyId, requesterId)).thenReturn(false);
         when(findFamilyJoinRequestPort.findLatestByFamilyIdAndRequesterId(familyId, requesterId))
             .thenReturn(Optional.empty());
-        when(findFamilyJoinRequestPort.countByRequesterIdAndStatusApproved(requesterId)).thenReturn(2);
+        when(findFamilyMemberPort.countActiveByUserId(requesterId)).thenReturn(2);
         when(saveFamilyJoinRequestPort.save(any(FamilyJoinRequest.class))).thenReturn(savedRequestId);
 
         // when
@@ -177,8 +177,7 @@ class SaveFamilyJoinRequestServiceTest {
         when(findFamilyMemberPort.existsByFamilyIdAndUserId(familyId, requesterId)).thenReturn(false);
         when(findFamilyJoinRequestPort.findLatestByFamilyIdAndRequesterId(familyId, requesterId))
             .thenReturn(Optional.of(rejectedRequest));
-        //todo 수정 1
-        when(findFamilyJoinRequestPort.countByRequesterIdAndStatusApproved(requesterId)).thenReturn(2);
+        when(findFamilyMemberPort.countActiveByUserId(requesterId)).thenReturn(2);
         when(saveFamilyJoinRequestPort.save(any(FamilyJoinRequest.class))).thenReturn(savedRequestId);
 
         // when
@@ -201,8 +200,7 @@ class SaveFamilyJoinRequestServiceTest {
         when(findFamilyMemberPort.existsByFamilyIdAndUserId(familyId, requesterId)).thenReturn(false);
         when(findFamilyJoinRequestPort.findLatestByFamilyIdAndRequesterId(familyId, requesterId))
             .thenReturn(Optional.empty());
-        // todo 수정 2
-        when(findFamilyJoinRequestPort.countByRequesterIdAndStatusApproved(requesterId)).thenReturn(5);
+        when(findFamilyMemberPort.countActiveByUserId(requesterId)).thenReturn(6);
 
         // when, then
         assertThatThrownBy(() -> sut.save(command))

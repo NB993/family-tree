@@ -64,10 +64,9 @@ public class SaveFamilyJoinRequestService implements SaveFamilyJoinRequestUseCas
             // 거절된 경우 다시 신청 가능
         }
 
-        // 4. 가입 가능 수 제한 확인
-        //todo 수정 1
-        int approvedCount = findFamilyJoinRequestPort.countByRequesterIdAndStatusApproved(command.getRequesterId());
-        if (approvedCount >= MAX_FAMILY_JOIN_LIMIT) {
+        // 4. 가입 가능 수 제한 확인 - 활성 상태의 FamilyMember 수로 확인
+        int activeMemberCount = findFamilyMemberPort.countActiveByUserId(command.getRequesterId());
+        if (activeMemberCount > MAX_FAMILY_JOIN_LIMIT) {
             throw new FTException(FamilyExceptionCode.EXCEEDED_FAMILY_JOIN_LIMIT);
         }
 
