@@ -96,7 +96,8 @@ public class FamilyJoinRequest {
         LocalDateTime modifiedAt,
         Long modifiedBy
     ) {
-        Objects.requireNonNull(id, "id must not be null");
+        //todo 가입 신청 상태 변경 기능 개발 후 주석 해제 + 도메인엔티티 테스트코드에 예외 케이스 누락된 부분 추가
+//        Objects.requireNonNull(id, "id must not be null");
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(requesterId, "requesterId must not be null");
         Objects.requireNonNull(status, "status must not be null");

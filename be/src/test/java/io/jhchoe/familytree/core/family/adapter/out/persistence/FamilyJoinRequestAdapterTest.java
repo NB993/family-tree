@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequest;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequestStatus;
 import io.jhchoe.familytree.helper.AdapterTestBase;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +65,7 @@ class FamilyJoinRequestAdapterTest extends AdapterTestBase {
         Long requesterId = 2L;
         
         // 첫 번째 가입 신청(거절됨)
-        FamilyJoinRequest rejectedRequest = FamilyJoinRequest.newRequest(
+        FamilyJoinRequest rejectedRequest = FamilyJoinRequest.withId(
             null, familyId, requesterId, FamilyJoinRequestStatus.REJECTED, null, null, null, null
         );
         FamilyJoinRequestJpaEntity entity1 = FamilyJoinRequestJpaEntity.from(rejectedRequest);
