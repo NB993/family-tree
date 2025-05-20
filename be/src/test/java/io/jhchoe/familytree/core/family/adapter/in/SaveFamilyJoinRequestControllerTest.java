@@ -18,11 +18,13 @@ import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaEntity;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaRepository;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaEntity;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
+import io.jhchoe.familytree.core.family.domain.Family;
+import io.jhchoe.familytree.core.family.domain.FamilyJoinRequest;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequestStatus;
+import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
-import java.lang.reflect.Field;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -205,22 +207,10 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
      * 테스트 목적으로만 사용되는 메서드입니다.
      */
     private Long createFamily(String name, String description) {
-        // 테스트 코드 내에서는 리플렉션을 사용하여 엔티티를 생성합니다
-        try {
-            FamilyJpaEntity entity = new FamilyJpaEntity();
-            
-            Field nameField = FamilyJpaEntity.class.getDeclaredField("name");
-            nameField.setAccessible(true);
-            nameField.set(entity, name);
-            
-            Field descriptionField = FamilyJpaEntity.class.getDeclaredField("description");
-            descriptionField.setAccessible(true);
-            descriptionField.set(entity, description);
-            
-            return familyJpaRepository.save(entity).getId();
-        } catch (Exception e) {
-            throw new RuntimeException("테스트 데이터 생성 중 오류 발생: " + e.getMessage(), e);
-        }
+        // 도메인 객체를 먼저 생성한 후 JpaEntity로 변환
+        Family family = Family.newFamily(name, description, null);
+        FamilyJpaEntity entity = FamilyJpaEntity.from(family);
+        return familyJpaRepository.save(entity).getId();
     }
 
     /**
@@ -228,29 +218,13 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
      * 테스트 목적으로만 사용되는 메서드입니다.
      */
     private void createFamilyMember(Long familyId, Long userId, String name, FamilyMemberStatus status) {
-        try {
-            FamilyMemberJpaEntity entity = new FamilyMemberJpaEntity();
-            
-            Field familyIdField = FamilyMemberJpaEntity.class.getDeclaredField("familyId");
-            familyIdField.setAccessible(true);
-            familyIdField.set(entity, familyId);
-            
-            Field userIdField = FamilyMemberJpaEntity.class.getDeclaredField("userId");
-            userIdField.setAccessible(true);
-            userIdField.set(entity, userId);
-            
-            Field nameField = FamilyMemberJpaEntity.class.getDeclaredField("name");
-            nameField.setAccessible(true);
-            nameField.set(entity, name);
-            
-            Field statusField = FamilyMemberJpaEntity.class.getDeclaredField("status");
-            statusField.setAccessible(true);
-            statusField.set(entity, status);
-            
-            familyMemberJpaRepository.save(entity);
-        } catch (Exception e) {
-            throw new RuntimeException("테스트 데이터 생성 중 오류 발생: " + e.getMessage(), e);
-        }
+        // 도메인 객체를 먼저 생성한 후 JpaEntity로 변환
+        FamilyMember familyMember = FamilyMember.existingMember(
+            null, familyId, userId, name, null, null, null, status, 
+            null, null, null, null
+        );
+        FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
+        familyMemberJpaRepository.save(entity);
     }
 
     /**
@@ -258,24 +232,11 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
      * 테스트 목적으로만 사용되는 메서드입니다.
      */
     private void createFamilyJoinRequest(Long familyId, Long requesterId, FamilyJoinRequestStatus status) {
-        try {
-            FamilyJoinRequestJpaEntity entity = new FamilyJoinRequestJpaEntity();
-            
-            Field familyIdField = FamilyJoinRequestJpaEntity.class.getDeclaredField("familyId");
-            familyIdField.setAccessible(true);
-            familyIdField.set(entity, familyId);
-            
-            Field requesterIdField = FamilyJoinRequestJpaEntity.class.getDeclaredField("requesterId");
-            requesterIdField.setAccessible(true);
-            requesterIdField.set(entity, requesterId);
-            
-            Field statusField = FamilyJoinRequestJpaEntity.class.getDeclaredField("status");
-            statusField.setAccessible(true);
-            statusField.set(entity, status);
-            
-            familyJoinRequestJpaRepository.save(entity);
-        } catch (Exception e) {
-            throw new RuntimeException("테스트 데이터 생성 중 오류 발생: " + e.getMessage(), e);
-        }
+        // 도메인 객체를 먼저 생성한 후 JpaEntity로 변환
+        FamilyJoinRequest familyJoinRequest = FamilyJoinRequest.withId(
+            null, familyId, requesterId, status, null, null, null, null
+        );
+        FamilyJoinRequestJpaEntity entity = FamilyJoinRequestJpaEntity.from(familyJoinRequest);
+        familyJoinRequestJpaRepository.save(entity);
     }
 }
