@@ -25,9 +25,11 @@ import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
+import java.lang.reflect.Field;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 @DisplayName("[Acceptance Test] SaveFamilyJoinRequestControllerTest")
 class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
@@ -52,6 +54,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
         // when & then
         given()
             .contentType(JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .body(request)
             .when()
             .post("/api/family-join-requests")
@@ -71,6 +74,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
         // when & then
         given()
             .contentType(JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .body(request)
             .when()
             .post("/api/family-join-requests")
@@ -91,6 +95,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
         // when & then
         given()
             .contentType(JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .body(request)
             .when()
             .post("/api/family-join-requests")
@@ -111,6 +116,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
         // when & then
         given()
             .contentType(JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .body(request)
             .when()
             .post("/api/family-join-requests")
@@ -131,6 +137,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
         // when & then
         given()
             .contentType(JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .body(request)
             .when()
             .post("/api/family-join-requests")
@@ -151,6 +158,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
         // when & then
         given()
             .contentType(JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .body(request)
             .when()
             .post("/api/family-join-requests")
@@ -177,6 +185,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
         // when & then
         given()
             .contentType(JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .body(request)
             .when()
             .post("/api/family-join-requests")
@@ -195,6 +204,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
         // when & then
         given()
             .contentType(JSON)
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
             .body(requestWithNullId)
             .when()
             .post("/api/family-join-requests")
@@ -219,12 +229,38 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
      */
     private void createFamilyMember(Long familyId, Long userId, String name, FamilyMemberStatus status) {
         // 도메인 객체를 먼저 생성한 후 JpaEntity로 변환
-        FamilyMember familyMember = FamilyMember.existingMember(
-            null, familyId, userId, name, null, null, null, status, 
-            null, null, null, null
-        );
-        FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
-        familyMemberJpaRepository.save(entity);
+        // 테스트용으로는 newMember 메서드 사용 후 별도로 상태 설정
+        FamilyMember familyMember = FamilyMember.newMember(familyId, userId, name, null, null, null);
+        
+        // status가 ACTIVE가 아닐 경우 처리 필요
+        if (status != FamilyMemberStatus.ACTIVE) {
+            // 테스트 목적으로 리플렉션을 사용하여 상태 변경
+            try {
+                Field statusField = FamilyMember.class.getDeclaredField("status");
+                statusField.setAccessible(true);
+                
+                // 필드가 final이므로 Field.set()은 동작하지 않을 수 있음
+                // 다른 방법으로 처리해야 할 수도 있음
+                // 여기서는 status가 ACTIVE라고 가정하고 진행
+                
+                FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
+                
+                // JpaEntity에 status 값 설정
+                if (status != FamilyMemberStatus.ACTIVE) {
+                    Field entityStatusField = FamilyMemberJpaEntity.class.getDeclaredField("status");
+                    entityStatusField.setAccessible(true);
+                    entityStatusField.set(entity, status);
+                }
+                
+                familyMemberJpaRepository.save(entity);
+            } catch (Exception e) {
+                throw new RuntimeException("테스트 데이터 생성 중 오류 발생: " + e.getMessage(), e);
+            }
+        } else {
+            // ACTIVE 상태면 그대로 저장
+            FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
+            familyMemberJpaRepository.save(entity);
+        }
     }
 
     /**
@@ -233,9 +269,19 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
      */
     private void createFamilyJoinRequest(Long familyId, Long requesterId, FamilyJoinRequestStatus status) {
         // 도메인 객체를 먼저 생성한 후 JpaEntity로 변환
-        FamilyJoinRequest familyJoinRequest = FamilyJoinRequest.withId(
-            null, familyId, requesterId, status, null, null, null, null
-        );
+        // withId 메서드는 id가 null이어도 된다는 주석이 있으므로 그대로 사용
+        FamilyJoinRequest familyJoinRequest;
+        
+        if (status == FamilyJoinRequestStatus.PENDING) {
+            // PENDING 상태면 newRequest 메서드 사용
+            familyJoinRequest = FamilyJoinRequest.newRequest(familyId, requesterId);
+        } else {
+            // 다른 상태면 withId 메서드 사용
+            familyJoinRequest = FamilyJoinRequest.withId(
+                null, familyId, requesterId, status, null, null, null, null
+            );
+        }
+        
         FamilyJoinRequestJpaEntity entity = FamilyJoinRequestJpaEntity.from(familyJoinRequest);
         familyJoinRequestJpaRepository.save(entity);
     }
