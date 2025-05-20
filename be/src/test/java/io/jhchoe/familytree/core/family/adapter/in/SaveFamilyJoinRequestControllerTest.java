@@ -190,7 +190,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
             .when()
             .post("/api/family-join-requests")
             .then()
-            .status(FORBIDDEN)
+            .status(BAD_REQUEST)
             .body("code", is(FamilyExceptionCode.EXCEEDED_FAMILY_JOIN_LIMIT.getCode()));
     }
 
