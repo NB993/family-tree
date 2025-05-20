@@ -56,5 +56,6 @@
       - 무조건 DB 데이터로 테스트. 기본적으로 mocking 미사용 정책.
       - DB 데이터 생성을 위한 JpaRepository를 @Autowired
       - 절대 `@BeforeEach`에서 테스트용 데이터 생성 하지 말 것. 각 테스트 메서드의 given 영역에서 데이터 생성
+      - GET 메서드 이외에는 `.given()` 다음에 `.postProcessors(SecurityMockMvcRequestPostProcessors.csrf())` 무조건 설정
       - 응답 Body 검증 시 RestAssured 내장 함수 활용
       - API 내에서 발생 가능한 모든 예외 케이스를 테스트 (inbound ~ application ~ oubound 전체 계층)
