@@ -8,3 +8,4 @@
 - 개발 지침 수정
   - [ ] 도메인JpaEntity 작성 규칙 추가
   - [ ] JpaRepository 메서드 작성 규칙 추가
+  - [ ] setter 사용 제한 규칙 추가
