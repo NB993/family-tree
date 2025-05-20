@@ -55,6 +55,7 @@
       - `@DisplayName("[Acceptance Test] {Controller 클래스명}Test")` 선언
       - 무조건 DB 데이터로 테스트. 기본적으로 mocking 미사용 정책.
       - DB 데이터 생성을 위한 JpaRepository를 @Autowired
+      - DB 데이터 생성을 위해 도메인JpaEntity 생성 시 기본생성자 절대 사용 금지. 무조건 도메인 엔티티의 신규 엔티티 생성용 정적 메서드를 이용하여 도메인 엔티티를 생성한 뒤 도메인JpaEntity.from 메서드를 호출하여 생성
       - 절대 `@BeforeEach`에서 테스트용 데이터 생성 하지 말 것. 각 테스트 메서드의 given 영역에서 데이터 생성
       - GET 메서드 이외에는 `.given()` 다음에 `.postProcessors(SecurityMockMvcRequestPostProcessors.csrf())` 무조건 설정
       - 응답 Body 검증 시 RestAssured 내장 함수 활용
