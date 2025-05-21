@@ -19,4 +19,4 @@
 - [x] adapter/in 계층 개발
 
 ## 개발 규칙
-- [feat.md](feat.md) 파일의 `## 개발 규칙`대로 개발
+- [feat.md](../feat.md) 파일의 `## 개발 규칙`대로 개발
