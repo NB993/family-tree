@@ -2,6 +2,7 @@ package io.jhchoe.familytree.core.family.adapter.out.persistence;
 
 import io.jhchoe.familytree.common.support.ModifierBaseEntity;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -42,7 +43,12 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
     private String nationality;
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private FamilyMemberStatus status;
+    
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private FamilyMemberRole role;
 
     /**
      * FamilyMemberEntity 전체 필드를 초기화하는 생성자.
@@ -55,12 +61,13 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
      * @param birthday    생일
      * @param nationality 국적
      * @param status      멤버 상태
+     * @param role        멤버 역할
      * @param createdBy   생성한 사용자 ID
      * @param createdAt   생성 일시
      * @param modifiedBy  수정한 사용자 ID
      * @param modifiedAt  수정 일시
      */
-    private FamilyMemberJpaEntity(
+    public FamilyMemberJpaEntity(
         Long id,
         Long familyId,
         Long userId,
@@ -69,6 +76,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         LocalDateTime birthday,
         String nationality,
         FamilyMemberStatus status,
+        FamilyMemberRole role,
         Long createdBy,
         LocalDateTime createdAt,
         Long modifiedBy,
@@ -83,6 +91,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         this.birthday = birthday;
         this.nationality = nationality;
         this.status = status;
+        this.role = role;
     }
 
     /**
@@ -103,6 +112,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
             familyMember.getBirthday(),
             familyMember.getNationality(),
             familyMember.getStatus(),
+            familyMember.getRole(),
             familyMember.getCreatedBy(),
             familyMember.getCreatedAt(),
             familyMember.getModifiedBy(),
@@ -116,7 +126,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
      * @return 변환된 FamilyMember 객체
      */
     public FamilyMember toFamilyMember() {
-        return FamilyMember.existingMember(
+        return FamilyMember.withRole(
             id,
             familyId,
             userId,
@@ -125,6 +135,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
             birthday,
             nationality,
             status,
+            role != null ? role : FamilyMemberRole.MEMBER, // 기본 역할은 MEMBER
             getCreatedBy(),
             getCreatedAt(),
             getModifiedBy(),
@@ -143,3 +154,4 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         this.status = status;
     }
 }
+

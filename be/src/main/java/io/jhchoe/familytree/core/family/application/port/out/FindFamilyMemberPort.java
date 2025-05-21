@@ -1,24 +1,36 @@
 package io.jhchoe.familytree.core.family.application.port.out;
 
+import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import java.util.List;
+import java.util.Optional;
+
 /**
- * Family 멤버 조회를 위한 포트 인터페이스입니다.
+ * Family 구성원 정보를 조회하기 위한 포트입니다.
  */
 public interface FindFamilyMemberPort {
 
     /**
-     * 특정 사용자가 Family에 이미 가입되어 있는지 확인합니다.
+     * 지정된 ID에 해당하는 Family 구성원을 조회합니다.
      *
-     * @param familyId 확인할 Family ID
-     * @param userId 확인할 사용자 ID
-     * @return 가입되어 있으면 true, 아니면 false
+     * @param id 조회할 FamilyMember ID
+     * @return 조회된 FamilyMember 객체를 포함하는 Optional, 존재하지 않는 경우 빈 Optional 반환
      */
-    boolean existsByFamilyIdAndUserId(Long familyId, Long userId);
+    Optional<FamilyMember> findById(Long id);
     
     /**
-     * 특정 사용자가 활성 상태로 가입한 Family의 수를 조회합니다.
+     * 특정 Family의 모든 구성원을 조회합니다.
      *
-     * @param userId 조회할 사용자 ID
-     * @return 활성 상태로 가입한 Family 수
+     * @param familyId 조회할 Family ID
+     * @return FamilyMember 객체 목록
      */
-    int countActiveByUserId(Long userId);
+    List<FamilyMember> findAllByFamilyId(Long familyId);
+    
+    /**
+     * 현재 사용자가 특정 Family의 구성원인지 확인하고, 구성원 정보를 조회합니다.
+     *
+     * @param familyId Family ID
+     * @param userId 사용자 ID
+     * @return 조회된 FamilyMember 객체를 포함하는 Optional, 존재하지 않는 경우 빈 Optional 반환
+     */
+    Optional<FamilyMember> findByFamilyIdAndUserId(Long familyId, Long userId);
 }

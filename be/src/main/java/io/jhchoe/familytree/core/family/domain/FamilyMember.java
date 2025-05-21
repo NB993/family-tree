@@ -22,6 +22,7 @@ public class FamilyMember {
     private final LocalDateTime birthday;
     private final String nationality;
     private final FamilyMemberStatus status;
+    private final FamilyMemberRole role; // 추가된 필드
     private final Long createdBy;
     private final LocalDateTime createdAt;
     private final Long modifiedBy;
@@ -38,6 +39,7 @@ public class FamilyMember {
      * @param birthday    생일
      * @param nationality 국적
      * @param status      멤버 상태
+     * @param role        멤버 역할
      * @param createdBy   생성한 사용자 ID
      * @param createdAt   생성 일시
      * @param modifiedBy  수정한 사용자 ID
@@ -52,6 +54,7 @@ public class FamilyMember {
         LocalDateTime birthday,
         String nationality,
         FamilyMemberStatus status,
+        FamilyMemberRole role,
         Long createdBy,
         LocalDateTime createdAt,
         Long modifiedBy,
@@ -65,6 +68,7 @@ public class FamilyMember {
         this.birthday = birthday;
         this.nationality = nationality;
         this.status = status;
+        this.role = role;
         this.createdBy = createdBy;
         this.createdAt = createdAt;
         this.modifiedBy = modifiedBy;
@@ -94,7 +98,9 @@ public class FamilyMember {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
 
-        return new FamilyMember(null, familyId, userId, name, profileUrl, birthday, nationality, FamilyMemberStatus.ACTIVE, null, null, null, null);
+        return new FamilyMember(null, familyId, userId, name, profileUrl, birthday, nationality, 
+                              FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 
+                              null, null, null, null);
     }
 
     /**
@@ -132,6 +138,145 @@ public class FamilyMember {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
 
-        return new FamilyMember(id, familyId, userId, name, profileUrl, birthday, nationality, status, createdBy, createdAt, modifiedBy, modifiedAt);
+        // 하위 호환성을 위해 기본 역할은 MEMBER로 설정
+        return new FamilyMember(id, familyId, userId, name, profileUrl, birthday, nationality, 
+                              status, FamilyMemberRole.MEMBER, 
+                              createdBy, createdAt, modifiedBy, modifiedAt);
+    }
+    
+    /**
+     * Family 생성자(OWNER)를 생성합니다.
+     *
+     * @param familyId    가족 ID
+     * @param userId      사용자 ID
+     * @param name        이름
+     * @param profileUrl  프로필 URL
+     * @param birthday    생일
+     * @param nationality 국적
+     * @return 새로운 FamilyMember 인스턴스 (OWNER 역할, ACTIVE 상태)
+     */
+    public static FamilyMember newOwner(
+        Long familyId,
+        Long userId,
+        String name,
+        String profileUrl,
+        LocalDateTime birthday,
+        String nationality
+    ) {
+        Objects.requireNonNull(familyId, "familyId must not be null");
+        Objects.requireNonNull(userId, "userId must not be null");
+
+        return new FamilyMember(
+            null, familyId, userId, name, profileUrl, birthday, nationality, 
+            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER, 
+            null, null, null, null
+        );
+    }
+
+    /**
+     * 역할 정보가 포함된 기존 구성원을 생성합니다.
+     *
+     * @param id          고유 ID
+     * @param familyId    Family ID
+     * @param userId      사용자 ID
+     * @param name        이름
+     * @param profileUrl  프로필 URL
+     * @param birthday    생일
+     * @param nationality 국적
+     * @param status      멤버 상태
+     * @param role        멤버 역할
+     * @param createdBy   생성한 사용자 ID
+     * @param createdAt   생성 일시
+     * @param modifiedBy  수정한 사용자 ID
+     * @param modifiedAt  수정 일시
+     * @return 새로운 FamilyMember 인스턴스 (ID 및 audit 필드 포함)
+     */
+    public static FamilyMember withRole(
+        Long id,
+        Long familyId,
+        Long userId,
+        String name,
+        String profileUrl,
+        LocalDateTime birthday,
+        String nationality,
+        FamilyMemberStatus status,
+        FamilyMemberRole role,
+        Long createdBy,
+        LocalDateTime createdAt,
+        Long modifiedBy,
+        LocalDateTime modifiedAt
+    ) {
+        Objects.requireNonNull(id, "id must not be null");
+        Objects.requireNonNull(familyId, "familyId must not be null");
+        Objects.requireNonNull(userId, "userId must not be null");
+        Objects.requireNonNull(role, "role must not be null");
+
+        return new FamilyMember(
+            id, familyId, userId, name, profileUrl, birthday, nationality, 
+            status, role, createdBy, createdAt, modifiedBy, modifiedAt
+        );
+    }
+    
+    /**
+     * FamilyMember의 역할을 변경합니다.
+     *
+     * @param newRole 변경할 역할
+     * @return 역할이 변경된 새로운 FamilyMember 객체
+     * @throws IllegalStateException OWNER 역할은 변경할 수 없는 경우
+     */
+    public FamilyMember updateRole(FamilyMemberRole newRole) {
+        Objects.requireNonNull(newRole, "role must not be null");
+        
+        // OWNER 역할은 변경할 수 없음
+        if (this.role == FamilyMemberRole.OWNER) {
+            throw new IllegalStateException("Cannot change role of the Family OWNER");
+        }
+        
+        return new FamilyMember(
+            this.id, this.familyId, this.userId, this.name, this.profileUrl, 
+            this.birthday, this.nationality, this.status, newRole, 
+            this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
+        );
+    }
+    
+    /**
+     * FamilyMember의 상태를 변경합니다.
+     *
+     * @param newStatus 변경할 상태
+     * @return 상태가 변경된 새로운 FamilyMember 객체
+     * @throws IllegalStateException OWNER 상태는 변경할 수 없는 경우
+     */
+    public FamilyMember updateStatus(FamilyMemberStatus newStatus) {
+        Objects.requireNonNull(newStatus, "status must not be null");
+        
+        // OWNER 상태는 변경할 수 없음
+        if (this.role == FamilyMemberRole.OWNER) {
+            throw new IllegalStateException("Cannot change status of the Family OWNER");
+        }
+        
+        return new FamilyMember(
+            this.id, this.familyId, this.userId, this.name, this.profileUrl, 
+            this.birthday, this.nationality, newStatus, this.role, 
+            this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
+        );
+    }
+    
+    /**
+     * 해당 역할 이상의 권한을 가지고 있는지 확인합니다.
+     *
+     * @param requiredRole 필요한 최소 역할
+     * @return 요구되는 역할 이상의 권한을 가지고 있으면 true, 그렇지 않으면 false
+     */
+    public boolean hasRoleAtLeast(FamilyMemberRole requiredRole) {
+        return this.role.isAtLeast(requiredRole);
+    }
+    
+    /**
+     * 구성원이 활성 상태인지 확인합니다.
+     *
+     * @return 활성 상태이면 true, 그렇지 않으면 false
+     */
+    public boolean isActive() {
+        return this.status == FamilyMemberStatus.ACTIVE;
     }
 }

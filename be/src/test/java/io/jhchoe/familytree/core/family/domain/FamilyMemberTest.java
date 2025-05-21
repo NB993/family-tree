@@ -4,201 +4,295 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("[Unit Test] FamilyMember")
+@DisplayName("[Unit Test] FamilyMemberTest")
 class FamilyMemberTest {
 
     @Test
-    @DisplayName("newMember 메서드는 familyId와 userId가 유효하면 FamilyMember 객체를 생성해야 한다.")
-    void given_valid_inputs_when_new_member_then_create_family_member() {
+    @DisplayName("newOwner 메서드로 OWNER 역할의 FamilyMember를 생성할 수 있다")
+    void new_owner_creates_family_member_with_owner_role() {
         // given
         Long familyId = 1L;
         Long userId = 2L;
-        String name = "John Doe";
-        String profileUrl = "http://example.com/profile";
+        String name = "홍길동";
+        String profileUrl = "http://example.com/profile.jpg";
         LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
-        String nationality = "US";
-
+        String nationality = "KR";
+        
         // when
-        FamilyMember result = FamilyMember.newMember(familyId, userId, name, profileUrl, birthday, nationality);
-
+        FamilyMember familyMember = FamilyMember.newOwner(
+            familyId, userId, name, profileUrl, birthday, nationality
+        );
+        
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.getFamilyId()).isEqualTo(familyId);
-        assertThat(result.getUserId()).isEqualTo(userId);
-        assertThat(result.getName()).isEqualTo(name);
-        assertThat(result.getProfileUrl()).isEqualTo(profileUrl);
-        assertThat(result.getBirthday()).isEqualTo(birthday);
-        assertThat(result.getNationality()).isEqualTo(nationality);
-        assertThat(result.getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE);
+        assertThat(familyMember.getId()).isNull();
+        assertThat(familyMember.getFamilyId()).isEqualTo(familyId);
+        assertThat(familyMember.getUserId()).isEqualTo(userId);
+        assertThat(familyMember.getName()).isEqualTo(name);
+        assertThat(familyMember.getProfileUrl()).isEqualTo(profileUrl);
+        assertThat(familyMember.getBirthday()).isEqualTo(birthday);
+        assertThat(familyMember.getNationality()).isEqualTo(nationality);
+        assertThat(familyMember.getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE);
+        assertThat(familyMember.getRole()).isEqualTo(FamilyMemberRole.OWNER);
+        assertThat(familyMember.getCreatedBy()).isNull();
+        assertThat(familyMember.getCreatedAt()).isNull();
+        assertThat(familyMember.getModifiedBy()).isNull();
+        assertThat(familyMember.getModifiedAt()).isNull();
     }
-
+    
     @Test
-    @DisplayName("newMember 메서드는 familyId가 null이면 예외를 발생시켜야 한다.")
-    void given_null_family_id_when_new_member_then_throw_exception() {
-        // given
-        Long familyId = null;
-        Long userId = 2L;
-        String name = "John Doe";
-        String profileUrl = "http://example.com/profile";
-        LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
-        String nationality = "US";
-
-        // when & then
-        assertThatThrownBy(() -> FamilyMember.newMember(familyId, userId, name, profileUrl, birthday, nationality))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("familyId must not be null");
-    }
-
-    @Test
-    @DisplayName("newMember 메서드는 userId가 null이면 예외를 발생시켜야 한다.")
-    void given_null_user_id_when_new_member_then_throw_exception() {
-        // given
-        Long familyId = 1L;
-        Long userId = null;
-        String name = "John Doe";
-        String profileUrl = "http://example.com/profile";
-        LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
-        String nationality = "US";
-
-        // when & then
-        assertThatThrownBy(() -> FamilyMember.newMember(familyId, userId, name, profileUrl, birthday, nationality))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("userId must not be null");
-    }
-
-    @Test
-    @DisplayName("newMember 메서드는 optional 필드(name, profileUrl, birthday, nationality)가 null이어도 FamilyMember 객체를 생성해야 한다.")
-    void given_null_optional_fields_when_new_member_then_create_family_member() {
+    @DisplayName("newMember 메서드로 MEMBER 역할의 FamilyMember를 생성할 수 있다")
+    void new_member_creates_family_member_with_member_role() {
         // given
         Long familyId = 1L;
         Long userId = 2L;
-
+        String name = "홍길동";
+        String profileUrl = "http://example.com/profile.jpg";
+        LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
+        String nationality = "KR";
+        
         // when
-        FamilyMember result = FamilyMember.newMember(familyId, userId, null, null, null, null);
-
+        FamilyMember familyMember = FamilyMember.newMember(
+            familyId, userId, name, profileUrl, birthday, nationality
+        );
+        
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.getFamilyId()).isEqualTo(familyId);
-        assertThat(result.getUserId()).isEqualTo(userId);
-        assertThat(result.getName()).isNull();
-        assertThat(result.getProfileUrl()).isNull();
-        assertThat(result.getBirthday()).isNull();
-        assertThat(result.getNationality()).isNull();
+        assertThat(familyMember.getId()).isNull();
+        assertThat(familyMember.getFamilyId()).isEqualTo(familyId);
+        assertThat(familyMember.getUserId()).isEqualTo(userId);
+        assertThat(familyMember.getName()).isEqualTo(name);
+        assertThat(familyMember.getProfileUrl()).isEqualTo(profileUrl);
+        assertThat(familyMember.getBirthday()).isEqualTo(birthday);
+        assertThat(familyMember.getNationality()).isEqualTo(nationality);
+        assertThat(familyMember.getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE);
+        assertThat(familyMember.getRole()).isEqualTo(FamilyMemberRole.MEMBER);
+        assertThat(familyMember.getCreatedBy()).isNull();
+        assertThat(familyMember.getCreatedAt()).isNull();
+        assertThat(familyMember.getModifiedBy()).isNull();
+        assertThat(familyMember.getModifiedAt()).isNull();
     }
-
+    
     @Test
-    @DisplayName("existingMember 메서드는 유효한 모든 필드로 FamilyMember 객체를 생성해야 한다.")
-    void given_valid_inputs_when_existing_member_then_create_family_member() {
-        // given
-        Long id = 1L;
-        Long familyId = 1L;
-        Long userId = 2L;
-        String name = "John Doe";
-        String profileUrl = "http://example.com/profile";
-        LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
-        String nationality = "US";
-        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
-        Long createdBy = 3L;
-        LocalDateTime createdAt = LocalDateTime.now();
-        Long modifiedBy = 4L;
-        LocalDateTime modifiedAt = LocalDateTime.now();
-
-        // when
-        FamilyMember result = FamilyMember.existingMember(id, familyId, userId, name, profileUrl, birthday, nationality,
-            status, createdBy, createdAt, modifiedBy, modifiedAt);
-
-        // then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(id);
-        assertThat(result.getFamilyId()).isEqualTo(familyId);
-        assertThat(result.getUserId()).isEqualTo(userId);
-        assertThat(result.getName()).isEqualTo(name);
-        assertThat(result.getProfileUrl()).isEqualTo(profileUrl);
-        assertThat(result.getBirthday()).isEqualTo(birthday);
-        assertThat(result.getNationality()).isEqualTo(nationality);
-        assertThat(result.getStatus()).isEqualTo(status);
-        assertThat(result.getCreatedBy()).isEqualTo(createdBy);
-        assertThat(result.getCreatedAt()).isEqualTo(createdAt);
-        assertThat(result.getModifiedBy()).isEqualTo(modifiedBy);
-        assertThat(result.getModifiedAt()).isEqualTo(modifiedAt);
-    }
-
-    @Test
-    @DisplayName("existingMember 메서드는 id가 null이면 예외를 발생시켜야 한다.")
-    void given_null_id_when_existing_member_then_throw_exception() {
-        // given
-        Long id = null;
-        Long familyId = 1L;
-        Long userId = 2L;
-        String name = "John Doe";
-        String profileUrl = "http://example.com/profile";
-        LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
-        String nationality = "US";
-        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
-        Long createdBy = null;
-        LocalDateTime createdAt = null;
-        Long modifiedBy = null;
-        LocalDateTime modifiedAt = null;
-
-        // when & then
-        assertThatThrownBy(
-            () -> FamilyMember.existingMember(id, familyId, userId, name, profileUrl, birthday, nationality, status,
-                createdBy, createdAt, modifiedBy, modifiedAt))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("id must not be null");
-    }
-
-    @Test
-    @DisplayName("existingMember 메서드는 familyId가 null이면 예외를 발생시켜야 한다.")
-    void given_null_familyId_when_existing_member_then_throw_exception() {
-        // given
-        Long id = 1L;
-        Long familyId = null;
-        Long userId = 2L;
-        String name = "John Doe";
-        String profileUrl = "http://example.com/profile";
-        LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
-        String nationality = "US";
-        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
-        Long createdBy = null;
-        LocalDateTime createdAt = null;
-        Long modifiedBy = null;
-        LocalDateTime modifiedAt = null;
-
-        // when & then
-        assertThatThrownBy(
-            () -> FamilyMember.existingMember(id, familyId, userId, name, profileUrl, birthday, nationality, status,
-                createdBy, createdAt, modifiedBy, modifiedAt))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("familyId must not be null");
-    }
-
-    @Test
-    @DisplayName("existingMember 메서드는 userId가 null이면 예외를 발생시켜야 한다.")
-    void given_null_userId_when_existing_member_then_throw_exception() {
+    @DisplayName("existingMember 메서드로 기존 ID가 있는 FamilyMember를 생성할 수 있다")
+    void existing_member_creates_family_member_with_id() {
         // given
         Long id = 1L;
         Long familyId = 2L;
-        Long userId = null;
-        String name = "John Doe";
-        String profileUrl = "http://example.com/profile";
+        Long userId = 3L;
+        String name = "홍길동";
+        String profileUrl = "http://example.com/profile.jpg";
         LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
-        String nationality = "US";
+        String nationality = "KR";
         FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
-        Long createdBy = null;
-        LocalDateTime createdAt = null;
-        Long modifiedBy = null;
-        LocalDateTime modifiedAt = null;
-
+        Long createdBy = 4L;
+        LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
+        Long modifiedBy = 5L;
+        LocalDateTime modifiedAt = LocalDateTime.now();
+        
+        // when
+        FamilyMember familyMember = FamilyMember.existingMember(
+            id, familyId, userId, name, profileUrl, birthday, nationality, 
+            status, createdBy, createdAt, modifiedBy, modifiedAt
+        );
+        
+        // then
+        assertThat(familyMember.getId()).isEqualTo(id);
+        assertThat(familyMember.getFamilyId()).isEqualTo(familyId);
+        assertThat(familyMember.getUserId()).isEqualTo(userId);
+        assertThat(familyMember.getName()).isEqualTo(name);
+        assertThat(familyMember.getProfileUrl()).isEqualTo(profileUrl);
+        assertThat(familyMember.getBirthday()).isEqualTo(birthday);
+        assertThat(familyMember.getNationality()).isEqualTo(nationality);
+        assertThat(familyMember.getStatus()).isEqualTo(status);
+        // existingMember()는 기본적으로 MEMBER 역할을 부여함 (하위 호환성 유지)
+        assertThat(familyMember.getRole()).isEqualTo(FamilyMemberRole.MEMBER);
+        assertThat(familyMember.getCreatedBy()).isEqualTo(createdBy);
+        assertThat(familyMember.getCreatedAt()).isEqualTo(createdAt);
+        assertThat(familyMember.getModifiedBy()).isEqualTo(modifiedBy);
+        assertThat(familyMember.getModifiedAt()).isEqualTo(modifiedAt);
+    }
+    
+    @Test
+    @DisplayName("withRole 메서드로 역할이 명시된 FamilyMember를 생성할 수 있다")
+    void with_role_creates_family_member_with_specified_role() {
+        // given
+        Long id = 1L;
+        Long familyId = 2L;
+        Long userId = 3L;
+        String name = "홍길동";
+        String profileUrl = "http://example.com/profile.jpg";
+        LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
+        String nationality = "KR";
+        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
+        FamilyMemberRole role = FamilyMemberRole.ADMIN;
+        Long createdBy = 4L;
+        LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
+        Long modifiedBy = 5L;
+        LocalDateTime modifiedAt = LocalDateTime.now();
+        
+        // when
+        FamilyMember familyMember = FamilyMember.withRole(
+            id, familyId, userId, name, profileUrl, birthday, nationality, 
+            status, role, createdBy, createdAt, modifiedBy, modifiedAt
+        );
+        
+        // then
+        assertThat(familyMember.getId()).isEqualTo(id);
+        assertThat(familyMember.getFamilyId()).isEqualTo(familyId);
+        assertThat(familyMember.getUserId()).isEqualTo(userId);
+        assertThat(familyMember.getName()).isEqualTo(name);
+        assertThat(familyMember.getProfileUrl()).isEqualTo(profileUrl);
+        assertThat(familyMember.getBirthday()).isEqualTo(birthday);
+        assertThat(familyMember.getNationality()).isEqualTo(nationality);
+        assertThat(familyMember.getStatus()).isEqualTo(status);
+        assertThat(familyMember.getRole()).isEqualTo(role);
+        assertThat(familyMember.getCreatedBy()).isEqualTo(createdBy);
+        assertThat(familyMember.getCreatedAt()).isEqualTo(createdAt);
+        assertThat(familyMember.getModifiedBy()).isEqualTo(modifiedBy);
+        assertThat(familyMember.getModifiedAt()).isEqualTo(modifiedAt);
+    }
+    
+    @Test
+    @DisplayName("updateRole 메서드로 FamilyMember의 역할을 변경할 수 있다")
+    void update_role_changes_family_member_role() {
+        // given
+        FamilyMember member = FamilyMember.withRole(
+            1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
+            LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
+            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+            4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+        );
+        FamilyMemberRole newRole = FamilyMemberRole.ADMIN;
+        
+        // when
+        FamilyMember updatedMember = member.updateRole(newRole);
+        
+        // then
+        assertThat(updatedMember.getRole()).isEqualTo(newRole);
+        // 다른 필드는 변경되지 않아야 함
+        assertThat(updatedMember.getId()).isEqualTo(member.getId());
+        assertThat(updatedMember.getFamilyId()).isEqualTo(member.getFamilyId());
+        assertThat(updatedMember.getUserId()).isEqualTo(member.getUserId());
+        assertThat(updatedMember.getName()).isEqualTo(member.getName());
+        assertThat(updatedMember.getProfileUrl()).isEqualTo(member.getProfileUrl());
+        assertThat(updatedMember.getBirthday()).isEqualTo(member.getBirthday());
+        assertThat(updatedMember.getNationality()).isEqualTo(member.getNationality());
+        assertThat(updatedMember.getStatus()).isEqualTo(member.getStatus());
+        assertThat(updatedMember.getCreatedBy()).isEqualTo(member.getCreatedBy());
+        assertThat(updatedMember.getCreatedAt()).isEqualTo(member.getCreatedAt());
+        assertThat(updatedMember.getModifiedBy()).isEqualTo(member.getModifiedBy());
+        assertThat(updatedMember.getModifiedAt()).isEqualTo(member.getModifiedAt());
+    }
+    
+    @Test
+    @DisplayName("OWNER 역할은 변경할 수 없다")
+    void cannot_change_owner_role() {
+        // given
+        FamilyMember owner = FamilyMember.withRole(
+            1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
+            LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
+            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
+            4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+        );
+        FamilyMemberRole newRole = FamilyMemberRole.ADMIN;
+        
         // when & then
-        assertThatThrownBy(
-            () -> FamilyMember.existingMember(id, familyId, userId, name, profileUrl, birthday, nationality, status,
-                createdBy, createdAt, modifiedBy, modifiedAt))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("userId must not be null");
+        assertThatThrownBy(() -> {
+            owner.updateRole(newRole);
+        }).isInstanceOf(IllegalStateException.class)
+          .hasMessageContaining("Cannot change role of the Family OWNER");
+    }
+    
+    @Test
+    @DisplayName("updateStatus 메서드로 FamilyMember의 상태를 변경할 수 있다")
+    void update_status_changes_family_member_status() {
+        // given
+        FamilyMember member = FamilyMember.withRole(
+            1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
+            LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
+            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+            4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+        );
+        FamilyMemberStatus newStatus = FamilyMemberStatus.SUSPENDED;
+        
+        // when
+        FamilyMember updatedMember = member.updateStatus(newStatus);
+        
+        // then
+        assertThat(updatedMember.getStatus()).isEqualTo(newStatus);
+        // 다른 필드는 변경되지 않아야 함
+        assertThat(updatedMember.getId()).isEqualTo(member.getId());
+        assertThat(updatedMember.getFamilyId()).isEqualTo(member.getFamilyId());
+        assertThat(updatedMember.getUserId()).isEqualTo(member.getUserId());
+        assertThat(updatedMember.getName()).isEqualTo(member.getName());
+        assertThat(updatedMember.getProfileUrl()).isEqualTo(member.getProfileUrl());
+        assertThat(updatedMember.getBirthday()).isEqualTo(member.getBirthday());
+        assertThat(updatedMember.getNationality()).isEqualTo(member.getNationality());
+        assertThat(updatedMember.getRole()).isEqualTo(member.getRole());
+        assertThat(updatedMember.getCreatedBy()).isEqualTo(member.getCreatedBy());
+        assertThat(updatedMember.getCreatedAt()).isEqualTo(member.getCreatedAt());
+        assertThat(updatedMember.getModifiedBy()).isEqualTo(member.getModifiedBy());
+        assertThat(updatedMember.getModifiedAt()).isEqualTo(member.getModifiedAt());
+    }
+    
+    @Test
+    @DisplayName("OWNER 상태는 변경할 수 없다")
+    void cannot_change_owner_status() {
+        // given
+        FamilyMember owner = FamilyMember.withRole(
+            1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
+            LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
+            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
+            4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+        );
+        FamilyMemberStatus newStatus = FamilyMemberStatus.SUSPENDED;
+        
+        // when & then
+        assertThatThrownBy(() -> {
+            owner.updateStatus(newStatus);
+        }).isInstanceOf(IllegalStateException.class)
+          .hasMessageContaining("Cannot change status of the Family OWNER");
+    }
+    
+    @Test
+    @DisplayName("hasRoleAtLeast 메서드로 특정 역할 이상의 권한을 가지고 있는지 확인할 수 있다")
+    void has_role_at_least_checks_if_member_has_required_role() {
+        // given
+        FamilyMember owner = FamilyMember.newOwner(1L, 2L, "Owner", "", null, "");
+        FamilyMember admin = FamilyMember.withRole(3L, 1L, 4L, "Admin", "", null, "", 
+            FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN, null, null, null, null);
+        FamilyMember member = FamilyMember.newMember(1L, 5L, "Member", "", null, "");
+        
+        // when & then
+        assertThat(owner.hasRoleAtLeast(FamilyMemberRole.OWNER)).isTrue();
+        assertThat(owner.hasRoleAtLeast(FamilyMemberRole.ADMIN)).isTrue();
+        assertThat(owner.hasRoleAtLeast(FamilyMemberRole.MEMBER)).isTrue();
+        
+        assertThat(admin.hasRoleAtLeast(FamilyMemberRole.OWNER)).isFalse();
+        assertThat(admin.hasRoleAtLeast(FamilyMemberRole.ADMIN)).isTrue();
+        assertThat(admin.hasRoleAtLeast(FamilyMemberRole.MEMBER)).isTrue();
+        
+        assertThat(member.hasRoleAtLeast(FamilyMemberRole.OWNER)).isFalse();
+        assertThat(member.hasRoleAtLeast(FamilyMemberRole.ADMIN)).isFalse();
+        assertThat(member.hasRoleAtLeast(FamilyMemberRole.MEMBER)).isTrue();
+    }
+    
+    @Test
+    @DisplayName("isActive 메서드로 구성원이 활성 상태인지 확인할 수 있다")
+    void is_active_checks_if_member_is_active() {
+        // given
+        FamilyMember activeMember = FamilyMember.withRole(1L, 2L, 3L, "Active", "", null, "", 
+            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, null, null, null, null);
+        FamilyMember suspendedMember = FamilyMember.withRole(4L, 2L, 5L, "Suspended", "", null, "", 
+            FamilyMemberStatus.SUSPENDED, FamilyMemberRole.MEMBER, null, null, null, null);
+        FamilyMember bannedMember = FamilyMember.withRole(6L, 2L, 7L, "Banned", "", null, "", 
+            FamilyMemberStatus.BANNED, FamilyMemberRole.MEMBER, null, null, null, null);
+        
+        // when & then
+        assertThat(activeMember.isActive()).isTrue();
+        assertThat(suspendedMember.isActive()).isFalse();
+        assertThat(bannedMember.isActive()).isFalse();
     }
 }
