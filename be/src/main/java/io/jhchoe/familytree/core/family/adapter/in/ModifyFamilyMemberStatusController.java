@@ -1,10 +1,10 @@
 package io.jhchoe.familytree.core.family.adapter.in;
 
 import io.jhchoe.familytree.common.support.ApiResponse;
-import io.jhchoe.familytree.core.family.adapter.in.request.UpdateFamilyMemberStatusRequest;
-import io.jhchoe.familytree.core.family.adapter.in.response.UpdateFamilyMemberStatusResponse;
-import io.jhchoe.familytree.core.family.application.port.in.UpdateFamilyMemberStatusCommand;
-import io.jhchoe.familytree.core.family.application.port.in.UpdateFamilyMemberStatusUseCase;
+import io.jhchoe.familytree.core.family.adapter.in.request.ModifyFamilyMemberStatusRequest;
+import io.jhchoe.familytree.core.family.adapter.in.response.ModifyFamilyMemberStatusResponse;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberStatusCommand;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberStatusUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,14 +12,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 구성원 상태 관리 API 컨트롤러입니다.
+ * 구성원 상태 변경 API 컨트롤러입니다.
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/families/{familyId}/members")
-public class FamilyMemberStatusController {
+public class ModifyFamilyMemberStatusController {
 
-    private final UpdateFamilyMemberStatusUseCase updateFamilyMemberStatusUseCase;
+    private final ModifyFamilyMemberStatusUseCase modifyFamilyMemberStatusUseCase;
     
     /**
      * 구성원의 상태를 변경합니다.
@@ -31,16 +31,16 @@ public class FamilyMemberStatusController {
      * @return 변경 결과 응답
      */
     @PutMapping("/{memberId}/status")
-    public ApiResponse<UpdateFamilyMemberStatusResponse> updateMemberStatus(
+    public ApiResponse<ModifyFamilyMemberStatusResponse> modifyMemberStatus(
         @PathVariable Long familyId,
         @PathVariable Long memberId,
-        @Valid @RequestBody UpdateFamilyMemberStatusRequest request,
+        @Valid @RequestBody ModifyFamilyMemberStatusRequest request,
         @AuthenticationPrincipal OAuth2User user
     ) {
         Long userId = Long.valueOf(user.getName());
         
-        Long updatedMemberId = updateFamilyMemberStatusUseCase.updateStatus(
-            new UpdateFamilyMemberStatusCommand(
+        Long updatedMemberId = modifyFamilyMemberStatusUseCase.modifyStatus(
+            new ModifyFamilyMemberStatusCommand(
                 familyId,
                 memberId,
                 userId,
@@ -49,6 +49,6 @@ public class FamilyMemberStatusController {
             )
         );
         
-        return ApiResponse.ok(new UpdateFamilyMemberStatusResponse(updatedMemberId));
+        return ApiResponse.ok(new ModifyFamilyMemberStatusResponse(updatedMemberId));
     }
 }

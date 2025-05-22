@@ -136,7 +136,7 @@ class AnnouncementServiceTest {
         
         assertThatThrownBy(() -> announcementService.save(command))
             .isInstanceOf(FTException.class)
-            .hasFieldOrPropertyWithValue("exceptionCode", FamilyExceptionCode.NOT_AUTHORIZED);
+            .hasFieldOrPropertyWithValue("exceptionCodeType", FamilyExceptionCode.NOT_AUTHORIZED);
         
         verify(saveAnnouncementPort, never()).save(any(Announcement.class));
     }
@@ -202,7 +202,7 @@ class AnnouncementServiceTest {
         
         assertThatThrownBy(() -> announcementService.findAll(query))
             .isInstanceOf(FTException.class)
-            .hasFieldOrPropertyWithValue("exceptionCode", FamilyExceptionCode.NOT_FAMILY_MEMBER);
+            .hasFieldOrPropertyWithValue("exceptionCodeType", FamilyExceptionCode.NOT_FAMILY_MEMBER);
     }
 
     @Test
@@ -312,7 +312,7 @@ class AnnouncementServiceTest {
         
         assertThatThrownBy(() -> announcementService.delete(command))
             .isInstanceOf(FTException.class)
-            .hasFieldOrPropertyWithValue("exceptionCode", FamilyExceptionCode.NOT_AUTHORIZED);
+            .hasFieldOrPropertyWithValue("exceptionCodeType", FamilyExceptionCode.NOT_AUTHORIZED);
         
         verify(saveAnnouncementPort, never()).deleteById(announcementId);
     }
@@ -343,7 +343,7 @@ class AnnouncementServiceTest {
         
         assertThatThrownBy(() -> announcementService.delete(command))
             .isInstanceOf(FTException.class)
-            .hasFieldOrPropertyWithValue("exceptionCode", FamilyExceptionCode.NOT_AUTHORIZED);
+            .hasFieldOrPropertyWithValue("exceptionCodeType", FamilyExceptionCode.NOT_AUTHORIZED);
         
         verify(saveAnnouncementPort, never()).deleteById(announcementId);
     }
@@ -376,7 +376,7 @@ class AnnouncementServiceTest {
         
         assertThatThrownBy(() -> announcementService.delete(command))
             .isInstanceOf(FTException.class)
-            .hasFieldOrPropertyWithValue("exceptionCode", FamilyExceptionCode.ANNOUNCEMENT_NOT_FOUND);
+            .hasFieldOrPropertyWithValue("exceptionCodeType", FamilyExceptionCode.ANNOUNCEMENT_NOT_FOUND);
         
         verify(saveAnnouncementPort, never()).deleteById(announcementId);
     }

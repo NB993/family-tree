@@ -1,9 +1,10 @@
 package io.jhchoe.familytree.core.family.application.port.in;
 
+import java.util.Objects;
 import lombok.Getter;
 
 /**
- * 구성원 역할 조회를 위한 쿼리 객체입니다.
+ * Family 구성원 역할 조회를 위한 쿼리 클래스입니다.
  */
 @Getter
 public class FindFamilyMembersRoleQuery {
@@ -15,28 +16,25 @@ public class FindFamilyMembersRoleQuery {
      * 구성원 역할 조회 쿼리 객체를 생성합니다.
      *
      * @param familyId      Family ID
-     * @param currentUserId 현재 로그인한 사용자 ID
+     * @param currentUserId 현재 요청하는 사용자 ID
      */
-    public FindFamilyMembersRoleQuery(
-        Long familyId,
-        Long currentUserId
-    ) {
-        validateFamilyId(familyId);
-        validateCurrentUserId(currentUserId);
+    public FindFamilyMembersRoleQuery(Long familyId, Long currentUserId) {
+        this.familyId = Objects.requireNonNull(familyId, "familyId must not be null");
+        this.currentUserId = Objects.requireNonNull(currentUserId, "currentUserId must not be null");
         
-        this.familyId = familyId;
-        this.currentUserId = currentUserId;
+        validate();
     }
     
-    private void validateFamilyId(Long familyId) {
-        if (familyId == null || familyId <= 0) {
-            throw new IllegalArgumentException("유효한 Family ID가 필요합니다.");
+    /**
+     * 쿼리 객체의 유효성을 검증합니다.
+     */
+    private void validate() {
+        if (familyId <= 0) {
+            throw new IllegalArgumentException("familyId must be positive");
         }
-    }
-    
-    private void validateCurrentUserId(Long currentUserId) {
-        if (currentUserId == null || currentUserId <= 0) {
-            throw new IllegalArgumentException("유효한 현재 사용자 ID가 필요합니다.");
+        
+        if (currentUserId <= 0) {
+            throw new IllegalArgumentException("currentUserId must be positive");
         }
     }
 }

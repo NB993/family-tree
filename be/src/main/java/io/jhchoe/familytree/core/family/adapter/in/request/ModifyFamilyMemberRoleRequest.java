@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-public class UpdateFamilyMemberRoleRequest {
+public class ModifyFamilyMemberRoleRequest {
     
     @NotNull(message = "변경할 역할은 필수입니다.")
     private FamilyMemberRole role;
@@ -20,7 +20,7 @@ public class UpdateFamilyMemberRoleRequest {
      *
      * @param role 변경할 역할
      */
-    public UpdateFamilyMemberRoleRequest(FamilyMemberRole role) {
+    public ModifyFamilyMemberRoleRequest(FamilyMemberRole role) {
         this.role = role;
     }
 }

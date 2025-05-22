@@ -1,37 +1,34 @@
 package io.jhchoe.familytree.core.family.application.service;
 
 import io.jhchoe.familytree.common.exception.FTException;
-import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMembersRoleQuery;
-import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMembersRoleUseCase;
-import io.jhchoe.familytree.core.family.application.port.in.UpdateFamilyMemberRoleCommand;
-import io.jhchoe.familytree.core.family.application.port.in.UpdateFamilyMemberRoleUseCase;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberRoleCommand;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberRoleUseCase;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
-import io.jhchoe.familytree.core.family.application.port.out.UpdateFamilyMemberPort;
+import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyMemberPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
-import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Family 구성원 역할 관리를 위한 서비스 클래스입니다.
+ * Family 구성원 역할 변경을 담당하는 서비스 클래스입니다.
  */
 @Service
 @RequiredArgsConstructor
-public class FamilyMemberRoleService implements UpdateFamilyMemberRoleUseCase, FindFamilyMembersRoleUseCase {
+public class ModifyFamilyMemberRoleService implements ModifyFamilyMemberRoleUseCase {
 
     private final FindFamilyMemberPort findFamilyMemberPort;
-    private final UpdateFamilyMemberPort updateFamilyMemberPort;
+    private final ModifyFamilyMemberPort modifyFamilyMemberPort;
     
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional
-    public Long updateRole(UpdateFamilyMemberRoleCommand command) {
+    public Long modifyRole(ModifyFamilyMemberRoleCommand command) {
         Objects.requireNonNull(command, "command must not be null");
         
         // 1. 현재 사용자가 해당 Family의 구성원인지 확인하고 역할 검증
@@ -58,26 +55,9 @@ public class FamilyMemberRoleService implements UpdateFamilyMemberRoleUseCase, F
             FamilyMember updatedMember = targetMember.updateRole(command.getNewRole());
             
             // 6. 저장
-            return updateFamilyMemberPort.update(updatedMember);
+            return modifyFamilyMemberPort.modify(updatedMember);
         } catch (IllegalStateException e) {
             throw new FTException(FamilyExceptionCode.CANNOT_CHANGE_OWNER_ROLE);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public List<FamilyMember> findAllByFamilyId(FindFamilyMembersRoleQuery query) {
-        Objects.requireNonNull(query, "query must not be null");
-        
-        // 1. 현재 사용자가 해당 Family의 구성원인지 확인
-        findFamilyMemberPort.findByFamilyIdAndUserId(
-                query.getFamilyId(), query.getCurrentUserId())
-            .orElseThrow(() -> new FTException(FamilyExceptionCode.NOT_FAMILY_MEMBER));
-        
-        // 2. 구성원 목록 조회
-        return findFamilyMemberPort.findAllByFamilyId(query.getFamilyId());
     }
 }

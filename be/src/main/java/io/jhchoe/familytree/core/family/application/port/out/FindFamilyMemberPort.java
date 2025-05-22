@@ -10,6 +10,23 @@ import java.util.Optional;
 public interface FindFamilyMemberPort {
 
     /**
+     * 특정 Family와 사용자 ID로 구성원 존재 여부를 확인합니다.
+     *
+     * @param familyId Family ID
+     * @param userId 사용자 ID
+     * @return 존재하면 true, 그렇지 않으면 false
+     */
+    boolean existsByFamilyIdAndUserId(Long familyId, Long userId);
+
+    /**
+     * 특정 사용자의 활성 Family 구성원 수를 조회합니다.
+     *
+     * @param userId 사용자 ID
+     * @return 활성 Family 구성원 수
+     */
+    int countActiveByUserId(Long userId);
+
+    /**
      * 지정된 ID에 해당하는 Family 구성원을 조회합니다.
      *
      * @param id 조회할 FamilyMember ID

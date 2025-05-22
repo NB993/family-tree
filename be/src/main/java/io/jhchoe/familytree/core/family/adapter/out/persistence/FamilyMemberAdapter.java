@@ -1,7 +1,7 @@
 package io.jhchoe.familytree.core.family.adapter.out.persistence;
 
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
-import io.jhchoe.familytree.core.family.application.port.out.UpdateFamilyMemberPort;
+import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyMemberPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class FamilyMemberAdapter implements FindFamilyMemberPort, UpdateFamilyMemberPort {
+public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMemberPort {
 
     private final FamilyMemberJpaRepository familyMemberJpaRepository;
 
@@ -82,7 +82,7 @@ public class FamilyMemberAdapter implements FindFamilyMemberPort, UpdateFamilyMe
      * {@inheritDoc}
      */
     @Override
-    public Long update(FamilyMember familyMember) {
+    public Long modify(FamilyMember familyMember) {
         Objects.requireNonNull(familyMember, "familyMember must not be null");
         Objects.requireNonNull(familyMember.getId(), "familyMember.id must not be null");
         

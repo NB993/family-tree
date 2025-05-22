@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-public class UpdateFamilyMemberStatusRequest {
+public class ModifyFamilyMemberStatusRequest {
     
     @NotNull(message = "변경할 상태는 필수입니다.")
     private FamilyMemberStatus status;
@@ -23,7 +23,7 @@ public class UpdateFamilyMemberStatusRequest {
      * @param status 변경할 상태
      * @param reason 변경 사유
      */
-    public UpdateFamilyMemberStatusRequest(FamilyMemberStatus status, String reason) {
+    public ModifyFamilyMemberStatusRequest(FamilyMemberStatus status, String reason) {
         this.status = status;
         this.reason = reason;
     }

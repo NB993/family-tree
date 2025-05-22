@@ -1,6 +1,8 @@
 package io.jhchoe.familytree.core.family.adapter.out.persistence;
 
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +26,21 @@ public interface FamilyMemberJpaRepository extends JpaRepository<FamilyMemberJpa
      * @return 활성 상태로 가입한 Family 수
      */
     int countByUserIdAndStatus(Long userId, FamilyMemberStatus status);
+    
+    /**
+     * 특정 Family의 특정 사용자 구성원을 조회합니다.
+     *
+     * @param familyId Family ID
+     * @param userId 사용자 ID
+     * @return 조회된 FamilyMember 엔티티
+     */
+    Optional<FamilyMemberJpaEntity> findByFamilyIdAndUserId(Long familyId, Long userId);
+    
+    /**
+     * 특정 Family의 모든 구성원을 조회합니다.
+     *
+     * @param familyId Family ID
+     * @return FamilyMember 엔티티 목록
+     */
+    List<FamilyMemberJpaEntity> findAllByFamilyId(Long familyId);
 }

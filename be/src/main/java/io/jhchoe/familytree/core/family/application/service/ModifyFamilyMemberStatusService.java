@@ -1,11 +1,11 @@
 package io.jhchoe.familytree.core.family.application.service;
 
 import io.jhchoe.familytree.common.exception.FTException;
-import io.jhchoe.familytree.core.family.application.port.in.UpdateFamilyMemberStatusCommand;
-import io.jhchoe.familytree.core.family.application.port.in.UpdateFamilyMemberStatusUseCase;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberStatusCommand;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberStatusUseCase;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
+import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.SaveFamilyMemberStatusHistoryPort;
-import io.jhchoe.familytree.core.family.application.port.out.UpdateFamilyMemberPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatusHistory;
@@ -16,14 +16,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Family 구성원 상태 관리를 위한 서비스 클래스입니다.
+ * Family 구성원 상태 변경을 담당하는 서비스 클래스입니다.
  */
 @Service
 @RequiredArgsConstructor
-public class FamilyMemberStatusService implements UpdateFamilyMemberStatusUseCase {
+public class ModifyFamilyMemberStatusService implements ModifyFamilyMemberStatusUseCase {
 
     private final FindFamilyMemberPort findFamilyMemberPort;
-    private final UpdateFamilyMemberPort updateFamilyMemberPort;
+    private final ModifyFamilyMemberPort modifyFamilyMemberPort;
     private final SaveFamilyMemberStatusHistoryPort saveFamilyMemberStatusHistoryPort;
     
     /**
@@ -31,7 +31,7 @@ public class FamilyMemberStatusService implements UpdateFamilyMemberStatusUseCas
      */
     @Override
     @Transactional
-    public Long updateStatus(UpdateFamilyMemberStatusCommand command) {
+    public Long modifyStatus(ModifyFamilyMemberStatusCommand command) {
         Objects.requireNonNull(command, "command must not be null");
         
         // 1. 현재 사용자가 해당 Family의 구성원인지 확인하고 역할 검증
@@ -74,7 +74,7 @@ public class FamilyMemberStatusService implements UpdateFamilyMemberStatusUseCas
             saveFamilyMemberStatusHistoryPort.save(history);
             
             // 8. 저장
-            return updateFamilyMemberPort.update(updatedMember);
+            return modifyFamilyMemberPort.modify(updatedMember);
         } catch (IllegalStateException e) {
             throw new FTException(FamilyExceptionCode.CANNOT_CHANGE_OWNER_STATUS);
         }
