@@ -171,7 +171,13 @@ public class Announcement {
 - FamilyMember와 FamilyMemberStatusHistory: 1:N 관계
 - Family와 Announcement: 1:N 관계
 
-## 기능 구현을 위한 주요 컴포넌트
+## 개발 및 QA 단계
+- [x] 1단계: 코어 계층 개발
+- [ ] 1단계: 코어 계층 QA 검증
+- [ ] 2단계: 인프라 계층 개발
+- [ ] 2단계: 인프라 계층 QA 검증
+- [ ] 3단계: 프레젠테이션 계층 개발
+- [ ] 3단계: 프레젠테이션 계층 QA 검증
 
 ### 1. 인바운드 포트 (UseCase)
 
@@ -369,7 +375,7 @@ public class FamilyMemberAuthorizationValidator {
    - FamilyMemberStatusHistory 및 Announcement 테이블 생성
 
 2. **단계적 배포 전략**:
-   - 1단계: 도메인 모델 및 DB 스키마 변경
+   - 1단계: 도메인 모델, 애플리케이션 서비스 및 DB 스키마 변경
    - 2단계: 권한 관리 API 배포
    - 3단계: 상태 관리 및 공지사항 API 배포
 
