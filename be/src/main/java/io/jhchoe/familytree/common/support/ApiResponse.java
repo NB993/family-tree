@@ -31,6 +31,35 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true, data, null);
     }
 
+    /**
+     * 성공 응답을 생성합니다 (ok 별칭).
+     *
+     * @param data 응답 데이터
+     * @return 성공 ApiResponse
+     */
+    public static <T> ApiResponse<T> ok(final T data) {
+        return success(data);
+    }
+
+    /**
+     * 성공 응답을 생성합니다 (데이터 없음).
+     *
+     * @return 성공 ApiResponse
+     */
+    public static ApiResponse<Void> ok() {
+        return OK;
+    }
+
+    /**
+     * 생성 성공 응답을 생성합니다.
+     *
+     * @param data 응답 데이터
+     * @return 생성 성공 ApiResponse
+     */
+    public static <T> ApiResponse<T> created(final T data) {
+        return success(data);
+    }
+
     public static <T> ApiResponse<T> error(final io.jhchoe.familytree.common.exception.ErrorResponse error) {
         return new ApiResponse<>(false, null, error);
     }
