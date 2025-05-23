@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.adapter.in;
 
-import io.jhchoe.familytree.common.support.ApiResponse;
+import io.jhchoe.familytree.common.auth.domain.AuthFTUser;
+import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.core.family.adapter.in.request.SaveAnnouncementRequest;
 import io.jhchoe.familytree.core.family.adapter.in.response.AnnouncementResponse;
 import io.jhchoe.familytree.core.family.adapter.in.response.SaveAnnouncementResponse;
@@ -10,8 +11,8 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -36,23 +37,23 @@ public class AnnouncementController {
      * @return 공지사항 목록 응답
      */
     @GetMapping
-    public ApiResponse<List<AnnouncementResponse>> getAnnouncements(
+    public ResponseEntity<List<AnnouncementResponse>> getAnnouncements(
         @PathVariable Long familyId,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
-        @AuthenticationPrincipal OAuth2User user
+        @AuthFTUser FTUser user
     ) {
-        Long userId = Long.valueOf(user.getName());
+        Long userId = user.getId();
         
         List<Announcement> announcements = findAnnouncementUseCase.findAll(
             new FindAnnouncementQuery(familyId, userId, page, size)
         );
         
-        return ApiResponse.ok(
-            announcements.stream()
-                .map(AnnouncementResponse::from)
-                .collect(Collectors.toList())
-        );
+        List<AnnouncementResponse> responses = announcements.stream()
+            .map(AnnouncementResponse::from)
+            .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(responses);
     }
     
     /**
@@ -64,18 +65,18 @@ public class AnnouncementController {
      * @return 공지사항 응답
      */
     @GetMapping("/{announcementId}")
-    public ApiResponse<AnnouncementResponse> getAnnouncement(
+    public ResponseEntity<AnnouncementResponse> getAnnouncement(
         @PathVariable Long familyId,
         @PathVariable Long announcementId,
-        @AuthenticationPrincipal OAuth2User user
+        @AuthFTUser FTUser user
     ) {
-        Long userId = Long.valueOf(user.getName());
+        Long userId = user.getId();
         
         Announcement announcement = findAnnouncementUseCase.findById(
             new FindAnnouncementByIdQuery(announcementId, familyId, userId)
         );
         
-        return ApiResponse.ok(AnnouncementResponse.from(announcement));
+        return ResponseEntity.ok(AnnouncementResponse.from(announcement));
     }
     
     /**
@@ -87,12 +88,12 @@ public class AnnouncementController {
      * @return 저장 결과 응답
      */
     @PostMapping
-    public ApiResponse<SaveAnnouncementResponse> saveAnnouncement(
+    public ResponseEntity<SaveAnnouncementResponse> saveAnnouncement(
         @PathVariable Long familyId,
         @Valid @RequestBody SaveAnnouncementRequest request,
-        @AuthenticationPrincipal OAuth2User user
+        @AuthFTUser FTUser user
     ) {
-        Long userId = Long.valueOf(user.getName());
+        Long userId = user.getId();
         
         Long savedId = saveAnnouncementUseCase.save(
             new SaveAnnouncementCommand(
@@ -103,7 +104,9 @@ public class AnnouncementController {
             )
         );
         
-        return ApiResponse.created(new SaveAnnouncementResponse(savedId));
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(new SaveAnnouncementResponse(savedId));
     }
     
     /**
@@ -115,17 +118,17 @@ public class AnnouncementController {
      * @return 삭제 결과 응답
      */
     @DeleteMapping("/{announcementId}")
-    public ApiResponse<Void> deleteAnnouncement(
+    public ResponseEntity<Void> deleteAnnouncement(
         @PathVariable Long familyId,
         @PathVariable Long announcementId,
-        @AuthenticationPrincipal OAuth2User user
+        @AuthFTUser FTUser user
     ) {
-        Long userId = Long.valueOf(user.getName());
+        Long userId = user.getId();
         
         deleteAnnouncementUseCase.delete(
             new DeleteAnnouncementCommand(announcementId, familyId, userId)
         );
         
-        return ApiResponse.ok();
+        return ResponseEntity.noContent().build();
     }
 }
