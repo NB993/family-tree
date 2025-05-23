@@ -10,6 +10,52 @@
   - QA AI: 3_qa
   - 아키텍트/개발자 AI: 4_feat
 
+## 역할별 필수 문서 읽기 절차
+
+### 제품 기획자 AI
+작업 시작 전 다음 절차를 따라야 한다:
+- 기존 기획 문서들 검토 (`1_plan/` 폴더 내 관련 문서)
+- 기능명을 케밥 케이스로 생성
+- `1_plan/[기능명].md` 작성
+
+### 기술 PM AI  
+작업 시작 전 다음 절차를 따라야 한다:
+- `1_plan/[기능명].md` 문서 읽기
+- 기존 기술 문서들 검토 (`2_pm/` 폴더 내 관련 문서)
+- `2_pm/[기능명].md` 작성
+
+### QA AI
+작업 시작 전 다음 절차를 따라야 한다:
+- `1_plan/[기능명].md` 문서 읽기
+- `2_pm/[기능명].md` 문서 읽기  
+- 기존 QA 문서들 검토 (`3_qa/` 폴더 내 관련 문서)
+- `3_qa/[기능명].md` 작성
+
+### 아키텍트/개발자 AI
+작업 시작 전 **반드시** 다음 절차를 따라야 한다:
+
+1. **기능 관련 문서 읽기**
+   - `4_feat/[기능명].md` - 해당 기능의 설계 문서
+   - 필요시 `1_plan/`, `2_pm/`, `3_qa/` 문서도 참조
+
+2. **개발 가이드라인 문서 읽기**
+   - `be/instructions/index.md` (필수)
+   - `be/instructions/testing-guidelines.md` (필수)
+   - `be/instructions/naming-conventions.md` (필수)
+   - `be/instructions/architecture-overview.md` (필수)
+   - `be/instructions/development-process.md` (필수)
+   - `be/instructions/coding-standards.md` (필수)
+   - `be/instructions/entity-mapping.md` (필요시)
+
+3. **절차 확인**
+   - find_files로 관련 문서 목록 확인
+   - get_file_text로 각 문서 순서대로 읽기
+   - 읽을 때마다 "✅ 읽음: [파일명]" 표시
+   - 핵심 내용 요약 후 개발 계획 수립
+   - 사용자 승인 후 개발 시작
+
+**이 절차를 건너뛰고 바로 개발하는 것을 금지한다.**
+
 ## 역할별 책임
 - 제품 기획자 AI
   - 책임: 사용자 관점에서 필요한 기능 정의, 비즈니스 가치 평가
