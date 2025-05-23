@@ -4,10 +4,13 @@ import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.helper.AdapterTestBase;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -137,6 +140,176 @@ class FamilyMemberAdapterTest extends AdapterTestBase {
             .hasMessageContaining("userId must not be null");
     }
     
+    @Test
+    @DisplayName("findById 메서드는 ID로 FamilyMember를 조회할 수 있다")
+    void return_family_member_when_exists_by_id() {
+        // given
+        FamilyMember member = FamilyMember.newOwner(1L, 1L, "Owner", null, null, "KR");
+        FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
+        FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
+        
+        // when
+        Optional<FamilyMember> result = sut.findById(savedEntity.getId());
+        
+        // then
+        assertThat(result).isPresent();
+        assertThat(result.get().getId()).isEqualTo(savedEntity.getId());
+        assertThat(result.get().getName()).isEqualTo("Owner");
+        assertThat(result.get().getRole()).isEqualTo(FamilyMemberRole.OWNER);
+    }
+    
+    @Test
+    @DisplayName("findById 메서드는 존재하지 않는 ID로 조회 시 빈 Optional을 반환한다")
+    void return_empty_optional_when_not_exists_by_id() {
+        // given
+        Long nonExistentId = 999L;
+        
+        // when
+        Optional<FamilyMember> result = sut.findById(nonExistentId);
+        
+        // then
+        assertThat(result).isEmpty();
+    }
+    
+    @Test
+    @DisplayName("findByFamilyIdAndUserId 메서드는 Family ID와 User ID로 구성원을 조회할 수 있다")
+    void return_family_member_when_exists_by_family_id_and_user_id() {
+        // given
+        Long familyId = 1L;
+        Long userId = 1L;
+        FamilyMember member = FamilyMember.newMember(familyId, userId, "Member", null, null, "KR");
+        FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
+        familyMemberJpaRepository.save(entity);
+        
+        // when
+        Optional<FamilyMember> result = sut.findByFamilyIdAndUserId(familyId, userId);
+        
+        // then
+        assertThat(result).isPresent();
+        assertThat(result.get().getFamilyId()).isEqualTo(familyId);
+        assertThat(result.get().getUserId()).isEqualTo(userId);
+        assertThat(result.get().getRole()).isEqualTo(FamilyMemberRole.MEMBER);
+    }
+    
+    @Test
+    @DisplayName("findAllByFamilyId 메서드는 Family ID로 모든 구성원을 조회할 수 있다")
+    void return_all_family_members_by_family_id() {
+        // given
+        Long familyId = 1L;
+        
+        // OWNER 생성
+        FamilyMember owner = FamilyMember.newOwner(familyId, 1L, "Owner", null, null, "KR");
+        familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(owner));
+        
+        // ADMIN 생성  
+        FamilyMember admin = FamilyMember.withRole(familyId, 2L, "Admin", null, null, "KR", FamilyMemberRole.ADMIN);
+        familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(admin));
+        
+        // MEMBER 생성
+        FamilyMember member = FamilyMember.newMember(familyId, 3L, "Member", null, null, "KR");
+        familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member));
+        
+        // 다른 Family의 구성원
+        FamilyMember otherFamilyMember = FamilyMember.newMember(2L, 4L, "Other", null, null, "KR");
+        familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(otherFamilyMember));
+        
+        // when
+        List<FamilyMember> result = sut.findAllByFamilyId(familyId);
+        
+        // then
+        assertThat(result).hasSize(3);
+        assertThat(result)
+            .extracting(FamilyMember::getName)
+            .containsExactlyInAnyOrder("Owner", "Admin", "Member");
+        assertThat(result)
+            .extracting(FamilyMember::getRole)
+            .containsExactlyInAnyOrder(FamilyMemberRole.OWNER, FamilyMemberRole.ADMIN, FamilyMemberRole.MEMBER);
+    }
+    
+    @Test
+    @DisplayName("modify 메서드는 FamilyMember의 역할을 성공적으로 변경한다")
+    void modify_family_member_role_successfully() {
+        // given
+        FamilyMember member = FamilyMember.newMember(1L, 1L, "Member", null, null, "KR");
+        FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
+        FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
+        
+        // 역할을 ADMIN으로 변경
+        FamilyMember memberWithRole = FamilyMember.existingMember(
+            savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(),
+            savedEntity.getName(), savedEntity.getProfileUrl(), savedEntity.getBirthday(),
+            savedEntity.getNationality(), savedEntity.getStatus(), FamilyMemberRole.ADMIN,
+            savedEntity.getCreatedBy(), savedEntity.getCreatedAt(), savedEntity.getModifiedBy(), savedEntity.getModifiedAt()
+        );
+        
+        // when
+        Long modifiedId = sut.modify(memberWithRole);
+        
+        // then
+        assertThat(modifiedId).isEqualTo(savedEntity.getId());
+        
+        // 변경 확인
+        FamilyMemberJpaEntity modifiedEntity = familyMemberJpaRepository.findById(modifiedId).orElseThrow();
+        assertThat(modifiedEntity.getRole()).isEqualTo(FamilyMemberRole.ADMIN);
+        assertThat(modifiedEntity.getName()).isEqualTo("Member"); // 다른 필드는 변경되지 않아야 함
+    }
+    
+    @Test
+    @DisplayName("modify 메서드는 FamilyMember의 상태를 성공적으로 변경한다")
+    void modify_family_member_status_successfully() {
+        // given
+        FamilyMember member = FamilyMember.newMember(1L, 1L, "Member", null, null, "KR");
+        FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
+        FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
+        
+        // 상태를 SUSPENDED로 변경
+        FamilyMember memberWithStatus = FamilyMember.existingMember(
+            savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(),
+            savedEntity.getName(), savedEntity.getProfileUrl(), savedEntity.getBirthday(),
+            savedEntity.getNationality(), FamilyMemberStatus.SUSPENDED, savedEntity.getRole(),
+            savedEntity.getCreatedBy(), savedEntity.getCreatedAt(), savedEntity.getModifiedBy(), savedEntity.getModifiedAt()
+        );
+        
+        // when
+        Long modifiedId = sut.modify(memberWithStatus);
+        
+        // then
+        assertThat(modifiedId).isEqualTo(savedEntity.getId());
+        
+        // 변경 확인
+        FamilyMemberJpaEntity modifiedEntity = familyMemberJpaRepository.findById(modifiedId).orElseThrow();
+        assertThat(modifiedEntity.getStatus()).isEqualTo(FamilyMemberStatus.SUSPENDED);
+        assertThat(modifiedEntity.getRole()).isEqualTo(FamilyMemberRole.MEMBER); // 다른 필드는 변경되지 않아야 함
+    }
+    
+    @Test
+    @DisplayName("modify 메서드는 ID가 null인 FamilyMember로 호출 시 예외를 발생시킨다")
+    void throw_exception_when_modify_with_null_id() {
+        // given
+        FamilyMember memberWithoutId = FamilyMember.newMember(1L, 1L, "Member", null, null, "KR");
+        
+        // when & then
+        assertThatThrownBy(() -> sut.modify(memberWithoutId))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessageContaining("familyMember.id must not be null");
+    }
+    
+    @Test
+    @DisplayName("modify 메서드는 존재하지 않는 ID로 호출 시 예외를 발생시킨다")
+    void throw_exception_when_modify_with_non_existent_id() {
+        // given
+        FamilyMember memberWithNonExistentId = FamilyMember.existingMember(
+            999L, 1L, 1L, "Member", null, null, "KR",
+            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+            null, null, null, null
+        );
+        
+        // when & then
+        assertThatThrownBy(() -> sut.modify(memberWithNonExistentId))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Member not found: 999");
+    }
+
     /**
      * 테스트용 헬퍼 메서드: 특정 상태를 가진 FamilyMember를 생성합니다.
      * 참고: 이 방식은 테스트에서만 사용해야 합니다. 도메인 엔티티를 우선 생성 후 저장하는 것이 

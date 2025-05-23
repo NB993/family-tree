@@ -57,7 +57,7 @@ class ModifyFamilyMemberStatusServiceTest {
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
 
-        // 대상 구성원 (ACTIVE -> INACTIVE로 변경할 대상)
+        // 대상 구성원 (ACTIVE -> SUSPENDED로 변경할 대상)
         FamilyMember targetMember = createFamilyMember(targetMemberId, familyId, 4L, FamilyMemberRole.MEMBER);
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.of(targetMember));
@@ -279,7 +279,7 @@ class ModifyFamilyMemberStatusServiceTest {
      * 테스트용 FamilyMember 객체를 생성합니다.
      */
     private FamilyMember createFamilyMember(Long id, Long familyId, Long userId, FamilyMemberRole role) {
-        return FamilyMember.withRole(
+        return FamilyMember.existingMember(
             id, familyId, userId, "Test User", "profile.jpg",
             LocalDateTime.now(), "KR", FamilyMemberStatus.ACTIVE, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now()

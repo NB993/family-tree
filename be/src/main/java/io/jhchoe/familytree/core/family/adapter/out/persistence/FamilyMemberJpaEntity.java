@@ -126,7 +126,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
      * @return 변환된 FamilyMember 객체
      */
     public FamilyMember toFamilyMember() {
-        return FamilyMember.withRole(
+        return FamilyMember.existingMember(
             id,
             familyId,
             userId,

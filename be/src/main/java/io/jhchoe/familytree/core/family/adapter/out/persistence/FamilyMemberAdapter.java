@@ -118,20 +118,6 @@ public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMe
      * @return 변환된 도메인 엔티티
      */
     private FamilyMember mapToDomainEntity(FamilyMemberJpaEntity jpaEntity) {
-        return FamilyMember.withRole(
-                jpaEntity.getId(),
-                jpaEntity.getFamilyId(),
-                jpaEntity.getUserId(),
-                jpaEntity.getName(),
-                jpaEntity.getProfileUrl(),
-                jpaEntity.getBirthday(),
-                jpaEntity.getNationality(),
-                jpaEntity.getStatus(),
-                jpaEntity.getRole(),
-                jpaEntity.getCreatedBy(),
-                jpaEntity.getCreatedAt(),
-                jpaEntity.getModifiedBy(),
-                jpaEntity.getModifiedAt()
-        );
+        return jpaEntity.toFamilyMember();
     }
 }

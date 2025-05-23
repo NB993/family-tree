@@ -109,7 +109,7 @@ class FindFamilyMemberRoleServiceTest {
      * 테스트용 FamilyMember 객체를 생성합니다.
      */
     private FamilyMember createFamilyMember(Long id, Long familyId, Long userId, FamilyMemberRole role) {
-        return FamilyMember.withRole(
+        return FamilyMember.existingMember(
             id, familyId, userId, "Test User", "profile.jpg",
             LocalDateTime.now(), "KR", FamilyMemberStatus.ACTIVE, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now()

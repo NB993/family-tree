@@ -94,7 +94,7 @@ class FamilyMemberTest {
         // when
         FamilyMember familyMember = FamilyMember.existingMember(
             id, familyId, userId, name, profileUrl, birthday, nationality, 
-            status, createdBy, createdAt, modifiedBy, modifiedAt
+            status, FamilyMemberRole.MEMBER, createdBy, createdAt, modifiedBy, modifiedAt
         );
         
         // then
@@ -115,50 +115,43 @@ class FamilyMemberTest {
     }
     
     @Test
-    @DisplayName("withRole 메서드로 역할이 명시된 FamilyMember를 생성할 수 있다")
-    void with_role_creates_family_member_with_specified_role() {
+    @DisplayName("withRole 메서드로 역할이 지정된 신규 FamilyMember를 생성할 수 있다")
+    void with_role_creates_new_family_member_with_specified_role() {
         // given
-        Long id = 1L;
         Long familyId = 2L;
         Long userId = 3L;
         String name = "홍길동";
         String profileUrl = "http://example.com/profile.jpg";
         LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
         String nationality = "KR";
-        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
         FamilyMemberRole role = FamilyMemberRole.ADMIN;
-        Long createdBy = 4L;
-        LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
-        Long modifiedBy = 5L;
-        LocalDateTime modifiedAt = LocalDateTime.now();
         
         // when
         FamilyMember familyMember = FamilyMember.withRole(
-            id, familyId, userId, name, profileUrl, birthday, nationality, 
-            status, role, createdBy, createdAt, modifiedBy, modifiedAt
+            familyId, userId, name, profileUrl, birthday, nationality, role
         );
         
         // then
-        assertThat(familyMember.getId()).isEqualTo(id);
+        assertThat(familyMember.getId()).isNull(); // 신규 생성이므로 ID는 null
         assertThat(familyMember.getFamilyId()).isEqualTo(familyId);
         assertThat(familyMember.getUserId()).isEqualTo(userId);
         assertThat(familyMember.getName()).isEqualTo(name);
         assertThat(familyMember.getProfileUrl()).isEqualTo(profileUrl);
         assertThat(familyMember.getBirthday()).isEqualTo(birthday);
         assertThat(familyMember.getNationality()).isEqualTo(nationality);
-        assertThat(familyMember.getStatus()).isEqualTo(status);
+        assertThat(familyMember.getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE); // 기본값
         assertThat(familyMember.getRole()).isEqualTo(role);
-        assertThat(familyMember.getCreatedBy()).isEqualTo(createdBy);
-        assertThat(familyMember.getCreatedAt()).isEqualTo(createdAt);
-        assertThat(familyMember.getModifiedBy()).isEqualTo(modifiedBy);
-        assertThat(familyMember.getModifiedAt()).isEqualTo(modifiedAt);
+        assertThat(familyMember.getCreatedBy()).isNull(); // 신규 생성이므로 audit 필드는 null
+        assertThat(familyMember.getCreatedAt()).isNull();
+        assertThat(familyMember.getModifiedBy()).isNull();
+        assertThat(familyMember.getModifiedAt()).isNull();
     }
     
     @Test
     @DisplayName("updateRole 메서드로 FamilyMember의 역할을 변경할 수 있다")
     void update_role_changes_family_member_role() {
         // given
-        FamilyMember member = FamilyMember.withRole(
+        FamilyMember member = FamilyMember.existingMember(
             1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
@@ -190,7 +183,7 @@ class FamilyMemberTest {
     @DisplayName("OWNER 역할은 변경할 수 없다")
     void cannot_change_owner_role() {
         // given
-        FamilyMember owner = FamilyMember.withRole(
+        FamilyMember owner = FamilyMember.existingMember(
             1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
@@ -209,7 +202,7 @@ class FamilyMemberTest {
     @DisplayName("updateStatus 메서드로 FamilyMember의 상태를 변경할 수 있다")
     void update_status_changes_family_member_status() {
         // given
-        FamilyMember member = FamilyMember.withRole(
+        FamilyMember member = FamilyMember.existingMember(
             1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
@@ -241,7 +234,7 @@ class FamilyMemberTest {
     @DisplayName("OWNER 상태는 변경할 수 없다")
     void cannot_change_owner_status() {
         // given
-        FamilyMember owner = FamilyMember.withRole(
+        FamilyMember owner = FamilyMember.existingMember(
             1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
@@ -261,7 +254,7 @@ class FamilyMemberTest {
     void has_role_at_least_checks_if_member_has_required_role() {
         // given
         FamilyMember owner = FamilyMember.newOwner(1L, 2L, "Owner", "", null, "");
-        FamilyMember admin = FamilyMember.withRole(3L, 1L, 4L, "Admin", "", null, "", 
+        FamilyMember admin = FamilyMember.existingMember(3L, 1L, 4L, "Admin", "", null, "", 
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN, null, null, null, null);
         FamilyMember member = FamilyMember.newMember(1L, 5L, "Member", "", null, "");
         
@@ -283,11 +276,11 @@ class FamilyMemberTest {
     @DisplayName("isActive 메서드로 구성원이 활성 상태인지 확인할 수 있다")
     void is_active_checks_if_member_is_active() {
         // given
-        FamilyMember activeMember = FamilyMember.withRole(1L, 2L, 3L, "Active", "", null, "", 
+        FamilyMember activeMember = FamilyMember.existingMember(1L, 2L, 3L, "Active", "", null, "", 
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, null, null, null, null);
-        FamilyMember suspendedMember = FamilyMember.withRole(4L, 2L, 5L, "Suspended", "", null, "", 
+        FamilyMember suspendedMember = FamilyMember.existingMember(4L, 2L, 5L, "Suspended", "", null, "", 
             FamilyMemberStatus.SUSPENDED, FamilyMemberRole.MEMBER, null, null, null, null);
-        FamilyMember bannedMember = FamilyMember.withRole(6L, 2L, 7L, "Banned", "", null, "", 
+        FamilyMember bannedMember = FamilyMember.existingMember(6L, 2L, 7L, "Banned", "", null, "", 
             FamilyMemberStatus.BANNED, FamilyMemberRole.MEMBER, null, null, null, null);
         
         // when & then

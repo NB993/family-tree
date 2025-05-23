@@ -104,7 +104,7 @@ public class FamilyMember {
     }
 
     /**
-     * 고유 ID를 가지고 있는 FamilyMember 객체를 생성합니다.
+     * 고유 ID를 가지고 있는 기존 FamilyMember 객체를 생성합니다.
      *
      * @param id          고유 ID
      * @param familyId    Family ID
@@ -114,6 +114,7 @@ public class FamilyMember {
      * @param birthday    생일
      * @param nationality 국적
      * @param status      멤버 상태
+     * @param role        멤버 역할
      * @param createdBy   생성한 사용자 ID
      * @param createdAt   생성 일시
      * @param modifiedBy  수정한 사용자 ID
@@ -129,6 +130,7 @@ public class FamilyMember {
         LocalDateTime birthday,
         String nationality,
         FamilyMemberStatus status,
+        FamilyMemberRole role,
         Long createdBy,
         LocalDateTime createdAt,
         Long modifiedBy,
@@ -137,11 +139,10 @@ public class FamilyMember {
         Objects.requireNonNull(id, "id must not be null");
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
+        Objects.requireNonNull(role, "role must not be null");
 
-        // 하위 호환성을 위해 기본 역할은 MEMBER로 설정
         return new FamilyMember(id, familyId, userId, name, profileUrl, birthday, nationality, 
-                              status, FamilyMemberRole.MEMBER, 
-                              createdBy, createdAt, modifiedBy, modifiedAt);
+                              status, role, createdBy, createdAt, modifiedBy, modifiedAt);
     }
     
     /**
@@ -174,46 +175,33 @@ public class FamilyMember {
     }
 
     /**
-     * 역할 정보가 포함된 기존 구성원을 생성합니다.
+     * 역할을 지정하여 신규 Family 구성원을 생성합니다.
      *
-     * @param id          고유 ID
      * @param familyId    Family ID
      * @param userId      사용자 ID
      * @param name        이름
      * @param profileUrl  프로필 URL
      * @param birthday    생일
      * @param nationality 국적
-     * @param status      멤버 상태
      * @param role        멤버 역할
-     * @param createdBy   생성한 사용자 ID
-     * @param createdAt   생성 일시
-     * @param modifiedBy  수정한 사용자 ID
-     * @param modifiedAt  수정 일시
-     * @return 새로운 FamilyMember 인스턴스 (ID 및 audit 필드 포함)
+     * @return 새로운 FamilyMember 인스턴스 (ID 및 audit 필드 없음)
      */
     public static FamilyMember withRole(
-        Long id,
         Long familyId,
         Long userId,
         String name,
         String profileUrl,
         LocalDateTime birthday,
         String nationality,
-        FamilyMemberStatus status,
-        FamilyMemberRole role,
-        Long createdBy,
-        LocalDateTime createdAt,
-        Long modifiedBy,
-        LocalDateTime modifiedAt
+        FamilyMemberRole role
     ) {
-        Objects.requireNonNull(id, "id must not be null");
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
         Objects.requireNonNull(role, "role must not be null");
 
         return new FamilyMember(
-            id, familyId, userId, name, profileUrl, birthday, nationality, 
-            status, role, createdBy, createdAt, modifiedBy, modifiedAt
+            null, familyId, userId, name, profileUrl, birthday, nationality, 
+            FamilyMemberStatus.ACTIVE, role, null, null, null, null
         );
     }
     

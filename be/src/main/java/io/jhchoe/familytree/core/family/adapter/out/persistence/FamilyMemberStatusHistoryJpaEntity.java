@@ -70,7 +70,7 @@ public class FamilyMemberStatusHistoryJpaEntity extends CreatorBaseEntity {
      * @return JPA 엔티티
      */
     public static FamilyMemberStatusHistoryJpaEntity from(FamilyMemberStatusHistory history) {
-        Objects.requireNonNull(history, "history must not be null");
+        Objects.requireNonNull(history, "statusHistory must not be null");
 
         return new FamilyMemberStatusHistoryJpaEntity(
             history.getId(),
