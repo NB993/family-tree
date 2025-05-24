@@ -269,20 +269,33 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
      */
     private void createFamilyJoinRequest(Long familyId, Long requesterId, FamilyJoinRequestStatus status) {
         // 도메인 객체를 먼저 생성한 후 JpaEntity로 변환
-        // withId 메서드는 id가 null이어도 된다는 주석이 있으므로 그대로 사용
         FamilyJoinRequest familyJoinRequest;
         
         if (status == FamilyJoinRequestStatus.PENDING) {
             // PENDING 상태면 newRequest 메서드 사용
             familyJoinRequest = FamilyJoinRequest.newRequest(familyId, requesterId);
         } else {
-            // 다른 상태면 withId 메서드 사용
-            familyJoinRequest = FamilyJoinRequest.withId(
-                null, familyId, requesterId, status, null, null, null, null
-            );
+            // 다른 상태는 newRequest로 생성 후 상태 변경
+            familyJoinRequest = FamilyJoinRequest.newRequest(familyId, requesterId);
         }
         
         FamilyJoinRequestJpaEntity entity = FamilyJoinRequestJpaEntity.from(familyJoinRequest);
-        familyJoinRequestJpaRepository.save(entity);
+        FamilyJoinRequestJpaEntity savedEntity = familyJoinRequestJpaRepository.save(entity);
+        
+        // PENDING이 아닌 경우 상태를 변경하여 다시 저장
+        if (status != FamilyJoinRequestStatus.PENDING) {
+            FamilyJoinRequest updatedRequest = FamilyJoinRequest.withId(
+                savedEntity.getId(),
+                familyId,
+                requesterId,
+                status,
+                savedEntity.getCreatedAt(),
+                savedEntity.getCreatedBy(),
+                savedEntity.getModifiedAt(),
+                savedEntity.getModifiedBy()
+            );
+            FamilyJoinRequestJpaEntity updatedEntity = FamilyJoinRequestJpaEntity.from(updatedRequest);
+            familyJoinRequestJpaRepository.save(updatedEntity);
+        }
     }
 }

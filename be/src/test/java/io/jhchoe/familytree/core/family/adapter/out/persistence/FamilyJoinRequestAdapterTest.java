@@ -66,17 +66,20 @@ class FamilyJoinRequestAdapterTest extends AdapterTestBase {
         Long familyId = 1L;
         Long requesterId = 2L;
         
-        // 첫 번째 가입 신청(거절됨)
-        FamilyJoinRequest rejectedRequest = FamilyJoinRequest.withId(
-            null, familyId, requesterId, FamilyJoinRequestStatus.REJECTED, null, null, null, null
-        );
+        // 첫 번째 가입 신청(거절됨) - 새 신청 생성 후 상태 변경
+        FamilyJoinRequest rejectedRequest = FamilyJoinRequest.newRequest(familyId, requesterId);
         FamilyJoinRequestJpaEntity entity1 = FamilyJoinRequestJpaEntity.from(rejectedRequest);
-        familyJoinRequestJpaRepository.save(entity1);
+        entity1 = familyJoinRequestJpaRepository.save(entity1);
+        
+        // 상태를 REJECTED로 변경하여 다시 저장
+        FamilyJoinRequest rejectedWithId = FamilyJoinRequest.withId(
+            entity1.getId(), familyId, requesterId, FamilyJoinRequestStatus.REJECTED, 
+            entity1.getCreatedAt(), entity1.getCreatedBy(), entity1.getModifiedAt(), entity1.getModifiedBy()
+        );
+        familyJoinRequestJpaRepository.save(FamilyJoinRequestJpaEntity.from(rejectedWithId));
         
         // 두 번째 가입 신청(대기 중)
-        FamilyJoinRequest pendingRequest = FamilyJoinRequest.withId(
-            null, familyId, requesterId, FamilyJoinRequestStatus.PENDING, null, null, null, null
-        );
+        FamilyJoinRequest pendingRequest = FamilyJoinRequest.newRequest(familyId, requesterId);
         FamilyJoinRequestJpaEntity entity2 = FamilyJoinRequestJpaEntity.from(pendingRequest);
         familyJoinRequestJpaRepository.save(entity2);
 
@@ -135,10 +138,7 @@ class FamilyJoinRequestAdapterTest extends AdapterTestBase {
         Long familyId = 1L;
         
         // 가입 신청들을 순차적으로 저장 (시간 간격을 두어 저장)
-        FamilyJoinRequest firstRequest = FamilyJoinRequest.withId(
-            null, familyId, 2L, FamilyJoinRequestStatus.PENDING, 
-            null, null, null, null
-        );
+        FamilyJoinRequest firstRequest = FamilyJoinRequest.newRequest(familyId, 2L);
         FamilyJoinRequestJpaEntity entity1 = FamilyJoinRequestJpaEntity.from(firstRequest);
         familyJoinRequestJpaRepository.save(entity1);
         
@@ -148,10 +148,7 @@ class FamilyJoinRequestAdapterTest extends AdapterTestBase {
             Thread.currentThread().interrupt();
         }
         
-        FamilyJoinRequest secondRequest = FamilyJoinRequest.withId(
-            null, familyId, 3L, FamilyJoinRequestStatus.PENDING, 
-            null, null, null, null
-        );
+        FamilyJoinRequest secondRequest = FamilyJoinRequest.newRequest(familyId, 3L);
         FamilyJoinRequestJpaEntity entity2 = FamilyJoinRequestJpaEntity.from(secondRequest);
         familyJoinRequestJpaRepository.save(entity2);
         
@@ -161,12 +158,17 @@ class FamilyJoinRequestAdapterTest extends AdapterTestBase {
             Thread.currentThread().interrupt();
         }
         
-        FamilyJoinRequest thirdRequest = FamilyJoinRequest.withId(
-            null, familyId, 4L, FamilyJoinRequestStatus.REJECTED, 
-            null, null, null, null
-        );
+        // 세 번째 요청은 거절 상태로 생성
+        FamilyJoinRequest thirdRequest = FamilyJoinRequest.newRequest(familyId, 4L);
         FamilyJoinRequestJpaEntity entity3 = FamilyJoinRequestJpaEntity.from(thirdRequest);
-        familyJoinRequestJpaRepository.save(entity3);
+        entity3 = familyJoinRequestJpaRepository.save(entity3);
+        
+        // 상태를 REJECTED로 변경
+        FamilyJoinRequest rejectedRequest = FamilyJoinRequest.withId(
+            entity3.getId(), familyId, 4L, FamilyJoinRequestStatus.REJECTED, 
+            entity3.getCreatedAt(), entity3.getCreatedBy(), entity3.getModifiedAt(), entity3.getModifiedBy()
+        );
+        familyJoinRequestJpaRepository.save(FamilyJoinRequestJpaEntity.from(rejectedRequest));
 
         // when
         List<FamilyJoinRequest> result = sut.findAllByFamilyId(familyId);
@@ -187,15 +189,11 @@ class FamilyJoinRequestAdapterTest extends AdapterTestBase {
         Long otherFamilyId = 2L;
         
         // 타겟 Family의 가입 신청
-        FamilyJoinRequest targetRequest = FamilyJoinRequest.withId(
-            null, targetFamilyId, 2L, FamilyJoinRequestStatus.PENDING, null, null, null, null
-        );
+        FamilyJoinRequest targetRequest = FamilyJoinRequest.newRequest(targetFamilyId, 2L);
         familyJoinRequestJpaRepository.save(FamilyJoinRequestJpaEntity.from(targetRequest));
         
         // 다른 Family의 가입 신청
-        FamilyJoinRequest otherRequest = FamilyJoinRequest.withId(
-            null, otherFamilyId, 3L, FamilyJoinRequestStatus.PENDING, null, null, null, null
-        );
+        FamilyJoinRequest otherRequest = FamilyJoinRequest.newRequest(otherFamilyId, 3L);
         familyJoinRequestJpaRepository.save(FamilyJoinRequestJpaEntity.from(otherRequest));
 
         // when
@@ -230,5 +228,103 @@ class FamilyJoinRequestAdapterTest extends AdapterTestBase {
         assertThatThrownBy(() -> sut.findAllByFamilyId(nullFamilyId))
             .isInstanceOf(NullPointerException.class)
             .hasMessageContaining("familyId must not be null");
+    }
+
+    @Test
+    @DisplayName("ID로 가입 신청을 조회할 수 있다")
+    void find_by_id_returns_family_join_request_when_exists() {
+        // given
+        FamilyJoinRequest request = FamilyJoinRequest.newRequest(1L, 2L);
+        FamilyJoinRequestJpaEntity entity = FamilyJoinRequestJpaEntity.from(request);
+        FamilyJoinRequestJpaEntity savedEntity = familyJoinRequestJpaRepository.save(entity);
+        Long savedId = savedEntity.getId();
+
+        // when
+        Optional<FamilyJoinRequest> result = sut.findById(savedId);
+
+        // then
+        assertThat(result).isPresent();
+        assertThat(result.get().getId()).isEqualTo(savedId);
+        assertThat(result.get().getFamilyId()).isEqualTo(1L);
+        assertThat(result.get().getRequesterId()).isEqualTo(2L);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 ID로 조회하면 빈 Optional을 반환한다")
+    void find_by_id_returns_empty_when_not_exists() {
+        // given
+        Long nonExistentId = 999L;
+
+        // when
+        Optional<FamilyJoinRequest> result = sut.findById(nonExistentId);
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("findById에서 id가 null이면 예외가 발생한다")
+    void throw_exception_when_id_is_null_in_find_by_id() {
+        // given
+        Long nullId = null;
+
+        // when, then
+        assertThatThrownBy(() -> sut.findById(nullId))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessageContaining("id must not be null");
+    }
+
+    @Test
+    @DisplayName("가입 신청 정보를 업데이트할 수 있다")
+    void update_family_join_request_success() {
+        // given
+        FamilyJoinRequest original = FamilyJoinRequest.newRequest(1L, 2L);
+        FamilyJoinRequestJpaEntity entity = FamilyJoinRequestJpaEntity.from(original);
+        FamilyJoinRequestJpaEntity savedEntity = familyJoinRequestJpaRepository.save(entity);
+        
+        // 승인된 상태로 업데이트할 요청 생성
+        FamilyJoinRequest updatedRequest = FamilyJoinRequest.withId(
+            savedEntity.getId(),
+            1L,
+            2L,
+            FamilyJoinRequestStatus.APPROVED,
+            savedEntity.getCreatedAt(),
+            savedEntity.getCreatedBy(),
+            LocalDateTime.now(), // 처리 시간
+            3L // 처리자 ID
+        );
+
+        // when
+        FamilyJoinRequest result = sut.updateFamilyJoinRequest(updatedRequest);
+
+        // then
+        assertThat(result.getId()).isEqualTo(savedEntity.getId());
+        assertThat(result.getStatus()).isEqualTo(FamilyJoinRequestStatus.APPROVED);
+        assertThat(result.getModifiedBy()).isEqualTo(3L);
+        assertThat(result.getModifiedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("updateFamilyJoinRequest에서 familyJoinRequest가 null이면 예외가 발생한다")
+    void throw_exception_when_family_join_request_is_null_in_update() {
+        // given
+        FamilyJoinRequest nullRequest = null;
+
+        // when, then
+        assertThatThrownBy(() -> sut.updateFamilyJoinRequest(nullRequest))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessageContaining("familyJoinRequest must not be null");
+    }
+
+    @Test
+    @DisplayName("updateFamilyJoinRequest에서 ID가 null이면 예외가 발생한다")
+    void throw_exception_when_id_is_null_in_update() {
+        // given
+        FamilyJoinRequest requestWithoutId = FamilyJoinRequest.newRequest(1L, 2L);
+
+        // when, then
+        assertThatThrownBy(() -> sut.updateFamilyJoinRequest(requestWithoutId))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessageContaining("familyJoinRequest.id must not be null");
     }
 }

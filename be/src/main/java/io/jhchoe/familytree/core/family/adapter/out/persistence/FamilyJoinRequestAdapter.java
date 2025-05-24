@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.adapter.out.persistence;
 
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyJoinRequestPort;
+import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyJoinRequestPort;
 import io.jhchoe.familytree.core.family.application.port.out.SaveFamilyJoinRequestPort;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequest;
 import java.util.List;
@@ -14,9 +15,23 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class FamilyJoinRequestAdapter implements SaveFamilyJoinRequestPort, FindFamilyJoinRequestPort {
+public class FamilyJoinRequestAdapter implements SaveFamilyJoinRequestPort, FindFamilyJoinRequestPort, ModifyFamilyJoinRequestPort {
 
     private final FamilyJoinRequestJpaRepository familyJoinRequestJpaRepository;
+
+    /**
+     * ID로 Family 가입 신청을 조회합니다.
+     *
+     * @param id 조회할 가입 신청 ID
+     * @return 가입 신청 정보를 Optional로 반환
+     */
+    @Override
+    public Optional<FamilyJoinRequest> findById(Long id) {
+        Objects.requireNonNull(id, "id must not be null");
+
+        return familyJoinRequestJpaRepository.findById(id)
+            .map(FamilyJoinRequestJpaEntity::toFamilyJoinRequest);
+    }
 
     /**
      * 가장 최근의 Family 가입 신청을 조회합니다.
@@ -65,5 +80,21 @@ public class FamilyJoinRequestAdapter implements SaveFamilyJoinRequestPort, Find
         FamilyJoinRequestJpaEntity entity = FamilyJoinRequestJpaEntity.from(familyJoinRequest);
         FamilyJoinRequestJpaEntity savedEntity = familyJoinRequestJpaRepository.save(entity);
         return savedEntity.getId();
+    }
+
+    /**
+     * Family 가입 신청 정보를 업데이트합니다.
+     *
+     * @param familyJoinRequest 업데이트할 가입 신청 정보
+     * @return 업데이트된 FamilyJoinRequest 객체
+     */
+    @Override
+    public FamilyJoinRequest updateFamilyJoinRequest(FamilyJoinRequest familyJoinRequest) {
+        Objects.requireNonNull(familyJoinRequest, "familyJoinRequest must not be null");
+        Objects.requireNonNull(familyJoinRequest.getId(), "familyJoinRequest.id must not be null");
+
+        FamilyJoinRequestJpaEntity entity = FamilyJoinRequestJpaEntity.from(familyJoinRequest);
+        FamilyJoinRequestJpaEntity savedEntity = familyJoinRequestJpaRepository.save(entity);
+        return savedEntity.toFamilyJoinRequest();
     }
 }

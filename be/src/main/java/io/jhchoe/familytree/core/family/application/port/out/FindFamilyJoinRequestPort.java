@@ -10,6 +10,14 @@ import java.util.Optional;
 public interface FindFamilyJoinRequestPort {
 
     /**
+     * ID로 Family 가입 신청을 조회합니다.
+     *
+     * @param id 조회할 가입 신청 ID
+     * @return 가입 신청 정보를 Optional로 반환
+     */
+    Optional<FamilyJoinRequest> findById(Long id);
+
+    /**
      * 가장 최근의 Family 가입 신청을 조회합니다.
      *
      * @param familyId 조회할 Family ID

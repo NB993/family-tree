@@ -310,6 +310,59 @@ class FamilyMemberAdapterTest extends AdapterTestBase {
             .hasMessageContaining("Member not found: 999");
     }
 
+    @Test
+    @DisplayName("save 메서드는 새로운 FamilyMember를 저장하고 ID를 반환한다")
+    void save_family_member_successfully() {
+        // given
+        FamilyMember newMember = FamilyMember.newMember(1L, 1L, "New Member", "profile.jpg", null, "KR");
+        
+        // when
+        Long savedId = sut.save(newMember);
+        
+        // then
+        assertThat(savedId).isNotNull();
+        
+        // 저장 확인
+        Optional<FamilyMemberJpaEntity> savedEntity = familyMemberJpaRepository.findById(savedId);
+        assertThat(savedEntity).isPresent();
+        assertThat(savedEntity.get().getName()).isEqualTo("New Member");
+        assertThat(savedEntity.get().getProfileUrl()).isEqualTo("profile.jpg");
+        assertThat(savedEntity.get().getRole()).isEqualTo(FamilyMemberRole.MEMBER);
+        assertThat(savedEntity.get().getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE);
+    }
+
+    @Test
+    @DisplayName("save 메서드는 OWNER 역할의 FamilyMember를 저장할 수 있다")
+    void save_owner_family_member_successfully() {
+        // given
+        FamilyMember owner = FamilyMember.newOwner(1L, 1L, "Owner", null, null, "KR");
+        
+        // when
+        Long savedId = sut.save(owner);
+        
+        // then
+        assertThat(savedId).isNotNull();
+        
+        // 저장 확인
+        Optional<FamilyMemberJpaEntity> savedEntity = familyMemberJpaRepository.findById(savedId);
+        assertThat(savedEntity).isPresent();
+        assertThat(savedEntity.get().getName()).isEqualTo("Owner");
+        assertThat(savedEntity.get().getRole()).isEqualTo(FamilyMemberRole.OWNER);
+        assertThat(savedEntity.get().getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE);
+    }
+
+    @Test
+    @DisplayName("save 메서드는 null FamilyMember로 호출 시 예외를 발생시킨다")
+    void throw_exception_when_save_with_null_member() {
+        // given
+        FamilyMember nullMember = null;
+        
+        // when & then
+        assertThatThrownBy(() -> sut.save(nullMember))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessageContaining("familyMember must not be null");
+    }
+
     /**
      * 테스트용 헬퍼 메서드: 특정 상태를 가진 FamilyMember를 생성합니다.
      * 참고: 이 방식은 테스트에서만 사용해야 합니다. 도메인 엔티티를 우선 생성 후 저장하는 것이 

@@ -14,15 +14,17 @@ public enum FamilyExceptionCode implements ExceptionCodeType {
     JOIN_REQUEST_ALREADY_PENDING("F004", "가입 신청을 처리중이에요.", HttpStatus.CONFLICT),
     EXCEEDED_FAMILY_JOIN_LIMIT("F005", "최대 패밀리 가입 수를 초과했습니다.", HttpStatus.BAD_REQUEST),
     JOIN_REQUEST_REJECTED("F006", "가입 신청이 불가능합니다.", HttpStatus.FORBIDDEN),
-    MEMBER_NOT_FOUND("F007", "해당 구성원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    NOT_AUTHORIZED("F008", "해당 작업을 수행할 권한이 없습니다.", HttpStatus.FORBIDDEN),
-    MEMBER_NOT_ACTIVE("F009", "활성 상태가 아닌 구성원입니다.", HttpStatus.FORBIDDEN),
-    CANNOT_CHANGE_OWNER_ROLE("F010", "Family 소유자의 역할은 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
-    CANNOT_CHANGE_OWNER_STATUS("F011", "Family 소유자의 상태는 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
-    SELF_MODIFICATION_NOT_ALLOWED("F012", "자신의 역할이나 상태는 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
-    ADMIN_MODIFICATION_NOT_ALLOWED("F013", "관리자는 다른 관리자의 상태를 변경할 수 없습니다.", HttpStatus.FORBIDDEN),
-    ANNOUNCEMENT_NOT_FOUND("F014", "존재하지 않는 공지사항입니다.", HttpStatus.NOT_FOUND),
-    INVALID_ANNOUNCEMENT_REQUEST("F015", "잘못된 공지사항 요청입니다.", HttpStatus.BAD_REQUEST);
+    JOIN_REQUEST_NOT_FOUND("F007", "존재하지 않는 가입 신청입니다.", HttpStatus.NOT_FOUND),
+    JOIN_REQUEST_ALREADY_PROCESSED("F008", "이미 처리된 가입 신청입니다.", HttpStatus.BAD_REQUEST),
+    MEMBER_NOT_FOUND("F009", "해당 구성원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    NOT_AUTHORIZED("F010", "해당 작업을 수행할 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    MEMBER_NOT_ACTIVE("F011", "활성 상태가 아닌 구성원입니다.", HttpStatus.FORBIDDEN),
+    CANNOT_CHANGE_OWNER_ROLE("F012", "Family 소유자의 역할은 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    CANNOT_CHANGE_OWNER_STATUS("F013", "Family 소유자의 상태는 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    SELF_MODIFICATION_NOT_ALLOWED("F014", "자신의 역할이나 상태는 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    ADMIN_MODIFICATION_NOT_ALLOWED("F015", "관리자는 다른 관리자의 상태를 변경할 수 없습니다.", HttpStatus.FORBIDDEN),
+    ANNOUNCEMENT_NOT_FOUND("F016", "존재하지 않는 공지사항입니다.", HttpStatus.NOT_FOUND),
+    INVALID_ANNOUNCEMENT_REQUEST("F017", "잘못된 공지사항 요청입니다.", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;

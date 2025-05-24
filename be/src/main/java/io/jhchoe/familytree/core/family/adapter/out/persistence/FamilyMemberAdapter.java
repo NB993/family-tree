@@ -2,6 +2,7 @@ package io.jhchoe.familytree.core.family.adapter.out.persistence;
 
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyMemberPort;
+import io.jhchoe.familytree.core.family.application.port.out.SaveFamilyMemberPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMemberPort {
+public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMemberPort, SaveFamilyMemberPort {
 
     private final FamilyMemberJpaRepository familyMemberJpaRepository;
 
@@ -109,6 +110,20 @@ public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMe
         
         // 저장 및 ID 반환
         return familyMemberJpaRepository.save(updatedEntity).getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long save(FamilyMember familyMember) {
+        Objects.requireNonNull(familyMember, "familyMember must not be null");
+        
+        // 도메인 객체를 JPA 엔티티로 변환
+        FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
+        
+        // 저장 및 ID 반환
+        return familyMemberJpaRepository.save(entity).getId();
     }
     
     /**

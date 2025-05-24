@@ -96,8 +96,7 @@ public class FamilyJoinRequest {
         LocalDateTime modifiedAt,
         Long modifiedBy
     ) {
-        //todo 가입 신청 상태 변경 기능 개발 후 주석 해제 + 도메인엔티티 테스트코드에 예외 케이스 누락된 부분 추가
-//        Objects.requireNonNull(id, "id must not be null");
+        Objects.requireNonNull(id, "id must not be null");
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(requesterId, "requesterId must not be null");
         Objects.requireNonNull(status, "status must not be null");
@@ -109,26 +108,38 @@ public class FamilyJoinRequest {
 
     /**
      * 가입 신청을 승인 상태로 변경한 새 객체를 반환합니다.
+     * modifiedAt과 modifiedBy는 JPA Audit을 통해 자동으로 설정됩니다.
      *
      * @return 승인 상태로 변경된 새 FamilyJoinRequest 객체
      */
     public FamilyJoinRequest approve() {
         return new FamilyJoinRequest(
             this.id, this.familyId, this.requesterId, FamilyJoinRequestStatus.APPROVED,
-            this.createdAt, this.createdBy, this.modifiedAt, this.modifiedBy
+            this.createdAt, this.createdBy, null, null
         );
     }
 
     /**
      * 가입 신청을 거절 상태로 변경한 새 객체를 반환합니다.
+     * modifiedAt과 modifiedBy는 JPA Audit을 통해 자동으로 설정됩니다.
      *
      * @return 거절 상태로 변경된 새 FamilyJoinRequest 객체
      */
     public FamilyJoinRequest reject() {
         return new FamilyJoinRequest(
             this.id, this.familyId, this.requesterId, FamilyJoinRequestStatus.REJECTED,
-            this.createdAt, this.createdBy, this.modifiedAt, this.modifiedBy
+            this.createdAt, this.createdBy, null, null
         );
+    }
+
+    /**
+     * 현재 가입 신청이 처리 가능한 상태인지 확인합니다.
+     * PENDING 상태의 신청만 처리할 수 있습니다.
+     *
+     * @return 처리 가능하면 true, 아니면 false
+     */
+    public boolean canBeProcessed() {
+        return isPending();
     }
 
     /**

@@ -85,6 +85,70 @@ class FamilyJoinRequestTest {
     }
 
     @Test
+    @DisplayName("withId 메서드에서 id가 null이면 예외가 발생한다")
+    void throw_exception_when_id_is_null_in_withId() {
+        // given
+        Long id = null;
+        Long familyId = 1L;
+        Long requesterId = 2L;
+        FamilyJoinRequestStatus status = FamilyJoinRequestStatus.PENDING;
+
+        // when & then
+        assertThatThrownBy(() -> FamilyJoinRequest.withId(
+            id, familyId, requesterId, status, null, null, null, null
+        )).isInstanceOf(NullPointerException.class)
+          .hasMessage("id must not be null");
+    }
+
+    @Test
+    @DisplayName("withId 메서드에서 familyId가 null이면 예외가 발생한다")
+    void throw_exception_when_family_id_is_null_in_withId() {
+        // given
+        Long id = 1L;
+        Long familyId = null;
+        Long requesterId = 2L;
+        FamilyJoinRequestStatus status = FamilyJoinRequestStatus.PENDING;
+
+        // when & then
+        assertThatThrownBy(() -> FamilyJoinRequest.withId(
+            id, familyId, requesterId, status, null, null, null, null
+        )).isInstanceOf(NullPointerException.class)
+          .hasMessage("familyId must not be null");
+    }
+
+    @Test
+    @DisplayName("withId 메서드에서 requesterId가 null이면 예외가 발생한다")
+    void throw_exception_when_requester_id_is_null_in_withId() {
+        // given
+        Long id = 1L;
+        Long familyId = 1L;
+        Long requesterId = null;
+        FamilyJoinRequestStatus status = FamilyJoinRequestStatus.PENDING;
+
+        // when & then
+        assertThatThrownBy(() -> FamilyJoinRequest.withId(
+            id, familyId, requesterId, status, null, null, null, null
+        )).isInstanceOf(NullPointerException.class)
+          .hasMessage("requesterId must not be null");
+    }
+
+    @Test
+    @DisplayName("withId 메서드에서 status가 null이면 예외가 발생한다")
+    void throw_exception_when_status_is_null_in_withId() {
+        // given
+        Long id = 1L;
+        Long familyId = 1L;
+        Long requesterId = 2L;
+        FamilyJoinRequestStatus status = null;
+
+        // when & then
+        assertThatThrownBy(() -> FamilyJoinRequest.withId(
+            id, familyId, requesterId, status, null, null, null, null
+        )).isInstanceOf(NullPointerException.class)
+          .hasMessage("status must not be null");
+    }
+
+    @Test
     @DisplayName("approve 메서드로 가입 신청을 승인 상태로 변경할 수 있다")
     void approve_request() {
         // given
@@ -96,6 +160,9 @@ class FamilyJoinRequestTest {
         // then
         assertThat(approvedRequest.getStatus()).isEqualTo(FamilyJoinRequestStatus.APPROVED);
         assertThat(approvedRequest.isApproved()).isTrue();
+        // modifiedAt과 modifiedBy는 JPA Audit을 통해 자동 설정되므로 null로 전달
+        assertThat(approvedRequest.getModifiedBy()).isNull();
+        assertThat(approvedRequest.getModifiedAt()).isNull();
         // 원본 객체는 변경되지 않음 (불변성)
         assertThat(request.getStatus()).isEqualTo(FamilyJoinRequestStatus.PENDING);
     }
@@ -112,8 +179,31 @@ class FamilyJoinRequestTest {
         // then
         assertThat(rejectedRequest.getStatus()).isEqualTo(FamilyJoinRequestStatus.REJECTED);
         assertThat(rejectedRequest.isRejected()).isTrue();
+        // modifiedAt과 modifiedBy는 JPA Audit을 통해 자동 설정되므로 null로 전달
+        assertThat(rejectedRequest.getModifiedBy()).isNull();
+        assertThat(rejectedRequest.getModifiedAt()).isNull();
         // 원본 객체는 변경되지 않음 (불변성)
         assertThat(request.getStatus()).isEqualTo(FamilyJoinRequestStatus.PENDING);
+    }
+
+    @Test
+    @DisplayName("canBeProcessed 메서드가 올바르게 동작한다")
+    void can_be_processed_works_correctly() {
+        // given
+        FamilyJoinRequest pendingRequest = FamilyJoinRequest.withId(
+            1L, 1L, 2L, FamilyJoinRequestStatus.PENDING, null, null, null, null
+        );
+        FamilyJoinRequest approvedRequest = FamilyJoinRequest.withId(
+            2L, 1L, 2L, FamilyJoinRequestStatus.APPROVED, null, null, null, null
+        );
+        FamilyJoinRequest rejectedRequest = FamilyJoinRequest.withId(
+            3L, 1L, 2L, FamilyJoinRequestStatus.REJECTED, null, null, null, null
+        );
+
+        // then
+        assertThat(pendingRequest.canBeProcessed()).isTrue();
+        assertThat(approvedRequest.canBeProcessed()).isFalse();
+        assertThat(rejectedRequest.canBeProcessed()).isFalse();
     }
 
     @Test
