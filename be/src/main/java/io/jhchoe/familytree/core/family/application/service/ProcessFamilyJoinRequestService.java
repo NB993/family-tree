@@ -61,28 +61,31 @@ public class ProcessFamilyJoinRequestService implements ProcessFamilyJoinRequest
         }
 
         // 6. 상태에 따른 처리
-        FamilyJoinRequest processedRequest;
-        if (command.getStatus() == FamilyJoinRequestStatus.APPROVED) {
-            // 승인 처리
-            processedRequest = joinRequest.approve();
-            
-            // FamilyMember 생성 (기본 역할: MEMBER)
-            FamilyMember newMember = FamilyMember.newMember(
-                command.getFamilyId(),
-                joinRequest.getRequesterId(),
-                "신규 구성원", // TODO: 실제 사용자 정보에서 가져와야 함
-                null, // TODO: 실제 사용자 정보에서 가져와야 함
-                null, // TODO: 실제 사용자 정보에서 가져와야 함
-                "KR" // TODO: 실제 사용자 정보에서 가져와야 함
-            );
-            
-            saveFamilyMemberPort.save(newMember);
-        } else {
-            // 거부 처리
-            processedRequest = joinRequest.reject();
-        }
+        FamilyJoinRequest processedRequest = processJoinRequest(command, joinRequest);
 
         // 7. 가입 신청 상태 업데이트
         return modifyFamilyJoinRequestPort.updateFamilyJoinRequest(processedRequest);
+    }
+
+    private FamilyJoinRequest processJoinRequest(ProcessFamilyJoinRequestCommand command,
+        FamilyJoinRequest joinRequest) {
+        if (command.getStatus() == FamilyJoinRequestStatus.APPROVED) {
+            FamilyJoinRequest approvedRequest = joinRequest.approve();
+            createAndSaveNewFamilyMember(command.getFamilyId(), joinRequest.getRequesterId());
+            return approvedRequest;
+        }
+        return joinRequest.reject();
+    }
+
+    private void createAndSaveNewFamilyMember(Long familyId, Long requesterId) {
+        FamilyMember newMember = FamilyMember.newMember(
+            familyId,
+            requesterId,
+            "신규 구성원", // TODO: 실제 사용자 정보에서 가져와야 함
+            null, // TODO: 실제 사용자 정보에서 가져와야 함
+            null, // TODO: 실제 사용자 정보에서 가져와야 함
+            "KR" // TODO: 실제 사용자 정보에서 가져와야 함
+        );
+        saveFamilyMemberPort.save(newMember);
     }
 }
