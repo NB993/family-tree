@@ -1,5 +1,26 @@
 # 테스트 코드 작성 가이드라인
 
+## 테스트 실행 방법
+
+### IDE Run Configuration 사용 (필수)
+- **필수 규칙**: gradle 명령어가 아닌 IDE의 run configuration을 사용하여 테스트 실행
+- **이유**: 
+  - 프로젝트 지침 준수
+  - 일관된 테스트 환경 유지
+  - 토큰 사용량 효율성 (gradle 출력 로그 최소화)
+- **방법**: 
+  1. `get_run_configurations` 도구로 사용 가능한 configuration 확인
+  2. `run_configuration` 도구로 적절한 configuration 실행
+- **금지사항**: 
+  - `./gradlew test` 등의 gradle 명령어 직접 사용 금지
+  - `execute_terminal_command`로 gradle 테스트 실행 금지
+
+### 테스트 실행 절차
+1. 먼저 `get_run_configurations`로 사용 가능한 설정 확인
+2. 적절한 run configuration 선택하여 실행
+3. 전체 테스트 실행 시: "Tests in '{$root}.test'" 사용
+4. 특정 테스트만 실행하고 싶은 경우 별도 configuration이 있는지 확인
+
 ## 테스트 분류
 
 본 프로젝트는 다음과 같은 테스트 종류를 사용합니다:
