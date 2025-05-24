@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.application.port.out;
 
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequest;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,4 +17,12 @@ public interface FindFamilyJoinRequestPort {
      * @return 가장 최근의 가입 신청 정보를 Optional로 반환
      */
     Optional<FamilyJoinRequest> findLatestByFamilyIdAndRequesterId(Long familyId, Long requesterId);
+
+    /**
+     * 특정 Family의 모든 가입 신청 목록을 조회합니다.
+     *
+     * @param familyId 조회할 Family ID
+     * @return Family의 가입 신청 목록
+     */
+    List<FamilyJoinRequest> findAllByFamilyId(Long familyId);
 }

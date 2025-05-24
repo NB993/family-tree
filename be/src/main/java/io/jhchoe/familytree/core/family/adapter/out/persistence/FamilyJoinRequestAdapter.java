@@ -3,6 +3,7 @@ package io.jhchoe.familytree.core.family.adapter.out.persistence;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyJoinRequestPort;
 import io.jhchoe.familytree.core.family.application.port.out.SaveFamilyJoinRequestPort;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequest;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,23 @@ public class FamilyJoinRequestAdapter implements SaveFamilyJoinRequestPort, Find
         return familyJoinRequestJpaRepository
             .findTopByFamilyIdAndRequesterIdOrderByIdDesc(familyId, requesterId)
             .map(FamilyJoinRequestJpaEntity::toFamilyJoinRequest);
+    }
+
+    /**
+     * 특정 Family의 모든 가입 신청 목록을 조회합니다.
+     *
+     * @param familyId 조회할 Family ID
+     * @return Family의 가입 신청 목록
+     */
+    @Override
+    public List<FamilyJoinRequest> findAllByFamilyId(Long familyId) {
+        Objects.requireNonNull(familyId, "familyId must not be null");
+
+        return familyJoinRequestJpaRepository
+            .findAllByFamilyIdOrderByCreatedAtDesc(familyId)
+            .stream()
+            .map(FamilyJoinRequestJpaEntity::toFamilyJoinRequest)
+            .toList();
     }
 
     /**

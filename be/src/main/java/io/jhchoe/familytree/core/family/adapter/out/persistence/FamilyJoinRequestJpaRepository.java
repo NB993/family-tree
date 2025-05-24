@@ -24,4 +24,12 @@ public interface FamilyJoinRequestJpaRepository extends JpaRepository<FamilyJoin
     Optional<FamilyJoinRequestJpaEntity> findTopByFamilyIdAndRequesterIdOrderByIdDesc(
         Long familyId, Long requesterId
     );
+
+    /**
+     * 특정 Family의 모든 가입 신청 목록을 생성일시 내림차순으로 조회합니다.
+     *
+     * @param familyId 조회할 Family ID
+     * @return Family의 가입 신청 목록 (생성일시 내림차순)
+     */
+    List<FamilyJoinRequestJpaEntity> findAllByFamilyIdOrderByCreatedAtDesc(Long familyId);
 }
