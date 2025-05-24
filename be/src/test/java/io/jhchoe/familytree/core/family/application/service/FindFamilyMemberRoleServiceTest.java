@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.*;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMembersRoleQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
+import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
@@ -34,6 +35,9 @@ class FindFamilyMemberRoleServiceTest {
     @Mock
     private FindFamilyMemberPort findFamilyMemberPort;
 
+    @Mock
+    private FindFamilyPort findFamilyPort;
+
     @Test
     @DisplayName("Family 구성원이 요청한 경우 모든 구성원의 역할 정보를 조회할 수 있습니다")
     void find_all_family_members_roles_by_family_member() {
@@ -52,9 +56,11 @@ class FindFamilyMemberRoleServiceTest {
             createFamilyMember(2L, familyId, 200L, FamilyMemberRole.ADMIN),
             createFamilyMember(3L, familyId, 300L, FamilyMemberRole.MEMBER)
         );
+        given(findFamilyPort.existsById(familyId))
+            .willReturn(true);
         given(findFamilyMemberPort.findAllByFamilyId(familyId))
             .willReturn(familyMembers);
-        
+
         FindFamilyMembersRoleQuery query = new FindFamilyMembersRoleQuery(familyId, currentUserId);
 
         // when
@@ -65,7 +71,8 @@ class FindFamilyMemberRoleServiceTest {
         assertThat(result).extracting(FamilyMember::getRole)
             .containsExactly(FamilyMemberRole.OWNER, FamilyMemberRole.ADMIN, FamilyMemberRole.MEMBER);
         
-        // findFamilyMemberPort 호출 검증
+        // findFamilyPort, findFamilyMemberPort 호출 검증
+        then(findFamilyPort).should().existsById(familyId);
         then(findFamilyMemberPort).should().findByFamilyIdAndUserId(familyId, currentUserId);
         then(findFamilyMemberPort).should().findAllByFamilyId(familyId);
     }
@@ -77,10 +84,12 @@ class FindFamilyMemberRoleServiceTest {
         Long familyId = 1L;
         Long currentUserId = 10L;
         
+        given(findFamilyPort.existsById(familyId))
+            .willReturn(true);
         // 현재 사용자가 Family 구성원이 아님
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.empty());
-        
+
         FindFamilyMembersRoleQuery query = new FindFamilyMembersRoleQuery(familyId, currentUserId);
 
         // when & then
@@ -90,6 +99,7 @@ class FindFamilyMemberRoleServiceTest {
             .isEqualTo(FamilyExceptionCode.NOT_FAMILY_MEMBER);
         
         // findAllByFamilyId는 호출되지 않아야 함
+        then(findFamilyPort).should().existsById(familyId);
         then(findFamilyMemberPort).should(never()).findAllByFamilyId(any());
     }
 
