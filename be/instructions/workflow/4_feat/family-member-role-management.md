@@ -367,22 +367,229 @@ public class FamilyMemberAuthorizationValidator {
 - OWNER만 ADMIN 역할을 부여하거나 회수할 수 있도록 설계
 - 권한 변경 이력 관리를 통한 감사 추적 기능 구현
 
+## API 엔드포인트 설계
+
+### 1. 구성원 역할 조회 API
+```
+GET /api/families/{familyId}/members/roles
+- 권한: MEMBER 이상
+- 응답: 해당 가족의 모든 구성원 역할 정보
+```
+
+### 2. 구성원 역할 변경 API
+```
+PUT /api/families/{familyId}/members/{memberId}/role
+- 권한: OWNER만 가능
+- 요청: {
+  "newRole": "ADMIN"
+}
+- 응답: {
+  "success": true,
+  "data": {
+    "memberId": 123,
+    "role": "ADMIN",
+    "updatedAt": "2024-01-15T10:30:00"
+  }
+}
+```
+
+### 3. 구성원 상태 변경 API
+```
+PUT /api/families/{familyId}/members/{memberId}/status
+- 권한: ADMIN 이상
+- 요청: {
+  "newStatus": "SUSPENDED",
+  "reason": "규칙 위반"
+}
+- 응답: {
+  "success": true,
+  "data": {
+    "memberId": 123,
+    "status": "SUSPENDED",
+    "reason": "규칙 위반",
+    "updatedAt": "2024-01-15T10:30:00"
+  }
+}
+```
+
+### 4. 공지사항 작성 API
+```
+POST /api/families/{familyId}/announcements
+- 권한: ADMIN 이상
+- 요청: {
+  "title": "가족 모임 공지",
+  "content": "다음 주 일요일에 가족 모임이 있습니다."
+}
+- 응답: {
+  "success": true,
+  "data": {
+    "announcementId": 456,
+    "title": "가족 모임 공지",
+    "content": "다음 주 일요일에 가족 모임이 있습니다.",
+    "createdAt": "2024-01-15T10:30:00"
+  }
+}
+```
+
+### 5. 공지사항 조회 API
+```
+GET /api/families/{familyId}/announcements?page=0&size=10
+- 권한: MEMBER 이상
+- 응답: {
+  "success": true,
+  "data": {
+    "announcements": [
+      {
+        "id": 456,
+        "title": "가족 모임 공지",
+        "content": "다음 주 일요일에 가족 모임이 있습니다.",
+        "createdBy": "홍길동",
+        "createdAt": "2024-01-15T10:30:00"
+      }
+    ],
+    "page": 0,
+    "size": 10,
+    "totalElements": 1
+  }
+}
+```
+
+## 에러 코드 및 예외 처리
+
+### 권한 관련 예외
+- `FM001`: 권한이 부족함 (403 Forbidden)
+- `FM002`: 비활성화된 구성원 (403 Forbidden)
+- `FM003`: OWNER 역할 변경 시도 (400 Bad Request)
+- `FM004`: OWNER 상태 변경 시도 (400 Bad Request)
+
+### 데이터 검증 예외
+- `FM005`: 존재하지 않는 가족 구성원 (404 Not Found)
+- `FM006`: 잘못된 역할 값 (400 Bad Request)
+- `FM007`: 잘못된 상태 값 (400 Bad Request)
+- `FM008`: 필수 필드 누락 (400 Bad Request)
+
+### 비즈니스 규칙 위반 예외
+- `FM009`: 자기 자신의 역할 변경 시도 (400 Bad Request)
+- `FM010`: ADMIN이 다른 ADMIN 역할 변경 시도 (400 Bad Request)
+- `FM011`: 공지사항 내용 길이 초과 (400 Bad Request)
+
+## 성능 고려사항
+
+### 1. 캐싱 전략
+- **구성원 역할 정보**: Redis를 활용한 캐싱
+  - Key: `family:{familyId}:member:{memberId}:role`
+  - TTL: 1시간
+  - 역할 변경 시 캐시 무효화
+
+### 2. 데이터베이스 최적화
+- **인덱스 설계**:
+  - `family_member(family_id, role)` 복합 인덱스
+  - `family_member_status_history(member_id, created_at)` 복합 인덱스
+  - `announcement(family_id, created_at)` 복합 인덱스
+
+### 3. 페이징 및 정렬
+- 공지사항 조회 시 페이징 필수 적용
+- 최신 공지사항부터 정렬 (created_at DESC)
+- 구성원 목록 조회 시 역할별 정렬 (OWNER → ADMIN → MEMBER)
+
+## 보안 고려사항
+
+### 1. 권한 검증 레벨
+- **API 레벨**: Controller에서 기본 권한 확인
+- **비즈니스 레벨**: Service에서 세부 권한 검증
+- **데이터 레벨**: Repository에서 family_id 기반 접근 제어
+
+### 2. 민감 정보 보호
+- 상태 변경 이력의 reason 필드는 로그에 기록하지 않음
+- 권한 변경 이력은 감사 로그로 별도 관리
+- API 응답에서 내부 시스템 정보 노출 방지
+
+### 3. 입력값 검증
+- 모든 사용자 입력에 대한 XSS 방지 처리
+- SQL Injection 방지를 위한 PreparedStatement 사용
+- 파일 업로드 시 확장자 및 크기 제한
+
 ## 배포 및 통합 지침
 
-1. **데이터 마이그레이션 계획**:
-   - 기존 FamilyMember 테이블에 role 컬럼 추가
-   - Family 생성자를 OWNER로, 나머지 구성원을 MEMBER로 초기화
-   - FamilyMemberStatusHistory 및 Announcement 테이블 생성
+### 1. 데이터 마이그레이션 계획
+```sql
+-- FamilyMember 테이블에 role 컬럼 추가
+ALTER TABLE family_member ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'MEMBER';
 
-2. **단계적 배포 전략**:
-   - 1단계: 도메인 모델, 애플리케이션 서비스 및 DB 스키마 변경
-   - 2단계: 권한 관리 API 배포
-   - 3단계: 상태 관리 및 공지사항 API 배포
+-- Family 생성자를 OWNER로 업데이트
+UPDATE family_member fm 
+SET role = 'OWNER' 
+WHERE fm.id = (
+    SELECT MIN(fm2.id) 
+    FROM family_member fm2 
+    WHERE fm2.family_id = fm.family_id
+);
 
-3. **API 버전 관리**:
-   - 기존 API는 유지하며 새로운 기능은 별도 엔드포인트로 제공
-   - 권한 검증이 필요한 기존 API에 점진적으로 권한 검증 로직 적용
+-- FamilyMemberStatusHistory 테이블 생성
+CREATE TABLE family_member_status_history (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    family_id BIGINT NOT NULL,
+    member_id BIGINT NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    reason VARCHAR(500),
+    created_by BIGINT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (family_id) REFERENCES family(id),
+    FOREIGN KEY (member_id) REFERENCES family_member(id),
+    INDEX idx_member_created (member_id, created_at)
+);
 
-4. **성능 최적화**:
-   - 자주 조회되는 구성원 권한 정보 캐싱 고려
-   - 구성원 조회 시 N+1 문제 방지를 위한 join fetch 사용
+-- Announcement 테이블 생성
+CREATE TABLE announcement (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    family_id BIGINT NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    created_by BIGINT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_by BIGINT,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (family_id) REFERENCES family(id),
+    INDEX idx_family_created (family_id, created_at)
+);
+```
+
+### 2. 단계적 배포 전략
+- **1단계**: 도메인 모델, 애플리케이션 서비스 및 DB 스키마 변경
+- **2단계**: 권한 관리 API 배포 (기존 기능 영향 없음)
+- **3단계**: 상태 관리 API 배포 (점진적 적용)
+- **4단계**: 공지사항 API 배포 (신규 기능)
+
+### 3. API 버전 관리
+- 기존 API는 유지하며 새로운 기능은 `/v2/` 엔드포인트로 제공
+- 권한 검증이 필요한 기존 API에 점진적으로 권한 검증 로직 적용
+- 3개월 후 기존 API deprecated 예정
+
+### 4. 모니터링 및 알림
+- 권한 변경 이벤트에 대한 실시간 알림 설정
+- 비정상적인 권한 변경 패턴 감지
+- API 응답 시간 및 에러율 모니터링
+
+## 테스트 전략
+
+### 1. 단위 테스트
+- 도메인 모델의 비즈니스 로직 검증
+- 권한 검증 로직 테스트
+- 예외 상황 처리 검증
+
+### 2. 통합 테스트
+- API 엔드포인트별 권한 시나리오 테스트
+- 데이터베이스 트랜잭션 검증
+- 캐시 동작 검증
+
+### 3. 성능 테스트
+- 대량 구성원 조회 성능 측정
+- 권한 변경 시 캐시 무효화 성능 확인
+- 동시 접근 시나리오 테스트
+
+### 4. 보안 테스트
+- 권한 우회 시도 방지 검증
+- SQL Injection 방지 확인
+- XSS 공격 방지 검증
+
+이 설계 문서를 바탕으로 3단계 프레젠테이션 계층 개발을 진행할 수 있습니다.
