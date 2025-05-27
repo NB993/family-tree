@@ -66,28 +66,41 @@
 - development-docs 폴더 구조 생성 (.gitkeep 파일 포함)
 - 한글 기획명을 영어 폴더명으로 변환 (CLI 친화적)
 
-Epic/Story 구조 예시:
-Epic-001: 사용자 인증 시스템 (User Authentication System)
-├── Story-001: 이메일 회원가입 기능 (Email Signup)
-├── Story-002: 구글 소셜로그인 기능 (Google Social Login)
-├── Story-003: 비밀번호 찾기 기능 (Password Reset)
-└── Story-004: 로그인 세션 관리 기능 (Login Session Management)
+🎯 티켓 채번 규칙 (Jira 스타일):
+- 프로젝트 코드: FT (Family Tree)
+- Epic과 Story 모두 동일한 시퀀스로 연속 증가
+- 예시: FT-001 (Epic), FT-002 (Story), FT-003 (Story), FT-004 (Epic)
+- 커밋 메시지에는 반드시 티켓 번호 포함
+
+티켓 채번 예시:
+FT-001: Epic - 사용자 인증 시스템 (User Authentication System)
+├── FT-002: Story - 이메일 회원가입 기능 (Email Signup)
+├── FT-003: Story - 구글 소셜로그인 기능 (Google Social Login)
+└── FT-004: Story - 비밀번호 찾기 기능 (Password Reset)
+FT-005: Epic - 게시판 시스템 (Board System)
+├── FT-006: Story - 게시글 작성 기능 (Post Creation)
+└── FT-007: Story - 게시글 조회 기능 (Post View)
 
 폴더/파일명 규칙 (영어 사용):
 development-docs/
-├── epic-001-user-authentication/
+├── ft-001-user-authentication/
 │   ├── .gitkeep (폴더 구조 유지용)
-│   ├── story-001-email-signup.md
-│   ├── story-002-google-social-login.md
-│   └── story-003-password-reset.md
-└── epic-002-board-system/
+│   ├── ft-002-email-signup.md
+│   ├── ft-003-google-social-login.md
+│   └── ft-004-password-reset.md
+└── ft-005-board-system/
     └── .gitkeep
+
+커밋 메시지 규칙:
+feat [by-ai] FT-002 이메일 회원가입 기능 구현
+fix [by-ai] FT-003 구글 소셜로그인 버그 수정
 
 ❌ 하지 말아야 할 일:
 - 템플릿 구조 임의 변경
 - 기술적 구현 방법까지 구체적 명시 (개발자 AI 영역)
 - 디자인 세부사항까지 지정 (디자이너 AI 영역)
 - Story 완료 조건이 모호하게 정의
+- 티켓 번호 없는 커밋 메시지 작성
 ```
 
 #### 2.2.3 작업 추적 및 프로젝트 관리
@@ -101,12 +114,12 @@ development-docs/
 - 사용자에게 정기적 진행 상황 보고
 
 작업 추적 예시:
-□ Story-001: 이메일 회원가입 (진행중)
+□ FT-002: 이메일 회원가입 (진행중)
   ├── ✅ 코어 계층 개발 완료
   ├── 🔄 인프라 계층 개발 진행중  
   └── ⏳ API 계층 개발 대기중
-✅ Story-002: 구글 소셜로그인 (완료)
-⏳ Story-003: 비밀번호 찾기 (대기중)
+✅ FT-003: 구글 소셜로그인 (완료)
+⏳ FT-004: 비밀번호 찾기 (대기중)
 
 ❌ 하지 말아야 할 일:
 - Story 완료 기준 달성 전 다음 작업 승인
@@ -223,10 +236,10 @@ development-docs/
 - API 간략 명세 (REST Docs 별도)
 
 ✅ 문서 저장 위치:
-development-docs/[Epic명]/Story-[번호]_[기능명].md
+development-docs/ft-[번호]-[영어명]/ft-[번호]-[영어명].md
 
 ✅ 문서 작성 예시:
-development-docs/epic-001-user-authentication/story-001-email-signup.md
+development-docs/ft-002-email-signup/ft-002-email-signup.md
 ```
 
 ### 4.3 필수 준수 사항
@@ -299,9 +312,9 @@ development-docs/epic-001-user-authentication/story-001-email-signup.md
 - 문서 품질이 기준에 미달 시 재작성 요구
 
 ✅ 문서 저장 경로:
-development-docs/epic-[번호]-[영어명]/story-[번호]-[영어명].md
+development-docs/ft-[번호]-[영어명]/ft-[번호]-[영어명].md
 
-예시: development-docs/epic-001-user-authentication/story-001-email-signup.md
+예시: development-docs/ft-002-email-signup/ft-002-email-signup.md
 
 ✅ 필수 포함 내용:
 1. 구현된 코드 설명 (핵심 로직 중심)
@@ -522,4 +535,5 @@ AI 간 협업:
 |------|------|-----------|--------|
 | v1.0.0 | 2025-05-26 | AI 협업 워크플로우 초기 작성 | Claude AI |
 | v1.1.0 | 2025-05-26 | workflow.md 내용 통합 및 단일 워크플로우로 통합 | Claude AI |
+| v1.2.0 | 2025-05-27 | Jira 스타일 티켓 채번 규칙 추가 (FT-XXX 형식) | Claude AI |
 ```
