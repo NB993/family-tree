@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 가족트리 조회 관련 비즈니스 로직을 처리하는 서비스 클래스입니다.
  */
+@Service
 @RequiredArgsConstructor
 public class FindFamilyTreeService implements FindFamilyTreeUseCase {
 

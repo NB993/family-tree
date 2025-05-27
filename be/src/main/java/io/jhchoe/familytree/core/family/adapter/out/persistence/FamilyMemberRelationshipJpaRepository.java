@@ -31,4 +31,12 @@ public interface FamilyMemberRelationshipJpaRepository extends JpaRepository<Fam
      * @return 조회된 가족 관계 JPA 엔티티 목록
      */
     List<FamilyMemberRelationshipJpaEntity> findAllByFamilyIdAndFromMemberId(Long familyId, Long fromMemberId);
+
+    /**
+     * 특정 가족의 모든 관계를 조회합니다.
+     *
+     * @param familyId 가족 ID
+     * @return 조회된 가족 관계 JPA 엔티티 목록
+     */
+    List<FamilyMemberRelationshipJpaEntity> findAllByFamilyId(Long familyId);
 }

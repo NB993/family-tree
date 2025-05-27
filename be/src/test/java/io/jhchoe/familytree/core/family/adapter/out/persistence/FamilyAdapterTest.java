@@ -25,12 +25,18 @@ class FamilyAdapterTest {
 
     @Autowired
     private FamilyJpaRepository familyJpaRepository;
+    
+    @Autowired
+    private FamilyMemberJpaRepository familyMemberJpaRepository;
+    
+    @Autowired
+    private FamilyMemberRelationshipJpaRepository familyMemberRelationshipJpaRepository;
 
     private FamilyAdapter sut;
 
     @BeforeEach
     void setUp() {
-        sut = new FamilyAdapter(familyJpaRepository);
+        sut = new FamilyAdapter(familyJpaRepository, familyMemberJpaRepository, familyMemberRelationshipJpaRepository);
     }
 
 

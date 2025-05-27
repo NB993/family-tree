@@ -5,7 +5,11 @@ import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.out.SaveFamilyPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyPort;
+import io.jhchoe.familytree.core.family.application.port.out.FindFamilyTreePort;
 import io.jhchoe.familytree.core.family.domain.Family;
+import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,9 +23,11 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class FamilyAdapter implements SaveFamilyPort, ModifyFamilyPort, FindFamilyPort {
+public class FamilyAdapter implements SaveFamilyPort, ModifyFamilyPort, FindFamilyPort, FindFamilyTreePort {
 
     private final FamilyJpaRepository familyJpaRepository;
+    private final FamilyMemberJpaRepository familyMemberJpaRepository;
+    private final FamilyMemberRelationshipJpaRepository familyMemberRelationshipJpaRepository;
 
     /**
      * Family 데이터를 저장하고, 저장된 Family의 ID를 반환합니다.
@@ -85,5 +91,86 @@ public class FamilyAdapter implements SaveFamilyPort, ModifyFamilyPort, FindFami
                 return save.getId();
             })
             .orElseThrow(() -> new FTException(CommonExceptionCode.NOT_FOUND, "family"));
+    }
+
+    // FindFamilyTreePort 구현
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Family> findFamily(final Long familyId) {
+        Objects.requireNonNull(familyId, "familyId must not be null");
+        
+        return familyJpaRepository.findById(familyId)
+            .map(FamilyJpaEntity::toFamily);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FamilyMember> findActiveFamilyMembers(final Long familyId) {
+        Objects.requireNonNull(familyId, "familyId must not be null");
+        
+        return familyMemberJpaRepository.findAllByFamilyId(familyId).stream()
+            .filter(entity -> entity.getStatus() == FamilyMemberStatus.ACTIVE)
+            .map(FamilyMemberJpaEntity::toFamilyMember)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<FamilyMember> findFamilyMember(final Long memberId) {
+        Objects.requireNonNull(memberId, "memberId must not be null");
+        
+        return familyMemberJpaRepository.findById(memberId)
+            .map(FamilyMemberJpaEntity::toFamilyMember);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FamilyMemberRelationship> findFamilyMemberRelationships(final Long familyId) {
+        Objects.requireNonNull(familyId, "familyId must not be null");
+        
+        // 가족의 모든 구성원 관계를 조회
+        return familyMemberRelationshipJpaRepository.findAllByFamilyId(familyId).stream()
+            .map(FamilyMemberRelationshipJpaEntity::toFamilyRelationship)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FamilyMemberRelationship> findRelationshipsByFromMember(final Long fromMemberId) {
+        Objects.requireNonNull(fromMemberId, "fromMemberId must not be null");
+        
+        // fromMemberId로 familyId를 조회해야 함
+        Optional<FamilyMemberJpaEntity> memberEntity = familyMemberJpaRepository.findById(fromMemberId);
+        if (memberEntity.isEmpty()) {
+            return List.of();
+        }
+        
+        Long familyId = memberEntity.get().getFamilyId();
+        return familyMemberRelationshipJpaRepository.findAllByFamilyIdAndFromMemberId(familyId, fromMemberId).stream()
+            .map(FamilyMemberRelationshipJpaEntity::toFamilyRelationship)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<FamilyMember> findFamilyMemberByUserId(final Long familyId, final Long userId) {
+        Objects.requireNonNull(familyId, "familyId must not be null");
+        Objects.requireNonNull(userId, "userId must not be null");
+        
+        return familyMemberJpaRepository.findByFamilyIdAndUserId(familyId, userId)
+            .map(FamilyMemberJpaEntity::toFamilyMember);
     }
 }
