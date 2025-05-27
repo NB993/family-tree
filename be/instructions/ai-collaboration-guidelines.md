@@ -200,9 +200,13 @@
 - **권한 검증**: MEMBER 권한은 403 Forbidden, 비구성원도 403 Forbidden
 
 ### 테스트 작성 시 주의사항
-- **인수 테스트**: `@WithMockOAuth2User` + 실제 DB 엔티티 생성
-- **단위 테스트**: `@WithMockUser` + Mock 객체 사용
-- **테스트 실행**: run_configuration 사용, gradle 직접 실행 금지
+- **인수 테스트**
+  - `@WithMockOAuth2User` + 실제 DB 엔티티 생성
+- **단위 테스트**
+  - Mock 객체 사용
+- **테스트 실행**
+  - run_configuration 사용
+  - gradle test 태스크 직접 실행 금지
 
 ### 기존 코드 보호
 - **1-2단계 완료 코드**: 절대 변경 금지
