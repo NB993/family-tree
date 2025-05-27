@@ -67,10 +67,18 @@
 - 한글 기획명을 영어 폴더명으로 변환 (CLI 친화적)
 
 🎯 티켓 채번 규칙 (Jira 스타일):
-- 프로젝트 코드: FT (Family Tree)
-- Epic과 Story 모두 동일한 시퀀스로 연속 증가
-- 예시: FT-001 (Epic), FT-002 (Story), FT-003 (Story), FT-004 (Epic)
+- 프로젝트 코드: 
+  * PM (Project Management): 프로젝트 관리, 인프라, 워크플로우 개선
+  * FT (Family Tree): 실제 사용자 기능 개발
+- Epic과 Story 구조는 FT 코드에서만 사용
+- 각 코드별 시퀀스 독립 관리
+- 예시: PM-001, PM-002 (관리작업) / FT-001 (Epic), FT-002 (Story)
 - 커밋 메시지에는 반드시 티켓 번호 포함
+
+📝 커밋 메시지 관리:
+- **개발자 AI 책임**: 커밋 메시지 작성 및 실행
+- **기획자 AI 책임**: 커밋 메시지 품질 검토 및 승인
+- **상세 규칙**: `be/instructions/commit-guidelines.md` 참조
 
 티켓 채번 예시:
 FT-001: Epic - 사용자 인증 시스템 (User Authentication System)
@@ -90,17 +98,6 @@ development-docs/
 │   └── ft-004-password-reset.md
 └── ft-005-board-system/
     └── .gitkeep
-
-커밋 메시지 규칙:
-feat [by-ai] FT-002 이메일 회원가입 기능 구현
-fix [by-ai] FT-003 구글 소셜로그인 버그 수정
-
-❌ 하지 말아야 할 일:
-- 템플릿 구조 임의 변경
-- 기술적 구현 방법까지 구체적 명시 (개발자 AI 영역)
-- 디자인 세부사항까지 지정 (디자이너 AI 영역)
-- Story 완료 조건이 모호하게 정의
-- 티켓 번호 없는 커밋 메시지 작성
 ```
 
 #### 2.2.3 작업 추적 및 프로젝트 관리
@@ -217,9 +214,14 @@ fix [by-ai] FT-003 구글 소셜로그인 버그 수정
 
 협업 시 주의사항:
 - 비즈니스 로직 변경은 기획자 AI 승인 필수
-- 기술적 최적화는 개발자 AI 자율 결정
-- 보안 이슈는 즉시 기획자 AI에게 보고
-- Story 완료 시 반드시 개발 문서 작성 및 제출
+❌ 하지 말아야 할 일:
+- 템플릿 구조 임의 변경
+- 기술적 구현 방법까지 구체적 명시 (개발자 AI 영역)
+- 디자인 세부사항까지 지정 (디자이너 AI 영역)
+- Story 완료 조건이 모호하게 정의
+- 커밋 메시지 양식 미준수 (`be/instructions/commit-guidelines.md` 참조)
+- 기획자 AI 검토 없이 커밋 실행
+```
 ```
 
 ### 4.3 개발 문서 작성 의무
@@ -244,7 +246,19 @@ development-docs/ft-002-email-signup/ft-002-email-signup.md
 
 ### 4.3 필수 준수 사항
 
-#### 4.3.1 필수 문서 읽기 절차 (엄격)
+#### 4.3.1 커밋 작업 절차 (엄격 준수)
+```
+✅ Story 완료 시 필수 커밋 절차:
+1. VCS 상태 확인: get_project_vcs_status 도구 사용
+2. 커밋 메시지 작성: be/instructions/commit-guidelines.md 양식 준수
+3. 기획자 AI 검토: 커밋 메시지 검토 요청 및 승인 대기
+4. Git 커밋 실행: --no-pager 옵션과 함께 커밋 실행
+5. 완료 보고: 기획자 AI에게 커밋 완료 및 다음 단계 승인 요청
+
+⚠️ 이 절차를 건너뛰고 임의로 커밋하는 것을 금지한다.
+```
+
+#### 4.3.2 필수 문서 읽기 절차 (엄격)
 ```
 ✅ Story 개발 시작 전 필수 절차:
 1. 기능 관련 문서 읽기
@@ -258,6 +272,7 @@ development-docs/ft-002-email-signup/ft-002-email-signup.md
    - `be/instructions/architecture-overview.md` (필수)
    - `be/instructions/development-process.md` (필수)
    - `be/instructions/coding-standards.md` (필수)
+   - `be/instructions/commit-guidelines.md` (필수)
    - `be/instructions/entity-mapping.md` (필요시)
 
 3. 절차 확인
@@ -270,7 +285,7 @@ development-docs/ft-002-email-signup/ft-002-email-signup.md
 ⚠️ 이 절차를 건너뛰고 바로 개발하는 것을 금지한다.
 ```
 
-#### 4.3.2 개발 단계별 진행 원칙 (엄격 준수)
+#### 4.3.3 개발 단계별 진행 원칙 (엄격 준수)
 ```
 ⚠️ 단계별 개발 강제 규칙:
 개발자 AI는 반드시 아래 단계를 순서대로 진행해야 함:
