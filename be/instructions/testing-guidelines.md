@@ -225,11 +225,48 @@ class FindFamilyAcceptanceTest extends AcceptanceTestBase {
 
 ## API 문서 테스트 작성 방법
 
+### 공통 규칙
+
 - **위치**: 해당 컨트롤러가 있는 패키지
 - **명명 규칙**: `{Find/Save/Modify/Delete}{도메인명}DocsTest`
-- **문서화 범위**: 요청/응답 필드 및 발생 가능한 모든 예외 코드 문서화
-- **예외 문서화**: 다음의 예외 발생 가능 지점을 모두 문서화
-  - API Path Variable
-  - API Request DTO
-  - Command/Query 객체
-  - UseCase 인터페이스
+- **메서드 이름**: 단위 테스트와 동일한 규칙 적용 (snake_case)
+- **테스트 클래스**: `ApiDocsTestBase` 상속
+- `@DisplayName("[Docs Test] {Controller 클래스명}DocsTest")` 선언
+
+### API 문서 테스트 중요 규칙
+
+#### 데이터 생성 규칙 (인수 테스트와 동일)
+- 무조건 DB 데이터로 테스트. 기본적으로 mocking 미사용
+- DB 데이터 생성을 위한 JpaRepository `@Autowired`
+- DB 데이터 생성을 위해 도메인JpaEntity 생성 시 기본생성자 사용 금지
+- 도메인 엔티티의 신규 엔티티 생성용 정적 메서드를 이용하여 도메인 엔티티를 생성한 뒤 도메인JpaEntity.from 메서드를 호출하여 생성
+- 절대 `@BeforeEach`에서 테스트용 데이터 생성 금지. 각 테스트 메서드의 given 영역에서 데이터 생성
+
+#### RestAssuredMockMvc + REST Docs 전용 규칙
+- `given()` → `when()` → `then()` → `apply(document(...))` 패턴 사용
+- GET 메서드 이외에는 `.given()` 다음에 `.postProcessors(SecurityMockMvcRequestPostProcessors.csrf())` 필수 설정
+- 요청 Body 데이터는 Multiline Strings(`"""`)를 이용
+- **문서화 필수 요소**:
+  - `preprocessRequest(prettyPrint())`
+  - `preprocessResponse(prettyPrint())`
+  - `pathParameters()` (Path Variable 있는 경우)
+  - `queryParameters()` (Query Parameter 있는 경우)
+  - `requestFields()` (Request Body 있는 경우)
+  - `responseFields()` (모든 응답 필드 문서화)
+
+#### 예외 케이스 문서화 규칙
+- API 내에서 발생 가능한 모든 예외 케이스를 별도 테스트 메서드로 작성
+- 각 예외별로 `document("api-name-error-case", ...)` 형태로 문서화
+- 예외 발생 지점:
+  - **API Path Variable 검증 실패**
+  - **API Request Parameter 검증 실패**
+  - **API Request DTO 검증 실패**
+  - **Command/Query 객체 생성 실패**
+  - **UseCase 비즈니스 로직 예외**
+
+#### 문서화 명명 규칙
+- 성공 케이스: `document("find-family-tree", ...)`
+- 실패 케이스: `document("find-family-tree-family-not-found", ...)`
+- Path Variable 검증 실패: `document("find-family-tree-invalid-path-variable", ...)`
+- Request Parameter 검증 실패: `document("find-family-tree-invalid-request-param", ...)`
+- Request DTO 검증 실패: `document("find-family-tree-invalid-request", ...)`
