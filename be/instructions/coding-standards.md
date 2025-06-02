@@ -115,6 +115,43 @@ public List<Member> getActiveMembers() {
 - 블로킹 작업은 별도의 스레드풀에서 실행합니다
 - 비동기 작업의 결과를 동기적으로 기다려야 할 경우 타임아웃을 설정합니다
 
+## JPA 엔티티 작성 규칙
+
+### 도메인 JPA 엔티티 규칙
+
+- **setter 사용 금지**: 도메인 JPA 엔티티에서는 setter 메서드를 제거합니다
+- **생성자 패턴**: 기본 생성자로 생성한 뒤 setter로 데이터를 주입하는 방식을 금지합니다
+- **팩토리 메서드 활용**: 도메인 엔티티를 생성한 뒤 `from()` 정적 메서드에 넘겨서 JPA 엔티티를 생성합니다
+
+```java
+// ❌ 금지: setter 사용
+FamilyJpaEntity entity = new FamilyJpaEntity();
+entity.setName("패밀리명");
+entity.setDescription("설명");
+
+// ✅ 권장: from() 정적 메서드 사용
+Family domain = Family.create("패밀리명", "설명", "프로필URL", 1L);
+FamilyJpaEntity entity = FamilyJpaEntity.from(domain);
+```
+
+### JPA Repository 메서드 작성 규칙
+
+- **메서드 이름 기반 쿼리 우선**: JPQL `@Query` 사용보다는 메서드 이름 기반 쿼리를 우선 사용합니다
+- **JPQL 사용 시 주석 필수**: JPQL `@Query`를 사용해야 하는 경우, 메서드 바로 위에 주석으로 사용 이유를 명시합니다
+
+```java
+// ✅ 권장: 메서드 이름 기반 쿼리
+List<FamilyMemberJpaEntity> findByFamilyIdAndStatus(Long familyId, FamilyMemberStatus status);
+
+// ✅ JPQL 사용 시 주석으로 이유 명시
+/**
+ * 복잡한 조인과 서브쿼리가 필요하여 JPQL로 작성
+ * 메서드 이름으로는 표현하기 어려운 복잡한 조건
+ */
+@Query("SELECT f FROM FamilyJpaEntity f WHERE f.id IN (SELECT fm.familyId FROM FamilyMemberJpaEntity fm WHERE fm.userId = :userId)")
+List<FamilyJpaEntity> findFamiliesByUserId(@Param("userId") Long userId);
+```
+
 ## 기타 권장 사항
 
 - 가능하면 외부 라이브러리에 의존하지 않는 순수 자바 코드를 작성합니다
