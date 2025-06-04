@@ -218,6 +218,7 @@ class FindFamilyAcceptanceTest extends AcceptanceTestBase {
 - DB 데이터 생성을 위해 도메인JpaEntity 생성 시 기본생성자 사용 금지
 - 도메인 엔티티의 신규 엔티티 생성용 정적 메서드를 이용하여 도메인 엔티티를 생성한 뒤 도메인JpaEntity.from 메서드를 호출하여 생성
 - 절대 `@BeforeEach`에서 테스트용 데이터 생성 금지. 각 테스트 메서드의 given 영역에서 데이터 생성
+- **모든 테스트 메서드에 `@WithMockOAuth2User` 어노테이션 필수**: 인증이 필요한 API 테스트 시 일관된 Mock OAuth2 사용자 설정
 - GET 메서드 이외에는 `.given()` 다음에 `.postProcessors(SecurityMockMvcRequestPostProcessors.csrf())` 필수 설정
 - 요청 Body 데이터는 Multiline Strings(`"""`)를 이용
 - 응답 Body 검증 시 RestAssured 내장 함수 활용
@@ -244,6 +245,7 @@ class FindFamilyAcceptanceTest extends AcceptanceTestBase {
 
 #### RestAssuredMockMvc + REST Docs 전용 규칙
 - `given()` → `when()` → `then()` → `apply(document(...))` 패턴 사용
+- **모든 테스트 메서드에 `@WithMockOAuth2User` 어노테이션 필수**: 인증이 필요한 API 테스트 시 일관된 Mock OAuth2 사용자 설정
 - GET 메서드 이외에는 `.given()` 다음에 `.postProcessors(SecurityMockMvcRequestPostProcessors.csrf())` 필수 설정
 - 요청 Body 데이터는 Multiline Strings(`"""`)를 이용
 - **문서화 필수 요소**:
