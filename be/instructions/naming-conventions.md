@@ -106,3 +106,103 @@ public Xxx toXxx() {
 ### 순환 참조 처리
 - 양방향 관계에서는 한쪽에서만 변환을 수행합니다
 - 필요한 경우 ID만 참조하는 가벼운 객체를 사용합니다
+
+## 도메인 모델 정적 팩토리 메서드명 규칙
+
+### 🎯 정적 팩토리 메서드 명명 규칙 (강제 준수)
+
+#### 신규 생성: `newXxx`
+- **목적**: 완전히 새로운 도메인 객체 생성 (ID 없음)
+- **패턴**: `newXxx(필요한_파라미터들)`
+- **특징**: ID가 null이거나 기본값인 새로운 객체 생성
+
+```java
+/**
+ * 새로운 가족 구성원을 생성합니다.
+ *
+ * @param name 구성원 이름
+ * @param role 구성원 역할
+ * @param birthDate 생년월일
+ * @return 새로 생성된 가족 구성원 (ID 없음)
+ */
+public static FamilyMember newMember(String name, FamilyRole role, LocalDate birthDate) {
+    return new FamilyMember(null, name, role, birthDate);
+}
+```
+
+#### 기존 데이터 복원: `withId`
+- **목적**: JPA 엔티티에서 도메인 엔티티로 변환 시 사용
+- **패턴**: `withId(id, 기타_파라미터들)`
+- **특징**: 이미 존재하는 데이터를 도메인 객체로 복원
+
+```java
+/**
+ * 기존 가족 구성원 데이터를 도메인 객체로 복원합니다.
+ *
+ * @param id 구성원 ID
+ * @param name 구성원 이름
+ * @param role 구성원 역할
+ * @param birthDate 생년월일
+ * @return 복원된 가족 구성원 (ID 포함)
+ */
+public static FamilyMember withId(Long id, String name, FamilyRole role, LocalDate birthDate) {
+    return new FamilyMember(id, name, role, birthDate);
+}
+```
+
+### 🚫 금지된 메서드명
+
+#### 절대 사용 금지
+```java
+// ❌ 금지된 메서드명들
+public static FamilyMember of(...) { }         // 모호함
+public static FamilyMember create(...) { }     // 모호함
+public static FamilyMember from(...) { }       // JPA 엔티티 전용
+public static FamilyMember build(...) { }      // 빌더 패턴과 혼동
+public static FamilyMember getInstance(...) { } // 싱글톤과 혼동
+public static FamilyMember valueOf(...) { }    // 값 변환과 혼동
+```
+
+#### 혼동 방지를 위한 명확한 구분
+- `from()`: JPA 엔티티에서만 사용 (도메인 → JPA 엔티티 변환)
+- `newXxx()`: 도메인 객체에서만 사용 (신규 생성)
+- `withId()`: 도메인 객체에서만 사용 (기존 데이터 복원)
+
+### 📝 메서드 선택 가이드
+
+#### 신규 생성이 필요한 경우 → `newXxx`
+```java
+// 사용자가 새로운 가족 구성원을 등록할 때
+FamilyMember newMember = FamilyMember.newMember("홍길동", FamilyRole.FATHER, birthDate);
+```
+
+#### DB에서 조회한 데이터를 복원할 때 → `withId`
+```java
+// JPA 엔티티에서 도메인 객체로 변환할 때
+public FamilyMember toMember() {
+    return FamilyMember.withId(this.id, this.name, this.role, this.birthDate);
+}
+```
+
+### ⚠️ 중요 주의사항
+
+1. **ID 처리 규칙**
+   - `newXxx`: ID는 null 또는 기본값
+   - `withId`: ID는 반드시 유효한 값 (null 체크 필수)
+
+2. **유효성 검사**: 두 메서드 모두 파라미터 유효성 검사 필수
+
+3. **불변성 유지**: 정적 팩토리 메서드로 생성된 객체는 불변 객체여야 함
+
+4. **문서화 필수**: 모든 정적 팩토리 메서드에 JavaDoc 작성
+
+### 📋 코드 리뷰 체크리스트
+
+#### 정적 팩토리 메서드 작성 시 확인사항
+- [ ] 메서드명이 `newXxx` 또는 `withId` 규칙을 따르는가?
+- [ ] 금지된 메서드명(`of`, `create`, `from` 등)을 사용하지 않았는가?
+- [ ] ID 처리가 올바르게 되었는가? (newXxx는 null, withId는 유효값)
+- [ ] 파라미터 유효성 검사가 포함되었는가?
+- [ ] JavaDoc이 완전히 작성되었는가?
+- [ ] 생성된 객체가 불변성을 유지하는가?
+- [ ] 특수한 상태나 역할은 파라미터로 전달하고 있는가? (별도 메서드 지양)
