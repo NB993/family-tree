@@ -2,10 +2,11 @@
 
 ## ⚠️ 기획 시작 전 필수 확인사항
 **기획자 AI는 기획서 작성 전 반드시 다음 문서를 읽어야 합니다:**
-1. **`be/instructions/commit-guidelines.md`** - 티켓 채번 규칙 (FT/PM 코드, Epic/Story 구조)
-2. **`be/instructions/workflow/ai-collaboration-workflow.md`** - 협업 워크플로우
+1. **`be/instructions/ticket-numbers.json`** - 현재 티켓 번호 확인 (다음 번호 사용)
+2. **`be/instructions/commit-guidelines.md`** - 티켓 채번 규칙 (FT/PM 코드, Epic/Story 구조)
+3. **`be/instructions/workflow/ai-collaboration-workflow.md`** - 협업 워크플로우
 
-**채번 규칙을 확인하지 않고 기획서를 작성하는 것은 금지됩니다.**
+**채번 규칙과 현재 번호를 확인하지 않고 기획서를 작성하는 것은 금지됩니다.**
 
 ---
 

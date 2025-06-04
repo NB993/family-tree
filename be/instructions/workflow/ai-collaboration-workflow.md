@@ -89,6 +89,8 @@
   * FT (Family Tree): 실제 사용자 기능 개발
 - Epic과 Story 구조는 FT 코드에서만 사용
 - 각 코드별 시퀀스 독립 관리
+- **티켓 번호 확인**: `be/instructions/ticket-numbers.json` 파일에서 현재 번호 확인 필수
+- 새 티켓 생성 시 해당 파일의 번호를 1 증가시켜 사용
 - 예시: PM-001, PM-002 (관리작업) / FT-001 (Epic), FT-002 (Story)
 - 커밋 메시지에는 반드시 티켓 번호 포함
 
