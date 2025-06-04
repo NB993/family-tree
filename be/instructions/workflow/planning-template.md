@@ -1,5 +1,14 @@
 # 기획서 템플릿
 
+## ⚠️ 기획 시작 전 필수 확인사항
+**기획자 AI는 기획서 작성 전 반드시 다음 문서를 읽어야 합니다:**
+1. **`be/instructions/commit-guidelines.md`** - 티켓 채번 규칙 (FT/PM 코드, Epic/Story 구조)
+2. **`be/instructions/workflow/ai-collaboration-workflow.md`** - 협업 워크플로우
+
+**채번 규칙을 확인하지 않고 기획서를 작성하는 것은 금지됩니다.**
+
+---
+
 ## 문서 정보
 - **프로젝트명**: [프로젝트 이름]
 - **작성일**: [YYYY-MM-DD]
@@ -270,3 +279,76 @@ flowchart TD
 변경 사유: 개선
 영향도: 있음
 ```
+
+---
+
+## 🎯 Epic/Story 구조 정의 (채번 규칙 준수 필수)
+
+### Epic/Story 채번 규칙 (commit-guidelines.md 기준)
+```
+티켓 채번 시스템:
+- FT (Family Tree): 실제 사용자 기능 개발 작업
+- PM (Project Management): 프로젝트 관리, 인프라, 워크플로우 개선 작업
+
+Epic과 Story 구조는 FT 코드에서만 사용:
+FT-001: Epic - [기능군 이름]
+├── FT-002: Story - [세부 기능 1]
+├── FT-003: Story - [세부 기능 2] 
+└── FT-004: Story - [세부 기능 3]
+
+폴더명 규칙 (영어 사용):
+development-docs/ft-001-[영어명]/
+├── ft-002-[영어명].md
+├── ft-003-[영어명].md
+└── ft-004-[영어명].md
+```
+
+### Epic: [FT-XXX] [Epic 이름]
+
+```
+Epic-XXX: [Epic 이름 (한글)] ([Epic 이름 영어])
+├── Story-XXX: [Story 이름] 📅 [완료 목표 주차] ([담당 역할])
+├── Story-XXX: [Story 이름] 📅 [완료 목표 주차] ([담당 역할])
+└── Story-XXX: [Story 이름] 📅 [완료 목표 주차] ([담당 역할])
+```
+
+### Story 완료 조건 (Definition of Done)
+```
+각 Story별 완료 조건:
+✅ 기능 구현 완료 (백엔드 API + 프론트엔드 UI)
+✅ 단위 테스트 작성 및 통과 (JUnit5 + Jest)
+✅ 인수 테스트 작성 및 통과 (Acceptance Test)
+✅ API 문서 작성 (REST Docs)
+✅ 코드 리뷰 완료
+✅ 기획자 AI 검수 및 승인
+✅ 사용자 테스트 시나리오 검증 완료
+```
+
+---
+
+## 🚀 다음 단계
+
+### 즉시 진행 가능한 작업
+1. **기획서 승인 요청** ← 현재 단계  
+2. **Story-001 상세 요구사항 작성** ([첫 번째 Story])
+3. **개발자 AI에게 Story-001 할당**
+4. **단계별 개발 진행 및 검수**
+
+### 개발 우선순위 권장사항
+```
+Phase 1 (핵심 MVP - 2주차 완료 목표):
+- Story-001: [핵심 기능 1]
+- Story-002: [핵심 기능 2]
+
+Phase 2 (확장 기능 - 3주차 완료 목표):
+- Story-003: [확장 기능 1] 
+- Story-004: [확장 기능 2]
+
+Phase 3 (고급 기능 - 4주차 완료 목표):
+- Story-005: [고급 기능 1]
+- Story-006: [고급 기능 2] (선택적)
+```
+
+**🎉 [기획명] 기획 완료!**
+
+[기획 요약 한 줄]

@@ -55,7 +55,12 @@
 
 #### 2.2.2 기획서 작성 및 Epic/Story 관리
 ```
+✅ 기획서 작성 시 반드시 먼저 읽어야 할 필수 문서들:
+1. 채번 규칙 확인: `be/instructions/commit-guidelines.md` (티켓 채번 시스템)
+2. 기획 템플릿: `be/instructions/workflow/planning-template.md`
+
 ✅ 해야 할 일:
+- 채번 규칙(FT/PM 코드, Epic/Story 구조)을 반드시 확인 후 기획 시작
 - planning-template.md를 기반으로 체계적 작성
 - Mermaid 플로우차트로 시각적 흐름 제공
 - 텍스트 와이어프레임으로 화면 구성 명시
