@@ -56,53 +56,6 @@ public interface FindFamilyMemberUseCase {
 
 ### Query 클래스 명명 규칙
 
-#### 1. 단건 조회용 Query
-- **패턴**: `{동사}{도메인객체}Query`
-- **예시**: `FindFamilyMemberQuery`, `SaveFamilyMemberQuery`
-
-#### 2. 복수 조회용 Query  
-- **패턴**: `{동사}All{도메인객체복수형}Query`
-- **예시**: `FindAllFamilyMembersQuery`, `FindAllFamilyMemberRelationshipsQuery`
-
-#### 3. 특수 조건 Query
-- **패턴**: `{동사}{조건}{도메인객체}Query`
-- **예시**: `FindActiveFamilyMembersQuery`, `FindSuspendedFamilyMembersQuery`
-
-### 실제 구현 예시
-
-#### 기존 구현 (참고용)
-```java
-// UseCase 인터페이스
-public interface FindFamilyMemberRelationshipUseCase {
-    FamilyMemberRelationship find(FindFamilyMemberRelationshipQuery query);
-    List<FamilyMemberRelationship> findAll(FindAllFamilyMemberRelationshipsQuery query);
-}
-
-// 단건 조회용 Query
-public class FindFamilyMemberRelationshipQuery {
-    private final Long familyId;
-    private final Long fromMemberId;
-    private final Long toMemberId;
-}
-
-// 복수 조회용 Query
-public class FindAllFamilyMemberRelationshipsQuery {
-    private final Long familyId;
-    private final Long fromMemberId;
-}
-```
-
-### 주의사항
-
-1. **일관성 유지**: 모든 UseCase에서 동일한 패턴 적용
-2. **단수형 원칙**: UseCase 인터페이스명은 항상 단수형
-3. **메서드명 엄격 통일**: 단건 조회는 `find()`, 복수 조회는 `findAll()` 만 사용
-4. **Query 객체로 의도 구분**: 메서드명이 아닌 Query 클래스명으로 조회 의도 표현
-5. **조회 기준 명시**: Query 클래스명에 조회 기준이 명확히 드러나야 함
-6. **Validation**: 각 Query 클래스에서 입력값 검증 필수
-
-### 조회 기준별 Query 클래스명 가이드
-
 #### 단일 필드 기준 조회
 ```java
 // ID 기준
