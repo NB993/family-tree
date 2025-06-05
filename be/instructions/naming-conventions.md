@@ -78,7 +78,92 @@ public class FindAllFamilyMemberRelationshipsQuery {
 2. **단수형 원칙**: UseCase 인터페이스명은 항상 단수형
 3. **메서드명 명확성**: 단건/복수 구분이 명확하게 드러나야 함
 4. **Query 클래스 분리**: 단건용과 복수용 Query는 별도 클래스로 구현
-5. **Validation**: 각 Query 클래스에서 입력값 검증 필수
+5. **조회 기준 명시**: Query 클래스명에 조회 기준이 명확히 드러나야 함
+6. **Validation**: 각 Query 클래스에서 입력값 검증 필수
+
+### 조회 기준별 Query 클래스명 가이드
+
+#### 단일 필드 기준 조회
+```java
+// ID 기준
+FindFamilyMemberByIdQuery
+FindUserByIdQuery
+
+// 이메일 기준  
+FindUserByEmailQuery
+FindFamilyMemberByEmailQuery
+
+// 사용자 ID 기준
+FindFamilyMemberByUserIdQuery
+
+// 이름 기준
+FindFamilyMemberByNameQuery
+```
+
+#### 복합 조건 조회
+```java
+// Family 내 특정 상태의 구성원들
+FindActiveFamilyMembersByFamilyIdQuery
+FindSuspendedFamilyMembersByFamilyIdQuery
+
+// 역할별 조회
+FindFamilyMembersByRoleQuery
+FindAdminFamilyMembersQuery
+
+// 날짜 범위 조회
+FindFamilyMembersByBirthdayRangeQuery
+FindFamilyMembersByJoinDateRangeQuery
+
+// 복합 조건
+FindActiveFamilyMembersByRoleAndFamilyIdQuery
+```
+
+#### 메서드 오버로딩 vs 별도 Query 원칙
+```java
+// ❌ 잘못된 방식: 하나의 Query로 여러 조회 방식 지원
+public class FindFamilyMemberQuery {
+    private Long id;           // ID 조회용
+    private String email;      // 이메일 조회용
+    private Long userId;       // 사용자ID 조회용
+    // 어떤 필드가 실제 조회 기준인지 불명확
+}
+
+// ✅ 올바른 방식: 조회 기준별로 별도 Query 클래스
+public interface FindFamilyMemberUseCase {
+    FamilyMember find(FindFamilyMemberByIdQuery query);
+    FamilyMember find(FindFamilyMemberByEmailQuery query);
+    FamilyMember find(FindFamilyMemberByUserIdQuery query);
+}
+```
+
+### 기획 단계에서 확인해야 할 질문들
+
+기획자 AI가 UseCase 설계 시 개발자에게 확인해야 할 필수 질문:
+
+#### 단건 조회 UseCase
+1. **조회 기준**: "어떤 필드를 기준으로 조회하시겠습니까? (ID/UserID/Email 등)"
+2. **유니크성**: "해당 필드가 유니크한 값인가요?"
+3. **실패 처리**: "조회 실패 시 어떻게 처리하시겠습니까? (예외/Optional)"
+4. **권한 제한**: "조회 대상에 권한 제한이 있나요?"
+
+#### 복수 조회 UseCase  
+1. **필터링**: "어떤 조건으로 필터링하시겠습니까? (상태/역할/날짜범위)"
+2. **정렬**: "정렬 기준은 무엇입니까? (생성일/이름/사용자정의)"
+3. **권한**: "권한별 접근 제한이 있나요?"
+4. **페이징**: "페이징이 필요합니까?"
+
+### 네이밍 검증 체크리스트
+
+#### Query 클래스명 검증
+- [ ] 조회 기준이 클래스명에 명확히 표현되었는가?
+- [ ] `By{필드명}` 형태로 조회 필드가 명시되었는가?
+- [ ] 복수 조회의 경우 필터링 조건이 명시되었는가?
+- [ ] 하나의 Query가 하나의 명확한 조회 책임만 가지는가?
+
+#### UseCase 메서드명 검증  
+- [ ] `find()` vs `findAll()` 구분이 명확한가?
+- [ ] 메서드 시그니처만으로 무엇을 조회하는지 알 수 있는가?
+- [ ] Query 클래스명과 메서드명이 일치하는가?
 
 ## 계층별 명명 규칙
 

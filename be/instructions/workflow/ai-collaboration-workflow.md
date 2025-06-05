@@ -59,9 +59,38 @@
 1. 채번 규칙 확인: `be/instructions/commit-guidelines.md` (티켓 채번 시스템)
 2. 기획 템플릿: `be/instructions/workflow/planning-template.md`
 
+✅ UseCase 조회 기준 구체화 (필수 질문 단계):
+기획자 AI는 UseCase가 포함된 기획 시 반드시 아래 질문들을 통해 구체화해야 함:
+
+**단건 조회 UseCase 구체화:**
+- Q: "어떤 필드를 기준으로 조회하시겠습니까? (ID/UserID/Email/Name 등)"
+- Q: "해당 필드가 유니크한 값인가요?"
+- Q: "조회 실패 시 어떻게 처리하시겠습니까? (예외 발생/null 반환/Optional)"
+- Q: "조회 대상에 권한 제한이 있나요? (본인만/관리자만/모든 사용자)"
+
+**복수 조회 UseCase 구체화:**
+- Q: "어떤 조건으로 필터링하시겠습니까? (상태별/역할별/날짜범위/특정 값)"
+- Q: "정렬 기준은 무엇입니까? (생성일/수정일/이름/사용자정의)"
+- Q: "권한별 접근 제한이 있나요? (ADMIN만 전체 조회, 일반 사용자는 ACTIVE만 등)"
+- Q: "페이징이 필요합니까? (한 번에 모든 데이터/페이지 단위)"
+
+**Query 클래스명 제안:**
+조회 기준을 반영한 명확한 클래스명 제안:
+- FindFamilyMemberByIdQuery (ID 기준 단건 조회)
+- FindFamilyMemberByEmailQuery (이메일 기준 단건 조회)
+- FindActiveFamilyMembersByFamilyIdQuery (Family 내 활성 구성원 조회)
+- FindFamilyMembersByRoleQuery (역할별 구성원 조회)
+- FindFamilyMembersByBirthdayRangeQuery (생일 범위 조회)
+
+**구체화 완료 후 확인:**
+- Query 클래스명이 조회 기준을 명확히 표현하는지 확인
+- 단일 책임 원칙: 하나의 Query는 하나의 명확한 조회 조건만 담당
+- 메서드 시그니처의 모호성 제거: find() 메서드가 무엇을 기준으로 조회하는지 Query 클래스명으로 명확히 구분
+
 ✅ 해야 할 일:
 - 채번 규칙(FT/PM 코드, Epic/Story 구조)을 반드시 확인 후 기획 시작
 - planning-template.md를 기반으로 체계적 작성
+- **UseCase 포함 시 조회 기준 구체화 질문 필수 수행**
 - Mermaid 플로우차트로 시각적 흐름 제공
 - 텍스트 와이어프레임으로 화면 구성 명시
 - 모든 예외상황과 에러 케이스 고려
