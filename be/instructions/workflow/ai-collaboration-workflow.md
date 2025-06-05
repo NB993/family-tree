@@ -75,17 +75,23 @@
 - Q: "페이징이 필요합니까? (한 번에 모든 데이터/페이지 단위)"
 
 **Query 클래스명 제안:**
-조회 기준을 반영한 명확한 클래스명 제안:
-- FindFamilyMemberByIdQuery (ID 기준 단건 조회)
-- FindFamilyMemberByEmailQuery (이메일 기준 단건 조회)
-- FindActiveFamilyMembersByFamilyIdQuery (Family 내 활성 구성원 조회)
-- FindFamilyMembersByRoleQuery (역할별 구성원 조회)
-- FindFamilyMembersByBirthdayRangeQuery (생일 범위 조회)
+조회 기준을 반영한 명확한 클래스명 제안 (메서드명은 find/findAll로 통일):
+- FindFamilyMemberByIdQuery (ID 기준 단건 조회) → find() 메서드 사용
+- FindFamilyMemberByEmailQuery (이메일 기준 단건 조회) → find() 메서드 사용
+- FindActiveFamilyMembersByFamilyIdQuery (Family 내 활성 구성원 조회) → findAll() 메서드 사용
+- FindFamilyMembersByRoleQuery (역할별 구성원 조회) → findAll() 메서드 사용
+- FindFamilyMembersByBirthdayRangeQuery (생일 범위 조회) → findAll() 메서드 사용
+
+**메서드명 통일 원칙:**
+- 모든 단건 조회: find() 메서드명 고정
+- 모든 복수 조회: findAll() 메서드명 고정
+- 조회 의도는 Query 객체 클래스명으로만 구분
 
 **구체화 완료 후 확인:**
 - Query 클래스명이 조회 기준을 명확히 표현하는지 확인
 - 단일 책임 원칙: 하나의 Query는 하나의 명확한 조회 조건만 담당
-- 메서드 시그니처의 모호성 제거: find() 메서드가 무엇을 기준으로 조회하는지 Query 클래스명으로 명확히 구분
+- 메서드명 통일: 단건 조회는 find(), 복수 조회는 findAll() 고정
+- 조회 의도 구분: Query 객체 클래스명으로만 구분 (메서드명으로 구분 금지)
 
 ✅ 해야 할 일:
 - 채번 규칙(FT/PM 코드, Epic/Story 구조)을 반드시 확인 후 기획 시작

@@ -121,8 +121,17 @@ flowchart TD
   - [ ] 모든 인증된 사용자 조회 가능
   - [ ] 특정 조건: ________________
 
-**결정된 Query 클래스명**: `Find[도메인]By[필드명]Query`
+**결정된 Query 클래스명**: `Find[도메인]By[필드명]Query`  
+**메서드명**: `find()` (모든 단건 조회에서 동일)
 **예시**: `FindFamilyMemberByIdQuery`, `FindUserByEmailQuery`
+
+```java
+// 사용 예시
+public interface FindFamilyMemberUseCase {
+    FamilyMember find(FindFamilyMemberByIdQuery query);      // ID 기준 단건 조회
+    FamilyMember find(FindFamilyMemberByEmailQuery query);   // 이메일 기준 단건 조회
+}
+```
 
 ### 3.3 복수 조회 UseCase 구체화
 
@@ -157,8 +166,17 @@ flowchart TD
   - [ ] 예 (예상 데이터 수: ____개, 페이지당 ____개)
   - [ ] 아니오 (한 번에 모든 데이터 조회)
 
-**결정된 Query 클래스명**: `Find[조건][도메인복수형]By[기준]Query`  
+**결정된 Query 클래스명**: `Find[조건][도메인복수형]By[기준]Query`
+**메서드명**: `findAll()` (모든 복수 조회에서 동일)  
 **예시**: `FindActiveFamilyMembersByFamilyIdQuery`, `FindFamilyMembersByRoleQuery`
+
+```java
+// 사용 예시
+public interface FindFamilyMemberUseCase {
+    List<FamilyMember> findAll(FindActiveFamilyMembersByFamilyIdQuery query);  // 활성 구성원 조회
+    List<FamilyMember> findAll(FindFamilyMembersByRoleQuery query);            // 역할별 조회
+}
+```
 
 ### 3.4 구체화 결과 요약
 
@@ -171,7 +189,8 @@ flowchart TD
 - [ ] 모든 UseCase의 조회 기준이 명확히 정의되었는가?
 - [ ] Query 클래스명이 조회 기준을 명확히 표현하는가?
 - [ ] 단일 책임 원칙이 지켜지는가? (하나의 Query는 하나의 명확한 조회 조건만)
-- [ ] 메서드 시그니처의 모호성이 제거되었는가?
+- [ ] 메서드명이 통일되었는가? (단건: find(), 복수: findAll())
+- [ ] 조회 의도 구분이 Query 객체로만 이루어지는가?
 
 ---
 

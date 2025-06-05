@@ -23,14 +23,34 @@
   - `SaveFamilyMemberUseCase`
   - `ModifyFamilyMemberUseCase`
 
-#### 2. UseCase 메서드명
-- **단건 조회**: `find()`, `save()`, `modify()` 등 단수형 동사
-- **복수 조회**: `findAll()`, `findMembers()` 등 복수형 의미가 명확한 메서드명
-- **예시**:
+#### 2. UseCase 메서드명 (엄격 통일)
+- **단건 조회**: `find()` - 모든 단건 조회에서 동일한 메서드명 사용
+- **복수 조회**: `findAll()` - 모든 복수 조회에서 동일한 메서드명 사용
+- **조회 의도 구분**: Query 객체 클래스명으로만 구분 (메서드명으로 구분 금지)
+
+**올바른 예시**:
 ```java
 public interface FindFamilyMemberUseCase {
-    FamilyMember find(FindFamilyMemberQuery query);           // 단건 조회
-    List<FamilyMember> findAll(FindAllFamilyMembersQuery query); // 복수 조회
+    // 단건 조회 - 메서드명은 항상 find()
+    FamilyMember find(FindFamilyMemberByIdQuery query);
+    FamilyMember find(FindFamilyMemberByEmailQuery query);
+    FamilyMember find(FindFamilyMemberByUserIdQuery query);
+    
+    // 복수 조회 - 메서드명은 항상 findAll()
+    List<FamilyMember> findAll(FindAllFamilyMembersQuery query);
+    List<FamilyMember> findAll(FindActiveFamilyMembersByFamilyIdQuery query);
+    List<FamilyMember> findAll(FindFamilyMembersByRoleQuery query);
+}
+```
+
+**금지된 예시**:
+```java
+// ❌ 금지: 메서드명으로 조회 의도 구분
+public interface FindFamilyMemberUseCase {
+    FamilyMember findById(Long id);           // 금지
+    FamilyMember findByEmail(String email);   // 금지
+    List<FamilyMember> findMembers(...);      // 금지
+    List<FamilyMember> findActiveMembers(...); // 금지
 }
 ```
 
@@ -76,8 +96,8 @@ public class FindAllFamilyMemberRelationshipsQuery {
 
 1. **일관성 유지**: 모든 UseCase에서 동일한 패턴 적용
 2. **단수형 원칙**: UseCase 인터페이스명은 항상 단수형
-3. **메서드명 명확성**: 단건/복수 구분이 명확하게 드러나야 함
-4. **Query 클래스 분리**: 단건용과 복수용 Query는 별도 클래스로 구현
+3. **메서드명 엄격 통일**: 단건 조회는 `find()`, 복수 조회는 `findAll()` 만 사용
+4. **Query 객체로 의도 구분**: 메서드명이 아닌 Query 클래스명으로 조회 의도 표현
 5. **조회 기준 명시**: Query 클래스명에 조회 기준이 명확히 드러나야 함
 6. **Validation**: 각 Query 클래스에서 입력값 검증 필수
 
@@ -118,23 +138,35 @@ FindFamilyMembersByJoinDateRangeQuery
 FindActiveFamilyMembersByRoleAndFamilyIdQuery
 ```
 
-#### 메서드 오버로딩 vs 별도 Query 원칙
+#### 메서드 오버로딩을 활용한 일관성 확보
 ```java
-// ❌ 잘못된 방식: 하나의 Query로 여러 조회 방식 지원
-public class FindFamilyMemberQuery {
-    private Long id;           // ID 조회용
-    private String email;      // 이메일 조회용
-    private Long userId;       // 사용자ID 조회용
-    // 어떤 필드가 실제 조회 기준인지 불명확
-}
-
-// ✅ 올바른 방식: 조회 기준별로 별도 Query 클래스
+// ✅ 올바른 방식: 메서드명 통일 + Query 객체로 의도 구분
 public interface FindFamilyMemberUseCase {
+    // 모든 단건 조회는 find() 메서드명 통일
     FamilyMember find(FindFamilyMemberByIdQuery query);
     FamilyMember find(FindFamilyMemberByEmailQuery query);
     FamilyMember find(FindFamilyMemberByUserIdQuery query);
+    
+    // 모든 복수 조회는 findAll() 메서드명 통일  
+    List<FamilyMember> findAll(FindAllFamilyMembersQuery query);
+    List<FamilyMember> findAll(FindActiveFamilyMembersByFamilyIdQuery query);
+    List<FamilyMember> findAll(FindFamilyMembersByRoleQuery query);
+}
+
+// ❌ 잘못된 방식: 메서드명으로 조회 의도 구분
+public interface FindFamilyMemberUseCase {
+    FamilyMember findById(Long id);                    // 금지
+    FamilyMember findByEmail(String email);            // 금지
+    List<FamilyMember> findActiveMembers(...);         // 금지
+    List<FamilyMember> findMembersByRole(...);         // 금지
 }
 ```
+
+**장점**:
+- 메서드명의 일관성 확보
+- Query 객체만으로 조회 의도 파악 가능
+- IDE 자동완성에서 find/findAll 두 개만 표시
+- 코드 가독성 및 유지보수성 향상
 
 ### 기획 단계에서 확인해야 할 질문들
 
@@ -161,9 +193,10 @@ public interface FindFamilyMemberUseCase {
 - [ ] 하나의 Query가 하나의 명확한 조회 책임만 가지는가?
 
 #### UseCase 메서드명 검증  
-- [ ] `find()` vs `findAll()` 구분이 명확한가?
-- [ ] 메서드 시그니처만으로 무엇을 조회하는지 알 수 있는가?
-- [ ] Query 클래스명과 메서드명이 일치하는가?
+- [ ] 단건 조회는 모두 `find()` 메서드명을 사용하는가?
+- [ ] 복수 조회는 모두 `findAll()` 메서드명을 사용하는가?
+- [ ] `findById()`, `findByEmail()`, `findMembers()` 등 금지된 메서드명을 사용하지 않았는가?
+- [ ] 메서드 오버로딩으로 Query 타입별 구분이 가능한가?
 
 ## 계층별 명명 규칙
 
