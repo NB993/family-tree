@@ -210,12 +210,18 @@ public class FindFamilyTreeService implements FindFamilyTreeUseCase {
      */
     private int calculateTargetGeneration(int currentGeneration, FamilyMemberRelationship relationship) {
         return switch (relationship.getRelationshipType()) {
-            case PARENT, UNCLE_AUNT -> currentGeneration - 1; // 상위 세대
-            case CHILD, NEPHEW_NIECE -> currentGeneration + 1; // 하위 세대
-            case GRANDPARENT -> currentGeneration - 2; // 2세대 상위
-            case GRANDCHILD -> currentGeneration + 2; // 2세대 하위
-            case SPOUSE, SIBLING, COUSIN -> currentGeneration; // 동일 세대
-            case CUSTOM -> currentGeneration; // 사용자 정의는 동일 세대로 처리
+            // 상위 세대 (부모, 삼촌/이모)
+            case FATHER, MOTHER, UNCLE, AUNT -> currentGeneration - 1;
+            // 하위 세대 (자녀, 조카)
+            case SON, DAUGHTER, NEPHEW, NIECE -> currentGeneration + 1;
+            // 2세대 상위 (조부모)
+            case GRANDFATHER, GRANDMOTHER -> currentGeneration - 2;
+            // 2세대 하위 (손자녀)
+            case GRANDSON, GRANDDAUGHTER -> currentGeneration + 2;
+            // 동일 세대 (배우자, 형제자매, 사촌)
+            case HUSBAND, WIFE, ELDER_BROTHER, ELDER_SISTER, YOUNGER_BROTHER, YOUNGER_SISTER, COUSIN -> currentGeneration;
+            // 사용자 정의는 동일 세대로 처리
+            case CUSTOM -> currentGeneration;
         };
     }
 

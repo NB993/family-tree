@@ -51,7 +51,7 @@ class FamilyMemberRelationshipAdapterTest {
         Long familyId = 2L;
         Long fromMemberId = 3L;
         Long toMemberId = 4L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "부모 관계";
 
@@ -87,7 +87,7 @@ class FamilyMemberRelationshipAdapterTest {
         Long familyId = 2L;
         Long fromMemberId = 3L;
         Long toMemberId = 4L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "부모 관계";
 
@@ -181,12 +181,12 @@ class FamilyMemberRelationshipAdapterTest {
         Long fromMemberId = 2L;
 
         Long toMemberId1 = 3L;
-        FamilyMemberRelationshipType relationshipType1 = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType1 = FamilyMemberRelationshipType.FATHER;
         String customRelationship1 = null;
         String description1 = "부모 관계";
 
         Long toMemberId2 = 4L;
-        FamilyMemberRelationshipType relationshipType2 = FamilyMemberRelationshipType.SIBLING;
+        FamilyMemberRelationshipType relationshipType2 = FamilyMemberRelationshipType.ELDER_BROTHER;
         String customRelationship2 = null;
         String description2 = "형제 관계";
 

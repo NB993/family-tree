@@ -139,7 +139,7 @@ class FamilyTreeAdapterTest extends AdapterTestBase {
         // 관계 생성
         FamilyMemberRelationship relationship = FamilyMemberRelationship.newRelationship(
             savedFamily.getId(), savedMember1.getId(), savedMember2.getId(),
-            FamilyMemberRelationshipType.PARENT, "부모", "설명"
+            FamilyMemberRelationshipType.FATHER, "부모", "설명"
         );
         familyMemberRelationshipJpaRepository.save(FamilyMemberRelationshipJpaEntity.from(relationship));
         
@@ -148,7 +148,7 @@ class FamilyTreeAdapterTest extends AdapterTestBase {
         
         // then
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getRelationshipType()).isEqualTo(FamilyMemberRelationshipType.PARENT);
+        assertThat(result.get(0).getRelationshipType()).isEqualTo(FamilyMemberRelationshipType.FATHER);
     }
     
     @Test

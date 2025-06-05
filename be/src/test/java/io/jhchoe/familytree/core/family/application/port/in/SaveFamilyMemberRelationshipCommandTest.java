@@ -19,7 +19,7 @@ class SaveFamilyMemberRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "부모 관계";
 
@@ -77,7 +77,7 @@ class SaveFamilyMemberRelationshipCommandTest {
         Long familyId = null;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "부모 관계";
 
@@ -101,7 +101,7 @@ class SaveFamilyMemberRelationshipCommandTest {
         // given
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "부모 관계";
 
@@ -125,7 +125,7 @@ class SaveFamilyMemberRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = null;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "부모 관계";
 
@@ -149,7 +149,7 @@ class SaveFamilyMemberRelationshipCommandTest {
         // given
         Long familyId = 1L;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "부모 관계";
 
@@ -173,7 +173,7 @@ class SaveFamilyMemberRelationshipCommandTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = null;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "부모 관계";
 
@@ -197,7 +197,7 @@ class SaveFamilyMemberRelationshipCommandTest {
         // given
         Long familyId = 1L;
         Long fromMemberId = 2L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "부모 관계";
 
@@ -220,7 +220,7 @@ class SaveFamilyMemberRelationshipCommandTest {
         // given
         Long familyId = 1L;
         Long memberId = 2L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "부모 관계";
 

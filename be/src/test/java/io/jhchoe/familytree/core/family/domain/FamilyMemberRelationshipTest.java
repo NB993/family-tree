@@ -17,7 +17,7 @@ class FamilyMemberRelationshipTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "관계 설명";
 
@@ -80,7 +80,7 @@ class FamilyMemberRelationshipTest {
         Long familyId = null;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "관계 설명";
 
@@ -104,7 +104,7 @@ class FamilyMemberRelationshipTest {
         Long familyId = 1L;
         Long fromMemberId = null;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "관계 설명";
 
@@ -128,7 +128,7 @@ class FamilyMemberRelationshipTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = null;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "관계 설명";
 
@@ -152,7 +152,7 @@ class FamilyMemberRelationshipTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 2L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "관계 설명";
 
@@ -225,12 +225,12 @@ class FamilyMemberRelationshipTest {
             1L,
             2L,
             3L,
-            FamilyMemberRelationshipType.PARENT,
+            FamilyMemberRelationshipType.FATHER,
             null,
             "원래 설명"
         );
 
-        FamilyMemberRelationshipType newType = FamilyMemberRelationshipType.GRANDPARENT;
+        FamilyMemberRelationshipType newType = FamilyMemberRelationshipType.GRANDFATHER;
         String newCustomRelationship = null;
         String newDescription = "새로운 설명";
 
@@ -260,7 +260,7 @@ class FamilyMemberRelationshipTest {
             1L,
             2L,
             3L,
-            FamilyMemberRelationshipType.PARENT,
+            FamilyMemberRelationshipType.FATHER,
             null,
             "원래 설명"
         );
@@ -291,7 +291,7 @@ class FamilyMemberRelationshipTest {
             1L,
             2L,
             3L,
-            FamilyMemberRelationshipType.PARENT,
+            FamilyMemberRelationshipType.FATHER,
             null,
             "원래 설명"
         );
@@ -318,7 +318,7 @@ class FamilyMemberRelationshipTest {
             1L,
             2L,
             3L,
-            FamilyMemberRelationshipType.PARENT,
+            FamilyMemberRelationshipType.FATHER,
             null,
             "원래 설명"
         );
@@ -345,7 +345,7 @@ class FamilyMemberRelationshipTest {
         Long familyId = 2L;
         Long fromMemberId = 3L;
         Long toMemberId = 4L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "관계 설명";
         Long createdBy = 5L;
@@ -391,7 +391,7 @@ class FamilyMemberRelationshipTest {
         Long familyId = 2L;
         Long fromMemberId = 3L;
         Long toMemberId = 4L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "관계 설명";
         Long createdBy = 5L;

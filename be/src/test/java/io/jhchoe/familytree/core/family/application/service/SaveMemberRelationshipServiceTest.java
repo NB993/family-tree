@@ -65,7 +65,7 @@ class SaveMemberRelationshipServiceTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "새로운 관계";
         Long expectedId = 4L;
@@ -107,8 +107,8 @@ class SaveMemberRelationshipServiceTest {
         Long familyId = 2L;
         Long fromMemberId = 3L;
         Long toMemberId = 4L;
-        FamilyMemberRelationshipType originalType = FamilyMemberRelationshipType.PARENT;
-        FamilyMemberRelationshipType newType = FamilyMemberRelationshipType.GRANDPARENT;
+        FamilyMemberRelationshipType originalType = FamilyMemberRelationshipType.FATHER;
+        FamilyMemberRelationshipType newType = FamilyMemberRelationshipType.GRANDFATHER;
         String originalCustom = null;
         String newCustom = null;
         String originalDesc = "원래 설명";
@@ -164,7 +164,7 @@ class SaveMemberRelationshipServiceTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "새로운 관계";
 
@@ -197,7 +197,7 @@ class SaveMemberRelationshipServiceTest {
         Long familyId = 1L;
         Long fromMemberId = 2L;
         Long toMemberId = 3L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String customRelationship = null;
         String description = "새로운 관계";
 

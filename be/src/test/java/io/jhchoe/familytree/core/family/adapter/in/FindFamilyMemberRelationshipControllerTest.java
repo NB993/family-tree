@@ -48,7 +48,7 @@ class FindFamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
             familyId,
             fromMemberId,
             toMemberId1,
-            FamilyMemberRelationshipType.PARENT,
+            FamilyMemberRelationshipType.FATHER,
             null,
             "부모 관계"
         );
@@ -57,7 +57,7 @@ class FindFamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
             familyId,
             fromMemberId,
             toMemberId2,
-            FamilyMemberRelationshipType.SIBLING,
+            FamilyMemberRelationshipType.ELDER_BROTHER,
             null,
             "형제 관계"
         );
@@ -75,10 +75,10 @@ class FindFamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
             .body("$", hasSize(2))
             .body("[0].fromMemberId", equalTo(fromMemberId.intValue()))
             .body("[0].relationshipType", is(notNullValue()))
-            .body("[0].relationshipDisplayName", is("부모"))
+            .body("[0].relationshipDisplayName", is("아버지"))
             .body("[1].fromMemberId", equalTo(fromMemberId.intValue()))
             .body("[1].relationshipType", is(notNullValue()))
-            .body("[1].relationshipDisplayName", is("형제자매"));
+            .body("[1].relationshipDisplayName", is("형"));
     }
 
     @Test
@@ -97,7 +97,7 @@ class FindFamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
             familyId,
             fromMemberId,
             toMemberId,
-            FamilyMemberRelationshipType.PARENT,
+            FamilyMemberRelationshipType.FATHER,
             null,
             "부모 관계"
         );
@@ -113,8 +113,8 @@ class FindFamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
             .statusCode(200)
             .body("fromMemberId", equalTo(fromMemberId.intValue()))
             .body("toMemberId", equalTo(toMemberId.intValue()))
-            .body("relationshipType", equalTo("PARENT"))
-            .body("relationshipDisplayName", equalTo("부모"))
+            .body("relationshipType", equalTo("FATHER"))
+            .body("relationshipDisplayName", equalTo("아버지"))
             .body("description", equalTo("부모 관계"));
     }
 

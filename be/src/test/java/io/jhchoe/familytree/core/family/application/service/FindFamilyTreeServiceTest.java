@@ -59,7 +59,7 @@ class FindFamilyTreeServiceTest {
         List<FamilyMember> familyMembers = List.of(centerMember, childMember);
         
         FamilyMemberRelationship relationship = FamilyMemberRelationship.withId(
-            1L, familyId, centerMemberId, 2L, FamilyMemberRelationshipType.CHILD,
+            1L, familyId, centerMemberId, 2L, FamilyMemberRelationshipType.SON,
             null, "자녀", 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
         

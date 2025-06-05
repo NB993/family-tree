@@ -44,7 +44,7 @@ class SaveFamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
         Long familyId = 1L;
         Long fromMemberId = 1L;
         Long toMemberId = 2L;
-        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.PARENT;
+        FamilyMemberRelationshipType relationshipType = FamilyMemberRelationshipType.FATHER;
         String description = "부모 관계";
 
         SaveFamilyMemberRelationshipRequest request = new SaveFamilyMemberRelationshipRequest(
@@ -159,7 +159,7 @@ class SaveFamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
         SaveFamilyMemberRelationshipRequest request = new SaveFamilyMemberRelationshipRequest(
             null,
             1L,
-            FamilyMemberRelationshipType.PARENT,
+            FamilyMemberRelationshipType.FATHER,
             null,
             "설명"
         );
@@ -243,7 +243,7 @@ class SaveFamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
         SaveFamilyMemberRelationshipRequest request = new SaveFamilyMemberRelationshipRequest(
             familyId,
             toMemberId,
-            FamilyMemberRelationshipType.PARENT,
+            FamilyMemberRelationshipType.FATHER,
             "C".repeat(51), // > 50
             "설명"
         );
@@ -270,7 +270,7 @@ class SaveFamilyMemberRelationshipControllerTest extends AcceptanceTestBase {
         SaveFamilyMemberRelationshipRequest request = new SaveFamilyMemberRelationshipRequest(
             familyId,
             toMemberId,
-            FamilyMemberRelationshipType.PARENT,
+            FamilyMemberRelationshipType.FATHER,
             null,
             "D".repeat(201) // > 200
         );
