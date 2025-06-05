@@ -1,7 +1,7 @@
 package io.jhchoe.familytree.core.family.application.service;
 
-import io.jhchoe.familytree.core.family.application.port.in.FindAllFamilyMembersQuery;
-import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberUseCase;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
@@ -43,7 +43,7 @@ public class FindFamilyMemberService implements FindFamilyMemberUseCase {
      * @throws IllegalArgumentException query가 null이거나 유효하지 않은 경우
      */
     @Override
-    public FamilyMember find(FindFamilyMemberQuery query) {
+    public FamilyMember find(FindFamilyMemberByIdQuery query) {
         if (query == null) {
             throw new IllegalArgumentException("query must not be null");
         }
@@ -74,7 +74,7 @@ public class FindFamilyMemberService implements FindFamilyMemberUseCase {
      * @throws IllegalArgumentException query가 null이거나 사용자가 Family 구성원이 아닌 경우
      */
     @Override
-    public List<FamilyMember> findAll(FindAllFamilyMembersQuery query) {
+    public List<FamilyMember> findAll(FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query) {
         if (query == null) {
             throw new IllegalArgumentException("query must not be null");
         }

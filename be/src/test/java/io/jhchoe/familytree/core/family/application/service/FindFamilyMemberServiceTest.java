@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-import io.jhchoe.familytree.core.family.application.port.in.FindAllFamilyMembersQuery;
-import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
@@ -40,7 +40,8 @@ class FindFamilyMemberServiceTest {
         // given
         Long familyId = 1L;
         Long currentUserId = 2L;
-        FindAllFamilyMembersQuery query = new FindAllFamilyMembersQuery(familyId, currentUserId);
+        FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query = 
+            new FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery(familyId, currentUserId);
 
         // 현재 사용자 (MEMBER 권한)
         FamilyMember currentMember = FamilyMember.existingMember(
@@ -110,7 +111,8 @@ class FindFamilyMemberServiceTest {
         // given
         Long familyId = 1L;
         Long currentUserId = 2L;
-        FindAllFamilyMembersQuery query = new FindAllFamilyMembersQuery(familyId, currentUserId);
+        FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query = 
+            new FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery(familyId, currentUserId);
 
         // 현재 사용자 (ADMIN 권한)
         FamilyMember adminMember = FamilyMember.existingMember(
@@ -152,7 +154,8 @@ class FindFamilyMemberServiceTest {
         // given
         Long familyId = 1L;
         Long currentUserId = 2L;
-        FindAllFamilyMembersQuery query = new FindAllFamilyMembersQuery(familyId, currentUserId);
+        FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query = 
+            new FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery(familyId, currentUserId);
 
         FamilyMember currentMember = FamilyMember.existingMember(
             2L, familyId, currentUserId, "현재사용자", "profile2.jpg",
@@ -201,7 +204,8 @@ class FindFamilyMemberServiceTest {
         // given
         Long familyId = 1L;
         Long currentUserId = 999L; // 존재하지 않는 사용자
-        FindAllFamilyMembersQuery query = new FindAllFamilyMembersQuery(familyId, currentUserId);
+        FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query = 
+            new FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery(familyId, currentUserId);
 
         // Mocking: 현재 사용자가 Family 구성원이 아님
         when(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
@@ -228,7 +232,8 @@ class FindFamilyMemberServiceTest {
         // given
         Long familyId = 1L;
         Long currentUserId = 2L;
-        FindAllFamilyMembersQuery query = new FindAllFamilyMembersQuery(familyId, currentUserId);
+        FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query = 
+            new FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery(familyId, currentUserId);
 
         FamilyMember currentMember = FamilyMember.existingMember(
             2L, familyId, currentUserId, "현재사용자", "profile2.jpg",
@@ -260,7 +265,7 @@ class FindFamilyMemberServiceTest {
         Long familyId = 1L;
         Long currentUserId = 2L;
         Long targetMemberId = 3L;
-        FindFamilyMemberQuery query = new FindFamilyMemberQuery(familyId, currentUserId, targetMemberId);
+        FindFamilyMemberByIdQuery query = new FindFamilyMemberByIdQuery(familyId, currentUserId, targetMemberId);
 
         FamilyMember currentMember = FamilyMember.existingMember(
             2L, familyId, currentUserId, "현재사용자", "profile2.jpg",
@@ -299,7 +304,7 @@ class FindFamilyMemberServiceTest {
         Long familyId = 1L;
         Long currentUserId = 2L;
         Long targetMemberId = 3L;
-        FindFamilyMemberQuery query = new FindFamilyMemberQuery(familyId, currentUserId, targetMemberId);
+        FindFamilyMemberByIdQuery query = new FindFamilyMemberByIdQuery(familyId, currentUserId, targetMemberId);
 
         FamilyMember currentMember = FamilyMember.existingMember(
             2L, familyId, currentUserId, "현재사용자", "profile2.jpg",
@@ -336,7 +341,7 @@ class FindFamilyMemberServiceTest {
         Long familyId = 1L;
         Long currentUserId = 2L;
         Long targetMemberId = 3L;
-        FindFamilyMemberQuery query = new FindFamilyMemberQuery(familyId, currentUserId, targetMemberId);
+        FindFamilyMemberByIdQuery query = new FindFamilyMemberByIdQuery(familyId, currentUserId, targetMemberId);
 
         FamilyMember adminMember = FamilyMember.existingMember(
             2L, familyId, currentUserId, "관리자", "profile2.jpg",
@@ -375,7 +380,7 @@ class FindFamilyMemberServiceTest {
         Long familyId = 1L;
         Long currentUserId = 2L;
         Long targetMemberId = 999L; // 존재하지 않는 구성원
-        FindFamilyMemberQuery query = new FindFamilyMemberQuery(familyId, currentUserId, targetMemberId);
+        FindFamilyMemberByIdQuery query = new FindFamilyMemberByIdQuery(familyId, currentUserId, targetMemberId);
 
         FamilyMember currentMember = FamilyMember.existingMember(
             2L, familyId, currentUserId, "현재사용자", "profile2.jpg",

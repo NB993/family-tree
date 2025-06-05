@@ -17,7 +17,7 @@ public interface FindFamilyMemberUseCase {
      * @return 조회된 Family 구성원
      * @throws IllegalArgumentException query가 null이거나 유효하지 않은 경우
      */
-    FamilyMember find(FindFamilyMemberQuery query);
+    FamilyMember find(FindFamilyMemberByIdQuery query);
 
     /**
      * Family 구성원 목록을 조회합니다.
@@ -28,5 +28,5 @@ public interface FindFamilyMemberUseCase {
      * @return 나이순으로 정렬된 Family 구성원 목록
      * @throws IllegalArgumentException query가 null이거나 유효하지 않은 경우
      */
-    List<FamilyMember> findAll(FindAllFamilyMembersQuery query);
+    List<FamilyMember> findAll(FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query);
 }
