@@ -3,10 +3,12 @@ package io.jhchoe.familytree.core.family.adapter.in.response;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,20 +37,17 @@ public class FamilyMembersWithRelationshipsResponse {
      * FamilyMembersWithRelationshipsResponse 생성자입니다.
      * 
      * @param members 가족 구성원 목록 (null 불허)
-     * @param relationships 가족 관계 목록 (null 불허)
-     * @throws IllegalArgumentException members 또는 relationships가 null인 경우
+     * @param relationships 가족 관계 목록 (null인 경우 빈 리스트로 처리)
+     * @throws IllegalArgumentException members가 null인 경우
      */
     public FamilyMembersWithRelationshipsResponse(List<FamilyMember> members, List<FamilyMemberRelationship> relationships) {
         if (members == null) {
             throw new IllegalArgumentException("members must not be null");
         }
-        if (relationships == null) {
-            throw new IllegalArgumentException("relationships must not be null");
-        }
         
         // 방어적 복사로 불변성 보장
         this.members = List.copyOf(members);
-        this.relationships = List.copyOf(relationships);
+        this.relationships = List.copyOf(Objects.requireNonNullElse(relationships, Collections.emptyList()));
     }
     
     /**

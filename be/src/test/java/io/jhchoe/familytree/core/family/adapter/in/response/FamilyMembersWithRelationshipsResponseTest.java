@@ -29,10 +29,27 @@ class FamilyMembersWithRelationshipsResponseTest {
         assertThatThrownBy(() -> new FamilyMembersWithRelationshipsResponse(null, relationships))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("members must not be null");
-            
-        assertThatThrownBy(() -> new FamilyMembersWithRelationshipsResponse(members, null))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("relationships must not be null");
+    }
+    
+    @Test
+    @DisplayName("relationships가 null인 경우 빈 리스트로 처리된다")
+    void should_handle_null_relationships_as_empty_list() {
+        // given
+        FamilyMember member = createFamilyMember(1L, "김구성원", LocalDateTime.of(1990, 1, 1, 0, 0));
+        List<FamilyMember> members = List.of(member);
+        
+        // when
+        FamilyMembersWithRelationshipsResponse target = 
+            new FamilyMembersWithRelationshipsResponse(members, null);
+        
+        // then
+        Long currentUserId = 2L;
+        List<FamilyMemberWithRelationshipResponse> result = 
+            target.toMemberWithRelationships(currentUserId);
+        
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).isHasRelationship()).isFalse();
+        assertThat(result.get(0).getRelationshipType()).isNull();
     }
     
     @Test

@@ -1,72 +1,29 @@
-feat [with-ai] FT-005 일급객체 구현 - FamilyMembersWithRelationshipsResponse
+refactor [with-ai] FT-005 생성자 개선 - relationships null 처리
 
-- 가족 구성원과 관계 정보를 조합하는 일급객체 구현 완료
-- Family 홈 API용 응답 변환 메서드 구현
-- 관계 조회 성능 최적화 (인덱스 맵 활용)
-- 나이순 정렬 및 권한별 필터링 지원
+- FamilyMembersWithRelationshipsResponse 생성자에서 relationships null 허용
+- Objects.requireNonNullElse로 null인 경우 빈 리스트로 자동 변환
+- 실제 사용 시나리오 고려: 관계 정보가 아직 없을 수 있음
 
-## 구현 내용
+## 변경 사항
 
-### 핵심 일급객체
-- FamilyMembersWithRelationshipsResponse: 구성원+관계 조합 객체
-- FamilyMemberWithRelationshipResponse: Family 홈 API 응답 DTO
-- 기존 UseCase 재사용으로 도메인 순수성 보장
+### 생성자 로직 개선
+- relationships 파라미터: null 허용 → 빈 리스트로 자동 변환
+- members 파라미터: 여전히 null 불허 (최소 본인은 존재)
+- 방어적 프로그래밍 원칙 적용
 
-### 주요 기능
-- toMemberWithRelationships(): Family 홈 전용 변환
-- findRelationship(): O(1) 관계 조회 (인덱스 맵)
-- getActiveMembers(): ACTIVE 구성원 필터링
-- getRelationshipsFrom(): 구성원별 관계 맵 조회
+### 테스트 케이스 추가
+- relationships null 처리 테스트 추가
+- 기존 null 예외 테스트에서 relationships 부분 제거
+- 실제 동작 검증 (관계 없는 구성원 응답 확인)
 
-### 비즈니스 로직
-- 현재 사용자 본인 제외
-- SUSPENDED 구성원 제외 (일반 사용자)
-- 나이순(어린 순서) 정렬
-- 관계 미설정시 안내 메시지 표시
-- CUSTOM 관계 처리 및 표시명 계산
+### Javadoc 업데이트
+- relationships 파라미터 설명 변경
+- 예외 발생 조건 명확화
 
-### 성능 최적화
-- 지연 초기화 인덱스 맵으로 관계 조회 최적화
-- N+1 문제 회피 (기존 UseCase 조합 방식)
-- 방어적 복사로 불변성 보장
+## 기술적 개선 효과
 
-### 테스트 커버리지
-- 단위 테스트 25개 작성 (모든 시나리오 커버)
-- 예외 상황 처리 테스트 포함
-- 도메인 validation 대응
+- 더 관대한 API 설계 (Robustness Principle)
+- 초기 Family 생성 시나리오 대응
+- NPE 위험성 감소
 
-## 기술적 특징
-
-### 아키텍처 패턴
-- "기존 UseCase 재사용 + 일급객체 조합 + 어댑터 변환"
-- 헥사고날 아키텍처 원칙 준수
-- DDD 일급 컬렉션 패턴 적용
-
-### 확장성
-- 향후 API별 변환 메서드 추가 가능 (toTreeNodes, toStatistics)
-- 도메인 지식 캡슐화로 재사용성 극대화
-- 컴파일 타임 안전성 보장
-
-## 파일 변경 내역
-
-### 신규 생성
-- FamilyMembersWithRelationshipsResponse.java: 일급객체 (310줄)
-- FamilyMemberWithRelationshipResponse.java: 응답 DTO (220줄)
-- FamilyMembersWithRelationshipsResponseTest.java: 테스트 (150줄)
-- FamilyMemberWithRelationshipResponseTest.java: 테스트 (200줄)
-
-### 설계 결정
-- 기존 도메인 필드명 준수 (profileUrl, customRelationship)
-- 연락처 필드 부재로 향후 확장 대비 설계
-- 도메인 validation 존중한 테스트 작성
-
-## 다음 단계
-
-1. Controller 구현 (기존 UseCase 조합)
-2. 인프라 계층 구현 (필요시)
-3. 통합 테스트 작성
-4. API 문서화
-
-**🎯 핵심 가치: "도메인 순수성 + 성능 최적화 + 확장 가능한 설계"**
-
-Story-005 1단계 완료 - 일급객체 구현으로 아키텍처 기반 완성! 🚀
+**🛡️ 방어적 프로그래밍으로 사용성 개선!**
