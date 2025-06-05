@@ -1,0 +1,72 @@
+feat [with-ai] FT-005 일급객체 구현 - FamilyMembersWithRelationshipsResponse
+
+- 가족 구성원과 관계 정보를 조합하는 일급객체 구현 완료
+- Family 홈 API용 응답 변환 메서드 구현
+- 관계 조회 성능 최적화 (인덱스 맵 활용)
+- 나이순 정렬 및 권한별 필터링 지원
+
+## 구현 내용
+
+### 핵심 일급객체
+- FamilyMembersWithRelationshipsResponse: 구성원+관계 조합 객체
+- FamilyMemberWithRelationshipResponse: Family 홈 API 응답 DTO
+- 기존 UseCase 재사용으로 도메인 순수성 보장
+
+### 주요 기능
+- toMemberWithRelationships(): Family 홈 전용 변환
+- findRelationship(): O(1) 관계 조회 (인덱스 맵)
+- getActiveMembers(): ACTIVE 구성원 필터링
+- getRelationshipsFrom(): 구성원별 관계 맵 조회
+
+### 비즈니스 로직
+- 현재 사용자 본인 제외
+- SUSPENDED 구성원 제외 (일반 사용자)
+- 나이순(어린 순서) 정렬
+- 관계 미설정시 안내 메시지 표시
+- CUSTOM 관계 처리 및 표시명 계산
+
+### 성능 최적화
+- 지연 초기화 인덱스 맵으로 관계 조회 최적화
+- N+1 문제 회피 (기존 UseCase 조합 방식)
+- 방어적 복사로 불변성 보장
+
+### 테스트 커버리지
+- 단위 테스트 25개 작성 (모든 시나리오 커버)
+- 예외 상황 처리 테스트 포함
+- 도메인 validation 대응
+
+## 기술적 특징
+
+### 아키텍처 패턴
+- "기존 UseCase 재사용 + 일급객체 조합 + 어댑터 변환"
+- 헥사고날 아키텍처 원칙 준수
+- DDD 일급 컬렉션 패턴 적용
+
+### 확장성
+- 향후 API별 변환 메서드 추가 가능 (toTreeNodes, toStatistics)
+- 도메인 지식 캡슐화로 재사용성 극대화
+- 컴파일 타임 안전성 보장
+
+## 파일 변경 내역
+
+### 신규 생성
+- FamilyMembersWithRelationshipsResponse.java: 일급객체 (310줄)
+- FamilyMemberWithRelationshipResponse.java: 응답 DTO (220줄)
+- FamilyMembersWithRelationshipsResponseTest.java: 테스트 (150줄)
+- FamilyMemberWithRelationshipResponseTest.java: 테스트 (200줄)
+
+### 설계 결정
+- 기존 도메인 필드명 준수 (profileUrl, customRelationship)
+- 연락처 필드 부재로 향후 확장 대비 설계
+- 도메인 validation 존중한 테스트 작성
+
+## 다음 단계
+
+1. Controller 구현 (기존 UseCase 조합)
+2. 인프라 계층 구현 (필요시)
+3. 통합 테스트 작성
+4. API 문서화
+
+**🎯 핵심 가치: "도메인 순수성 + 성능 최적화 + 확장 가능한 설계"**
+
+Story-005 1단계 완료 - 일급객체 구현으로 아키텍처 기반 완성! 🚀
