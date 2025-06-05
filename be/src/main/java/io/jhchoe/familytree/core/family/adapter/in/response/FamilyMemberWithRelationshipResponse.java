@@ -5,7 +5,6 @@ import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationshipType;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import lombok.Getter;
 
 /**
  * Family 홈 API용 구성원과 관계 정보를 담는 응답 DTO입니다.
@@ -18,7 +17,6 @@ import lombok.Getter;
  *   <li>관계 표시명 (설정된 관계가 있는 경우)</li>
  * </ul>
  */
-@Getter
 public class FamilyMemberWithRelationshipResponse {
     
     /**
@@ -60,6 +58,42 @@ public class FamilyMemberWithRelationshipResponse {
         this.relationship = relationship;
         this.hasRelationship = relationship.isPresent();
         this.relationshipDisplayName = calculateRelationshipDisplayName(relationship);
+    }
+    
+    /**
+     * 가족 구성원 정보를 반환합니다.
+     * 
+     * @return 가족 구성원 정보
+     */
+    public FamilyMember getMember() {
+        return member;
+    }
+    
+    /**
+     * 현재 사용자와의 관계 정보를 반환합니다.
+     * 
+     * @return 관계 정보 (Optional)
+     */
+    public Optional<FamilyMemberRelationship> getRelationship() {
+        return relationship;
+    }
+    
+    /**
+     * 관계 표시명을 반환합니다.
+     * 
+     * @return 관계 표시명
+     */
+    public String getRelationshipDisplayName() {
+        return relationshipDisplayName;
+    }
+    
+    /**
+     * 관계 설정 여부를 반환합니다.
+     * 
+     * @return 관계 설정 여부
+     */
+    public boolean hasRelationship() {
+        return hasRelationship;
     }
     
     /**

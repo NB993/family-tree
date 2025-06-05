@@ -53,7 +53,7 @@ class FamilyMemberWithRelationshipResponseTest {
         assertThat(response.getMemberPhoneNumber()).isNull(); // 현재는 null
         assertThat(response.getMemberProfileImageUrl()).isEqualTo("https://example.com/profile.jpg");
         
-        assertThat(response.isHasRelationship()).isTrue();
+        assertThat(response.hasRelationship()).isTrue();
         assertThat(response.getRelationshipType()).isEqualTo(FamilyMemberRelationshipType.FATHER);
         assertThat(response.getRelationshipDisplayName()).isEqualTo("아버지");
         assertThat(response.getCustomRelationshipName()).isNull();
@@ -76,7 +76,7 @@ class FamilyMemberWithRelationshipResponseTest {
         assertThat(response.getMemberId()).isEqualTo(1L);
         assertThat(response.getMemberName()).isEqualTo("김아버지");
         
-        assertThat(response.isHasRelationship()).isFalse();
+        assertThat(response.hasRelationship()).isFalse();
         assertThat(response.getRelationshipType()).isNull();
         assertThat(response.getRelationshipDisplayName()).isNull();
         assertThat(response.getCustomRelationshipName()).isNull();
@@ -97,7 +97,7 @@ class FamilyMemberWithRelationshipResponseTest {
             new FamilyMemberWithRelationshipResponse(member, relationshipOpt);
         
         // then
-        assertThat(response.isHasRelationship()).isTrue();
+        assertThat(response.hasRelationship()).isTrue();
         assertThat(response.getRelationshipType()).isEqualTo(FamilyMemberRelationshipType.CUSTOM);
         assertThat(response.getRelationshipDisplayName()).isEqualTo("의붓아버지");
         assertThat(response.getCustomRelationshipName()).isEqualTo("의붓아버지");

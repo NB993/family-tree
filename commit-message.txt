@@ -1,29 +1,28 @@
-refactor [with-ai] FT-005 생성자 개선 - relationships null 처리
+refactor [with-ai] FT-005 메서드명 수정 - isHasRelationship → hasRelationship
 
-- FamilyMembersWithRelationshipsResponse 생성자에서 relationships null 허용
-- Objects.requireNonNullElse로 null인 경우 빈 리스트로 자동 변환
-- 실제 사용 시나리오 고려: 관계 정보가 아직 없을 수 있음
+- 부자연스러운 isHasRelationship() 메서드명을 hasRelationship()로 수정
+- Lombok @Getter 제거하고 명시적 getter 메서드 구현
+- 모든 테스트 케이스에서 메서드 호출 업데이트
 
 ## 변경 사항
 
-### 생성자 로직 개선
-- relationships 파라미터: null 허용 → 빈 리스트로 자동 변환
-- members 파라미터: 여전히 null 불허 (최소 본인은 존재)
-- 방어적 프로그래밍 원칙 적용
+### 메서드명 정규화
+- BEFORE: `isHasRelationship()` (문법적으로 부자연스러움)
+- AFTER: `hasRelationship()` (자연스러운 boolean 메서드명)
 
-### 테스트 케이스 추가
-- relationships null 처리 테스트 추가
-- 기존 null 예외 테스트에서 relationships 부분 제거
-- 실제 동작 검증 (관계 없는 구성원 응답 확인)
+### Lombok 의존성 제거
+- @Getter 어노테이션 제거
+- 필요한 getter 메서드들 명시적 구현
+- 메서드명 제어권 확보
 
-### Javadoc 업데이트
-- relationships 파라미터 설명 변경
-- 예외 발생 조건 명확화
+### 코드 품질 향상
+- 메서드명 가독성 개선
+- 일관된 네이밍 컨벤션 적용
+- 테스트 코드 가독성 향상
 
-## 기술적 개선 효과
+## 영향도
+- API 호출 방식 변경: response.isHasRelationship() → response.hasRelationship()
+- 모든 테스트 케이스 업데이트 완료
+- 기능적 변경 없음 (순수 리팩토링)
 
-- 더 관대한 API 설계 (Robustness Principle)
-- 초기 Family 생성 시나리오 대응
-- NPE 위험성 감소
-
-**🛡️ 방어적 프로그래밍으로 사용성 개선!**
+**📝 더 자연스러운 메서드명으로 코드 가독성 개선!**

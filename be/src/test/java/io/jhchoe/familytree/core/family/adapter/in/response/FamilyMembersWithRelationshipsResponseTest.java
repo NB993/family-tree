@@ -48,7 +48,7 @@ class FamilyMembersWithRelationshipsResponseTest {
             target.toMemberWithRelationships(currentUserId);
         
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).isHasRelationship()).isFalse();
+            assertThat(result.get(0).hasRelationship()).isFalse();
         assertThat(result.get(0).getRelationshipType()).isNull();
     }
     
