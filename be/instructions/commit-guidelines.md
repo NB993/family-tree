@@ -111,6 +111,36 @@ test [with-ai] FT-003 사용자 인증 - 단위 테스트 작성
 fix [by-ai] FT-002 가족트리 데이터 구조 설계 - 순환 참조 버그 수정
 ```
 
+### 2.5 파일을 이용한 커밋 예시 (긴 메시지)
+```bash
+# commit-message.txt 파일 생성
+cat > commit-message.txt << 'EOF'
+feat [by-ai] FT-003 Story-005 Family 구성원 조회 UseCase 구현 완료
+
+- 기존 구현된 FindFamilyMemberPort를 활용하여 구성원 조회 기능 구현
+- UseCase 명명 규칙에 따라 단수형 인터페이스와 분리된 Query 클래스 설계
+
+## 구현된 주요 컴포넌트
+
+### 애플리케이션 계층
+- FindFamilyMemberUseCase: 단건/복수 조회를 지원하는 UseCase 인터페이스
+- FindFamilyMemberService: UseCase 구현체 (기존 FindFamilyMemberPort 활용)
+
+## 테스트 구현
+- FindFamilyMemberServiceTest: UseCase 구현체 단위 테스트 ✅
+- 전체 테스트 통과 확인
+
+## 다음 단계
+- Story-006: 프레젠테이션 계층 구현
+EOF
+
+# 파일을 이용한 커밋
+git commit -F commit-message.txt --no-pager
+
+# 커밋 메시지 파일 삭제
+rm -f commit-message.txt
+```
+
 ---
 
 ## 3. 개발자 AI의 커밋 작업 절차
@@ -132,7 +162,17 @@ get_project_vcs_status 도구 사용
 ```bash
 # --no-pager 옵션 필수 사용
 execute_terminal_command: git add . --no-pager
+
+# 짧은 커밋 메시지인 경우
 execute_terminal_command: git commit -m "커밋 메시지" --no-pager
+
+# 긴 커밋 메시지인 경우 (권장)
+# 1. 커밋 메시지 파일 생성
+create_new_file_with_text: commit-message.txt 에 상세한 커밋 메시지 작성
+# 2. 파일을 이용한 커밋
+execute_terminal_command: git commit -F commit-message.txt --no-pager
+# 3. 커밋 메시지 파일 삭제
+execute_terminal_command: rm -f commit-message.txt
 ```
 
 #### Step 4: 기획자 AI에게 보고
@@ -146,6 +186,7 @@ execute_terminal_command: git commit -m "커밋 메시지" --no-pager
 - Story 단위로 커밋 (세분화된 커밋 지양)
 - 테스트 통과 후에만 커밋
 - 커밋 메시지 양식 엄격 준수
+- 긴 커밋 메시지는 파일(`commit-message.txt`)을 이용하여 `git commit -F` 사용 (권장)
 
 #### ❌ 금지사항
 - 티켓 번호 없는 커밋 (PM/FT 코드 필수)
