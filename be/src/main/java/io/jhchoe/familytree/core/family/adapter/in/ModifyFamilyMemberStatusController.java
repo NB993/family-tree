@@ -1,12 +1,12 @@
 package io.jhchoe.familytree.core.family.adapter.in;
 
-import io.jhchoe.familytree.common.support.ApiResponse;
 import io.jhchoe.familytree.core.family.adapter.in.request.ModifyFamilyMemberStatusRequest;
 import io.jhchoe.familytree.core.family.adapter.in.response.ModifyFamilyMemberStatusResponse;
 import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberStatusCommand;
 import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberStatusUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +31,7 @@ public class ModifyFamilyMemberStatusController {
      * @return 변경 결과 응답
      */
     @PutMapping("/{memberId}/status")
-    public ApiResponse<ModifyFamilyMemberStatusResponse> modifyMemberStatus(
+    public ResponseEntity<ModifyFamilyMemberStatusResponse> modifyMemberStatus(
         @PathVariable Long familyId,
         @PathVariable Long memberId,
         @Valid @RequestBody ModifyFamilyMemberStatusRequest request,
@@ -49,6 +49,6 @@ public class ModifyFamilyMemberStatusController {
             )
         );
         
-        return ApiResponse.ok(new ModifyFamilyMemberStatusResponse(updatedMemberId));
+        return ResponseEntity.ok(new ModifyFamilyMemberStatusResponse(updatedMemberId));
     }
 }

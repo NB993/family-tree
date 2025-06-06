@@ -1,5 +1,5 @@
 {
-  "PM": 20,
+  "PM": 21,
   "FT": 5,
   "lastUpdated": "2025-06-06",
   "description": {
@@ -7,7 +7,7 @@
     "FT": "Family Tree - 실제 사용자 기능 개발 작업"
   },
   "lastTickets": {
-    "PM-020": "코어 계층 null 체크 규칙 - 코딩 스탠다드 가이드라인 문서 업데이트",
+    "PM-021": "ApiResponse 래퍼 클래스 제거 - ResponseEntity 통일",
     "FT-005": "FindFamilyUseCase 표준화 리팩토링 - Query 패턴 적용 완료"
   }
 }
