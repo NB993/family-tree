@@ -13,6 +13,7 @@ import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,13 +46,12 @@ public class FindFamilyMemberService implements FindFamilyMemberUseCase {
      *
      * @param query 단건 조회 조건을 담은 쿼리 객체
      * @return 조회된 Family 구성원
-     * @throws FTException query가 null이거나 권한이 없거나 구성원을 찾을 수 없는 경우
+     * @throws NullPointerException query가 null인 경우 (개발자 실수)
+     * @throws FTException 권한이 없거나 구성원을 찾을 수 없는 경우
      */
     @Override
     public FamilyMember find(FindFamilyMemberByIdQuery query) {
-        if (query == null) {
-            throw new IllegalArgumentException("query must not be null");
-        }
+        Objects.requireNonNull(query, "query must not be null");
 
         // 1. Family 존재 여부 검증
         familyValidationService.validateFamilyExists(query.getFamilyId());
@@ -79,13 +79,12 @@ public class FindFamilyMemberService implements FindFamilyMemberUseCase {
      *
      * @param query 복수 조회 조건을 담은 쿼리 객체
      * @return 나이순으로 정렬된 Family 구성원 목록
+     * @throws NullPointerException query가 null인 경우 (개발자 실수)
      * @throws FTException Family가 존재하지 않거나 사용자가 Family 구성원이 아닌 경우
      */
     @Override
     public List<FamilyMember> findAll(FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query) {
-        if (query == null) {
-            throw new IllegalArgumentException("query must not be null");
-        }
+        Objects.requireNonNull(query, "query must not be null");
 
         // 1. Family 존재 여부 검증
         familyValidationService.validateFamilyExists(query.getFamilyId());

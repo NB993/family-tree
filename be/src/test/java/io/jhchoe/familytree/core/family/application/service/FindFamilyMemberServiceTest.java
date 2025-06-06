@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.in.FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
+import io.jhchoe.familytree.core.family.application.validation.FamilyValidationService;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
@@ -33,6 +35,9 @@ class FindFamilyMemberServiceTest {
 
     @Mock
     private FindFamilyMemberPort findFamilyMemberPort;
+    
+    @Mock
+    private FamilyValidationService familyValidationService;
 
     @Test
     @DisplayName("일반 구성원이 조회할 때 ACTIVE 상태 구성원만 나이순으로 반환합니다")
@@ -199,7 +204,7 @@ class FindFamilyMemberServiceTest {
     }
 
     @Test
-    @DisplayName("현재 사용자가 Family 구성원이 아닐 때 IllegalArgumentException이 발생합니다")
+    @DisplayName("현재 사용자가 Family 구성원이 아닐 때 FTException이 발생합니다")
     void throw_exception_when_user_is_not_family_member() {
         // given
         Long familyId = 1L;
@@ -213,16 +218,15 @@ class FindFamilyMemberServiceTest {
 
         // when & then
         assertThatThrownBy(() -> findFamilyMemberService.findAll(query))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("User is not a member of this family");
+            .isInstanceOf(FTException.class);
     }
 
     @Test
-    @DisplayName("query가 null일 때 IllegalArgumentException이 발생합니다")
+    @DisplayName("query가 null일 때 NullPointerException이 발생합니다")
     void throw_exception_when_query_is_null() {
         // when & then
         assertThatThrownBy(() -> findFamilyMemberService.findAll(null))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(NullPointerException.class)
             .hasMessage("query must not be null");
     }
 
@@ -298,7 +302,7 @@ class FindFamilyMemberServiceTest {
     }
 
     @Test
-    @DisplayName("단건 조회 시 일반 사용자가 SUSPENDED 구성원 조회할 때 예외가 발생합니다")
+    @DisplayName("단건 조회 시 일반 사용자가 SUSPENDED 구성원 조회할 때 FTException이 발생합니다")
     void throw_exception_when_member_tries_to_find_suspended_member() {
         // given
         Long familyId = 1L;
@@ -330,8 +334,7 @@ class FindFamilyMemberServiceTest {
 
         // when & then
         assertThatThrownBy(() -> findFamilyMemberService.find(query))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Access denied to target member");
+            .isInstanceOf(FTException.class);
     }
 
     @Test
@@ -374,7 +377,7 @@ class FindFamilyMemberServiceTest {
     }
 
     @Test
-    @DisplayName("단건 조회 시 존재하지 않는 구성원 조회할 때 예외가 발생합니다")
+    @DisplayName("단건 조회 시 존재하지 않는 구성원 조회할 때 FTException이 발생합니다")
     void throw_exception_when_target_member_not_found() {
         // given
         Long familyId = 1L;
@@ -399,16 +402,15 @@ class FindFamilyMemberServiceTest {
 
         // when & then
         assertThatThrownBy(() -> findFamilyMemberService.find(query))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Target member not found");
+            .isInstanceOf(FTException.class);
     }
 
     @Test
-    @DisplayName("단건 조회 시 query가 null일 때 예외가 발생합니다")
+    @DisplayName("단건 조회 시 query가 null일 때 NullPointerException이 발생합니다")
     void throw_exception_when_find_query_is_null() {
         // when & then
         assertThatThrownBy(() -> findFamilyMemberService.find(null))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(NullPointerException.class)
             .hasMessage("query must not be null");
     }
 }
