@@ -4,6 +4,7 @@ import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationshipType;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -44,15 +45,10 @@ public class FamilyMemberWithRelationshipResponse {
      * 
      * @param member 가족 구성원 정보 (null 불허)
      * @param relationship 현재 사용자와의 관계 정보 (Optional)
-     * @throws IllegalArgumentException member가 null인 경우
      */
     public FamilyMemberWithRelationshipResponse(FamilyMember member, Optional<FamilyMemberRelationship> relationship) {
-        if (member == null) {
-            throw new IllegalArgumentException("member must not be null");
-        }
-        if (relationship == null) {
-            throw new IllegalArgumentException("relationship must not be null (use Optional.empty() for no relationship)");
-        }
+        Objects.requireNonNull(member, "member must not be null");
+        Objects.requireNonNull(relationship, "relationship must not be null (use Optional.empty() for no relationship)");
         
         this.member = member;
         this.relationship = relationship;

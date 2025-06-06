@@ -27,7 +27,7 @@ class FamilyMembersWithRelationshipsResponseTest {
         
         // when & then
         assertThatThrownBy(() -> new FamilyMembersWithRelationshipsResponse(null, relationships))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(NullPointerException.class)
             .hasMessage("members must not be null");
     }
     

@@ -38,12 +38,9 @@ public class FamilyMembersWithRelationshipsResponse {
      * 
      * @param members 가족 구성원 목록 (null 불허)
      * @param relationships 가족 관계 목록 (null인 경우 빈 리스트로 처리)
-     * @throws IllegalArgumentException members가 null인 경우
      */
     public FamilyMembersWithRelationshipsResponse(List<FamilyMember> members, List<FamilyMemberRelationship> relationships) {
-        if (members == null) {
-            throw new IllegalArgumentException("members must not be null");
-        }
+        Objects.requireNonNull(members, "members must not be null");
         
         // 방어적 복사로 불변성 보장
         this.members = List.copyOf(members);
@@ -67,8 +64,9 @@ public class FamilyMembersWithRelationshipsResponse {
      * @throws IllegalArgumentException currentUserId가 null이거나 0 이하인 경우
      */
     public List<FamilyMemberWithRelationshipResponse> toMemberWithRelationships(Long currentUserId) {
-        if (currentUserId == null || currentUserId <= 0) {
-            throw new IllegalArgumentException("currentUserId must be positive");
+        Objects.requireNonNull(currentUserId, "currentUserId must not be null");
+        if (currentUserId <= 0) {
+            throw new IllegalStateException("currentUserId must be positive");
         }
         
         return members.stream()
@@ -93,11 +91,13 @@ public class FamilyMembersWithRelationshipsResponse {
      * @throws IllegalArgumentException fromMemberId 또는 toMemberId가 null이거나 0 이하인 경우
      */
     public Optional<FamilyMemberRelationship> findRelationship(Long fromMemberId, Long toMemberId) {
-        if (fromMemberId == null || fromMemberId <= 0) {
-            throw new IllegalArgumentException("fromMemberId must be positive");
+        Objects.requireNonNull(fromMemberId, "fromMemberId must not be null");
+        if (fromMemberId <= 0) {
+            throw new IllegalStateException("fromMemberId must be positive");
         }
-        if (toMemberId == null || toMemberId <= 0) {
-            throw new IllegalArgumentException("toMemberId must be positive");
+        Objects.requireNonNull(toMemberId, "toMemberId must not be null");
+        if (toMemberId <= 0) {
+            throw new IllegalStateException("toMemberId must be positive");
         }
         
         initializeRelationshipIndex();
@@ -124,8 +124,9 @@ public class FamilyMembersWithRelationshipsResponse {
      * @throws IllegalArgumentException memberId가 null이거나 0 이하인 경우
      */
     public Map<Long, FamilyMemberRelationship> getRelationshipsFrom(Long memberId) {
-        if (memberId == null || memberId <= 0) {
-            throw new IllegalArgumentException("memberId must be positive");
+        Objects.requireNonNull(memberId, "memberId must not be null");
+        if (memberId <= 0) {
+            throw new IllegalStateException("memberId must be positive");
         }
         
         return relationships.stream()

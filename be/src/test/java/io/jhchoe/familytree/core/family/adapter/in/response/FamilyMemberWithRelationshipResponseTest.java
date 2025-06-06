@@ -25,11 +25,11 @@ class FamilyMemberWithRelationshipResponseTest {
         
         // when & then
         assertThatThrownBy(() -> new FamilyMemberWithRelationshipResponse(null, relationship))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(NullPointerException.class)
             .hasMessage("member must not be null");
             
         assertThatThrownBy(() -> new FamilyMemberWithRelationshipResponse(member, null))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(NullPointerException.class)
             .hasMessage("relationship must not be null (use Optional.empty() for no relationship)");
     }
     

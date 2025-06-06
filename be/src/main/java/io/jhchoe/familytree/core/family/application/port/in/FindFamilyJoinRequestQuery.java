@@ -30,11 +30,11 @@ public class FindFamilyJoinRequestQuery {
      */
     private void validate() {
         if (familyId <= 0) {
-            throw new IllegalArgumentException("familyId must be positive");
+            throw new IllegalStateException("familyId must be positive");
         }
         
         if (currentUserId <= 0) {
-            throw new IllegalArgumentException("currentUserId must be positive");
+            throw new IllegalStateException("currentUserId must be positive");
         }
     }
 }

@@ -22,7 +22,7 @@ public record FamilyTreeGeneration(
      */
     public FamilyTreeGeneration {
         if (level < 0) {
-            throw new IllegalArgumentException("level must not be negative");
+            throw new IllegalStateException("level must not be negative");
         }
         Objects.requireNonNull(displayName, "displayName must not be null");
         Objects.requireNonNull(members, "members must not be null");

@@ -58,7 +58,7 @@ class FindFamilyJoinRequestQueryTest {
 
         // when & then
         assertThatThrownBy(() -> new FindFamilyJoinRequestQuery(familyId, currentUserId))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(IllegalStateException.class)
             .hasMessage("familyId must be positive");
     }
 
@@ -71,7 +71,7 @@ class FindFamilyJoinRequestQueryTest {
 
         // when & then
         assertThatThrownBy(() -> new FindFamilyJoinRequestQuery(familyId, currentUserId))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(IllegalStateException.class)
             .hasMessage("familyId must be positive");
     }
 
@@ -84,7 +84,7 @@ class FindFamilyJoinRequestQueryTest {
 
         // when & then
         assertThatThrownBy(() -> new FindFamilyJoinRequestQuery(familyId, currentUserId))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(IllegalStateException.class)
             .hasMessage("currentUserId must be positive");
     }
 
@@ -97,7 +97,7 @@ class FindFamilyJoinRequestQueryTest {
 
         // when & then
         assertThatThrownBy(() -> new FindFamilyJoinRequestQuery(familyId, currentUserId))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(IllegalStateException.class)
             .hasMessage("currentUserId must be positive");
     }
 }
