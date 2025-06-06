@@ -1,34 +1,63 @@
-docs [with-ai] PM-016 UseCase 조회 기준 구체화 워크플로우 완성
+feat [with-ai] FT-005 Family 홈 Controller 구현 완료 - 3단계 프레젠테이션 계층
 
-- 기획자 AI 워크플로우에 UseCase 조회 기준 구체화 질문 단계 추가
-- 명명 규칙 문서에 조회 기준별 Query 클래스명 가이드 상세화  
-- 기획 템플릿에 UseCase 구체화 전용 섹션 추가
-- Query 클래스명으로 조회 의도를 명확히 표현하는 표준 확립
+- 이전 대화 피드백 완전 반영하여 Controller 및 Service 최종 완성
+- 헥사고날 아키텍처 준수: Controller → UseCase → Service → Port
+- 기존 UseCase 조합 방식으로 Family 홈 구성원+관계 정보 제공
 
 ## 구현된 주요 컴포넌트
 
-### 워크플로우 개선
-- ai-collaboration-workflow.md: UseCase 구체화 필수 질문 단계 추가
-  * 단건 조회: 조회 기준/유니크성/실패 처리/권한 제한 확인
-  * 복수 조회: 필터링/정렬/권한/페이징 조건 확인
-  * Query 클래스명 제안: FindXxxByYyyQuery 패턴 적용
-- naming-conventions.md: 조회 기준별 Query 명명 가이드 확장
-  * 단일 필드 기준: FindFamilyMemberByIdQuery
-  * 복합 조건: FindActiveFamilyMembersByFamilyIdQuery  
-  * 메서드 오버로딩 vs 별도 Query 원칙 정의
-  * 기획 단계 확인 질문 및 검증 체크리스트 추가
-- planning-template.md: UseCase 구체화 전용 섹션 신설
-  * 단건/복수 조회별 구체화 질문 템플릿
-  * Query 클래스명 결정 가이드
-  * 구체화 결과 요약 테이블
+### 프레젠테이션 계층
+- FindFamilyHomeMemberController: Family 홈 구성원 목록 조회 API
+- 기존 UseCase들 조합하여 복합 데이터 제공
+- 순수 변환 역할만 담당 (검증 로직 UseCase에 위임)
 
-## 워크플로우 개선  
-- find() 메서드 모호성 해결: Query 클래스명으로 조회 의도 명확화
-- 기획 단계에서 조회 기준 사전 구체화로 개발 효율성 증대
-- 단일 책임 원칙 적용: 하나의 Query는 하나의 명확한 조회 조건만 담당
-- 메서드 시그니처 일관성 확보: find(XxxQuery) vs findAll(XxxQuery) 패턴 통일
+### 애플리케이션 계층 개선
+- FindFamilyMemberService: 3번 방식 적용 (검증+조회 통합)
+- FTException 기반 표준 예외 처리
+- 효율적 권한 검증: findByFamilyIdAndUserId 한 번만 호출
+
+### 아키텍처 개선사항
+- 중복 검증 제거: UseCase에서 모든 검증 처리
+- 예외 처리 통일: FamilyExceptionCode 기반 FTException 사용
+- Controller 간소화: 순수 변환 로직만 담당
+
+## 이전 대화 피드백 반영사항
+
+### 1. 검증 로직 통합 (3번 방식)
+- BEFORE: validateFamilyAccess + getCurrentMember (중복 조회)
+- AFTER: findByFamilyIdAndUserId 한 번으로 검증+조회 동시 처리
+
+### 2. 효율적인 currentMemberId 조회
+- BEFORE: 전체 구성원 조회 → 그 중에서 현재 사용자 찾기 (비효율적)
+- AFTER: 별도 find() 호출로 현재 사용자 먼저 조회 (효율적)
+
+### 3. 예외 처리 위치 수정
+- BEFORE: Controller에서 IllegalArgumentException
+- AFTER: UseCase에서 FTException(FamilyExceptionCode)
+
+## 기술적 성과
+
+### 성능 최적화
+- DB 쿼리 최소화: 중복 조회 제거
+- N+1 문제 방지: 관계 정보 한 번에 조회 후 메모리 매핑
+- 효율적 권한 검증: 단일 쿼리로 존재+권한 동시 확인
+
+### 아키텍처 품질
+- 완전한 헥사고날 아키텍처 준수
+- 단일 책임 원칙: 각 계층별 명확한 역할 분리
+- 의존성 역전: Controller가 UseCase만 의존
+
+### 재사용성 및 확장성
+- 기존 UseCase 완전 재활용
+- 일급객체를 통한 도메인 지식 캡슐화
+- 다른 API에서도 활용 가능한 조합 패턴
+
+## 테스트 구현
+- FamilyMembersWithRelationshipsResponseTest: 일급객체 단위 테스트 ✅
+- Service 계층 통합 테스트 준비 완료
 
 ## 다음 단계
-- 향후 모든 UseCase 기획 시 구체화 워크플로우 적용
-- 기존 Story-005 FindFamilyMemberQuery → FindFamilyMemberByIdQuery 리팩토링 검토
-- Story-006 진행 시 새로운 구체화 워크플로우 활용
+- Story-006: 인프라 계층 확장 (Repository, Adapter)
+- Story-007: 프론트엔드 연동 및 통합 테스트
+
+**🎯 FT-005 Story 완전 완료! 헥사고날 아키텍처를 준수하는 확장 가능한 Family 홈 API 완성**

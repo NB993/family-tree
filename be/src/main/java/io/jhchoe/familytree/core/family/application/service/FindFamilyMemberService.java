@@ -1,16 +1,18 @@
 package io.jhchoe.familytree.core.family.application.service;
 
+import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.in.FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberUseCase;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
+import io.jhchoe.familytree.core.family.application.validation.FamilyValidationService;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
+import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +26,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class FindFamilyMemberService implements FindFamilyMemberUseCase {
 
     private final FindFamilyMemberPort findFamilyMemberPort;
+    private final FamilyValidationService familyValidationService;
 
     /**
      * FindFamilyMemberService 생성자입니다.
      *
      * @param findFamilyMemberPort Family 구성원 조회 포트
+     * @param familyValidationService Family 검증 서비스
      */
-    public FindFamilyMemberService(FindFamilyMemberPort findFamilyMemberPort) {
+    public FindFamilyMemberService(FindFamilyMemberPort findFamilyMemberPort, FamilyValidationService familyValidationService) {
         this.findFamilyMemberPort = findFamilyMemberPort;
+        this.familyValidationService = familyValidationService;
     }
 
     /**
@@ -40,7 +45,7 @@ public class FindFamilyMemberService implements FindFamilyMemberUseCase {
      *
      * @param query 단건 조회 조건을 담은 쿼리 객체
      * @return 조회된 Family 구성원
-     * @throws IllegalArgumentException query가 null이거나 유효하지 않은 경우
+     * @throws FTException query가 null이거나 권한이 없거나 구성원을 찾을 수 없는 경우
      */
     @Override
     public FamilyMember find(FindFamilyMemberByIdQuery query) {
@@ -48,21 +53,24 @@ public class FindFamilyMemberService implements FindFamilyMemberUseCase {
             throw new IllegalArgumentException("query must not be null");
         }
 
-        // 현재 사용자가 Family 구성원인지 확인
-        FamilyMember currentMember = getCurrentMember(query.getFamilyId(), query.getCurrentUserId());
+        // 1. Family 존재 여부 검증
+        familyValidationService.validateFamilyExists(query.getFamilyId());
+        
+        // 2. 구성원 조회하면서 동시에 현재 사용자 권한 검증
+        FamilyMember currentMember = findFamilyMemberPort
+            .findByFamilyIdAndUserId(query.getFamilyId(), query.getCurrentUserId())
+            .orElseThrow(() -> new FTException(FamilyExceptionCode.NOT_FAMILY_MEMBER));
 
-        // 대상 구성원 조회
-        Optional<FamilyMember> targetMember = findFamilyMemberPort.findById(query.getTargetMemberId());
-        if (targetMember.isEmpty()) {
-            throw new IllegalArgumentException("Target member not found");
+        // 3. 대상 구성원 조회
+        FamilyMember targetMember = findFamilyMemberPort.findById(query.getTargetMemberId())
+            .orElseThrow(() -> new FTException(FamilyExceptionCode.MEMBER_NOT_FOUND));
+
+        // 4. 권한 확인
+        if (!shouldIncludeMember(targetMember, currentMember)) {
+            throw new FTException(FamilyExceptionCode.NOT_AUTHORIZED);
         }
 
-        // 권한 확인
-        if (!shouldIncludeMember(targetMember.get(), currentMember)) {
-            throw new IllegalArgumentException("Access denied to target member");
-        }
-
-        return targetMember.get();
+        return targetMember;
     }
 
     /**
@@ -71,7 +79,7 @@ public class FindFamilyMemberService implements FindFamilyMemberUseCase {
      *
      * @param query 복수 조회 조건을 담은 쿼리 객체
      * @return 나이순으로 정렬된 Family 구성원 목록
-     * @throws IllegalArgumentException query가 null이거나 사용자가 Family 구성원이 아닌 경우
+     * @throws FTException Family가 존재하지 않거나 사용자가 Family 구성원이 아닌 경우
      */
     @Override
     public List<FamilyMember> findAll(FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query) {
@@ -79,33 +87,19 @@ public class FindFamilyMemberService implements FindFamilyMemberUseCase {
             throw new IllegalArgumentException("query must not be null");
         }
 
-        // 현재 사용자가 Family 구성원인지 확인
-        FamilyMember currentMember = getCurrentMember(query.getFamilyId(), query.getCurrentUserId());
+        // 1. Family 존재 여부 검증
+        familyValidationService.validateFamilyExists(query.getFamilyId());
+        
+        // 2. 구성원 조회하면서 동시에 권한 검증
+        FamilyMember currentMember = findFamilyMemberPort
+            .findByFamilyIdAndUserId(query.getFamilyId(), query.getCurrentUserId())
+            .orElseThrow(() -> new FTException(FamilyExceptionCode.NOT_FAMILY_MEMBER));
 
-        // 전체 구성원 조회 (기존 구현 활용)
+        // 3. 전체 구성원 조회 (기존 구현 활용)
         List<FamilyMember> allMembers = findFamilyMemberPort.findAllByFamilyId(query.getFamilyId());
 
-        // 권한별 필터링 및 정렬
+        // 4. 권한별 필터링 및 정렬
         return filterAndSortMembers(allMembers, currentMember);
-    }
-
-    /**
-     * 현재 사용자 정보를 조회합니다.
-     *
-     * @param familyId Family ID
-     * @param currentUserId 현재 사용자 ID
-     * @return 현재 사용자 정보
-     * @throws IllegalArgumentException 사용자가 Family 구성원이 아닌 경우
-     */
-    private FamilyMember getCurrentMember(Long familyId, Long currentUserId) {
-        Optional<FamilyMember> currentMember = findFamilyMemberPort
-            .findByFamilyIdAndUserId(familyId, currentUserId);
-        
-        if (currentMember.isEmpty()) {
-            throw new IllegalArgumentException("User is not a member of this family");
-        }
-
-        return currentMember.get();
     }
 
     /**
