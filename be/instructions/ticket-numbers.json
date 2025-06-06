@@ -1,13 +1,13 @@
 {
-  "PM": 19,
+  "PM": 20,
   "FT": 3,
-  "lastUpdated": "2025-06-05",
+  "lastUpdated": "2025-06-06",
   "description": {
     "PM": "Project Management - 프로젝트 관리, 인프라, 워크플로우 개선 작업",
     "FT": "Family Tree - 실제 사용자 기능 개발 작업"
   },
   "lastTickets": {
-    "PM-019": "Query 클래스명 리팩토링 - 새로운 명명 규칙 적용",
+    "PM-020": "코어 계층 null 체크 규칙 - 코딩 스탠다드 가이드라인 문서 업데이트",
     "FT-003": "Family 홈 구성원 목록 조회 기능 - 기획서 작성"
   }
 }

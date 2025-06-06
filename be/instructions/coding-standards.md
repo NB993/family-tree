@@ -57,6 +57,70 @@
 - Command 객체는 생성자에서 유효성 검증을 수행합니다
 - 예외 처리 시에는 FTException을 사용하고, 적절한 예외 코드를 지정합니다
 
+### 코어 계층 null 체크 규칙
+
+**중요**: 코어 계층(애플리케이션 서비스)에서 Command/Query 객체가 null인 경우 NPE를 발생시켜야 합니다.
+
+- **목적**: 개발자 실수를 조기에 발견하여 개발 단계에서 수정하도록 유도
+- **방법**: `Objects.requireNonNull(query, "query must not be null")` 사용
+- **이유**: Command/Query 객체는 생성자에서 이미 사용자 입력 검증을 완료했으므로, 코어 계층까지 null이 넘어오는 것은 개발자의 실수임
+
+```java
+// ✅ 올바른 예시: 코어 계층에서 NPE 발생
+@Override
+@Transactional(readOnly = true)
+public FamilyMember find(FindFamilyMemberByIdQuery query) {
+    Objects.requireNonNull(query, "query must not be null"); // NPE 발생 → 500 에러
+    
+    // 비즈니스 로직...
+    return member;
+}
+
+// ❌ 잘못된 예시: IllegalArgumentException 사용하지 말 것
+@Override
+public FamilyMember find(FindFamilyMemberByIdQuery query) {
+    if (query == null) {
+        throw new IllegalArgumentException("query must not be null"); // 400 에러로 오해 가능
+    }
+    // ...
+}
+```
+
+**계층별 책임 분리**:
+- **Query/Command 생성자**: 사용자 입력 검증 → `IllegalArgumentException` (400 에러)
+- **코어 계층**: 개발자 실수 검증 → `NullPointerException` (500 에러)
+
+```java
+// Query 객체 생성자에서는 IllegalArgumentException
+public FindFamilyMemberByIdQuery(Long familyId, Long currentUserId, Long targetMemberId) {
+    if (familyId == null || familyId <= 0) {
+        throw new IllegalArgumentException("유효한 가족 ID가 필요합니다."); // 400 에러
+    }
+    // ...
+}
+
+// 코어 계층에서는 Objects.requireNonNull
+@Override
+public FamilyMember find(FindFamilyMemberByIdQuery query) {
+    Objects.requireNonNull(query, "query must not be null"); // 500 에러
+    // ...
+}
+```
+
+**에러 메시지 정확성**:
+- Family 존재 여부를 먼저 검증하여 명확한 에러 메시지 제공
+- "Family가 존재하지 않습니다" vs "해당 Family의 구성원이 아닙니다" 구분
+
+```java
+// 1. Family 존재 여부 검증 → FAMILY_NOT_FOUND
+familyValidationService.validateFamilyExists(query.getFamilyId());
+
+// 2. 구성원 권한 검증 → NOT_FAMILY_MEMBER  
+FamilyMember currentMember = findFamilyMemberPort
+    .findByFamilyIdAndUserId(query.getFamilyId(), query.getCurrentUserId())
+    .orElseThrow(() -> new FTException(FamilyExceptionCode.NOT_FAMILY_MEMBER));
+```
+
 ```java
 // 도메인 객체 검증 예시
 private Family(

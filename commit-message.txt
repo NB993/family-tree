@@ -1,55 +1,72 @@
-refactor [with-ai] FT-005 코어 계층 null 체크 표준화 - IllegalArgumentException → Objects.requireNonNull
+docs [with-ai] PM-020 코어 계층 null 체크 규칙 - 코딩 스탠다드 가이드라인 문서 업데이트
 
-- 코어 계층에서 Command/Query 객체 null 체크 시 NPE 발생으로 변경
-- 개발자 실수를 500 에러로 명확히 구분하여 조기 발견 유도
-- 사용자 입력 오류(400)와 개발자 실수(500)의 책임 소재 명확화
+- 코어 계층에서 Command/Query 객체 null 체크 시 Objects.requireNonNull 사용 규칙 명문화
+- 계층별 예외 처리 책임 분리 원칙 상세 가이드라인 추가
+- 개발자 실수와 사용자 입력 오류 구분을 위한 명확한 예외 처리 전략 문서화
 
-## 수정된 주요 컴포넌트
+## 추가된 주요 가이드라인
 
-### 애플리케이션 계층
-- FindFamilyMemberService: IllegalArgumentException → Objects.requireNonNull 변경
-- 코어 계층 진입점에서 NPE 발생으로 개발자 실수 조기 감지
-- FamilyValidationService 재추가: Family 존재 여부와 구성원 권한을 명확히 구분
-
-### 테스트 계층
-- FindFamilyMemberServiceTest: 예외 타입 변경 (IllegalArgumentException → NullPointerException)
-- Service 계층 비즈니스 예외는 FTException으로 통일
-- FamilyValidationService Mock 추가
-
-## 예외 처리 표준화
+### 코어 계층 null 체크 규칙
+- **목적**: 개발자 실수를 조기에 발견하여 개발 단계에서 수정하도록 유도
+- **방법**: Objects.requireNonNull(query, "query must not be null") 사용 
+- **이유**: Command/Query 객체는 생성자에서 사용자 입력 검증 완료, null 전달은 개발자 실수
 
 ### 계층별 책임 분리
 - **Query/Command 생성자**: 사용자 입력 검증 → IllegalArgumentException (400 에러)
 - **코어 계층**: 개발자 실수 검증 → NullPointerException (500 에러)
 
 ### 에러 메시지 정확성 개선
-```java
-// 1. Family 존재 여부 검증 → FAMILY_NOT_FOUND
-familyValidationService.validateFamilyExists(query.getFamilyId());
+- Family 존재 여부 먼저 검증하여 명확한 에러 메시지 제공
+- "Family가 존재하지 않습니다" vs "해당 Family의 구성원이 아닙니다" 구분
 
-// 2. 구성원 권한 검증 → NOT_FAMILY_MEMBER  
-FamilyMember currentMember = findFamilyMemberPort
-    .findByFamilyIdAndUserId(query.getFamilyId(), query.getCurrentUserId())
-    .orElseThrow(() -> new FTException(FamilyExceptionCode.NOT_FAMILY_MEMBER));
+## 코드 예시 추가
+
+### 올바른 코어 계층 구현
+```java
+@Override
+@Transactional(readOnly = true)
+public FamilyMember find(FindFamilyMemberByIdQuery query) {
+    Objects.requireNonNull(query, "query must not be null"); // NPE 발생 → 500 에러
+    
+    // 1. Family 존재 여부 검증 → FAMILY_NOT_FOUND
+    familyValidationService.validateFamilyExists(query.getFamilyId());
+    
+    // 2. 구성원 권한 검증 → NOT_FAMILY_MEMBER  
+    FamilyMember currentMember = findFamilyMemberPort
+        .findByFamilyIdAndUserId(query.getFamilyId(), query.getCurrentUserId())
+        .orElseThrow(() -> new FTException(FamilyExceptionCode.NOT_FAMILY_MEMBER));
+    
+    return member;
+}
 ```
 
-## 기술적 개선사항
+### Query 객체 사용자 입력 검증
+```java
+public FindFamilyMemberByIdQuery(Long familyId, Long currentUserId, Long targetMemberId) {
+    if (familyId == null || familyId <= 0) {
+        throw new IllegalArgumentException("유효한 가족 ID가 필요합니다."); // 400 에러
+    }
+    // ...
+}
+```
 
-### 에러 메시지 품질
-- "Family가 존재하지 않습니다" vs "해당 Family의 구성원이 아닙니다" 명확한 구분
-- 사용자 경험 개선: 접근 실패 원인을 정확히 알 수 있음
-- 디버깅 용이성: 문제 원인을 빠르게 파악 가능
+## 기술적 배경
 
-### 아키텍처 품질
-- 단일 책임 원칙: 각 계층별 명확한 예외 처리 책임
-- 개발자 경험 개선: 실수 시 명확한 500 에러로 즉시 인지 가능
-- 운영 안정성: 사용자 오류와 시스템 오류의 명확한 구분
+### 설계 의도
+- 운영 환경에서 500 에러는 "개발팀이 바로 확인해야 할 긴급 이슈"로 분류
+- 400 에러는 "사용자 입력 문제"로 분류하여 책임 소재 명확화
+- 개발자 실수 시 명확한 NPE 발생으로 즉시 인지 및 수정 유도
 
-## 테스트 품질
-- 모든 테스트 통과 ✅
-- Mock 객체 정확한 설정으로 격리된 단위 테스트 보장
-- 예외 케이스별 정확한 예외 타입 검증
+### 예외 처리 전략
+- 사용자 오류와 시스템 오류의 명확한 구분
+- 에러 메시지 정확성을 통한 사용자 경험 개선
+- 디버깅 용이성 및 문제 원인 빠른 파악
+
+## 문서 품질
+- 실무 경험을 바탕으로 한 구체적인 가이드라인 제공
+- 올바른 예시와 잘못된 예시 비교를 통한 명확한 이해
+- 기존 코딩 스탠다드와 일관성 있는 구조로 통합
 
 ## 다음 단계
-- PM-xxx 커밋으로 코딩 스탠다드 가이드라인 문서 업데이트
-- 다른 Service 클래스들의 null 체크 패턴 통일 검토
+- 기존 Service 클래스들의 null 체크 패턴 검토
+- 다른 개발자들에게 가이드라인 공유 및 적용 확산
