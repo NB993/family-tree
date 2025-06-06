@@ -1,6 +1,6 @@
 {
   "PM": 20,
-  "FT": 3,
+  "FT": 5,
   "lastUpdated": "2025-06-06",
   "description": {
     "PM": "Project Management - 프로젝트 관리, 인프라, 워크플로우 개선 작업",
@@ -8,6 +8,6 @@
   },
   "lastTickets": {
     "PM-020": "코어 계층 null 체크 규칙 - 코딩 스탠다드 가이드라인 문서 업데이트",
-    "FT-003": "Family 홈 구성원 목록 조회 기능 - 기획서 작성"
+    "FT-005": "FindFamilyUseCase 표준화 리팩토링 - Query 패턴 적용 완료"
   }
 }

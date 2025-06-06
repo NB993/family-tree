@@ -1,72 +1,40 @@
-docs [with-ai] PM-020 코어 계층 null 체크 규칙 - 코딩 스탠다드 가이드라인 문서 업데이트
+refactor [with-ai] FT-005 FindFamilyUseCase 표준화 리팩토링 - Query 패턴 적용 완료
 
-- 코어 계층에서 Command/Query 객체 null 체크 시 Objects.requireNonNull 사용 규칙 명문화
-- 계층별 예외 처리 책임 분리 원칙 상세 가이드라인 추가
-- 개발자 실수와 사용자 입력 오류 구분을 위한 명확한 예외 처리 전략 문서화
+- findById(Long) → find(FindFamilyByIdQuery)로 표준화
+- findByNameContaining() → findAll()로 메서드명 표준화
+- FindFamilyService에서 Objects.requireNonNull 패턴 적용 완료
 
-## 추가된 주요 가이드라인
+## 구현된 주요 컴포넌트
 
-### 코어 계층 null 체크 규칙
-- **목적**: 개발자 실수를 조기에 발견하여 개발 단계에서 수정하도록 유도
-- **방법**: Objects.requireNonNull(query, "query must not be null") 사용 
-- **이유**: Command/Query 객체는 생성자에서 사용자 입력 검증 완료, null 전달은 개발자 실수
+### 애플리케이션 계층
+- FindFamilyByIdQuery: 새로 추가된 Query 클래스 (생성자에서 IllegalArgumentException 검증)
+- FindFamilyUseCase: 표준 패턴에 맞춰 find(Query)/findAll(Query) 메서드로 변경
+- FindFamilyService: Objects.requireNonNull 패턴 적용 및 인터페이스 변경 적용
 
-### 계층별 책임 분리
-- **Query/Command 생성자**: 사용자 입력 검증 → IllegalArgumentException (400 에러)
-- **코어 계층**: 개발자 실수 검증 → NullPointerException (500 에러)
+### 프레젠테이션 계층
+- FindFamilyController: 새로운 Query 패턴 적용 및 UseCase 메서드 변경 적용
 
-### 에러 메시지 정확성 개선
-- Family 존재 여부 먼저 검증하여 명확한 에러 메시지 제공
-- "Family가 존재하지 않습니다" vs "해당 Family의 구성원이 아닙니다" 구분
+### 특화 사항
+- 코어 계층 null 체크 표준화: Objects.requireNonNull 통일 적용
+- UseCase 인터페이스 일관성: find(Query)/findAll(Query) 패턴 완성
+- 계층별 책임 분리: 프레젠테이션(IllegalArgumentException) vs 코어(Objects.requireNonNull)
 
-## 코드 예시 추가
+## 테스트 구현
+- FindFamilyServiceTest: 새로운 메서드 시그니처에 맞춰 전체 리팩토링 ✅
+- FindFamilyByIdQuery 생성자 검증 테스트 추가 ✅
+- 전체 테스트 통과 확인 (BUILD SUCCESSFUL)
 
-### 올바른 코어 계층 구현
-```java
-@Override
-@Transactional(readOnly = true)
-public FamilyMember find(FindFamilyMemberByIdQuery query) {
-    Objects.requireNonNull(query, "query must not be null"); // NPE 발생 → 500 에러
-    
-    // 1. Family 존재 여부 검증 → FAMILY_NOT_FOUND
-    familyValidationService.validateFamilyExists(query.getFamilyId());
-    
-    // 2. 구성원 권한 검증 → NOT_FAMILY_MEMBER  
-    FamilyMember currentMember = findFamilyMemberPort
-        .findByFamilyIdAndUserId(query.getFamilyId(), query.getCurrentUserId())
-        .orElseThrow(() -> new FTException(FamilyExceptionCode.NOT_FAMILY_MEMBER));
-    
-    return member;
-}
-```
+## 해결된 이슈
+- UseCase 인터페이스 불일치 문제 해결 (원시 타입 vs Query 객체)
+- 코어 계층 null 체크 표준화 완료 (if문 → Objects.requireNonNull)
+- 메서드명 표준화 (findByNameContaining → findAll)
 
-### Query 객체 사용자 입력 검증
-```java
-public FindFamilyMemberByIdQuery(Long familyId, Long currentUserId, Long targetMemberId) {
-    if (familyId == null || familyId <= 0) {
-        throw new IllegalArgumentException("유효한 가족 ID가 필요합니다."); // 400 에러
-    }
-    // ...
-}
-```
-
-## 기술적 배경
-
-### 설계 의도
-- 운영 환경에서 500 에러는 "개발팀이 바로 확인해야 할 긴급 이슈"로 분류
-- 400 에러는 "사용자 입력 문제"로 분류하여 책임 소재 명확화
-- 개발자 실수 시 명확한 NPE 발생으로 즉시 인지 및 수정 유도
-
-### 예외 처리 전략
-- 사용자 오류와 시스템 오류의 명확한 구분
-- 에러 메시지 정확성을 통한 사용자 경험 개선
-- 디버깅 용이성 및 문제 원인 빠른 파악
-
-## 문서 품질
-- 실무 경험을 바탕으로 한 구체적인 가이드라인 제공
-- 올바른 예시와 잘못된 예시 비교를 통한 명확한 이해
-- 기존 코딩 스탠다드와 일관성 있는 구조로 통합
+## 워크플로우 개선
+- 인수인계서 v2.0 기반으로 체계적인 리팩토링 진행
+- 단계별 진행으로 빌드 깨짐 없이 안전한 리팩토링 완료
+- 티켓 번호 시스템을 통한 체계적 작업 관리
 
 ## 다음 단계
-- 기존 Service 클래스들의 null 체크 패턴 검토
-- 다른 개발자들에게 가이드라인 공유 및 적용 확산
+- 모든 UseCase 인터페이스 표준화 완료 상태
+- 코어 계층 null 체크 표준화 100% 달성
+- Family 홈 구성원 목록 조회 기능 본격 개발 준비 완료

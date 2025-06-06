@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameContainingQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
@@ -18,6 +19,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * FindFamilyService의 단위 테스트 클래스.
+ * 
+ * <p>UseCase 표준화에 따라 find(Query), findAll(Query) 메서드를 테스트합니다.</p>
+ */
 @DisplayName("[Unit Test] FindFamilyServiceTest")
 @ExtendWith(MockitoExtension.class)
 public class FindFamilyServiceTest {
@@ -29,10 +35,11 @@ public class FindFamilyServiceTest {
     private FindFamilyService sut;
 
     @Test
-    @DisplayName("findById 메서드는 id와 일치하는 Family를 찾아 반환해야 한다")
-    void given_valid_id_when_find_ById_then_return_family() {
+    @DisplayName("find 메서드는 유효한 ID로 Family를 찾아 반환해야 한다")
+    void given_valid_query_when_find_then_return_family() {
         // given
         Long familyId = 1L;
+        FindFamilyByIdQuery query = new FindFamilyByIdQuery(familyId);
         Family expectedFamily = Family.withId(
             familyId,
             "name",
@@ -47,7 +54,7 @@ public class FindFamilyServiceTest {
         when(findFamilyPort.findById(familyId)).thenReturn(Optional.of(expectedFamily));
 
         // when
-        Family family = sut.findById(familyId);
+        Family family = sut.find(query);
 
         // then
         assertThat(family).isNotNull();
@@ -62,77 +69,103 @@ public class FindFamilyServiceTest {
     }
 
     @Test
-    @DisplayName("find 메서드는 id가 null이면 예외를 발생시켜야 한다.")
-    void given_null_id_when_find_ById_then_throw_exception() {
+    @DisplayName("find 메서드는 query가 null이면 예외를 발생시켜야 한다")
+    void given_null_query_when_find_then_throw_exception() {
         // given
-        Long familyId = null;
+        FindFamilyByIdQuery query = null;
 
         // when & then
-        assertThatThrownBy(() -> sut.findById(familyId))
-            .isInstanceOf(FTException.class)
-            .hasMessage("파라미터 누락.");
+        assertThatThrownBy(() -> sut.find(query))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessage("query must not be null");
     }
 
     @Test
-    @DisplayName("findById 메서드는 id와 일치하는 Family를 찾지 못한 경우 예외를 발생시켜야 한다.")
-    void given_invalid_id_when_find_ById_then_throw_exception() {
+    @DisplayName("find 메서드는 ID와 일치하는 Family를 찾지 못한 경우 예외를 발생시켜야 한다")
+    void given_invalid_id_when_find_then_throw_exception() {
         // given
         Long notSavedFamilyId = 999L;
+        FindFamilyByIdQuery query = new FindFamilyByIdQuery(notSavedFamilyId);
 
         // when
         when(findFamilyPort.findById(notSavedFamilyId))
             .thenReturn(Optional.empty());
 
         // then
-        assertThatThrownBy(() -> sut.findById(notSavedFamilyId))
+        assertThatThrownBy(() -> sut.find(query))
             .isInstanceOf(FTException.class)
             .hasMessage("대상을 찾지 못했습니다.");
     }
 
     @Test
-    @DisplayName("findByNameLike 메서드는 query가 null이라면 예외를 발생시켜야 한다.")
-    void given_null_query_when_find_by_name_in_then_throw_exception() {
+    @DisplayName("findAll 메서드는 query가 null이라면 예외를 발생시켜야 한다")
+    void given_null_query_when_find_all_then_throw_exception() {
         // given
         FindFamilyByNameContainingQuery query = null;
 
         // when & then
-        assertThatThrownBy(() -> sut.findByNameContaining(query))
+        assertThatThrownBy(() -> sut.findAll(query))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("query must not be null");
     }
 
     @Test
-    @DisplayName("findByNameLike 메서드는 전달받은 name을 포함하는 Family를 찾지 못한 경우 빈 List를 리턴해야 한다.")
-    void given_non_like_name_when_find_by_name_like_then_return_empty_list() {
+    @DisplayName("findAll 메서드는 전달받은 name을 포함하는 Family를 찾지 못한 경우 빈 List를 리턴해야 한다")
+    void given_non_matching_name_when_find_all_then_return_empty_list() {
         // given
-        FindFamilyByNameContainingQuery nonLikeNameQuery = new FindFamilyByNameContainingQuery("어느 Family도 포함하지 않는 이름");
+        FindFamilyByNameContainingQuery query = new FindFamilyByNameContainingQuery("어느 Family도 포함하지 않는 이름");
 
         // when
-        when(findFamilyPort.findByNameContaining(nonLikeNameQuery.getName()))
+        when(findFamilyPort.findByNameContaining(query.getName()))
             .thenReturn(List.of());
 
         // then
-        List<Family> families = sut.findByNameContaining(nonLikeNameQuery);
-        assertThat(families).isEmpty();;
+        List<Family> families = sut.findAll(query);
+        assertThat(families).isEmpty();
     }
 
     @Test
-    @DisplayName("findByNameLike 메서드는 전달받은 name을 포함하는 Family를 찾아서 반환해야 한다.")
-    void given_name_when_find_by_name_in_then_return_family_list() {
+    @DisplayName("findAll 메서드는 전달받은 name을 포함하는 Family를 찾아서 반환해야 한다")
+    void given_matching_name_when_find_all_then_return_family_list() {
         // given
-        FindFamilyByNameContainingQuery nonLikeNameQuery = new FindFamilyByNameContainingQuery("가족");
+        FindFamilyByNameContainingQuery query = new FindFamilyByNameContainingQuery("가족");
 
         Family family = Family.newFamily("가족 이름1", "설명", "프로필 url");
         Family family2 = Family.newFamily("가족 이름2", "설명", "프로필 url");
 
         // when
-        when(findFamilyPort.findByNameContaining(nonLikeNameQuery.getName()))
+        when(findFamilyPort.findByNameContaining(query.getName()))
             .thenReturn(List.of(family, family2));
 
         // then
-        List<Family> families = sut.findByNameContaining(nonLikeNameQuery);
+        List<Family> families = sut.findAll(query);
         assertThat(families).hasSize(2);
         assertThat(families).extracting("name")
             .containsExactlyInAnyOrder("가족 이름1", "가족 이름2");
+    }
+
+    @Test
+    @DisplayName("FindFamilyByIdQuery는 null ID로 생성할 수 없다")
+    void given_null_id_when_create_query_then_throw_exception() {
+        // given
+        Long nullId = null;
+
+        // when & then
+        assertThatThrownBy(() -> new FindFamilyByIdQuery(nullId))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Family ID must not be null");
+    }
+
+    @Test
+    @DisplayName("FindFamilyByIdQuery는 유효한 ID로 생성할 수 있다")
+    void given_valid_id_when_create_query_then_success() {
+        // given
+        Long validId = 1L;
+
+        // when
+        FindFamilyByIdQuery query = new FindFamilyByIdQuery(validId);
+
+        // then
+        assertThat(query.id()).isEqualTo(validId);
     }
 }
