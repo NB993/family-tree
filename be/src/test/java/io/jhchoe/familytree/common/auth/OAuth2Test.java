@@ -9,9 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,9 +44,9 @@ class OAuth2Test extends AcceptanceTestBase {
         )
         @DisplayName("GOOGLE: 인증된 사용자는 자신의 프로필 정보를 조회할 수 있다")
         void authenticatedUserCanAccessProtectedResource() throws Exception {
-            // SecurityContext에서 인증 정보 확인
+            // SecurityContext에서 인증 정보 확인 (JWT 인증 시스템과 동일한 토큰 타입)
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            assertThat(authentication).isInstanceOf(OAuth2AuthenticationToken.class);
+            assertThat(authentication).isInstanceOf(UsernamePasswordAuthenticationToken.class);
 
             FTUser user = (FTUser) authentication.getPrincipal();
             assertThat(user.getId()).isEqualTo(999L);
@@ -77,12 +77,9 @@ class OAuth2Test extends AcceptanceTestBase {
         )
         @DisplayName("KAKAO: 인증된 사용자는 자신의 프로필 정보를 조회할 수 있다")
         void customOAuth2UserAuthentication() throws Exception {
-            // SecurityContext에서 인증 정보 확인
+            // SecurityContext에서 인증 정보 확인 (JWT 인증 시스템과 동일한 토큰 타입)
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            assertThat(authentication).isInstanceOf(OAuth2AuthenticationToken.class);
-
-            OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
-            assertThat(token.getAuthorizedClientRegistrationId()).isEqualTo("kakao");
+            assertThat(authentication).isInstanceOf(UsernamePasswordAuthenticationToken.class);
 
             FTUser user = (FTUser) authentication.getPrincipal();
             assertThat(user.getId()).isEqualTo(100L);

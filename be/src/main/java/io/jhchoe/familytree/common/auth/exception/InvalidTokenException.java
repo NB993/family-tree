@@ -9,7 +9,7 @@ public class InvalidTokenException extends RuntimeException {
      * 기본 메시지로 InvalidTokenException을 생성합니다.
      */
     public InvalidTokenException() {
-        super("유효하지 않은 인증 정보입니다");
+        super("유효하지 않은 토큰입니다");
     }
 
     /**

@@ -9,7 +9,7 @@ public class ExpiredTokenException extends RuntimeException {
      * 기본 메시지로 ExpiredTokenException을 생성합니다.
      */
     public ExpiredTokenException() {
-        super("세션이 만료되었습니다. 다시 로그인해주세요");
+        super("토큰이 만료되었습니다");
     }
 
     /**

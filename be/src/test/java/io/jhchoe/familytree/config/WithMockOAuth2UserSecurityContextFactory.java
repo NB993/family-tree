@@ -2,11 +2,10 @@ package io.jhchoe.familytree.config;
 
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import java.util.Map;
 
 /**
  * WithMockOAuth2User 애노테이션을 처리하는 팩토리 클래스
+ * JWT 인증 시스템과 호환되도록 UsernamePasswordAuthenticationToken을 생성합니다.
  */
 public class WithMockOAuth2UserSecurityContextFactory implements WithSecurityContextFactory<WithMockOAuth2User> {
 
@@ -29,8 +29,8 @@ public class WithMockOAuth2UserSecurityContextFactory implements WithSecurityCon
             annotation.provider()
         );
         
-        // FTUser 객체 생성
-        OAuth2User principal = FTUser.ofOAuth2User(
+        // FTUser 객체 생성 (OAuth2 방식으로 생성하되 JWT 인증과 동일한 토큰 타입 사용)
+        FTUser principal = FTUser.ofOAuth2User(
             annotation.id(),
             annotation.name(),
             annotation.email(),
@@ -38,12 +38,15 @@ public class WithMockOAuth2UserSecurityContextFactory implements WithSecurityCon
             attributes
         );
         
-        // OAuth2AuthenticationToken 생성
-        Authentication auth = new OAuth2AuthenticationToken(
+        // 실제 JWT 인증과 동일한 UsernamePasswordAuthenticationToken 생성
+        Authentication auth = new UsernamePasswordAuthenticationToken(
             principal, 
-            principal.getAuthorities(),
-            annotation.provider().toString().toLowerCase() // registrationId
+            null, // credentials
+            principal.getAuthorities()
         );
+        
+        // 웹 인증 세부 정보 설정 (실제 필터와 동일한 방식)
+        // 테스트 환경에서는 WebAuthenticationDetailsSource 없이 진행
         
         context.setAuthentication(auth);
         return context;

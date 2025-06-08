@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.common.auth.filter;
 
 import io.jhchoe.familytree.common.auth.domain.FTUser;
+import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.common.auth.exception.ExpiredTokenException;
 import io.jhchoe.familytree.common.auth.exception.InvalidTokenException;
 import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -59,14 +61,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (final ExpiredTokenException e) {
             log.debug("만료된 토큰입니다: {}", e.getMessage());
-            // 만료된 토큰인 경우 SecurityContext를 비우고 계속 진행 (401 에러는 인증이 필요한 엔드포인트에서 발생)
+            request.setAttribute("JWT_EXCEPTION", AuthExceptionCode.EXPIRED_TOKEN.name());
             SecurityContextHolder.clearContext();
+            
         } catch (final InvalidTokenException e) {
             log.debug("유효하지 않은 토큰입니다: {}", e.getMessage());
-            // 유효하지 않은 토큰인 경우 SecurityContext를 비우고 계속 진행
+            request.setAttribute("JWT_EXCEPTION", AuthExceptionCode.INVALID_TOKEN_FORMAT.name());
             SecurityContextHolder.clearContext();
+            
         } catch (final Exception e) {
             log.error("JWT 토큰 처리 중 예상치 못한 오류가 발생했습니다: {}", e.getMessage(), e);
+            request.setAttribute("JWT_EXCEPTION", AuthExceptionCode.UNAUTHORIZED.name());
             SecurityContextHolder.clearContext();
         }
 

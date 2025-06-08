@@ -1,12 +1,12 @@
 package io.jhchoe.familytree.common.auth.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * JWT 관련 설정 프로퍼티를 관리하는 클래스입니다.
  */
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "jwt")
 public class JwtProperties {
 

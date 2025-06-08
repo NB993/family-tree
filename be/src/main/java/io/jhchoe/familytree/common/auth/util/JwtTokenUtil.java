@@ -91,9 +91,9 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token);
             return true;
         } catch (final ExpiredJwtException e) {
-            throw new ExpiredTokenException("토큰이 만료되었습니다", e);
+            throw new ExpiredTokenException();
         } catch (final SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
-            throw new InvalidTokenException("유효하지 않은 토큰입니다", e);
+            throw new InvalidTokenException();
         }
     }
 
@@ -112,7 +112,7 @@ public class JwtTokenUtil {
         try {
             return Long.parseLong(userIdStr);
         } catch (final NumberFormatException e) {
-            throw new InvalidTokenException("토큰에서 유효한 사용자 ID를 찾을 수 없습니다", e);
+            throw new InvalidTokenException("유효하지 않은 토큰입니다");
         }
     }
 
@@ -199,9 +199,9 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
         } catch (final ExpiredJwtException e) {
-            throw new ExpiredTokenException("토큰이 만료되었습니다", e);
+            throw new ExpiredTokenException();
         } catch (final SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
-            throw new InvalidTokenException("유효하지 않은 토큰입니다", e);
+            throw new InvalidTokenException();
         }
     }
 
