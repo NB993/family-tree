@@ -1,57 +1,42 @@
-feat [by-ai] FT-008 RefreshToken 엔티티 및 토큰 저장소 구현 완료
+feat [by-ai] FT-009 JWT 인증 필터 및 Spring Security 통합 완료
 
-- JWT 인증 시스템을 위한 RefreshToken 저장소 완전 구현
-- 사용자별 고유 토큰 관리 및 Upsert 동작 지원
-- 배치 작업을 위한 만료 토큰 조회 및 정리 기능 제공
+- 기존 OAuth2 + 세션 기반 인증에 JWT 토큰 기반 API 인증 추가
+- JWT 토큰의 role 정보를 Spring Security 권한으로 올바르게 변환
 
 ## 구현된 주요 컴포넌트
 
-### 도메인 객체
-- RefreshToken: JWT 리프레시 토큰 도메인 엔티티 (불변 객체 설계)
+### 코어 계층 (인증 필터)
+- JwtAuthenticationFilter: OncePerRequestFilter 기반 JWT 토큰 검증 필터
+- SecurityConfig 통합: JWT 필터를 Spring Security 필터 체인에 추가
+- Stateless 세션 정책: API 엔드포인트에 대한 완전한 Stateless 아키텍처
 
-### 애플리케이션 계층
-- FindRefreshTokenByUserIdQuery: 사용자 ID 기반 토큰 조회 쿼리
-- FindExpiredRefreshTokensQuery: 만료된 토큰 일괄 조회 쿼리
-- SaveRefreshTokenCommand: 토큰 저장 및 갱신 커맨드
-- DeleteRefreshTokenCommand: 토큰 삭제 커맨드
-- FindRefreshTokenUseCase: 토큰 조회 유스케이스 인터페이스
-- SaveRefreshTokenUseCase: 토큰 저장 유스케이스 인터페이스
-- DeleteRefreshTokenUseCase: 토큰 삭제 유스케이스 인터페이스
-- FindRefreshTokenService: 토큰 조회 비즈니스 로직 서비스
-- SaveRefreshTokenService: 토큰 저장 비즈니스 로직 서비스
-- DeleteRefreshTokenService: 토큰 삭제 비즈니스 로직 서비스
-
-### 인프라 계층
-- RefreshTokenJpaEntity: refresh_tokens 테이블 JPA 엔티티
-- RefreshTokenJpaRepository: Spring Data JPA 리포지토리
-- RefreshTokenAdapter: 아웃바운드 포트 통합 구현체
+### 도메인 객체 확장
+- AuthenticationType.JWT: 새로운 인증 타입 추가
+- FTUser.ofJwtUser(): JWT 전용 팩토리 메서드 구현
+- JWT role → Spring Security 권한 변환 로직
 
 ### 특화 사항
-- 사용자당 단일 토큰: UNIQUE 제약조건으로 중복 방지
-- Upsert 동작: 기존 토큰 자동 교체로 사용자별 최신 토큰 유지
-- 배치 작업 지원: 만료 토큰 일괄 조회 및 삭제 기능
-- 보안 강화: 토큰 해시 저장 및 민감정보 마스킹
-- 성능 최적화: user_id, expires_at 인덱스로 쿼리 성능 향상
+- 정보의 최소화: JWT에 OAuth2Provider 정보 제외로 토큰 크기 최적화
+- 보안 강화: Authorization 헤더 Bearer 토큰 검증
+- 권한별 접근 제어: ADMIN/USER role 기반 API 접근 권한 구현
+- 하이브리드 아키텍처: 기존 OAuth2/세션 인증과 JWT 인증 동시 지원
 
 ## 테스트 구현
-- 단위 테스트 11개 작성 및 통과 ✅
-- Command/Query 객체 유효성 검증 테스트
-- Service 계층 비즈니스 로직 테스트
-- Adapter 계층 데이터베이스 연동 테스트
-- 전체 테스트 통과: 546개 테스트 모두 성공
+- JwtAuthenticationFilterTest: JWT 필터 단위 테스트 8개 ✅
+- 토큰 검증, 권한 설정, 예외 처리 시나리오 완전 커버
+- ADMIN 역할 토큰 → ROLE_ADMIN 권한 변환 검증
+- 전체 테스트 563개 통과 확인
 
-## 데이터베이스 스키마
-- refresh_tokens 테이블 설계 및 인덱스 최적화
-- 사용자별 고유 토큰 제약조건 (user_id UNIQUE)
-- 만료 토큰 배치 처리 인덱스 (expires_at INDEX)
-- 자동 타임스탬프 관리 (created_at, updated_at)
+## 해결된 이슈
+- JWT 토큰 role 정보 미반영 문제 해결
+- AuthenticationType별 명확한 구분으로 런타임 혼란 방지
+- Spring Security 권한 기반 접근 제어 완전 작동
 
-## 헥사고날 아키텍처 준수
-- 포트와 어댑터 패턴으로 인프라 의존성 분리
-- 의존성 역전 원칙 적용으로 확장성 확보
-- 단일 책임 원칙에 따른 UseCase별 Service 분리
+## 설계 의사결정
+- JWT vs OAuth2Provider: 정보 최소화 원칙으로 Provider 정보 제외
+- ofJwtUser vs ofOAuth2User: 인증 방식별 명확한 팩토리 메서드 분리
+- Stateless 정책: API 성능 최적화 및 서버 확장성 확보
 
 ## 다음 단계
-- FT-009: JWT 인증 필터 및 Spring Security 통합
 - FT-010: OAuth2 JWT 연동 및 토큰 발급 구현
 - FT-011: 토큰 갱신 및 로그아웃 API 구현

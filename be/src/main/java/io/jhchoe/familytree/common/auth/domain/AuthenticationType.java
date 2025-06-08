@@ -10,7 +10,8 @@ import org.springframework.util.ObjectUtils;
 public enum AuthenticationType implements AttributeConverter<AuthenticationType, String> {
 
     FORM_LOGIN,
-    OAUTH2;
+    OAUTH2,
+    JWT;
 
     @Override
     public String convertToDatabaseColumn(AuthenticationType authenticationType) {

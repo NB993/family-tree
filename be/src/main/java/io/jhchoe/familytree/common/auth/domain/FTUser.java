@@ -97,6 +97,38 @@ public class FTUser extends User implements OAuth2User {
         );
     }
 
+    /**
+     * JWT 토큰 기반 인증용 FTUser 객체 생성
+     * 
+     * @param id 사용자 ID
+     * @param name 사용자 이름
+     * @param email 이메일
+     * @param role 역할 (USER, ADMIN 등)
+     * @return 생성된 FTUser 객체
+     */
+    public static FTUser ofJwtUser(
+        final Long id,
+        final String name,
+        final String email,
+        final String role
+    ) {
+        Collection<GrantedAuthority> authorities = List.of(
+            new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
+        );
+        
+        return new FTUser(
+            id,
+            name != null ? name : "JWT User",
+            email, // username
+            "", // password (JWT에서는 불필요)
+            email,
+            AuthenticationType.JWT,
+            null, // OAuth2Provider (JWT에서는 알 수 없음)
+            authorities,
+            Collections.emptyMap() // attributes (JWT에서는 불필요)
+        );
+    }
+
     private FTUser(
         final Long id,
         final String name,

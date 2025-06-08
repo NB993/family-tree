@@ -1,37 +1,45 @@
 package io.jhchoe.familytree.common.config;
 
+import io.jhchoe.familytree.common.auth.filter.JwtAuthenticationFilter;
 import io.jhchoe.familytree.common.auth.service.OAuth2UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final FTSpringSecurityExceptionHandler ftSpringSecurityExceptionHandler;
-    private final OAuth2UserServiceImpl oAuth2UserService; // 추가
+    private final OAuth2UserServiceImpl oAuth2UserService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .httpBasic(basic -> basic.disable())
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**", "/api/**") // API 엔드포인트에 대한 CSRF 비활성화 (JWT 사용)
+            )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 사용으로 세션을 Stateless로 설정
+            )
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/favicon.ico").permitAll()
                 .requestMatchers("/docs/**").permitAll() // API 문서 접근 허용
+                .requestMatchers("/api/auth/**").permitAll() // JWT 인증 관련 엔드포인트 허용
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/signup").permitAll()
                 .requestMatchers("/", "/login").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
-            )
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**") // H2-console에 대한 CSRF 비활성화
             )
             .exceptionHandling(customizer -> {
                 customizer.authenticationEntryPoint(ftSpringSecurityExceptionHandler);
@@ -61,10 +69,8 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID") // "JSESSIONID" 쿠키 삭제
                 .permitAll()
             )
-            .sessionManagement(session -> session
-                .maximumSessions(1) // 하나의 계정으로 최대 1개의 세션만 허용
-                .maxSessionsPreventsLogin(false) // 새로운 로그인 시 기존 세션 종료
-            );
+            // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
