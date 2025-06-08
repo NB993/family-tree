@@ -56,7 +56,7 @@ class SaveRefreshTokenServiceTest {
 
     @Test
     @DisplayName("도메인 객체를 올바르게 생성하여 저장합니다")
-    void create_domain_object_correctly() {
+    void newRefreshToken_domain_object_correctly() {
         // given
         Long userId = 1L;
         String tokenHash = "hashed-token-value";

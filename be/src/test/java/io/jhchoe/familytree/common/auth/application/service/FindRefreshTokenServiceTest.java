@@ -1,6 +1,6 @@
 package io.jhchoe.familytree.common.auth.application.service;
 
-import io.jhchoe.familytree.common.auth.application.port.in.FindExpiredRefreshTokensQuery;
+import io.jhchoe.familytree.common.auth.application.port.in.FindExpiredRefreshTokensBeforeCurrentDateTimeQuery;
 import io.jhchoe.familytree.common.auth.application.port.in.FindRefreshTokenByUserIdQuery;
 import io.jhchoe.familytree.common.auth.application.port.out.FindRefreshTokenPort;
 import io.jhchoe.familytree.common.auth.domain.RefreshToken;
@@ -33,7 +33,7 @@ class FindRefreshTokenServiceTest {
         // given
         Long userId = 1L;
         FindRefreshTokenByUserIdQuery query = new FindRefreshTokenByUserIdQuery(userId);
-        RefreshToken expectedToken = RefreshToken.create(
+        RefreshToken expectedToken = RefreshToken.newRefreshToken(
             userId, "hashed-token", LocalDateTime.now().plusDays(7)
         );
         
@@ -41,7 +41,7 @@ class FindRefreshTokenServiceTest {
         when(findRefreshTokenPort.findByUserId(userId)).thenReturn(Optional.of(expectedToken));
         
         // when
-        Optional<RefreshToken> actualToken = findRefreshTokenService.findByUserId(query);
+        Optional<RefreshToken> actualToken = findRefreshTokenService.find(query);
         
         // then
         assertThat(actualToken).isPresent();
@@ -59,7 +59,7 @@ class FindRefreshTokenServiceTest {
         when(findRefreshTokenPort.findByUserId(userId)).thenReturn(Optional.empty());
         
         // when
-        Optional<RefreshToken> actualToken = findRefreshTokenService.findByUserId(query);
+        Optional<RefreshToken> actualToken = findRefreshTokenService.find(query);
         
         // then
         assertThat(actualToken).isEmpty();
@@ -70,17 +70,17 @@ class FindRefreshTokenServiceTest {
     void return_expired_tokens_when_query_is_valid() {
         // given
         LocalDateTime currentDateTime = LocalDateTime.now();
-        FindExpiredRefreshTokensQuery query = new FindExpiredRefreshTokensQuery(currentDateTime);
+        FindExpiredRefreshTokensBeforeCurrentDateTimeQuery query = new FindExpiredRefreshTokensBeforeCurrentDateTimeQuery(currentDateTime);
         List<RefreshToken> expectedTokens = List.of(
-            RefreshToken.create(1L, "token1", currentDateTime.minusDays(1)),
-            RefreshToken.create(2L, "token2", currentDateTime.minusDays(2))
+            RefreshToken.newRefreshToken(1L, "token1", currentDateTime.minusDays(1)),
+            RefreshToken.newRefreshToken(2L, "token2", currentDateTime.minusDays(2))
         );
         
         // Mocking: 만료된 토큰 조회 모킹
         when(findRefreshTokenPort.findExpiredTokens(currentDateTime)).thenReturn(expectedTokens);
         
         // when
-        List<RefreshToken> actualTokens = findRefreshTokenService.findExpiredTokens(query);
+        List<RefreshToken> actualTokens = findRefreshTokenService.findAll(query);
         
         // then
         assertThat(actualTokens).hasSize(2);
@@ -90,7 +90,7 @@ class FindRefreshTokenServiceTest {
     @Test
     @DisplayName("쿼리가 null인 경우 NullPointerException이 발생합니다")
     void throw_exception_when_query_is_null() {
-        assertThatThrownBy(() -> findRefreshTokenService.findByUserId(null))
+        assertThatThrownBy(() -> findRefreshTokenService.find(null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("query must not be null");
     }

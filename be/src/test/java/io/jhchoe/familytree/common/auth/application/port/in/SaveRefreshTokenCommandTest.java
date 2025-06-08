@@ -11,7 +11,7 @@ class SaveRefreshTokenCommandTest {
 
     @Test
     @DisplayName("유효한 파라미터로 커맨드 객체를 생성합니다")
-    void create_success_when_parameters_are_valid() {
+    void newRefreshToken_success_when_parameters_are_valid() {
         // given
         Long userId = 1L;
         String tokenHash = "hashed-token-value";

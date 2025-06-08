@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.common.auth.adapter.out.persistence;
 
 import io.jhchoe.familytree.common.auth.domain.RefreshToken;
+import io.jhchoe.familytree.common.support.ModifierBaseEntity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
         @Index(name = "idx_refresh_tokens_expires_at", columnList = "expires_at")
     }
 )
-public class RefreshTokenJpaEntity {
+public class RefreshTokenJpaEntity extends ModifierBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,29 +37,24 @@ public class RefreshTokenJpaEntity {
     @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
     /**
      * RefreshTokenJpaEntity 객체를 생성하는 생성자입니다.
      */
-    public RefreshTokenJpaEntity(
+    private RefreshTokenJpaEntity(
         Long id,
         Long userId,
         String tokenHash,
         LocalDateTime expiresAt,
+        Long createdBy,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        Long modifiedBy,
+        LocalDateTime modifiedAt
     ) {
+        super(createdBy, createdAt, modifiedBy, modifiedAt);
         this.id = id;
         this.userId = userId;
         this.tokenHash = tokenHash;
         this.expiresAt = expiresAt;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     /**
@@ -75,8 +71,10 @@ public class RefreshTokenJpaEntity {
             refreshToken.getUserId(),
             refreshToken.getTokenHash(),
             refreshToken.getExpiresAt(),
+            refreshToken.getCreatedBy(),
             refreshToken.getCreatedAt(),
-            refreshToken.getUpdatedAt()
+            refreshToken.getModifiedBy(),
+            refreshToken.getModifiedAt()
         );
     }
 
@@ -91,30 +89,10 @@ public class RefreshTokenJpaEntity {
             userId,
             tokenHash,
             expiresAt,
-            createdAt,
-            updatedAt
+            getCreatedBy(),
+            getCreatedAt(),
+            getModifiedBy(),
+            getModifiedAt()
         );
-    }
-
-    /**
-     * 엔티티 저장 전 생성 시간을 설정합니다.
-     */
-    @PrePersist
-    protected void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
-        if (createdAt == null) {
-            createdAt = now;
-        }
-        if (updatedAt == null) {
-            updatedAt = now;
-        }
-    }
-
-    /**
-     * 엔티티 업데이트 전 수정 시간을 설정합니다.
-     */
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 }

@@ -10,7 +10,7 @@ class FindRefreshTokenByUserIdQueryTest {
 
     @Test
     @DisplayName("유효한 사용자 ID로 쿼리 객체를 생성합니다")
-    void create_success_when_user_id_is_valid() {
+    void newRefreshToken_success_when_user_id_is_valid() {
         // given
         Long userId = 1L;
         

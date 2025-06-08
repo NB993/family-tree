@@ -16,7 +16,7 @@ public interface FindRefreshTokenUseCase {
      * @param query 사용자 ID를 포함하는 쿼리 객체
      * @return 조회된 Refresh Token (없으면 Optional.empty())
      */
-    Optional<RefreshToken> findByUserId(FindRefreshTokenByUserIdQuery query);
+    Optional<RefreshToken> find(FindRefreshTokenByUserIdQuery query);
 
     /**
      * 만료된 Refresh Token들을 조회합니다.
@@ -25,5 +25,5 @@ public interface FindRefreshTokenUseCase {
      * @param query 현재 시간을 포함하는 쿼리 객체
      * @return 만료된 Refresh Token 목록 (없으면 빈 리스트)
      */
-    List<RefreshToken> findExpiredTokens(FindExpiredRefreshTokensQuery query);
+    List<RefreshToken> findAll(FindExpiredRefreshTokensBeforeCurrentDateTimeQuery query);
 }

@@ -30,7 +30,7 @@ class RefreshTokenAdapterTest extends AdapterTestBase {
     void find_returns_refresh_token_when_user_id_exists() {
         // given
         Long userId = 1L;
-        RefreshToken refreshToken = RefreshToken.create(
+        RefreshToken refreshToken = RefreshToken.newRefreshToken(
             userId, "hashed-token-value", LocalDateTime.now().plusDays(7)
         );
         RefreshTokenJpaEntity savedEntity = refreshTokenJpaRepository.save(RefreshTokenJpaEntity.from(refreshToken));
@@ -65,15 +65,15 @@ class RefreshTokenAdapterTest extends AdapterTestBase {
         LocalDateTime currentDateTime = LocalDateTime.now();
         
         // 만료된 토큰들
-        RefreshToken expiredToken1 = RefreshToken.create(
+        RefreshToken expiredToken1 = RefreshToken.newRefreshToken(
             1L, "expired-token-1", currentDateTime.minusDays(1)
         );
-        RefreshToken expiredToken2 = RefreshToken.create(
+        RefreshToken expiredToken2 = RefreshToken.newRefreshToken(
             2L, "expired-token-2", currentDateTime.minusDays(2)
         );
         
         // 유효한 토큰
-        RefreshToken validToken = RefreshToken.create(
+        RefreshToken validToken = RefreshToken.newRefreshToken(
             3L, "valid-token", currentDateTime.plusDays(1)
         );
         
@@ -95,7 +95,7 @@ class RefreshTokenAdapterTest extends AdapterTestBase {
     @DisplayName("토큰 저장 시 ID를 반환합니다")
     void save_returns_id_when_token_is_valid() {
         // given
-        RefreshToken refreshToken = RefreshToken.create(
+        RefreshToken refreshToken = RefreshToken.newRefreshToken(
             1L, "hashed-token-value", LocalDateTime.now().plusDays(7)
         );
         
@@ -119,13 +119,13 @@ class RefreshTokenAdapterTest extends AdapterTestBase {
         Long userId = 1L;
         
         // 기존 토큰 저장
-        RefreshToken oldToken = RefreshToken.create(
+        RefreshToken oldToken = RefreshToken.newRefreshToken(
             userId, "old-token-hash", LocalDateTime.now().plusDays(7)
         );
         refreshTokenJpaRepository.save(RefreshTokenJpaEntity.from(oldToken));
         
         // 새 토큰
-        RefreshToken newToken = RefreshToken.create(
+        RefreshToken newToken = RefreshToken.newRefreshToken(
             userId, "new-token-hash", LocalDateTime.now().plusDays(7)
         );
         
@@ -150,7 +150,7 @@ class RefreshTokenAdapterTest extends AdapterTestBase {
     void delete_removes_token_when_user_id_exists() {
         // given
         Long userId = 1L;
-        RefreshToken refreshToken = RefreshToken.create(
+        RefreshToken refreshToken = RefreshToken.newRefreshToken(
             userId, "hashed-token-value", LocalDateTime.now().plusDays(7)
         );
         refreshTokenJpaRepository.save(RefreshTokenJpaEntity.from(refreshToken));

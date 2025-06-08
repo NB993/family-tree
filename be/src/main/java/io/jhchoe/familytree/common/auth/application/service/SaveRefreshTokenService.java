@@ -27,7 +27,7 @@ public class SaveRefreshTokenService implements SaveRefreshTokenUseCase {
         Objects.requireNonNull(command, "command must not be null");
 
         // 도메인 객체 생성
-        RefreshToken refreshToken = RefreshToken.create(
+        RefreshToken refreshToken = RefreshToken.newRefreshToken(
             command.getUserId(),
             command.getTokenHash(),
             command.getExpiresAt()

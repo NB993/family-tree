@@ -7,7 +7,7 @@ import java.util.Objects;
  * 만료된 Refresh Token들을 조회하기 위한 쿼리 객체입니다.
  * 배치 작업에서 만료된 토큰을 정리할 때 사용됩니다.
  */
-public final class FindExpiredRefreshTokensQuery {
+public final class FindExpiredRefreshTokensBeforeCurrentDateTimeQuery {
 
     private final LocalDateTime currentDateTime;
 
@@ -17,7 +17,7 @@ public final class FindExpiredRefreshTokensQuery {
      * @param currentDateTime 현재 시간 (이 시간보다 이전에 만료된 토큰을 조회)
      * @throws IllegalArgumentException currentDateTime이 null인 경우
      */
-    public FindExpiredRefreshTokensQuery(final LocalDateTime currentDateTime) {
+    public FindExpiredRefreshTokensBeforeCurrentDateTimeQuery(final LocalDateTime currentDateTime) {
         Objects.requireNonNull(currentDateTime, "currentDateTime must not be null");
         this.currentDateTime = currentDateTime;
     }
@@ -35,7 +35,7 @@ public final class FindExpiredRefreshTokensQuery {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FindExpiredRefreshTokensQuery that = (FindExpiredRefreshTokensQuery) o;
+        FindExpiredRefreshTokensBeforeCurrentDateTimeQuery that = (FindExpiredRefreshTokensBeforeCurrentDateTimeQuery) o;
         return Objects.equals(currentDateTime, that.currentDateTime);
     }
 

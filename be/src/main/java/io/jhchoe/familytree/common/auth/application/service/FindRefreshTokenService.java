@@ -1,6 +1,6 @@
 package io.jhchoe.familytree.common.auth.application.service;
 
-import io.jhchoe.familytree.common.auth.application.port.in.FindExpiredRefreshTokensQuery;
+import io.jhchoe.familytree.common.auth.application.port.in.FindExpiredRefreshTokensBeforeCurrentDateTimeQuery;
 import io.jhchoe.familytree.common.auth.application.port.in.FindRefreshTokenByUserIdQuery;
 import io.jhchoe.familytree.common.auth.application.port.in.FindRefreshTokenUseCase;
 import io.jhchoe.familytree.common.auth.application.port.out.FindRefreshTokenPort;
@@ -26,7 +26,7 @@ public class FindRefreshTokenService implements FindRefreshTokenUseCase {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<RefreshToken> findByUserId(FindRefreshTokenByUserIdQuery query) {
+    public Optional<RefreshToken> find(FindRefreshTokenByUserIdQuery query) {
         Objects.requireNonNull(query, "query must not be null");
 
         return findRefreshTokenPort.findByUserId(query.getUserId());
@@ -37,7 +37,7 @@ public class FindRefreshTokenService implements FindRefreshTokenUseCase {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<RefreshToken> findExpiredTokens(FindExpiredRefreshTokensQuery query) {
+    public List<RefreshToken> findAll(FindExpiredRefreshTokensBeforeCurrentDateTimeQuery query) {
         Objects.requireNonNull(query, "query must not be null");
 
         return findRefreshTokenPort.findExpiredTokens(query.getCurrentDateTime());
