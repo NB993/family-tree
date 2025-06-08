@@ -1,0 +1,46 @@
+feat [by-ai] FT-011 JWT 토큰 갱신 및 로그아웃 API 구현 완료
+
+- JWT 토큰 갱신 및 안전한 로그아웃 기능을 통한 Stateless 인증 시스템 완성
+- Access Token 만료 시 Refresh Token을 통한 자동 갱신 메커니즘 구현
+- 토큰 블랙리스트 기반 로그아웃으로 보안성 강화
+
+## 구현된 주요 컴포넌트
+
+### 애플리케이션 계층
+- RefreshJwtTokenUseCase: 토큰 갱신 유스케이스 인터페이스
+- RefreshJwtTokenCommand: 토큰 갱신 요청 Command 객체 (Refresh Token 포함)
+- RefreshJwtTokenService: 토큰 갱신 비즈니스 로직 구현체
+- LogoutUseCase: 로그아웃 유스케이스 인터페이스  
+- LogoutCommand: 로그아웃 요청 Command 객체 (Access Token 포함)
+- LogoutService: 로그아웃 비즈니스 로직 구현체
+
+### 도메인 객체
+- FTUser: User ID 조회 메서드 추가 (토큰 갱신 시 사용자 식별용)
+
+### 특화 사항
+- 토큰 검증 실패 시 적절한 예외 처리 (InvalidTokenException)
+- Refresh Token 만료 시 재로그인 유도
+- 로그아웃 시 토큰 무효화로 보안 강화
+- Command 객체 검증 로직으로 데이터 무결성 보장
+
+## 테스트 구현
+- RefreshJwtTokenCommandTest: Command 객체 검증 테스트 3개 ✅
+- RefreshJwtTokenServiceTest: 토큰 갱신 서비스 테스트 3개 ✅
+- LogoutCommandTest: 로그아웃 Command 검증 테스트 3개 ✅
+- LogoutServiceTest: 로그아웃 서비스 테스트 3개 ✅
+- 전체 테스트 통과 확인
+
+## 해결된 이슈
+- JWT 기반 Stateless 인증에서 토큰 만료 처리 메커니즘 완성
+- 로그아웃 시 토큰 무효화를 통한 보안 취약점 해결
+- FT-010에서 구현된 토큰 발급 기능과 연계한 완전한 토큰 생명주기 관리
+
+## 보안 강화
+- Refresh Token 기반 자동 갱신: 사용자 편의성과 보안의 균형
+- 로그아웃 시 토큰 블랙리스트: 탈취된 토큰 악용 방지
+- 토큰 검증 실패 시 명확한 예외 처리: 디버깅 및 보안 모니터링 지원
+
+## 다음 단계
+- JWT 토큰 기반 API 인증 미들웨어 확장
+- 프론트엔드에서 토큰 갱신 자동화 구현
+- 토큰 만료 임박 시 사전 알림 기능 검토
