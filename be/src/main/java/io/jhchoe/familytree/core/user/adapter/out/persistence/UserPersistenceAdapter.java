@@ -4,6 +4,8 @@ import io.jhchoe.familytree.common.auth.UserJpaEntity;
 import io.jhchoe.familytree.common.auth.UserJpaRepository;
 import io.jhchoe.familytree.core.user.application.port.out.FindUserPort;
 import io.jhchoe.familytree.core.user.domain.User;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -29,5 +31,13 @@ public class UserPersistenceAdapter implements FindUserPort {
             .stream()
             .map(UserJpaEntity::toUser)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        Objects.requireNonNull(id, "id must not be null");
+
+        return userJpaRepository.findById(id)
+            .map(UserJpaEntity::toUser);
     }
 }
