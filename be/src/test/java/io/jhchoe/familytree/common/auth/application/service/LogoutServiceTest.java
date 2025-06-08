@@ -1,12 +1,7 @@
 package io.jhchoe.familytree.common.auth.application.service;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-
-import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenCommand;
+import io.jhchoe.familytree.common.auth.application.port.in.DeleteJwtTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenUseCase;
-import io.jhchoe.familytree.common.auth.application.port.in.LogoutCommand;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,35 +9,46 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+
+/**
+ * JWT 토큰 삭제 서비스 단위 테스트
+ */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("[Unit Test] LogoutServiceTest")
-class LogoutServiceTest {
+@DisplayName("[Unit Test] DeleteJwtTokenServiceTest")
+class DeleteJwtTokenServiceTest {
 
     @InjectMocks
-    private LogoutService logoutService;
+    private DeleteJwtTokenService deleteJwtTokenService;
 
     @Mock
     private DeleteRefreshTokenUseCase deleteRefreshTokenUseCase;
 
     @Test
-    @DisplayName("유효한 userId로 로그아웃에 성공합니다")
-    void logout_success_when_valid_user_id() {
+    @DisplayName("유효한 사용자 ID로 JWT 토큰 삭제 시 성공합니다")
+    void delete_success_when_valid_user_id() {
         // given
         Long userId = 1L;
-        LogoutCommand command = new LogoutCommand(userId);
+        DeleteJwtTokenCommand command = new DeleteJwtTokenCommand(userId);
+
+        // Mocking: RefreshToken 삭제 모킹
+        doNothing().when(deleteRefreshTokenUseCase).delete(any());
 
         // when
-        logoutService.logout(command);
+        deleteJwtTokenService.delete(command);
 
         // then
-        // Refresh Token 삭제 확인
-        verify(deleteRefreshTokenUseCase).delete(any(DeleteRefreshTokenCommand.class));
+        verify(deleteRefreshTokenUseCase).delete(any());
     }
 
     @Test
-    @DisplayName("command가 null인 경우 NullPointerException이 발생합니다")
-    void throw_exception_when_command_is_null() {
-        assertThatThrownBy(() -> logoutService.logout(null))
+    @DisplayName("null command로 JWT 토큰 삭제 시 NullPointerException이 발생합니다")
+    void delete_throws_exception_when_command_is_null() {
+        // when & then
+        assertThatThrownBy(() -> deleteJwtTokenService.delete(null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("command must not be null");
     }

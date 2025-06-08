@@ -1,148 +1,178 @@
 package io.jhchoe.familytree.common.auth.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jhchoe.familytree.common.auth.application.port.in.LogoutCommand;
-import io.jhchoe.familytree.common.auth.application.port.in.LogoutUseCase;
-import io.jhchoe.familytree.common.auth.application.port.in.RefreshJwtTokenCommand;
-import io.jhchoe.familytree.common.auth.application.port.in.RefreshJwtTokenUseCase;
-import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.common.auth.dto.JwtTokenResponse;
-import io.jhchoe.familytree.common.auth.dto.TokenRefreshRequest;
-import io.jhchoe.familytree.common.auth.exception.ExpiredTokenException;
-import io.jhchoe.familytree.common.auth.exception.InvalidTokenException;
+import io.jhchoe.familytree.common.auth.adapter.out.persistence.RefreshTokenJpaEntity;
+import io.jhchoe.familytree.common.auth.adapter.out.persistence.RefreshTokenJpaRepository;
+import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
+import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
+import io.jhchoe.familytree.common.auth.domain.RefreshToken;
+import io.jhchoe.familytree.common.auth.domain.UserRole;
+import io.jhchoe.familytree.common.auth.UserJpaEntity;
+import io.jhchoe.familytree.common.auth.UserJpaRepository;
+import io.jhchoe.familytree.core.user.domain.User;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
+import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.time.LocalDateTime;
+
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
- * TokenController 단위 테스트
+ * JWT 토큰 관련 API 인수 테스트
  */
-@WebMvcTest(TokenController.class)
-class TokenControllerTest {
+@DisplayName("[Acceptance Test] TokenControllerTest")
+class TokenControllerTest extends AcceptanceTestBase {
 
     @Autowired
-    private MockMvc mockMvc;
+    private UserJpaRepository userJpaRepository;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private RefreshJwtTokenUseCase refreshJwtTokenUseCase;
-
-    @MockBean
-    private LogoutUseCase logoutUseCase;
+    private RefreshTokenJpaRepository refreshTokenJpaRepository;
 
     @Test
-    @DisplayName("유효한 Refresh Token으로 토큰 갱신 성공")
-    void refresh_token_with_valid_refresh_token_should_return_new_tokens() throws Exception {
+    @DisplayName("유효한 Refresh Token으로 토큰 갱신 시 200 OK와 새로운 토큰을 반환합니다")
+    void modify_returns_200_and_new_tokens_when_valid_refresh_token() {
         // given
-        String refreshToken = "valid.refresh.token";
-        TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
-        
-        JwtTokenResponse expectedResponse = JwtTokenResponse.of(
-            "new.access.token",
-            "new.refresh.token",
-            300L
+        User user = User.newUser(
+            "test@example.com", 
+            "테스트사용자", 
+            "profile.jpg",
+            AuthenticationType.OAUTH2,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
+            false,
+            null,
+            LocalDateTime.now(),
+            null,
+            LocalDateTime.now()
         );
+        UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
+        
+        RefreshToken refreshToken = RefreshToken.newRefreshToken(
+            savedUser.getId(),
+            "valid.refresh.token.value",
+            LocalDateTime.now().plusDays(7)
+        );
+        refreshTokenJpaRepository.save(RefreshTokenJpaEntity.from(refreshToken));
 
-        when(refreshJwtTokenUseCase.refresh(any(RefreshJwtTokenCommand.class)))
-            .thenReturn(expectedResponse);
+        String requestBody = """
+            {
+                "refreshToken": "valid.refresh.token.value"
+            }
+            """;
 
         // when & then
-        mockMvc.perform(post("/api/auth/refresh")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.accessToken").value("new.access.token"))
-            .andExpect(jsonPath("$.refreshToken").value("new.refresh.token"))
-            .andExpect(jsonPath("$.tokenType").value("Bearer"))
-            .andExpect(jsonPath("$.expiresIn").value(300));
+        given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(requestBody)
+        .when()
+            .post("/api/auth/refresh")
+        .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("accessToken", notNullValue())
+            .body("refreshToken", notNullValue())
+            .body("tokenType", equalTo("Bearer"))
+            .body("expiresIn", notNullValue());
     }
 
     @Test
-    @DisplayName("빈 Refresh Token으로 토큰 갱신 시 400 에러")
-    void refresh_token_with_empty_refresh_token_should_return_400() throws Exception {
+    @DisplayName("빈 Refresh Token으로 토큰 갱신 시 400 BAD REQUEST를 반환합니다")
+    void modify_returns_400_when_empty_refresh_token() {
         // given
-        TokenRefreshRequest request = new TokenRefreshRequest("");
+        String requestBody = """
+            {
+                "refreshToken": ""
+            }
+            """;
 
         // when & then
-        mockMvc.perform(post("/api/auth/refresh")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.code").value("400"));
+        given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(requestBody)
+        .when()
+            .post("/api/auth/refresh")
+        .then()
+            .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
-    @DisplayName("만료된 Refresh Token으로 토큰 갱신 시 예외 발생")
-    void refresh_token_with_expired_token_should_throw_exception() throws Exception {
+    @DisplayName("존재하지 않는 Refresh Token으로 갱신 시 401 UNAUTHORIZED를 반환합니다")
+    void modify_returns_401_when_nonexistent_refresh_token() {
         // given
-        String expiredToken = "expired.refresh.token";
-        TokenRefreshRequest request = new TokenRefreshRequest(expiredToken);
-
-        when(refreshJwtTokenUseCase.refresh(any(RefreshJwtTokenCommand.class)))
-            .thenThrow(new ExpiredTokenException("Refresh Token이 만료되었습니다."));
+        String requestBody = """
+            {
+                "refreshToken": "nonexistent.refresh.token"
+            }
+            """;
 
         // when & then
-        mockMvc.perform(post("/api/auth/refresh")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isUnauthorized());
+        given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(requestBody)
+        .when()
+            .post("/api/auth/refresh")
+        .then()
+            .statusCode(HttpStatus.UNAUTHORIZED.value());
     }
 
     @Test
-    @DisplayName("유효하지 않은 Refresh Token으로 토큰 갱신 시 예외 발생")
-    void refresh_token_with_invalid_token_should_throw_exception() throws Exception {
+    @WithMockOAuth2User(id = 1L, email = "test@example.com", name = "테스트사용자")
+    @DisplayName("인증된 사용자의 로그아웃 시 200 OK와 성공 메시지를 반환합니다")
+    void delete_returns_200_and_success_message_when_authenticated_user() {
         // given
-        String invalidToken = "invalid.refresh.token";
-        TokenRefreshRequest request = new TokenRefreshRequest(invalidToken);
-
-        when(refreshJwtTokenUseCase.refresh(any(RefreshJwtTokenCommand.class)))
-            .thenThrow(new InvalidTokenException("유효하지 않은 Refresh Token입니다."));
+        User user = User.withId(
+            1L,
+            "test@example.com", 
+            "테스트사용자", 
+            "profile.jpg",
+            AuthenticationType.OAUTH2,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
+            false,
+            null,
+            LocalDateTime.now(),
+            null,
+            LocalDateTime.now()
+        );
+        UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
+        
+        RefreshToken refreshToken = RefreshToken.newRefreshToken(
+            savedUser.getId(),
+            "user.refresh.token",
+            LocalDateTime.now().plusDays(7)
+        );
+        refreshTokenJpaRepository.save(RefreshTokenJpaEntity.from(refreshToken));
 
         // when & then
-        mockMvc.perform(post("/api/auth/refresh")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isUnauthorized());
+        given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+        .when()
+            .post("/api/auth/logout")
+        .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("success", equalTo(true))
+            .body("message", equalTo("로그아웃이 성공적으로 완료되었습니다."));
     }
 
     @Test
-    @WithMockOAuth2User(id = 1L, email = "test@example.com", name = "테스트")
-    @DisplayName("인증된 사용자의 로그아웃 성공")
-    void logout_with_authenticated_user_should_return_success() throws Exception {
-        // given
-        doNothing().when(logoutUseCase).logout(any(LogoutCommand.class));
-
+    @DisplayName("인증되지 않은 사용자의 로그아웃 시 401 UNAUTHORIZED를 반환합니다")
+    void delete_returns_401_when_unauthenticated_user() {
         // when & then
-        mockMvc.perform(post("/api/auth/logout"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.message").value("로그아웃이 성공적으로 완료되었습니다."));
-    }
-
-    @Test
-    @DisplayName("인증되지 않은 사용자의 로그아웃 시 401 에러")
-    void logout_without_authentication_should_return_401() throws Exception {
-        // when & then
-        mockMvc.perform(post("/api/auth/logout"))
-            .andExpect(status().isUnauthorized());
+        given()
+            .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
+        .when()
+            .post("/api/auth/logout")
+        .then()
+            .statusCode(HttpStatus.UNAUTHORIZED.value());
     }
 }

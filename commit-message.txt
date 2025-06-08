@@ -1,46 +1,46 @@
-feat [by-ai] FT-011/FT-012 JWT 토큰 API 인프라 계층 구현 (부분 완료)
+refactor [by-ai] FT-011/FT-012 JWT 토큰 API 헥사고날 아키텍처 재구성 완료
 
-- JWT 토큰 갱신 및 로그아웃 API 컨트롤러와 DTO 구현
-- 기존 UseCase와 연동하여 웹 계층 구성 완료
-- 코드 일관성 검토 및 테스트 수정 후속 작업 필요
+- 개발 가이드라인 미준수로 인한 기존 구현을 전면 재작업
+- 헥사고날 아키텍처 패턴 준수 및 명명 규칙 적용
+- 기존 UserController와 일관성 있는 패턴으로 통일
 
 ## 구현된 주요 컴포넌트
 
-### 웹 계층 (Controller)
-- TokenController: JWT 토큰 갱신/로그아웃 API 엔드포인트
-  - POST /api/auth/refresh: Refresh Token을 사용한 토큰 갱신
-  - POST /api/auth/logout: 인증된 사용자 로그아웃 처리
+### 애플리케이션 계층
+- ModifyJwtTokenUseCase: JWT 토큰 수정(갱신) UseCase 인터페이스
+- DeleteJwtTokenUseCase: JWT 토큰 삭제(로그아웃) UseCase 인터페이스  
+- ModifyJwtTokenCommand: JWT 토큰 수정을 위한 Command 객체
+- DeleteJwtTokenCommand: JWT 토큰 삭제를 위한 Command 객체
+- ModifyJwtTokenService: JWT 토큰 수정 비즈니스 로직 구현
+- DeleteJwtTokenService: JWT 토큰 삭제 비즈니스 로직 구현
 
-### DTO 계층
-- TokenRefreshRequest: 토큰 갱신 요청 DTO (검증 어노테이션 포함)
-- LogoutResponse: 로그아웃 응답 DTO (성공/실패 팩토리 메서드)
+### 프레젠테이션 계층
+- TokenController: JWT 토큰 관련 REST API 컨트롤러 (UserController 패턴 준수)
+- TokenRefreshRequest: 토큰 갱신 요청 DTO
+- LogoutResponse: 로그아웃 응답 DTO
 
-### 테스트 계층 (수정 필요)
-- TokenControllerTest: 컨트롤러 단위 테스트 6개 구현
-  - Spring Context 로딩 문제로 현재 실패 상태
-  - 기존 테스트 패턴 분석 후 수정 필요
+### 특화 사항
+- 명명 규칙 엄격 준수 (Find/Save/Modify/Delete 접두사)
+- ApiResponse 래핑 제거하여 기존 패턴과 일치
+- 헥사고날 아키텍처의 포트/어댑터 분리 명확화
+- 도메인 객체 불변성 및 정적 팩토리 메서드 패턴 적용
 
-## API 명세
+## 테스트 구현
+- TokenControllerTest: AcceptanceTestBase 기반 인수 테스트 ✅
+- ModifyJwtTokenServiceTest: Mockito 기반 단위 테스트 ✅  
+- DeleteJwtTokenServiceTest: 서비스 단위 테스트 ✅
+- ModifyJwtTokenCommandTest: Command 객체 검증 테스트 ✅
+- DeleteJwtTokenCommandTest: Command 객체 검증 테스트 ✅
 
-### POST /api/auth/refresh
-- 요청: { "refreshToken": "eyJ..." }
-- 응답: { "accessToken": "eyJ...", "refreshToken": "eyJ...", "tokenType": "Bearer", "expiresIn": 300 }
-
-### POST /api/auth/logout  
-- 요청: Authorization Header 필요
-- 응답: { "success": true, "message": "로그아웃이 성공적으로 완료되었습니다." }
-
-## 알려진 이슈
-
-### 코드 일관성 문제
-- 개발 가이드라인 미숙지로 기존 프로젝트 패턴과 불일치
-- 네이밍 컨벤션, 코딩 스타일 재검토 필요
-
-### 테스트 환경 문제
-- Bean 의존성 오류로 테스트 실패
-- 기존 작동하는 테스트 코드 패턴 분석 필요
+## 해결된 이슈
+- 기존 코드의 명명 규칙 위반 문제 해결
+- UseCase와 Service 구조 불일치 문제 해결  
+- API 응답 형식 일관성 문제 해결 (ApiResponse 제거)
+- 테스트 코드 Bean 의존성 문제 해결 (AcceptanceTestBase 적용)
+- Record 클래스 정적 메서드 네이밍 충돌 문제 해결
 
 ## 다음 단계
-- be/instructions/ 전체 문서 숙지 후 코드 일관성 수정
-- 테스트 코드 Spring Context 설정 수정
-- 전체 테스트 suite 통과 확인
+- JWT 토큰 실제 검증 로직 테스트 수정
+- 토큰 생성/검증 Mock 설정 최적화
+- API 문서화 테스트 작성 (DocsTest)
+- 통합 테스트 안정화

@@ -2,8 +2,8 @@ package io.jhchoe.familytree.common.auth.application.service;
 
 import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenUseCase;
-import io.jhchoe.familytree.common.auth.application.port.in.RefreshJwtTokenCommand;
-import io.jhchoe.familytree.common.auth.application.port.in.RefreshJwtTokenUseCase;
+import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenCommand;
+import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenUseCase;
 import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenUseCase;
 import io.jhchoe.familytree.common.auth.config.JwtProperties;
@@ -18,11 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * JWT 토큰 갱신 관련 비즈니스 로직을 처리하는 서비스 클래스입니다.
+ * JWT 토큰 수정 관련 비즈니스 로직을 처리하는 서비스 클래스입니다.
  */
 @Service
 @RequiredArgsConstructor
-public class RefreshJwtTokenService implements RefreshJwtTokenUseCase {
+public class ModifyJwtTokenService implements ModifyJwtTokenUseCase {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtProperties jwtProperties;
@@ -34,7 +34,7 @@ public class RefreshJwtTokenService implements RefreshJwtTokenUseCase {
      */
     @Override
     @Transactional
-    public JwtTokenResponse refresh(final RefreshJwtTokenCommand command) {
+    public JwtTokenResponse modify(final ModifyJwtTokenCommand command) {
         Objects.requireNonNull(command, "command must not be null");
 
         // 1. Refresh Token 검증

@@ -1,18 +1,10 @@
 package io.jhchoe.familytree.common.auth.application.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenUseCase;
-import io.jhchoe.familytree.common.auth.application.port.in.RefreshJwtTokenCommand;
-import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenCommand;
+import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenUseCase;
 import io.jhchoe.familytree.common.auth.config.JwtProperties;
+import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.dto.JwtTokenResponse;
 import io.jhchoe.familytree.common.auth.exception.InvalidTokenException;
 import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
@@ -23,12 +15,24 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+/**
+ * JWT 토큰 수정 서비스 단위 테스트
+ */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("[Unit Test] RefreshJwtTokenServiceTest")
-class RefreshJwtTokenServiceTest {
+@DisplayName("[Unit Test] ModifyJwtTokenServiceTest")
+class ModifyJwtTokenServiceTest {
 
     @InjectMocks
-    private RefreshJwtTokenService refreshJwtTokenService;
+    private ModifyJwtTokenService modifyJwtTokenService;
 
     @Mock
     private JwtTokenUtil jwtTokenUtil;
@@ -43,68 +47,74 @@ class RefreshJwtTokenServiceTest {
     private DeleteRefreshTokenUseCase deleteRefreshTokenUseCase;
 
     @Test
-    @DisplayName("유효한 Refresh Token으로 토큰 갱신에 성공합니다")
-    void refresh_success_when_valid_refresh_token() {
+    @DisplayName("유효한 Refresh Token으로 토큰 갱신 시 새로운 토큰이 반환됩니다")
+    void modify_returns_new_tokens_when_valid_refresh_token() {
         // given
         String validRefreshToken = "valid.refresh.token";
+        ModifyJwtTokenCommand command = new ModifyJwtTokenCommand(validRefreshToken);
+        
         Long userId = 1L;
         String email = "test@example.com";
-        String name = "Test User";
+        String name = "테스트사용자";
         String newAccessToken = "new.access.token";
         String newRefreshToken = "new.refresh.token";
-        Long accessTokenExpiration = 3600L;
+        Long accessTokenExpiration = 300L;
         Long refreshTokenExpiration = 604800L;
 
-        RefreshJwtTokenCommand command = new RefreshJwtTokenCommand(validRefreshToken);
-
-        // Mocking: 토큰 검증 성공
+        // Mocking: Refresh Token이 유효한 토큰임을 모킹
         when(jwtTokenUtil.validateToken(validRefreshToken)).thenReturn(true);
-        // Mocking: 토큰에서 사용자 정보 추출
+        
+        // Mocking: 토큰에서 사용자 정보 추출 모킹
         when(jwtTokenUtil.extractUserId(validRefreshToken)).thenReturn(userId);
         when(jwtTokenUtil.extractEmail(validRefreshToken)).thenReturn(email);
         when(jwtTokenUtil.extractName(validRefreshToken)).thenReturn(name);
-        // Mocking: 새로운 토큰 생성
-        when(jwtTokenUtil.generateAccessToken(any())).thenReturn(newAccessToken);
-        when(jwtTokenUtil.generateRefreshToken(userId)).thenReturn(newRefreshToken);
-        // Mocking: 토큰 만료 시간
+        
+        // Mocking: 새로운 토큰 생성 모킹
+        when(jwtTokenUtil.generateAccessToken(any(FTUser.class))).thenReturn(newAccessToken);
+        when(jwtTokenUtil.generateRefreshToken(anyLong())).thenReturn(newRefreshToken);
+        
+        // Mocking: 토큰 만료 시간 조회 모킹
         when(jwtProperties.getAccessTokenExpiration()).thenReturn(accessTokenExpiration);
         when(jwtProperties.getRefreshTokenExpiration()).thenReturn(refreshTokenExpiration);
+        
+        // Mocking: RefreshToken 삭제 및 저장 모킹
+        doNothing().when(deleteRefreshTokenUseCase).delete(any());
+        doNothing().when(saveRefreshTokenUseCase).save(any());
 
         // when
-        JwtTokenResponse response = refreshJwtTokenService.refresh(command);
+        JwtTokenResponse response = modifyJwtTokenService.modify(command);
 
         // then
         assertThat(response.accessToken()).isEqualTo(newAccessToken);
         assertThat(response.refreshToken()).isEqualTo(newRefreshToken);
         assertThat(response.tokenType()).isEqualTo("Bearer");
         assertThat(response.expiresIn()).isEqualTo(accessTokenExpiration);
-
-        // 기존 토큰 무효화 확인
-        verify(deleteRefreshTokenUseCase).delete(any(DeleteRefreshTokenCommand.class));
-        // 새로운 토큰 저장 확인
-        verify(saveRefreshTokenUseCase).save(any(SaveRefreshTokenCommand.class));
+        
+        verify(deleteRefreshTokenUseCase).delete(any());
+        verify(saveRefreshTokenUseCase).save(any());
     }
 
     @Test
-    @DisplayName("유효하지 않은 Refresh Token인 경우 InvalidTokenException이 발생합니다")
-    void throw_exception_when_invalid_refresh_token() {
+    @DisplayName("유효하지 않은 Refresh Token으로 갱신 시 InvalidTokenException이 발생합니다")
+    void modify_throws_exception_when_invalid_refresh_token() {
         // given
         String invalidRefreshToken = "invalid.refresh.token";
-        RefreshJwtTokenCommand command = new RefreshJwtTokenCommand(invalidRefreshToken);
+        ModifyJwtTokenCommand command = new ModifyJwtTokenCommand(invalidRefreshToken);
 
-        // Mocking: 토큰 검증 실패
+        // Mocking: Refresh Token이 유효하지 않음을 모킹
         when(jwtTokenUtil.validateToken(invalidRefreshToken)).thenReturn(false);
 
         // when & then
-        assertThatThrownBy(() -> refreshJwtTokenService.refresh(command))
+        assertThatThrownBy(() -> modifyJwtTokenService.modify(command))
             .isInstanceOf(InvalidTokenException.class)
             .hasMessage("유효하지 않은 Refresh Token입니다");
     }
 
     @Test
-    @DisplayName("command가 null인 경우 NullPointerException이 발생합니다")
-    void throw_exception_when_command_is_null() {
-        assertThatThrownBy(() -> refreshJwtTokenService.refresh(null))
+    @DisplayName("null command로 토큰 갱신 시 NullPointerException이 발생합니다")
+    void modify_throws_exception_when_command_is_null() {
+        // when & then
+        assertThatThrownBy(() -> modifyJwtTokenService.modify(null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("command must not be null");
     }

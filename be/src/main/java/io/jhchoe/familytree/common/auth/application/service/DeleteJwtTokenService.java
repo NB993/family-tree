@@ -1,20 +1,20 @@
 package io.jhchoe.familytree.common.auth.application.service;
 
+import io.jhchoe.familytree.common.auth.application.port.in.DeleteJwtTokenCommand;
+import io.jhchoe.familytree.common.auth.application.port.in.DeleteJwtTokenUseCase;
 import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenUseCase;
-import io.jhchoe.familytree.common.auth.application.port.in.LogoutCommand;
-import io.jhchoe.familytree.common.auth.application.port.in.LogoutUseCase;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 로그아웃 관련 비즈니스 로직을 처리하는 서비스 클래스입니다.
+ * JWT 토큰 삭제 관련 비즈니스 로직을 처리하는 서비스 클래스입니다.
  */
 @Service
 @RequiredArgsConstructor
-public class LogoutService implements LogoutUseCase {
+public class DeleteJwtTokenService implements DeleteJwtTokenUseCase {
 
     private final DeleteRefreshTokenUseCase deleteRefreshTokenUseCase;
 
@@ -23,7 +23,7 @@ public class LogoutService implements LogoutUseCase {
      */
     @Override
     @Transactional
-    public void logout(final LogoutCommand command) {
+    public void delete(final DeleteJwtTokenCommand command) {
         Objects.requireNonNull(command, "command must not be null");
 
         // 해당 사용자의 모든 Refresh Token을 무효화

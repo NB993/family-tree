@@ -1,9 +1,9 @@
 package io.jhchoe.familytree.common.auth.controller;
 
-import io.jhchoe.familytree.common.auth.application.port.in.LogoutCommand;
-import io.jhchoe.familytree.common.auth.application.port.in.LogoutUseCase;
-import io.jhchoe.familytree.common.auth.application.port.in.RefreshJwtTokenCommand;
-import io.jhchoe.familytree.common.auth.application.port.in.RefreshJwtTokenUseCase;
+import io.jhchoe.familytree.common.auth.application.port.in.DeleteJwtTokenCommand;
+import io.jhchoe.familytree.common.auth.application.port.in.DeleteJwtTokenUseCase;
+import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenCommand;
+import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenUseCase;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.dto.JwtTokenResponse;
 import io.jhchoe.familytree.common.auth.dto.LogoutResponse;
@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TokenController {
 
-    private final RefreshJwtTokenUseCase refreshJwtTokenUseCase;
-    private final LogoutUseCase logoutUseCase;
+    private final ModifyJwtTokenUseCase modifyJwtTokenUseCase;
+    private final DeleteJwtTokenUseCase deleteJwtTokenUseCase;
 
     /**
      * Refresh Token을 사용하여 새로운 Access Token과 Refresh Token을 발급합니다.
@@ -47,8 +47,8 @@ public class TokenController {
         log.debug("토큰 갱신 요청: [Refresh Token Length: {}]", 
             request.refreshToken() != null ? request.refreshToken().length() : 0);
 
-        RefreshJwtTokenCommand command = new RefreshJwtTokenCommand(request.refreshToken());
-        JwtTokenResponse response = refreshJwtTokenUseCase.refresh(command);
+        ModifyJwtTokenCommand command = new ModifyJwtTokenCommand(request.refreshToken());
+        JwtTokenResponse response = modifyJwtTokenUseCase.modify(command);
 
         log.debug("토큰 갱신 완료: [Access Token Length: {}, Refresh Token Length: {}]",
             response.accessToken().length(),
@@ -72,8 +72,8 @@ public class TokenController {
     ) {
         log.debug("로그아웃 요청: [User ID: {}]", user.getId());
 
-        LogoutCommand command = new LogoutCommand(user.getId());
-        logoutUseCase.logout(command);
+        DeleteJwtTokenCommand command = new DeleteJwtTokenCommand(user.getId());
+        deleteJwtTokenUseCase.delete(command);
 
         log.debug("로그아웃 완료: [User ID: {}]", user.getId());
 
