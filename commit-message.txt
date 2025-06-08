@@ -1,0 +1,46 @@
+feat [by-ai] FT-011/FT-012 JWT 토큰 API 인프라 계층 구현 (부분 완료)
+
+- JWT 토큰 갱신 및 로그아웃 API 컨트롤러와 DTO 구현
+- 기존 UseCase와 연동하여 웹 계층 구성 완료
+- 코드 일관성 검토 및 테스트 수정 후속 작업 필요
+
+## 구현된 주요 컴포넌트
+
+### 웹 계층 (Controller)
+- TokenController: JWT 토큰 갱신/로그아웃 API 엔드포인트
+  - POST /api/auth/refresh: Refresh Token을 사용한 토큰 갱신
+  - POST /api/auth/logout: 인증된 사용자 로그아웃 처리
+
+### DTO 계층
+- TokenRefreshRequest: 토큰 갱신 요청 DTO (검증 어노테이션 포함)
+- LogoutResponse: 로그아웃 응답 DTO (성공/실패 팩토리 메서드)
+
+### 테스트 계층 (수정 필요)
+- TokenControllerTest: 컨트롤러 단위 테스트 6개 구현
+  - Spring Context 로딩 문제로 현재 실패 상태
+  - 기존 테스트 패턴 분석 후 수정 필요
+
+## API 명세
+
+### POST /api/auth/refresh
+- 요청: { "refreshToken": "eyJ..." }
+- 응답: { "accessToken": "eyJ...", "refreshToken": "eyJ...", "tokenType": "Bearer", "expiresIn": 300 }
+
+### POST /api/auth/logout  
+- 요청: Authorization Header 필요
+- 응답: { "success": true, "message": "로그아웃이 성공적으로 완료되었습니다." }
+
+## 알려진 이슈
+
+### 코드 일관성 문제
+- 개발 가이드라인 미숙지로 기존 프로젝트 패턴과 불일치
+- 네이밍 컨벤션, 코딩 스타일 재검토 필요
+
+### 테스트 환경 문제
+- Bean 의존성 오류로 테스트 실패
+- 기존 작동하는 테스트 코드 패턴 분석 필요
+
+## 다음 단계
+- be/instructions/ 전체 문서 숙지 후 코드 일관성 수정
+- 테스트 코드 Spring Context 설정 수정
+- 전체 테스트 suite 통과 확인
