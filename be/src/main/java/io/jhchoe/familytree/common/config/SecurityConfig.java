@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.common.config;
 
 import io.jhchoe.familytree.common.auth.filter.JwtAuthenticationFilter;
+import io.jhchoe.familytree.common.auth.handler.OAuth2JwtSuccessHandler;
 import io.jhchoe.familytree.common.auth.service.OAuth2UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ public class SecurityConfig {
     private final FTSpringSecurityExceptionHandler ftSpringSecurityExceptionHandler;
     private final OAuth2UserServiceImpl oAuth2UserService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OAuth2JwtSuccessHandler oAuth2JwtSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -56,7 +58,7 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2 // OAuth2 로그인 설정 추가
                 .loginPage("/login")
-                .defaultSuccessUrl("/")
+                .successHandler(oAuth2JwtSuccessHandler) // JWT 토큰 발급 핸들러 적용
                 .failureUrl("/login?error=true")
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(oAuth2UserService)
