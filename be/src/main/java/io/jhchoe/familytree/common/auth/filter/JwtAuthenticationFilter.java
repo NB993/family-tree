@@ -2,9 +2,8 @@ package io.jhchoe.familytree.common.auth.filter;
 
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
-import io.jhchoe.familytree.common.auth.exception.ExpiredTokenException;
-import io.jhchoe.familytree.common.auth.exception.InvalidTokenException;
 import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
+import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.common.util.MaskingUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -59,16 +58,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 authenticateToken(token, request);
             }
-        } catch (final ExpiredTokenException e) {
-            log.debug("만료된 토큰입니다: {}", e.getMessage());
-            request.setAttribute("JWT_EXCEPTION", AuthExceptionCode.EXPIRED_TOKEN.name());
+        } catch (final FTException e) {
+            log.debug("JWT 토큰 예외: {}", e.getMessage());
+            String exceptionCode = e.getCode();
+            request.setAttribute("JWT_EXCEPTION", AuthExceptionCode.ofCode(exceptionCode).name());
             SecurityContextHolder.clearContext();
-            
-        } catch (final InvalidTokenException e) {
-            log.debug("유효하지 않은 토큰입니다: {}", e.getMessage());
-            request.setAttribute("JWT_EXCEPTION", AuthExceptionCode.INVALID_TOKEN_FORMAT.name());
-            SecurityContextHolder.clearContext();
-            
+
         } catch (final Exception e) {
             log.error("JWT 토큰 처리 중 예상치 못한 오류가 발생했습니다: {}", e.getMessage(), e);
             request.setAttribute("JWT_EXCEPTION", AuthExceptionCode.UNAUTHORIZED.name());

@@ -9,8 +9,10 @@ import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenUseC
 import io.jhchoe.familytree.common.auth.config.JwtProperties;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.dto.JwtTokenResponse;
-import io.jhchoe.familytree.common.auth.exception.InvalidTokenException;
 import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
+import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.core.user.application.port.out.FindUserPort;
+import io.jhchoe.familytree.core.user.domain.User;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class ModifyJwtTokenService implements ModifyJwtTokenUseCase {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtProperties jwtProperties;
+    private final FindUserPort findUserPort;
     private final SaveRefreshTokenUseCase saveRefreshTokenUseCase;
     private final DeleteRefreshTokenUseCase deleteRefreshTokenUseCase;
 
@@ -37,21 +40,22 @@ public class ModifyJwtTokenService implements ModifyJwtTokenUseCase {
     public JwtTokenResponse modify(final ModifyJwtTokenCommand command) {
         Objects.requireNonNull(command, "command must not be null");
 
-        // 1. Refresh Token 검증
-        if (!jwtTokenUtil.validateToken(command.refreshToken())) {
-            throw new InvalidTokenException("유효하지 않은 Refresh Token입니다");
-        }
+        // 1. Refresh Token 검증 (JwtTokenUtil에서 FTException 발생)
+        jwtTokenUtil.validateToken(command.refreshToken());
 
-        // 2. 토큰에서 사용자 ID 추출
+        // 2. 토큰에서 사용자 정보 추출
         Long userId = jwtTokenUtil.extractUserId(command.refreshToken());
+        String email = jwtTokenUtil.extractEmail(command.refreshToken());
+        String name = jwtTokenUtil.extractName(command.refreshToken());
 
         // 3. 기존 Refresh Token 무효화 (토큰 재사용 방지)
         deleteRefreshTokenUseCase.delete(new DeleteRefreshTokenCommand(userId));
 
-        // 4. 토큰에서 사용자 정보 추출하여 FTUser 생성
-        String email = jwtTokenUtil.extractEmail(command.refreshToken());
-        String name = jwtTokenUtil.extractName(command.refreshToken());
-        FTUser ftUser = FTUser.withId(userId, email, name);
+        // 4. 토큰에서 사용자 ID를 추출하여 User 조회 후 FTUser로 변환
+        User user = findUserPort.findById(userId)
+            .orElseThrow(() -> FTException.NOT_FOUND);
+
+        FTUser ftUser = FTUser.withId(user.getId(), user.getEmail(), user.getName());
 
         // 5. 새로운 Access Token과 Refresh Token 생성
         String newAccessToken = jwtTokenUtil.generateAccessToken(ftUser);

@@ -3,7 +3,8 @@ package io.jhchoe.familytree.common.auth.util;
 import io.jhchoe.familytree.common.auth.config.JwtProperties;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
-import io.jhchoe.familytree.common.auth.exception.InvalidTokenException;
+import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
+import io.jhchoe.familytree.common.exception.FTException;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -112,8 +113,9 @@ class JwtTokenUtilTest {
 
         // when & then
         assertThatThrownBy(() -> jwtTokenUtil.validateToken(malformedToken))
-            .isInstanceOf(InvalidTokenException.class)
-            .hasMessage("유효하지 않은 토큰입니다");
+            .isInstanceOf(FTException.class)
+            .extracting("code")
+            .isEqualTo(AuthExceptionCode.INVALID_TOKEN_FORMAT.getCode());
     }
 
     @Test
@@ -197,7 +199,8 @@ class JwtTokenUtilTest {
 
         // when & then
         assertThatThrownBy(() -> jwtTokenUtil.extractUserId(invalidToken))
-            .isInstanceOf(InvalidTokenException.class)
-            .hasMessage("유효하지 않은 토큰입니다");
+            .isInstanceOf(FTException.class)
+            .extracting("code")
+            .isEqualTo(AuthExceptionCode.INVALID_TOKEN_FORMAT.getCode());
     }
 }

@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.common.auth.exception;
 
 import io.jhchoe.familytree.common.exception.ExceptionCodeType;
+import java.util.Arrays;
 import org.springframework.http.HttpStatus;
 
 public enum AuthExceptionCode implements ExceptionCodeType {
@@ -37,5 +38,12 @@ public enum AuthExceptionCode implements ExceptionCodeType {
     @Override
     public HttpStatus getStatus() {
         return this.status;
+    }
+
+    public static AuthExceptionCode ofCode(String code) {
+        return Arrays.stream(AuthExceptionCode.values())
+            .filter(authExceptionCode -> authExceptionCode.getCode().equals(code))
+            .findFirst()
+            .orElse(null);
     }
 }

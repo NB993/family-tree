@@ -2,9 +2,9 @@ package io.jhchoe.familytree.common.auth.filter;
 
 import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.common.auth.exception.ExpiredTokenException;
-import io.jhchoe.familytree.common.auth.exception.InvalidTokenException;
+import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
+import io.jhchoe.familytree.common.exception.FTException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -127,49 +127,53 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    @DisplayName("만료된 토큰일 때 BadCredentialsException을 발생시킵니다")
-    void throw_bad_credentials_exception_when_expired_token() throws ServletException, IOException {
+    @DisplayName("만료된 토큰일 때 요청 속성에 예외 정보를 설정합니다")
+    void set_exception_attribute_when_expired_token() throws ServletException, IOException {
         // given
         String expiredToken = "expired.jwt.token";
         when(request.getHeader("Authorization")).thenReturn("Bearer " + expiredToken);
 
         // 만료된 토큰 예외 모킹
-        when(jwtTokenUtil.validateToken(expiredToken)).thenThrow(new ExpiredTokenException());
+        when(jwtTokenUtil.validateToken(expiredToken)).thenThrow(new FTException(AuthExceptionCode.EXPIRED_TOKEN));
 
-        // when & then
-        assertThatThrownBy(() -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain))
-            .isInstanceOf(BadCredentialsException.class)
-            .hasMessage("EXPIRED_TOKEN");
+        // when
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        // then
         // SecurityContext가 비워졌는지 확인
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertThat(authentication).isNull();
 
-        // 예외 발생으로 필터 체인이 중단되므로 doFilter 호출되지 않음
-        verify(filterChain, never()).doFilter(request, response);
+        // 예외 정보가 요청 속성에 설정되었는지 확인
+        verify(request).setAttribute("JWT_EXCEPTION", AuthExceptionCode.EXPIRED_TOKEN.name());
+
+        // 필터 체인은 계속 진행됨
+        verify(filterChain).doFilter(request, response);
     }
 
     @Test
-    @DisplayName("유효하지 않은 토큰일 때 BadCredentialsException을 발생시킵니다")
-    void throw_bad_credentials_exception_when_invalid_token() throws ServletException, IOException {
+    @DisplayName("유효하지 않은 토큰일 때 요청 속성에 예외 정보를 설정합니다")
+    void set_exception_attribute_when_invalid_token() throws ServletException, IOException {
         // given
         String invalidToken = "invalid.jwt.token";
         when(request.getHeader("Authorization")).thenReturn("Bearer " + invalidToken);
 
         // 유효하지 않은 토큰 예외 모킹
-        when(jwtTokenUtil.validateToken(invalidToken)).thenThrow(new InvalidTokenException());
+        when(jwtTokenUtil.validateToken(invalidToken)).thenThrow(new FTException(AuthExceptionCode.INVALID_TOKEN_FORMAT));
 
-        // when & then
-        assertThatThrownBy(() -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain))
-            .isInstanceOf(BadCredentialsException.class)
-            .hasMessage("INVALID_TOKEN_FORMAT");
+        // when
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        // then
         // SecurityContext가 비워졌는지 확인
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertThat(authentication).isNull();
 
-        // 예외 발생으로 필터 체인이 중단되므로 doFilter 호출되지 않음
-        verify(filterChain, never()).doFilter(request, response);
+        // 예외 정보가 요청 속성에 설정되었는지 확인
+        verify(request).setAttribute("JWT_EXCEPTION", AuthExceptionCode.INVALID_TOKEN_FORMAT.name());
+
+        // 필터 체인은 계속 진행됨
+        verify(filterChain).doFilter(request, response);
     }
 
     @Test
@@ -212,8 +216,8 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    @DisplayName("토큰에서 사용자 정보 추출 중 예외가 발생할 때 BadCredentialsException을 발생시킵니다")
-    void throw_bad_credentials_exception_when_exception_during_token_processing() throws ServletException, IOException {
+    @DisplayName("토큰에서 사용자 정보 추출 중 예외가 발생할 때 요청 속성에 예외 정보를 설정합니다")
+    void set_exception_attribute_when_exception_during_token_processing() throws ServletException, IOException {
         // given
         String validToken = "valid.jwt.token";
         when(request.getHeader("Authorization")).thenReturn("Bearer " + validToken);
@@ -222,17 +226,19 @@ class JwtAuthenticationFilterTest {
         when(jwtTokenUtil.validateToken(validToken)).thenReturn(true);
         when(jwtTokenUtil.extractUserId(validToken)).thenThrow(new RuntimeException("예상치 못한 오류"));
 
-        // when & then
-        assertThatThrownBy(() -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain))
-            .isInstanceOf(BadCredentialsException.class)
-            .hasMessage("UNAUTHORIZED");
+        // when
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        // then
         // SecurityContext가 비워졌는지 확인
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertThat(authentication).isNull();
 
-        // 예외 발생으로 필터 체인이 중단되므로 doFilter 호출되지 않음
-        verify(filterChain, never()).doFilter(request, response);
+        // 예외 정보가 요청 속성에 설정되었는지 확인
+        verify(request).setAttribute("JWT_EXCEPTION", "UNAUTHORIZED");
+
+        // 필터 체인은 계속 진행됨
+        verify(filterChain).doFilter(request, response);
     }
 
     @Test

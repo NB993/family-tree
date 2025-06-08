@@ -1,46 +1,30 @@
-refactor [by-ai] FT-011/FT-012 JWT 토큰 API 헥사고날 아키텍처 재구성 완료
+fix [with-ai] FT-011/FT-012 JWT 토큰 API 테스트 오류 수정
 
-- 개발 가이드라인 미준수로 인한 기존 구현을 전면 재작업
-- 헥사고날 아키텍처 패턴 준수 및 명명 규칙 적용
-- 기존 UserController와 일관성 있는 패턴으로 통일
+- TokenControllerTest 실패 문제 해결을 위한 JWT 관련 컴포넌트 수정
+- JWT 토큰 생성, 검증, 예외 처리 로직 개선으로 테스트 안정화
+- 헥사고날 아키텍처 재구성 이후 발생한 통합 테스트 이슈 해결
+
+## 해결된 이슈
+
+### TokenControllerTest 실패 원인 해결
+- **문제**: JWT 토큰 갱신 API 테스트에서 AssertionError 발생
+- **원인**: JWT 토큰 생성/검증 로직과 예외 처리 불일치
+- **해결**: JwtTokenUtil, AuthExceptionCode, JwtAuthenticationFilter 로직 수정
 
 ## 구현된 주요 컴포넌트
 
-### 애플리케이션 계층
-- ModifyJwtTokenUseCase: JWT 토큰 수정(갱신) UseCase 인터페이스
-- DeleteJwtTokenUseCase: JWT 토큰 삭제(로그아웃) UseCase 인터페이스  
-- ModifyJwtTokenCommand: JWT 토큰 수정을 위한 Command 객체
-- DeleteJwtTokenCommand: JWT 토큰 삭제를 위한 Command 객체
-- ModifyJwtTokenService: JWT 토큰 수정 비즈니스 로직 구현
-- DeleteJwtTokenService: JWT 토큰 삭제 비즈니스 로직 구현
+### JWT 토큰 처리 개선
+- JwtTokenUtil: 토큰 생성/검증 로직 안정화
+- AuthExceptionCode: JWT 관련 예외 코드 정리
+- JwtAuthenticationFilter: 인증 필터 로직 개선
 
-### 프레젠테이션 계층
-- TokenController: JWT 토큰 관련 REST API 컨트롤러 (UserController 패턴 준수)
-- TokenRefreshRequest: 토큰 갱신 요청 DTO
-- LogoutResponse: 로그아웃 응답 DTO
-
-### 특화 사항
-- 명명 규칙 엄격 준수 (Find/Save/Modify/Delete 접두사)
-- ApiResponse 래핑 제거하여 기존 패턴과 일치
-- 헥사고날 아키텍처의 포트/어댑터 분리 명확화
-- 도메인 객체 불변성 및 정적 팩토리 메서드 패턴 적용
-
-## 테스트 구현
-- TokenControllerTest: AcceptanceTestBase 기반 인수 테스트 ✅
-- ModifyJwtTokenServiceTest: Mockito 기반 단위 테스트 ✅  
-- DeleteJwtTokenServiceTest: 서비스 단위 테스트 ✅
-- ModifyJwtTokenCommandTest: Command 객체 검증 테스트 ✅
-- DeleteJwtTokenCommandTest: Command 객체 검증 테스트 ✅
-
-## 해결된 이슈
-- 기존 코드의 명명 규칙 위반 문제 해결
-- UseCase와 Service 구조 불일치 문제 해결  
-- API 응답 형식 일관성 문제 해결 (ApiResponse 제거)
-- 테스트 코드 Bean 의존성 문제 해결 (AcceptanceTestBase 적용)
-- Record 클래스 정적 메서드 네이밍 충돌 문제 해결
+### 테스트 구현
+- ModifyJwtTokenServiceTest: 토큰 갱신 서비스 테스트 보완 ✅
+- DeleteJwtTokenServiceTest: 토큰 삭제 서비스 테스트 보완 ✅
+- ModifyJwtTokenCommandTest: 커맨드 검증 테스트 추가 ✅
+- DeleteJwtTokenCommandTest: 커맨드 검증 테스트 추가 ✅
+- TokenControllerTest: 인수 테스트 통과 확인 ✅
 
 ## 다음 단계
-- JWT 토큰 실제 검증 로직 테스트 수정
-- 토큰 생성/검증 Mock 설정 최적화
-- API 문서화 테스트 작성 (DocsTest)
-- 통합 테스트 안정화
+- JWT 보안 강화 및 성능 최적화
+- API 문서화 테스트 작성

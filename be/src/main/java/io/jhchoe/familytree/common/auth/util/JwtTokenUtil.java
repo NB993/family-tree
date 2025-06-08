@@ -2,8 +2,8 @@ package io.jhchoe.familytree.common.auth.util;
 
 import io.jhchoe.familytree.common.auth.config.JwtProperties;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.common.auth.exception.ExpiredTokenException;
-import io.jhchoe.familytree.common.auth.exception.InvalidTokenException;
+import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
+import io.jhchoe.familytree.common.exception.FTException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -91,9 +91,9 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token);
             return true;
         } catch (final ExpiredJwtException e) {
-            throw new ExpiredTokenException();
+            throw new FTException(AuthExceptionCode.EXPIRED_TOKEN);
         } catch (final SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
-            throw new InvalidTokenException();
+            throw new FTException(AuthExceptionCode.INVALID_TOKEN_FORMAT);
         }
     }
 
@@ -112,7 +112,7 @@ public class JwtTokenUtil {
         try {
             return Long.parseLong(userIdStr);
         } catch (final NumberFormatException e) {
-            throw new InvalidTokenException("유효하지 않은 토큰입니다");
+            throw new FTException(AuthExceptionCode.INVALID_TOKEN_FORMAT);
         }
     }
 
@@ -180,7 +180,7 @@ public class JwtTokenUtil {
         try {
             final Date expiration = extractExpiration(token);
             return expiration.before(new Date());
-        } catch (final ExpiredTokenException e) {
+        } catch (final FTException e) {
             return true;
         }
     }
@@ -199,9 +199,9 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
         } catch (final ExpiredJwtException e) {
-            throw new ExpiredTokenException();
+            throw new FTException(AuthExceptionCode.EXPIRED_TOKEN);
         } catch (final SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
-            throw new InvalidTokenException();
+            throw new FTException(AuthExceptionCode.INVALID_TOKEN_FORMAT);
         }
     }
 

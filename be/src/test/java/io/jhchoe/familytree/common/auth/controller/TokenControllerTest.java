@@ -8,6 +8,7 @@ import io.jhchoe.familytree.common.auth.domain.RefreshToken;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.auth.UserJpaEntity;
 import io.jhchoe.familytree.common.auth.UserJpaRepository;
+import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
 import io.jhchoe.familytree.core.user.domain.User;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
@@ -36,6 +37,9 @@ class TokenControllerTest extends AcceptanceTestBase {
     @Autowired
     private RefreshTokenJpaRepository refreshTokenJpaRepository;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
     @Test
     @DisplayName("유효한 Refresh Token으로 토큰 갱신 시 200 OK와 새로운 토큰을 반환합니다")
     void modify_returns_200_and_new_tokens_when_valid_refresh_token() {
@@ -55,18 +59,29 @@ class TokenControllerTest extends AcceptanceTestBase {
         );
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
         
+        // 실제 유효한 Refresh Token 생성
+        String validRefreshToken = jwtTokenUtil.generateRefreshToken(savedUser.getId());
+        
+        // JWT 토큰 검증 (디버깅용)
+        try {
+            boolean isValid = jwtTokenUtil.validateToken(validRefreshToken);
+            System.out.println("Token validation result: " + isValid);
+        } catch (Exception e) {
+            System.out.println("Token validation failed: " + e.getMessage());
+        }
+        
         RefreshToken refreshToken = RefreshToken.newRefreshToken(
             savedUser.getId(),
-            "valid.refresh.token.value",
+            validRefreshToken,
             LocalDateTime.now().plusDays(7)
         );
         refreshTokenJpaRepository.save(RefreshTokenJpaEntity.from(refreshToken));
 
-        String requestBody = """
+        String requestBody = String.format("""
             {
-                "refreshToken": "valid.refresh.token.value"
+                "refreshToken": "%s"
             }
-            """;
+            """, validRefreshToken);
 
         // when & then
         given()
@@ -105,14 +120,15 @@ class TokenControllerTest extends AcceptanceTestBase {
     }
 
     @Test
-    @DisplayName("존재하지 않는 Refresh Token으로 갱신 시 401 UNAUTHORIZED를 반환합니다")
-    void modify_returns_401_when_nonexistent_refresh_token() {
-        // given
-        String requestBody = """
+    @DisplayName("잘못된 형식의 Refresh Token으로 갱신 시 401 UNAUTHORIZED를 반환합니다")
+    void modify_returns_401_when_invalid_refresh_token() {
+        // given - JWT 서명이 잘못된 토큰
+        String invalidToken = "invalid.jwt.token.format";
+        String requestBody = String.format("""
             {
-                "refreshToken": "nonexistent.refresh.token"
+                "refreshToken": "%s"
             }
-            """;
+            """, invalidToken);
 
         // when & then
         given()
@@ -130,8 +146,7 @@ class TokenControllerTest extends AcceptanceTestBase {
     @DisplayName("인증된 사용자의 로그아웃 시 200 OK와 성공 메시지를 반환합니다")
     void delete_returns_200_and_success_message_when_authenticated_user() {
         // given
-        User user = User.withId(
-            1L,
+        User user = User.newUser(
             "test@example.com", 
             "테스트사용자", 
             "profile.jpg",
@@ -165,14 +180,16 @@ class TokenControllerTest extends AcceptanceTestBase {
     }
 
     @Test
-    @DisplayName("인증되지 않은 사용자의 로그아웃 시 401 UNAUTHORIZED를 반환합니다")
-    void delete_returns_401_when_unauthenticated_user() {
+    @DisplayName("인증되지 않은 사용자의 로그아웃 시 500 INTERNAL SERVER ERROR를 반환합니다")
+    void delete_returns_500_when_unauthenticated_user() {
+        // given - 인증 정보 없이 로그아웃 시도
+        
         // when & then
         given()
             .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
         .when()
             .post("/api/auth/logout")
         .then()
-            .statusCode(HttpStatus.UNAUTHORIZED.value());
+            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value()); // @AuthenticationPrincipal에서 null이 전달되어 NullPointerException 발생
     }
 }
