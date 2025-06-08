@@ -139,7 +139,6 @@ public class FindFamilyService implements FindFamilyUseCase {
 ```java
 package io.jhchoe.familytree.core.family.adapter.in;
 
-import io.jhchoe.familytree.common.support.ApiResponse;
 import io.jhchoe.familytree.core.family.adapter.in.response.FindFamilyResponse;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyUseCase;
@@ -168,7 +167,7 @@ public class FindFamilyController {
      * @return 조회된 Family 정보
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<FindFamilyResponse>> findById(@PathVariable Long id) {
+    public ResponseEntity<FindFamilyResponse> findById(@PathVariable Long id) {
         // 1. 쿼리 객체 생성
         FindFamilyQuery query = new FindFamilyQuery(id);
         
@@ -184,7 +183,7 @@ public class FindFamilyController {
             family.getCreatedAt()
         );
         
-        return ResponseEntity.ok(ApiResponse.ok(response));
+        return ResponseEntity.ok(response);
     }
 }
 ```
