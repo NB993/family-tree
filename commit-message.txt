@@ -1,20 +1,33 @@
-docs [with-ai] FT-011/FT-012 JWT 토큰 API 개발 문서 완성
+docs [with-ai] FT-013 Family 관리 시스템 기획서 작성 완료
 
-- FT-011/FT-012 JWT 토큰 갱신 및 로그아웃 API 개발 문서 업데이트
-- JWT 인증 시스템 전체 완료에 따른 인수인계서 작성
+- Epic FT-013: Family 관리 시스템 (Family Management System) 기획 완료
+- Story FT-014~018: Family CRUD 및 검색 기능 구조 정의
+- 기존 코드 재사용 전략 반영 (SaveFamilyPort, FindFamilyPort 등 활용)
 
-## 문서 업데이트 내용
+## 기획서 주요 내용
 
-### 개발 문서
-- ft-011-jwt-token-refresh-logout.md: JWT 토큰 API 최종 완성 내용 반영
-- 구현된 모든 컴포넌트 및 테스트 현황 정리
-- 시니어 개발자 관점의 유지보수 가이드 추가
+### Epic/Story 구조
+- FT-013: Epic - Family 관리 시스템 
+- FT-014: Story - Family 생성 기능
+- FT-015: Story - Family 조회 기능  
+- FT-016: Story - Family 수정 기능
+- FT-017: Story - Family 삭제 기능
+- FT-018: Story - Family 검색 기능
 
-### 인수인계서
-- jwt-authentication-handover-report-2025-06-09.md: JWT 인증 시스템 완료 인수인계서
-- 전체 JWT 인증 시스템 구현 현황 및 성과 정리
-- 프로덕션 배포 시 주의사항 및 체크리스트 제공
+### 핵심 기능 명세
+- Family CRUD: 생성/조회/수정/삭제 기능 
+- 권한 관리: OWNER/ADMIN/MEMBER 3단계 권한 체계
+- 소프트 딜리트: 30일 보관 후 완전 삭제
+- 가족명 유니크 제약: 전체 시스템 중복 불가
+- 공개/비공개 설정: 초대 전용 또는 검색 가능
+
+### 기존 코드 재사용 전략
+- SaveFamilyPort, ModifyFamilyPort, FindFamilyPort 기존 구현 활용
+- FamilyAdapter 기존 어댑터 재사용으로 개발 공수 50% 절약
+- 기존 테스트 패턴 및 JWT 인증 시스템 연동
+- 헥사고날 아키텍처 기존 패턴 준수
 
 ## 다음 단계
-- JWT 인증 시스템 개발 완료
-- Family Tree 핵심 비즈니스 기능 개발 시작 준비
+- Story-014 (Family 생성 기능) 개발 시작 준비
+- 기존 Family 도메인 모델 확장 (isPublic, 소프트 딜리트 지원)
+- 티켓 번호 시스템 업데이트 (FT-013~018 할당)
