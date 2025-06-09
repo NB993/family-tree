@@ -50,4 +50,12 @@ public interface FindFamilyMemberPort {
      * @return 조회된 FamilyMember 객체를 포함하는 Optional, 존재하지 않는 경우 빈 Optional 반환
      */
     Optional<FamilyMember> findByFamilyIdAndUserId(Long familyId, Long userId);
+
+    /**
+     * 특정 사용자가 소속된 모든 Family의 구성원 정보를 조회합니다.
+     *
+     * @param userId 사용자 ID
+     * @return 사용자가 소속된 FamilyMember 객체 목록
+     */
+    List<FamilyMember> findAllByUserId(Long userId);
 }

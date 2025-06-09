@@ -12,10 +12,17 @@ import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.core.family.adapter.in.response.FindFamilyResponse;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaEntity;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaRepository;
+import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaEntity;
+import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
 import io.jhchoe.familytree.core.family.domain.Family;
+import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
+import io.jhchoe.familytree.core.shared.valueobject.Nationality;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,9 +37,13 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     @Autowired
     private FamilyJpaRepository familyJpaRepository;
 
+    @Autowired
+    private FamilyMemberJpaRepository familyMemberJpaRepository;
+
     @AfterEach
     void tearDown() {
         // 테스트 데이터 정리
+        familyMemberJpaRepository.deleteAll();
         familyJpaRepository.deleteAll();
     }
 
@@ -123,5 +134,76 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
             .body("modifiedAt", everyItem(notNullValue()))
             .extract()
             .as(new TypeRef<List<FindFamilyResponse>>() {}); // 쓸 일은 없는데 추후 참고용으로 놔둠
+    }
+
+    @Test
+    @WithMockOAuth2User(id = 100L)
+    @DisplayName("내 소속 Family 목록을 조회할 수 있다")
+    void given_authenticated_user_when_find_my_families_then_return_my_families_with_status_200() {
+        // given
+        Long currentUserId = 100L;
+        
+        // Family 생성
+        Family family1 = Family.newFamily("우리가족", "행복한 우리 가족", "profile1.jpg", false);
+        Family family2 = Family.newFamily("친척가족", "큰집 가족", "profile2.jpg", true);
+        Family family3 = Family.newFamily("다른가족", "관련없는 가족", "profile3.jpg", false);
+        
+        FamilyJpaEntity savedFamily1 = familyJpaRepository.save(FamilyJpaEntity.from(family1));
+        FamilyJpaEntity savedFamily2 = familyJpaRepository.save(FamilyJpaEntity.from(family2));
+        FamilyJpaEntity savedFamily3 = familyJpaRepository.save(FamilyJpaEntity.from(family3));
+        
+        // 현재 사용자를 family1, family2의 구성원으로 추가
+        FamilyMember member1 = FamilyMember.withRole(
+            savedFamily1.getId(), currentUserId, "홍길동", "profile.jpg", 
+            LocalDate.of(1990, 1, 1).atStartOfDay(), "Korean", 
+            FamilyMemberRole.OWNER
+        );
+        FamilyMember member2 = FamilyMember.withRole(
+            savedFamily2.getId(), currentUserId, "홍길동", "profile.jpg",
+            LocalDate.of(1990, 1, 1).atStartOfDay(), "Korean",
+            FamilyMemberRole.MEMBER
+        );
+        
+        familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member1));
+        familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member2));
+
+        // when & then
+        given()
+            .contentType(ContentType.JSON)
+            .when()
+            .get("/api/families/my")
+            .then()
+            .statusCode(200)
+            .body("$", hasSize(2))
+            .body("id", containsInAnyOrder(savedFamily1.getId().intValue(), savedFamily2.getId().intValue()))
+            .body("name", containsInAnyOrder("우리가족", "친척가족"))
+            .body("description", containsInAnyOrder("행복한 우리 가족", "큰집 가족"))
+            .body("profileUrl", containsInAnyOrder("profile1.jpg", "profile2.jpg"));
+    }
+
+    @Test
+    @WithMockOAuth2User(id = 200L)
+    @DisplayName("소속된 Family가 없는 경우 빈 목록을 반환한다")
+    void given_user_with_no_families_when_find_my_families_then_return_empty_list() {
+        // given
+        // 다른 사용자의 Family는 있지만 현재 사용자(200L)는 소속되지 않음
+        Family family = Family.newFamily("다른가족", "관련없는 가족", "profile.jpg", false);
+        FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
+        
+        FamilyMember member = FamilyMember.withRole(
+            savedFamily.getId(), 999L, "다른사람", "other.jpg",
+            LocalDate.of(1990, 1, 1).atStartOfDay(), "Korean",
+            FamilyMemberRole.OWNER
+        );
+        familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member));
+
+        // when & then
+        given()
+            .contentType(ContentType.JSON)
+            .when()
+            .get("/api/families/my")
+            .then()
+            .statusCode(200)
+            .body("$", hasSize(0));
     }
 }

@@ -6,6 +6,7 @@ import io.jhchoe.familytree.core.family.adapter.in.response.FindFamilyResponse;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameContainingQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyUseCase;
+import io.jhchoe.familytree.core.family.application.port.in.FindMyFamiliesQuery;
 import io.jhchoe.familytree.core.family.domain.Family;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,25 @@ public class FindFamilyController {
         @RequestParam String name
     ) {
         FindFamilyByNameContainingQuery query = new FindFamilyByNameContainingQuery(name);
+        List<Family> families = findFamilyUseCase.findAll(query);
+        List<FindFamilyResponse> results = families.stream()
+            .map(FindFamilyResponse::from)
+            .toList();
+
+        return ResponseEntity.ok(results);
+    }
+
+    /**
+     * 현재 사용자가 소속된 Family 목록을 조회합니다.
+     * 
+     * @param ftUser 인증된 사용자 정보
+     * @return 조회된 내 소속 Family 목록
+     */
+    @GetMapping("/my")
+    public ResponseEntity<List<FindFamilyResponse>> findMyFamilies(
+        @AuthFTUser FTUser ftUser
+    ) {
+        FindMyFamiliesQuery query = new FindMyFamiliesQuery(ftUser.getId());
         List<Family> families = findFamilyUseCase.findAll(query);
         List<FindFamilyResponse> results = families.stream()
             .map(FindFamilyResponse::from)

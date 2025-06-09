@@ -43,4 +43,12 @@ public interface FamilyMemberJpaRepository extends JpaRepository<FamilyMemberJpa
      * @return FamilyMember 엔티티 목록
      */
     List<FamilyMemberJpaEntity> findAllByFamilyId(Long familyId);
+
+    /**
+     * 특정 사용자가 소속된 모든 Family의 구성원 정보를 조회합니다.
+     *
+     * @param userId 사용자 ID
+     * @return 사용자가 소속된 FamilyMember 엔티티 목록
+     */
+    List<FamilyMemberJpaEntity> findAllByUserId(Long userId);
 }

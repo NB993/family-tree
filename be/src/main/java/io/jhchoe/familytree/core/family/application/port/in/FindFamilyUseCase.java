@@ -27,4 +27,12 @@ public interface FindFamilyUseCase {
      * @return 조회된 Family 목록, 해당하는 Family가 없을 경우 빈 목록을 반환
      */
     List<Family> findAll(FindFamilyByNameContainingQuery query);
+
+    /**
+     * 사용자가 소속된 Family 목록을 조회합니다.
+     *
+     * @param query 사용자 정보를 포함하는 쿼리 객체
+     * @return 조회된 Family 목록, 소속된 Family가 없을 경우 빈 목록을 반환
+     */
+    List<Family> findAll(FindMyFamiliesQuery query);
 }

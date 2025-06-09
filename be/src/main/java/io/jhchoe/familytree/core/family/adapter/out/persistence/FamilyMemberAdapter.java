@@ -78,6 +78,19 @@ public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMe
                 .map(this::mapToDomainEntity)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FamilyMember> findAllByUserId(Long userId) {
+        Objects.requireNonNull(userId, "userId must not be null");
+        
+        return familyMemberJpaRepository.findAllByUserId(userId)
+                .stream()
+                .map(this::mapToDomainEntity)
+                .collect(Collectors.toList());
+    }
     
     /**
      * {@inheritDoc}

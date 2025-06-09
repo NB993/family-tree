@@ -4,8 +4,11 @@ import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameContainingQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyUseCase;
+import io.jhchoe.familytree.core.family.application.port.in.FindMyFamiliesQuery;
+import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
+import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 public class FindFamilyService implements FindFamilyUseCase {
 
     private final FindFamilyPort findFamilyPort;
+    private final FindFamilyMemberPort findFamilyMemberPort;
 
     /**
      * {@inheritDoc}
@@ -42,5 +46,23 @@ public class FindFamilyService implements FindFamilyUseCase {
         Objects.requireNonNull(query, "query must not be null");
 
         return findFamilyPort.findByNameContaining(query.getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Family> findAll(FindMyFamiliesQuery query) {
+        Objects.requireNonNull(query, "query must not be null");
+
+        // 1. 사용자가 소속된 FamilyMember 목록 조회
+        List<FamilyMember> familyMembers = findFamilyMemberPort.findAllByUserId(query.getUserId());
+
+        // 2. FamilyMember에서 Family ID 추출하여 Family 정보 조회
+        return familyMembers.stream()
+            .map(FamilyMember::getFamilyId)
+            .map(familyId -> findFamilyPort.findById(familyId)
+                .orElseThrow(() -> FTException.NOT_FOUND))
+            .toList();
     }
 }
