@@ -1,13 +1,13 @@
 {
-  "PM": 22,
+  "PM": 23,
   "FT": 14,
-  "lastUpdated": "2025-06-09",
+  "lastUpdated": "2025-06-10",
   "description": {
     "PM": "Project Management - 프로젝트 관리, 인프라, 워크플로우 개선 작업",
     "FT": "Family Tree - 실제 사용자 기능 개발 작업"
   },
   "lastTickets": {
-    "PM-022": "누락된 컨트롤러 테스트 추가 - ModifyFamilyMemberRole/Status",
+    "PM-023": "Family 관리 시스템 기획서 수정 - Story-017 기존 구현 분석 반영",
     "FT-014": "Family 관리 시스템 확장 (Epic)"
   }
 }

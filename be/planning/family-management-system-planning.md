@@ -211,9 +211,14 @@ GET /api/families/my
 }
 ```
 
-#### 3.4.3 공개 Family 검색 API (무한 스크롤)
+#### 3.4.3 공개 Family 검색 API (키워드 검색 + 무한 스크롤)
 ```
 GET /api/families/public?keyword={keyword}&cursor={cursor}&size={size}
+
+기존 검색 로직 확장:
+- 기존 findByNameContaining(keyword) 활용
+- isPublic=true 필터링 추가  
+- 커서 기반 페이징 적용
 
 응답:
 {
@@ -233,6 +238,10 @@ GET /api/families/public?keyword={keyword}&cursor={cursor}&size={size}
     "size": 20
   }
 }
+
+기존 검색과의 차이점:
+- 기존: GET /api/families?name={name} (모든 Family, 권한 체크)
+- 신규: GET /api/families/public?keyword={keyword} (공개 Family만, 무한 스크롤)
 ```
 
 #### 3.4.4 Family 수정 API (권한 강화)
@@ -289,12 +298,23 @@ DELETE /api/families/{familyId}
 
 ### 4.3 Phase 3: 목록 조회 기능 (2주차)
 ```
-✅ 우선순위 3:
-- 내 소속 Family 목록 조회 API
-- 공개 Family 검색 API (키워드 + 무한 스크롤)
+✅ 우선순위 3 (기존 구현 활용):
+- 내 소속 Family 목록 조회 API (신규)
+- 공개 Family 검색 API (기존 키워드 검색 + 공개 필터링 + 무한 스크롤)
+- 기존 findByNameContaining 로직 확장 및 재사용
 - 권한별 접근 제어 로직 구현
 
-예상 작업 시간: 2-3일  
+Phase 3-1: 내 소속 Family 목록 (1일)
+- FindMyFamiliesUseCase 구현 (기존 FamilyMemberPort 활용)
+- GET /api/families/my 엔드포인트 추가
+
+Phase 3-2: 공개 Family 검색 + 무한 스크롤 (2일)
+- 기존 findByNameContaining 로직 확장
+- 공개 여부 필터링 (isPublic=true) 추가
+- 커서 기반 페이징 유틸리티 구현
+- GET /api/families/public?keyword={keyword}&cursor={cursor}&size={size}
+
+예상 작업 시간: 3일 (기존 로직 재사용으로 단축)
 완료 조건: 목록/검색 API 테스트 통과 + 권한 테스트 통과
 ```
 
@@ -576,22 +596,18 @@ public void modifyFamily(Long familyId, ModifyFamilyCommand command) {
 ```java
 ✅ 새로 만들어야 할 것들:
 // UseCase (신규)
-- CheckFamilyNameDuplicationUseCase: 중복 체크 전용
-- FindMyFamiliesUseCase: 사용자별 소속 Family 조회 (전체 목록)
-- FindPublicFamiliesUseCase: 공개 Family 검색 (무한 스크롤)
+- CheckFamilyNameDuplicationUseCase: 중복 체크 전용 (이미 구현됨)
+- FindMyFamiliesUseCase: 사용자별 소속 Family 조회 (기존 FamilyMemberPort 활용)
+- FindPublicFamiliesUseCase: 공개 Family 검색 (기존 findByNameContaining 확장)
 
 // Controller (신규/확장)  
-- 기존 SaveFamilyController 경로 변경
-- CheckFamilyNameController: 중복 체크 API
-- FindFamilyListController: 목록/검색 API (무한 스크롤 지원)
+- 기존 SaveFamilyController 경로 변경 (이미 완료)
+- CheckFamilyNameController: 중복 체크 API (이미 구현됨)
+- FindFamilyController에 /my, /public 엔드포인트 추가
 
-// 검증 로직 (강화)
-- @FamilyNameValid: 커스텀 검증 어노테이션
-- FamilyNameValidator: 패턴 검증 로직
-
-// 권한 체크 (신규)
-- @RequireOwnerPermission: 권한 체크 어노테이션  
-- FamilyPermissionChecker: 권한 확인 유틸
+// 검색 로직 확장
+- FindFamilyPort에 findPublicFamiliesByNameContaining 메서드 추가
+- 기존 검색 로직을 공개 Family 필터링으로 확장
 
 // 무한 스크롤 지원 (신규)
 - CursorPageable: 커서 기반 페이징 객체
@@ -612,11 +628,13 @@ public void modifyFamily(Long familyId, ModifyFamilyCommand command) {
 - CheckFamilyNameDuplicationUseCase 구현
 - GET /api/families/check-name API 구현
 
-🎯 Step 3: 목록 조회 기능 (2일)
-- FindMyFamiliesUseCase 구현 (전체 목록, 페이징 없음)
-- FindPublicFamiliesUseCase 구현 (무한 스크롤)
-- 커서 기반 페이징 유틸리티 구현
+🎯 Step 3: 목록 조회 기능 (3일)
+- FindMyFamiliesUseCase 구현 (기존 FamilyMemberPort 활용, 전체 목록)
+- FindPublicFamiliesUseCase 구현 (기존 findByNameContaining 확장)
+- 기존 키워드 검색 로직에 공개 여부 필터링 (isPublic=true) 추가
+- 커서 기반 페이징 유틸리티 구현 (ID + memberCount 정렬)
 - GET /api/families/my, /api/families/public API
+- 기존 검색 API와의 호환성 유지
 
 🎯 Step 4: 권한 강화 (1일)
 - OWNER 권한 체크 로직 구현
@@ -691,17 +709,30 @@ Epic-014: Family 관리 시스템 확장 (기존 구현 기반)
 
 #### Story-017: Family 목록 및 검색 기능
 ```
-목표: 사용자별 소속 Family 목록 조회 및 공개 Family 검색 기능 (무한 스크롤)
+목표: 사용자별 소속 Family 목록 조회 및 공개 Family 검색 기능 (기존 검색 로직 확장)
 
 ✅ 완료 조건:
 - GET /api/families/my API 구현 (내 소속 Family 전체 목록)
-- GET /api/families/public API 구현 (키워드 검색 + 무한 스크롤)
-- FindMyFamiliesUseCase, FindPublicFamiliesUseCase 구현
+- GET /api/families/public API 구현 (기존 키워드 검색 + 공개 필터링 + 무한 스크롤)
+- FindMyFamiliesUseCase 구현 (기존 FamilyMemberPort 활용)
+- FindPublicFamiliesUseCase 구현 (기존 findByNameContaining 확장)
 - 커서 기반 무한 스크롤 처리 및 정렬 기능 구현
 - CursorPageable, CursorPage 유틸리티 구현
+- 기존 검색 로직과의 호환성 유지
 - 목록/검색 API 테스트 통과
 
-예상 공수: 2-3일 (무한 스크롤 구현 포함)
+세부 구현 계획:
+Phase 1: 내 소속 Family 목록 (1일)
+- 기존 FamilyMemberPort의 findByUserId 활용
+- 전체 목록 조회 (페이징 없음, 일반적으로 15개 이하)
+
+Phase 2: 공개 Family 검색 + 무한 스크롤 (2일)  
+- 기존 findByNameContaining(keyword) 로직 확장
+- isPublic=true 필터링 추가
+- 커서 기반 페이징 (ID + memberCount 기준 정렬)
+- 무한 스크롤 응답 구조 구현
+
+예상 공수: 3일 (기존 구현 재사용으로 단축)
 우선순위: Medium (편의 기능)
 ```
 
@@ -751,6 +782,8 @@ Phase 2 (기능 확장 - 2주차):
 | v2.0.0 | 2025-06-09 | 기존 구현 분석 후 미구현 부분만 정리한 수정판 | SaveFamilyController 등 기존 구현 발견, 중복 작업 방지 및 효율적 확장 전략 수립 | 개발: 기존 코드 재사용으로 50% 이상 공수 절약, 검증: 기존 테스트 패턴 활용, 일정: 4주 → 2주로 단축 | 기획자 AI |
 | v2.1.0 | 2025-06-09 | 공개 Family 검색 기능을 페이징에서 무한 스크롤로 변경 | 모바일 환경에서 더 자연스러운 UX 제공 및 사용자 경험 개선 | 개발: Story-017 공수 2일→2-3일로 증가, UX: 모바일 친화적 인터페이스로 개선 | 기획자 AI |
 
+| v2.2.0 | 2025-06-10 | Story-017 기획 수정: 기존 구현 분석 반영 | 기존 FindFamilyController와 findByNameContaining 로직 발견, 키워드 검색과 공개 Family 필터링, 무한 스크롤 통합 | 개발: 기존 검색 로직 재사용으로 공수 2일→3일, 호환성: 기존 API 유지하며 신규 기능 추가 | 기획자 AI |
+
 **🎉 Family 관리 시스템 확장 기획 완료!**
 
-기존 구현된 SaveFamilyController와 Family 엔티티를 최대한 활용하면서, 부족한 비즈니스 로직과 API들을 효율적으로 추가하는 전략으로 수정되었습니다.
+기존 구현된 SaveFamilyController, FindFamilyController, CheckFamilyNameController를 최대한 활용하면서, Story-017에서는 기존 키워드 검색 로직을 확장하여 공개 Family 필터링과 무한 스크롤을 통합하는 전략으로 수정되었습니다.
