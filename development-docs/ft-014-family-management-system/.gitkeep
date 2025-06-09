@@ -1,0 +1,9 @@
+# FT-014 Family 관리 시스템 확장 Epic
+
+이 폴더는 FT-014 Epic과 관련된 개발 문서들을 포함합니다.
+
+## Story 구성
+- FT-015: Family API 표준화 및 검증 강화
+- FT-016: 가족명 중복 체크 기능  
+- FT-017: Family 목록 및 검색 기능
+- FT-018: Family 권한 기반 접근 제어

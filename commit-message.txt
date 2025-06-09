@@ -1,0 +1,29 @@
+docs [with-ai] FT-014 Epic 문서화 및 폴더 구조 정리
+
+- FT-014 Family 관리 시스템 확장 Epic 문서 작성
+- 기존 구현 분석 결과 및 Story별 상세 계획 포함
+- development-docs/ft-014-family-management-system/ 폴더 생성
+- 잘못 명명된 ft-013-family-management 폴더 삭제
+- ticket-numbers.json FT 번호 정정 (18 → 14)
+
+## 문서화된 내용
+
+### Epic 개요
+- Epic 번호: FT-014
+- Epic 명: Family 관리 시스템 확장
+- 예상 기간: 2주 (4개 Story)
+
+### Story 구성
+- FT-015: Family API 표준화 및 검증 강화
+- FT-016: 가족명 중복 체크 기능
+- FT-017: Family 목록 및 검색 기능
+- FT-018: Family 권한 기반 접근 제어
+
+### 기술적 고려사항
+- 기존 코드 재사용 전략 정리
+- 데이터베이스 스키마 변경 계획
+- 성능 목표 및 보안 고려사항
+- 예상 위험사항 및 대응책
+
+## 다음 단계
+- FT-015 Story 개발 시작 준비 완료
