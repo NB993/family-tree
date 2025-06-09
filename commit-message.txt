@@ -1,35 +1,36 @@
-docs [with-ai] FT-015 Family 생성 시 OWNER 권한 자동 부여 개발 문서 작성
+feat [with-ai] FT-016 가족명 중복 체크 기능 구현 완료
 
-- FT-015 Epic 완료에 따른 종합 개발 문서 작성
-- 발생했던 주요 이슈 3건과 해결 과정 상세 기록
-- 테스트 환경 인증 문제 해결 과정 문서화
+- 실시간으로 가족명 사용 가능 여부를 확인할 수 있는 API 구현
+- 인증된 사용자만 접근 가능하며 소프트 딜리트된 Family 제외하고 중복 확인
 
 ## 구현된 주요 컴포넌트
 
-### 문서화
-- ft-015-family-owner-auto-assignment.md: 종합 개발 문서
-  - 아키텍처 설계 및 구현 상세
-  - 헥사고날 아키텍처 적용 과정
-  - API 표준화 (/api/family → /api/families) 기록
+### 애플리케이션 계층
+- CheckFamilyNameDuplicationUseCase: 가족명 중복 확인 UseCase 인터페이스
+- CheckFamilyNameDuplicationService: UseCase 구현체, 가족명 유효성 검증 및 중복 확인 로직
+- FamilyNameAvailabilityResult: 가족명 사용 가능 여부 결과를 나타내는 도메인 객체
 
-## 특화 사항
+### 인프라 계층
+- FindFamilyPort.findByName(): 가족명으로 Family 조회하는 포트 메서드 추가
+- FamilyAdapter.findByName(): findByName() 포트 구현
+- FamilyJpaRepository.findByNameAndDeletedFalse(): 소프트 딜리트 제외 가족명 조회 쿼리
 
-### 이슈 해결 과정 상세 기록
-- 이슈 #1: SaveFamilyControllerTest 실패 (3차 시도를 통한 해결)
-- 이슈 #2: ObjectOptimisticLockingFailureException (JPA 낙관적 락 충돌)
-- 이슈 #3: 테스트 간 데이터 격리 문제 (외래키 제약조건 고려)
-
-### 학습 포인트 문서화
-- @WithMockOAuth2User vs 실제 DB User 동기화 문제
-- JPA AUTO_INCREMENT와 수동 ID 지정의 트레이드오프
-- 테스트 환경에서의 FTUser Principal 동적 생성 방법
+### 프레젠테이션 계층
+- CheckFamilyNameController: GET /api/families/check-name API 컨트롤러
+- FamilyNameAvailabilityResponse: 가족명 사용 가능 여부 응답 DTO
 
 ## 테스트 구현
-- 전체 테스트 시나리오 5개 문서화 ✅
-- 테스트 커버리지 100% 달성 기록
-- 성능 지표 및 품질 기준 명시
+- CheckFamilyNameDuplicationServiceTest: 단위 테스트 7개 (유효성 검증, 중복 확인 로직) ✅
+- CheckFamilyNameControllerTest: 통합 테스트 9개 (API 동작, 인증, 예외 처리) ✅
+- 전체 테스트 통과 및 커버리지 확보
+
+## 핵심 특징
+- 헥사고날 아키텍처 원칙 준수
+- JWT 인증 기반 보안 (USER/ADMIN 역할 필요)
+- 소프트 딜리트된 Family 제외한 정확한 중복 확인
+- 입력 유효성 검증 (null, 빈값, 20자 초과 방지)
+- 사용자 친화적 응답 메시지
 
 ## 다음 단계
-- 향후 Family 관련 기능 개발 시 참고 문서로 활용
-- 테스트 환경 인증 문제 해결 가이드로 재사용 가능
-- 헥사고날 아키텍처 적용 사례 레퍼런스
+- FT-016 개발 문서 작성
+- Family 생성 폼에서 실시간 가족명 중복 체크 연동 검토

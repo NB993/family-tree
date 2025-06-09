@@ -73,6 +73,17 @@ public class FamilyAdapter implements SaveFamilyPort, ModifyFamilyPort, FindFami
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Family> findByName(String name) {
+        Objects.requireNonNull(name, "name must not be null");
+        
+        return familyJpaRepository.findByNameAndDeletedFalse(name)
+            .map(FamilyJpaEntity::toFamily);
+    }
+
+    /**
      * Family 데이터를 수정하고 저장된 Family의 ID를 반환합니다.
      *
      * @param family 수정할 Family 데이터 (null 불가)
