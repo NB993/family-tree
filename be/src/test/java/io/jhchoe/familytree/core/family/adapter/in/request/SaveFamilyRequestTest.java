@@ -78,24 +78,6 @@ class SaveFamilyRequestTest {
     }
 
     @Test
-    @DisplayName("숫자가 포함된 가족명으로 요청할 때 검증을 통과한다")
-    void should_pass_validation_when_family_name_contains_numbers() {
-        // given
-        SaveFamilyRequest request = new SaveFamilyRequest(
-            "김가족2024",
-            "PUBLIC",
-            "새로운 시작",
-            null
-        );
-
-        // when
-        Set<ConstraintViolation<SaveFamilyRequest>> violations = validator.validate(request);
-
-        // then
-        assertThat(violations).isEmpty();
-    }
-
-    @Test
     @DisplayName("가족명이 null일 때 검증에 실패한다")
     void should_fail_validation_when_family_name_is_null() {
         // given
@@ -157,26 +139,6 @@ class SaveFamilyRequestTest {
     }
 
     @Test
-    @DisplayName("가족명에 허용되지 않는 특수문자가 포함될 때 검증에 실패한다")
-    void should_fail_validation_when_family_name_contains_special_characters() {
-        // given
-        SaveFamilyRequest request = new SaveFamilyRequest(
-            "김가족@#$%",
-            "PUBLIC",
-            "설명",
-            null
-        );
-
-        // when
-        Set<ConstraintViolation<SaveFamilyRequest>> violations = validator.validate(request);
-
-        // then
-        assertThat(violations).hasSize(1);
-        assertThat(violations.iterator().next().getMessage())
-            .isEqualTo("가족명에는 한글, 영문, 숫자, 공백, 이모지만 사용 가능합니다");
-    }
-
-    @Test
     @DisplayName("공개여부가 PRIVATE도 PUBLIC도 아닐 때 검증에 실패한다")
     void should_fail_validation_when_visibility_is_invalid() {
         // given
@@ -204,6 +166,24 @@ class SaveFamilyRequestTest {
             "Happy Family 🏠❤️🌟",
             "PUBLIC",
             "We love each other! 💕",
+            null
+        );
+
+        // when
+        Set<ConstraintViolation<SaveFamilyRequest>> violations = validator.validate(request);
+
+        // then
+        assertThat(violations).isEmpty();
+    }
+
+    @Test
+    @DisplayName("숫자가 포함된 가족명으로 요청할 때 검증을 통과한다")
+    void should_pass_validation_when_family_name_contains_numbers() {
+        // given
+        SaveFamilyRequest request = new SaveFamilyRequest(
+            "김가족2024",
+            "PUBLIC",
+            "새로운 시작",
             null
         );
 

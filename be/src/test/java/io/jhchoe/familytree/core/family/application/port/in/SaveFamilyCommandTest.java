@@ -23,7 +23,7 @@ class SaveFamilyCommandTest {
         );
     
         // then
-        assertEquals("Family 이름을 입력해주세요.", exception.getMessage());
+        assertEquals("가족명을 입력해주세요.", exception.getMessage());
     }
 
     @Test
@@ -41,14 +41,14 @@ class SaveFamilyCommandTest {
         );
     
         // then
-        assertEquals("Family 이름을 입력해주세요.", exception.getMessage());
+        assertEquals("가족명을 입력해주세요.", exception.getMessage());
     }
 
     @Test
     @DisplayName("name 길이가 20자를 초과할 경우 예외를 발생시킨다.")
     void should_throw_exception_when_name_exceeds_max_length() {
         // given
-        String longName = "a".repeat(21); // 21 characters
+        String longName = "가".repeat(21); // 21 characters
         String profileUrl = "http://example.com";
         String description = "Valid description";
         Boolean isPublic = true;
@@ -59,7 +59,44 @@ class SaveFamilyCommandTest {
         );
     
         // then
-        assertEquals("Family 이름은 20자 이내로 작성해주세요.", exception.getMessage());
+        assertEquals("가족명은 20자 이하로 입력해주세요.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("name에 특수문자가 포함될 경우 예외를 발생시킨다.")
+    void should_throw_exception_when_name_contains_special_characters() {
+        // given
+        String nameWithSpecialChars = "김가족@#$";
+        String profileUrl = "http://example.com";
+        String description = "Valid description";
+        Boolean isPublic = true;
+    
+        // when
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+            new SaveFamilyCommand(nameWithSpecialChars, profileUrl, description, isPublic)
+        );
+    
+        // then
+        assertEquals("가족명에는 한글, 영문, 숫자, 공백, 이모지만 사용 가능합니다.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("name에 이모지가 포함된 경우 정상적으로 생성된다.")
+    void should_create_command_when_name_contains_emoji() {
+        // given
+        String nameWithEmoji = "우리가족👨‍👩‍👧‍👦";
+        String profileUrl = "http://example.com";
+        String description = "Valid description";
+        Boolean isPublic = true;
+    
+        // when
+        SaveFamilyCommand command = new SaveFamilyCommand(nameWithEmoji, profileUrl, description, isPublic);
+    
+        // then
+        assertEquals("우리가족👨‍👩‍👧‍👦", command.getName());
+        assertEquals("http://example.com", command.getProfileUrl());
+        assertEquals("Valid description", command.getDescription());
+        assertEquals(true, command.getIsPublic());
     }
 
     @Test

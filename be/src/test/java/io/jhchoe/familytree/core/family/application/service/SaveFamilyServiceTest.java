@@ -55,38 +55,38 @@ class SaveFamilyServiceTest {
     }
 
     @Test
-    @DisplayName("save 메서드는 이름이 없는 경우 IllegalArgumentException을 발생시켜야 한다.")
-    void given_command_with_null_name_when_save_then_throw_exception() {
+    @DisplayName("SaveFamilyCommand 생성 시 이름이 없는 경우 IllegalArgumentException을 발생시켜야 한다.")
+    void given_null_name_when_create_command_then_throw_exception() {
         // given & when & then
         assertThatThrownBy(() -> new SaveFamilyCommand(null, "http://example.com", "Description", true))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Family 이름을 입력해주세요.");
+            .hasMessage("가족명을 입력해주세요.");
     }
 
     @Test
-    @DisplayName("save 메서드는 이름이 빈 문자열일 경우 IllegalArgumentException을 발생시켜야 한다.")
-    void given_command_with_blank_name_when_save_then_throw_exception() {
+    @DisplayName("SaveFamilyCommand 생성 시 이름이 빈 문자열일 경우 IllegalArgumentException을 발생시켜야 한다.")
+    void given_blank_name_when_create_command_then_throw_exception() {
         // given & when & then
         assertThatThrownBy(() -> new SaveFamilyCommand("   ", "http://example.com", "Description", true))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Family 이름을 입력해주세요.");
+            .hasMessage("가족명을 입력해주세요.");
     }
 
     @Test
-    @DisplayName("save 메서드는 이름이 20자를 초과하는 경우 IllegalArgumentException을 발생시켜야 한다.")
-    void given_command_with_name_over_20_chars_when_save_then_throw_exception() {
+    @DisplayName("SaveFamilyCommand 생성 시 이름이 20자를 초과하는 경우 IllegalArgumentException을 발생시켜야 한다.")
+    void given_name_over_20_chars_when_create_command_then_throw_exception() {
         // given
         String longName = "a".repeat(21);
 
         // when & then
         assertThatThrownBy(() -> new SaveFamilyCommand(longName, null, "Description", true))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Family 이름은 20자 이내로 작성해주세요.");
+            .hasMessage("가족명은 20자 이하로 입력해주세요.");
     }
 
     @Test
-    @DisplayName("save 메서드는 유효하지 않은 profileUrl이 주어진 경우 IllegalArgumentException을 발생시켜야 한다.")
-    void given_command_with_invalid_profile_url_when_save_then_throw_exception() {
+    @DisplayName("SaveFamilyCommand 생성 시 유효하지 않은 profileUrl이 주어진 경우 IllegalArgumentException을 발생시켜야 한다.")
+    void given_invalid_profile_url_when_create_command_then_throw_exception() {
         // given & when & then
         assertThatThrownBy(() -> new SaveFamilyCommand("Family Name", "invalid-url", "Description", true))
             .isInstanceOf(IllegalArgumentException.class)
@@ -94,8 +94,8 @@ class SaveFamilyServiceTest {
     }
 
     @Test
-    @DisplayName("save 메서드는 설명이 200자를 초과할 경우 IllegalArgumentException을 발생시켜야 한다.")
-    void given_command_with_description_over_200_chars_when_save_then_throw_exception() {
+    @DisplayName("SaveFamilyCommand 생성 시 설명이 200자를 초과할 경우 IllegalArgumentException을 발생시켜야 한다.")
+    void given_description_over_200_chars_when_create_command_then_throw_exception() {
         // given
         String longDescription = "a".repeat(201);
 
@@ -106,8 +106,8 @@ class SaveFamilyServiceTest {
     }
 
     @Test
-    @DisplayName("save 메서드는 isPublic이 null인 경우 IllegalArgumentException을 발생시켜야 한다.")
-    void given_command_with_null_is_public_when_save_then_throw_exception() {
+    @DisplayName("SaveFamilyCommand 생성 시 isPublic이 null인 경우 IllegalArgumentException을 발생시켜야 한다.")
+    void given_null_is_public_when_create_command_then_throw_exception() {
         // given & when & then
         assertThatThrownBy(() -> new SaveFamilyCommand("Family Name", "http://example.com", "Description", null))
             .isInstanceOf(IllegalArgumentException.class)
