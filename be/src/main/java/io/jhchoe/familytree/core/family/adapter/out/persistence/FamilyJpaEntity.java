@@ -38,6 +38,9 @@ public class FamilyJpaEntity extends ModifierBaseEntity {
     @Column(name = "profile_url")
     private String profileUrl;
 
+    @Column(name = "is_public", nullable = false)
+    private Boolean isPublic = false;
+
     @Column(name = "deleted")
     private boolean deleted;
 
@@ -46,6 +49,7 @@ public class FamilyJpaEntity extends ModifierBaseEntity {
         final String name,
         final String description,
         final String profileUrl,
+        final Boolean isPublic,
         final Long createdBy,
         final LocalDateTime createdAt,
         final Long modifiedBy,
@@ -56,6 +60,7 @@ public class FamilyJpaEntity extends ModifierBaseEntity {
         this.name = name;
         this.description = description;
         this.profileUrl = profileUrl;
+        this.isPublic = isPublic;
     }
 
     /**
@@ -70,6 +75,7 @@ public class FamilyJpaEntity extends ModifierBaseEntity {
             family.getName(),
             family.getDescription(),
             family.getProfileUrl(),
+            family.getIsPublic(),
             family.getCreatedBy(),
             family.getCreatedAt(),
             family.getModifiedBy(),
@@ -83,12 +89,13 @@ public class FamilyJpaEntity extends ModifierBaseEntity {
      * @return 변환된 Family 객체
      */
     public Family toFamily() {
-        return Family.withId(id, name, description, profileUrl, getCreatedBy(), getCreatedAt(), getModifiedBy(), getModifiedAt());
+        return Family.withId(id, name, description, profileUrl, isPublic, getCreatedBy(), getCreatedAt(), getModifiedBy(), getModifiedAt());
     }
 
-    public void update(String name, String description, String profileUrl) {
+    public void update(String name, String description, String profileUrl, Boolean isPublic) {
         this.name = name;
         this.description = description;
         this.profileUrl = profileUrl;
+        this.isPublic = isPublic;
     }
 }

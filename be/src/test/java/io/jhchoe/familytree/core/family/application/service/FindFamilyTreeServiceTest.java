@@ -44,7 +44,7 @@ class FindFamilyTreeServiceTest {
         Long centerMemberId = 1L;
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, centerMemberId, 3);
         
-        Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
+        Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
         
         FamilyMember centerMember = FamilyMember.existingMember(
             centerMemberId, familyId, 1L, "중심구성원", "profile.jpg", LocalDateTime.now(),
@@ -107,7 +107,7 @@ class FindFamilyTreeServiceTest {
         Long familyId = 1L;
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, null, 3);
         
-        Family family = Family.withId(familyId, "빈가족", "설명", "프로필URL", 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
+        Family family = Family.withId(familyId, "빈가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
         
         // Mocking: 가족 존재하지만 구성원 없음
         when(findFamilyTreePort.findFamily(familyId)).thenReturn(Optional.of(family));
@@ -130,7 +130,7 @@ class FindFamilyTreeServiceTest {
         Long invalidCenterMemberId = 999L;
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, invalidCenterMemberId, 3);
         
-        Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
+        Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
         
         FamilyMember member = FamilyMember.existingMember(
             1L, familyId, 1L, "구성원", "profile.jpg", LocalDateTime.now(),
@@ -155,7 +155,7 @@ class FindFamilyTreeServiceTest {
         Long familyId = 1L;
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, null, 3); // 중심 구성원 지정 안함
         
-        Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
+        Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
         
         FamilyMember firstMember = FamilyMember.existingMember(
             1L, familyId, 1L, "첫번째구성원", "profile1.jpg", LocalDateTime.now(),

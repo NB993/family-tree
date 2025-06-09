@@ -37,10 +37,13 @@ public class SaveFamilyController {
         @AuthFTUser FTUser ftUser,
         @RequestBody @Valid SaveFamilyRequest saveFamilyRequest
     ) {
+        Boolean isPublic = "PUBLIC".equals(saveFamilyRequest.visibility());
+        
         SaveFamilyCommand command = new SaveFamilyCommand(
             saveFamilyRequest.name(),
             saveFamilyRequest.profileUrl(),
-            saveFamilyRequest.description()
+            saveFamilyRequest.description(),
+            isPublic
         );
 
         Long familyId = saveFamilyUseCase.save(command);

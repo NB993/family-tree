@@ -44,7 +44,8 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         Family family = Family.newFamily(
             "Original Family Name",
             "Original description",
-            "http://example.com/original-profile"
+            "http://example.com/original-profile",
+            true
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -94,7 +95,8 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         Family family = Family.newFamily(
             "Original Family Name",
             "Original description",
-            "http://example.com/original-profile"
+            "http://example.com/original-profile",
+            true
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -140,7 +142,8 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         Family family = Family.newFamily(
             "Original Family Name",
             "Original description",
-            "http://example.com/original-profile"
+            "http://example.com/original-profile",
+            true
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -186,7 +189,8 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         Family family = Family.newFamily(
             "Original Family Name",
             "Original description",
-            "http://example.com/original-profile"
+            "http://example.com/original-profile",
+            true
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -232,7 +236,8 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         Family family = Family.newFamily(
             "Original Family Name",
             "Original description",
-            "http://example.com/original-profile"
+            "http://example.com/original-profile",
+            true
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();

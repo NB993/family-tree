@@ -34,7 +34,8 @@ public class ModifyFamilyService implements ModifyFamilyUseCase {
 
         Family family = findFamilyPort.findById(command.getId())
             .orElseThrow(() -> new FTException(CommonExceptionCode.NOT_FOUND, "family"));
-        family.update(command.getName(), command.getDescription(), command.getProfileUrl());
+        // 기존 isPublic 값 유지하면서 다른 필드만 업데이트
+        family.update(command.getName(), command.getDescription(), command.getProfileUrl(), family.getIsPublic());
 
         return modifyFamilyPort.modifyFamily(family);
     }

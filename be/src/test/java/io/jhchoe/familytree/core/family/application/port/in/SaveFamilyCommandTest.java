@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("[Unit Test] CreateFamilyCommand")
+@DisplayName("[Unit Test] SaveFamilyCommand")
 class SaveFamilyCommandTest {
 
     @Test
@@ -15,10 +15,11 @@ class SaveFamilyCommandTest {
         String name = null;
         String profileUrl = "http://example.com";
         String description = "Valid description";
+        Boolean isPublic = true;
     
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            new SaveFamilyCommand(name, profileUrl, description)
+            new SaveFamilyCommand(name, profileUrl, description, isPublic)
         );
     
         // then
@@ -32,10 +33,11 @@ class SaveFamilyCommandTest {
         String name = " ";
         String profileUrl = "http://example.com";
         String description = "Valid description";
+        Boolean isPublic = true;
     
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            new SaveFamilyCommand(name, profileUrl, description)
+            new SaveFamilyCommand(name, profileUrl, description, isPublic)
         );
     
         // then
@@ -43,20 +45,21 @@ class SaveFamilyCommandTest {
     }
 
     @Test
-    @DisplayName("name 길이가 100자를 초과할 경우 예외를 발생시킨다.")
+    @DisplayName("name 길이가 20자를 초과할 경우 예외를 발생시킨다.")
     void should_throw_exception_when_name_exceeds_max_length() {
         // given
-        String longName = "a".repeat(101); // 101 characters
+        String longName = "a".repeat(21); // 21 characters
         String profileUrl = "http://example.com";
         String description = "Valid description";
+        Boolean isPublic = true;
     
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            new SaveFamilyCommand(longName, profileUrl, description)
+            new SaveFamilyCommand(longName, profileUrl, description, isPublic)
         );
     
         // then
-        assertEquals("Family 이름은 100자 이내로 작성해주세요.", exception.getMessage());
+        assertEquals("Family 이름은 20자 이내로 작성해주세요.", exception.getMessage());
     }
 
     @Test
@@ -66,10 +69,11 @@ class SaveFamilyCommandTest {
         String name = "Valid Name";
         String profileUrl = "ftp://example.com";
         String description = "Valid description";
+        Boolean isPublic = true;
     
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            new SaveFamilyCommand(name, profileUrl, description)
+            new SaveFamilyCommand(name, profileUrl, description, isPublic)
         );
     
         // then
@@ -83,10 +87,11 @@ class SaveFamilyCommandTest {
         String name = "Valid Name";
         String profileUrl = "http://example.com";
         String longDescription = "a".repeat(201); // 201 characters
+        Boolean isPublic = true;
     
         // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            new SaveFamilyCommand(name, profileUrl, longDescription)
+            new SaveFamilyCommand(name, profileUrl, longDescription, isPublic)
         );
     
         // then
@@ -94,36 +99,58 @@ class SaveFamilyCommandTest {
     }
 
     @Test
-    @DisplayName("모든 필드가 유효할 때 CreateFamilyCommand 객체를 생성한다.")
+    @DisplayName("isPublic이 null일 경우 예외를 발생시킨다.")
+    void should_throw_exception_when_is_public_is_null() {
+        // given
+        String name = "Valid Name";
+        String profileUrl = "http://example.com";
+        String description = "Valid description";
+        Boolean isPublic = null;
+    
+        // when
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+            new SaveFamilyCommand(name, profileUrl, description, isPublic)
+        );
+    
+        // then
+        assertEquals("공개 여부를 선택해주세요.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("모든 필드가 유효할 때 SaveFamilyCommand 객체를 생성한다.")
     void should_create_command_when_all_fields_are_valid() {
         // given
         String name = "Valid Name";
         String profileUrl = "http://example.com";
         String description = "Valid description";
+        Boolean isPublic = true;
     
         // when
-        SaveFamilyCommand command = new SaveFamilyCommand(name, profileUrl, description);
+        SaveFamilyCommand command = new SaveFamilyCommand(name, profileUrl, description, isPublic);
     
         // then
         assertEquals("Valid Name", command.getName());
         assertEquals("http://example.com", command.getProfileUrl());
         assertEquals("Valid description", command.getDescription());
+        assertEquals(true, command.getIsPublic());
     }
 
     @Test
-    @DisplayName("profileUrl과 description이 null일 때도 CreateFamilyCommand 객체가 생성된다.")
+    @DisplayName("profileUrl과 description이 null일 때도 SaveFamilyCommand 객체가 생성된다.")
     void should_create_command_when_optional_fields_are_null() {
         // given
         String name = "Valid Name";
         String profileUrl = null;
         String description = null;
+        Boolean isPublic = false;
     
         // when
-        SaveFamilyCommand command = new SaveFamilyCommand(name, profileUrl, description);
+        SaveFamilyCommand command = new SaveFamilyCommand(name, profileUrl, description, isPublic);
     
         // then
         assertEquals("Valid Name", command.getName());
         assertNull(command.getProfileUrl());
         assertNull(command.getDescription());
+        assertEquals(false, command.getIsPublic());
     }
 }

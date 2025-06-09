@@ -86,7 +86,7 @@ public class FamilyAdapter implements SaveFamilyPort, ModifyFamilyPort, FindFami
 
         return familyJpaRepository.findById(family.getId())
             .map(familyJpaEntity -> {
-                familyJpaEntity.update(family.getName(), family.getDescription(), family.getProfileUrl());
+                familyJpaEntity.update(family.getName(), family.getDescription(), family.getProfileUrl(), family.getIsPublic());
                 FamilyJpaEntity save = familyJpaRepository.save(familyJpaEntity);
                 return save.getId();
             })

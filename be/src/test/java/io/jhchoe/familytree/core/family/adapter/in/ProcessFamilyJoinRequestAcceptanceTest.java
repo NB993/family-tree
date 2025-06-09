@@ -58,7 +58,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -107,7 +107,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -163,7 +163,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -228,7 +228,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -286,7 +286,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -335,7 +335,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -392,7 +392,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -448,7 +448,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -521,7 +521,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -579,7 +579,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -649,7 +649,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
@@ -697,7 +697,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // Family 생성
         Family family = Family.withId(
             null, "테스트 가족", "가족 설명", "profile.jpg",
-            ownerUserId, now, ownerUserId, now
+            true, ownerUserId, now, ownerUserId, now
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();

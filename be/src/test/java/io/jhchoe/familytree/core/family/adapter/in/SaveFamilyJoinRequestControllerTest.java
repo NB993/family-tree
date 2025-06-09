@@ -218,7 +218,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
      */
     private Long createFamily(String name, String description) {
         // 도메인 객체를 먼저 생성한 후 JpaEntity로 변환
-        Family family = Family.newFamily(name, description, null);
+        Family family = Family.newFamily(name, description, null, true);
         FamilyJpaEntity entity = FamilyJpaEntity.from(family);
         return familyJpaRepository.save(entity).getId();
     }

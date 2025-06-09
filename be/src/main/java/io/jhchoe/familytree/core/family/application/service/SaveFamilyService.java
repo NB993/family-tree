@@ -25,7 +25,7 @@ public class SaveFamilyService implements SaveFamilyUseCase {
     public Long save(SaveFamilyCommand command) {
         Objects.requireNonNull(command, "command must not be null");
 
-        Family family = Family.newFamily(command.getName(), command.getDescription(), command.getProfileUrl());
+        Family family = Family.newFamily(command.getName(), command.getDescription(), command.getProfileUrl(), command.getIsPublic());
         return saveFamilyPort.save(family);
     }
 }

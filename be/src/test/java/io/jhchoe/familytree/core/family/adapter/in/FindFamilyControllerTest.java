@@ -41,7 +41,7 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     @DisplayName("가족 정보를 ID로 조회할 수 있다")
     void given_id_when_find_family_by_then_return_family_with_status_200() {
         // given
-        Family family = Family.newFamily("Family Name", "descrption", "profileUrl");
+        Family family = Family.newFamily("Family Name", "descrption", "profileUrl", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
 
         // when & then
@@ -96,8 +96,8 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     @DisplayName("name 으로 Family 정보를 조회할 경우 입력한 name 문자열을 포함하는 모든 Family 목록을 반환한다")
     void given_name_when_find_families_then_return_families_with_status_200() {
         // given
-        Family family1 = Family.newFamily("Family Name1", "description1", "profileUrl1");
-        Family family2 = Family.newFamily("Family Name2", "description2", "profileUrl2");
+        Family family1 = Family.newFamily("Family Name1", "description1", "profileUrl1", true);
+        Family family2 = Family.newFamily("Family Name2", "description2", "profileUrl2", true);
         FamilyJpaEntity savedFamily1 = familyJpaRepository.save(FamilyJpaEntity.from(family1));
         FamilyJpaEntity savedFamily2 = familyJpaRepository.save(FamilyJpaEntity.from(family2));
 

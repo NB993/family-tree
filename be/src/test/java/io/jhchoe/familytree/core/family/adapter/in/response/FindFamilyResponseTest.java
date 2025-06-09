@@ -24,7 +24,7 @@ class FindFamilyResponseTest {
         LocalDateTime modifiedAt = LocalDateTime.of(2023, 1, 2, 0, 0);
 
         Family family = Family.withId(
-            id, name, description, profileUrl,
+            id, name, description, profileUrl, true,
             createdBy, createdAt, modifiedBy, modifiedAt
         );
 
@@ -51,6 +51,7 @@ class FindFamilyResponseTest {
             "다른 가족",
             "다른 설명",
             "http://example.com/other.jpg",
+            true,
             300L,
             LocalDateTime.of(2023, 2, 1, 0, 0),
             400L,

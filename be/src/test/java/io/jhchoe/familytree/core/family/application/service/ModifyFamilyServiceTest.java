@@ -39,7 +39,7 @@ class ModifyFamilyServiceTest {
         ModifyFamilyCommand command = new ModifyFamilyCommand(familyId, "Updated Name", "http://example.com/profile",
             "Updated Description");
 
-        Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", null,
+        Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true, null,
             null, null, null);
 
         when(findFamilyPort.findById(familyId)).thenReturn(Optional.of(family));
@@ -86,7 +86,7 @@ class ModifyFamilyServiceTest {
         Long familyId = 1L;
         ModifyFamilyCommand command = new ModifyFamilyCommand(familyId, "Updated Name", "http://example.com/profile",
             "Updated Description");
-        Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", null,
+        Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true, null,
             null, null, null);
 
         when(findFamilyPort.findById(familyId)).thenReturn(Optional.of(family));

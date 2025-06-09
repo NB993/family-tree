@@ -45,6 +45,7 @@ public class FindFamilyServiceTest {
             "name",
             "description",
             "profile",
+            true,
             2L,
             LocalDateTime.now(),
             2L,
@@ -130,8 +131,8 @@ public class FindFamilyServiceTest {
         // given
         FindFamilyByNameContainingQuery query = new FindFamilyByNameContainingQuery("가족");
 
-        Family family = Family.newFamily("가족 이름1", "설명", "프로필 url");
-        Family family2 = Family.newFamily("가족 이름2", "설명", "프로필 url");
+        Family family = Family.newFamily("가족 이름1", "설명", "프로필 url", true);
+        Family family2 = Family.newFamily("가족 이름2", "설명", "프로필 url", true);
 
         // when
         when(findFamilyPort.findByNameContaining(query.getName()))

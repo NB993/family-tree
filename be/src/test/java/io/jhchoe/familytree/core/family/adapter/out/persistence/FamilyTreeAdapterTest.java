@@ -40,7 +40,7 @@ class FamilyTreeAdapterTest extends AdapterTestBase {
     @DisplayName("가족 ID로 조회 시 Family 객체를 반환합니다")
     void find_family_returns_family_when_exists() {
         // given
-        Family family = Family.newFamily("테스트가족", "설명", "프로필URL");
+        Family family = Family.newFamily("테스트가족", "설명", "프로필URL", true);
         FamilyJpaEntity savedEntity = familyJpaRepository.save(FamilyJpaEntity.from(family));
         
         // when
@@ -68,7 +68,7 @@ class FamilyTreeAdapterTest extends AdapterTestBase {
     @DisplayName("가족의 활성 구성원들을 조회합니다")
     void find_active_family_members_returns_active_members_only() {
         // given
-        Family family = Family.newFamily("테스트가족", "설명", "프로필URL");
+        Family family = Family.newFamily("테스트가족", "설명", "프로필URL", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         
         // 활성 구성원
@@ -99,7 +99,7 @@ class FamilyTreeAdapterTest extends AdapterTestBase {
     @DisplayName("구성원 ID로 조회 시 FamilyMember 객체를 반환합니다")
     void find_family_member_returns_member_when_exists() {
         // given
-        Family family = Family.newFamily("테스트가족", "설명", "프로필URL");
+        Family family = Family.newFamily("테스트가족", "설명", "프로필URL", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         
         FamilyMember member = FamilyMember.withRole(
@@ -120,7 +120,7 @@ class FamilyTreeAdapterTest extends AdapterTestBase {
     @DisplayName("가족의 모든 구성원 관계를 조회합니다")
     void find_family_member_relationships_returns_all_relationships() {
         // given
-        Family family = Family.newFamily("테스트가족", "설명", "프로필URL");
+        Family family = Family.newFamily("테스트가족", "설명", "프로필URL", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         
         // 구성원 생성
@@ -155,7 +155,7 @@ class FamilyTreeAdapterTest extends AdapterTestBase {
     @DisplayName("사용자 ID로 가족 구성원을 조회합니다")
     void find_family_member_by_user_id_returns_member_when_exists() {
         // given
-        Family family = Family.newFamily("테스트가족", "설명", "프로필URL");
+        Family family = Family.newFamily("테스트가족", "설명", "프로필URL", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         
         FamilyMember member = FamilyMember.withRole(
@@ -177,7 +177,7 @@ class FamilyTreeAdapterTest extends AdapterTestBase {
     @DisplayName("존재하지 않는 사용자 ID로 조회 시 빈 Optional을 반환합니다")
     void find_family_member_by_user_id_returns_empty_when_not_exists() {
         // given
-        Family family = Family.newFamily("테스트가족", "설명", "프로필URL");
+        Family family = Family.newFamily("테스트가족", "설명", "프로필URL", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         
         // when

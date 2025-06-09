@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 
 /**
- * Family를 나타내는 클래스입니다. 이 클래스는 Family의 주요 구성 요소인 ID, 이름, 설명, 프로필 URL, 생성자 정보, 생성 날짜, 수정자 정보, 수정 날짜를 포함하며, Family 객체 관리 및
+ * Family를 나타내는 클래스입니다. 이 클래스는 Family의 주요 구성 요소인 ID, 이름, 설명, 프로필 URL, 공개 여부, 생성자 정보, 생성 날짜, 수정자 정보, 수정 날짜를 포함하며, Family 객체 관리 및
  * 동작 수행을 위한 메서드도 제공합니다.
  */
 @Getter
@@ -14,6 +14,7 @@ public class Family {
     private String name;
     private String description;
     private String profileUrl;
+    private Boolean isPublic;
     private Long createdBy;
     private LocalDateTime createdAt;
     private Long modifiedBy;
@@ -27,6 +28,7 @@ public class Family {
      * @param name        Family의 이름
      * @param description Family의 간단한 설명
      * @param profileUrl  Family의 프로필 이미지 URL
+     * @param isPublic    Family의 공개 여부 (true: 공개, false: 비공개)
      * @param createdBy   Family를 최초로 생성한 사용자의 ID
      * @param createdAt   Family가 생성된 날짜와 시간
      * @param modifiedBy  Family를 마지막으로 수정한 사용자의 ID
@@ -37,6 +39,7 @@ public class Family {
         String name,
         String description,
         String profileUrl,
+        Boolean isPublic,
         Long createdBy,
         LocalDateTime createdAt,
         Long modifiedBy,
@@ -46,6 +49,7 @@ public class Family {
         this.name = name;
         this.description = description;
         this.profileUrl = profileUrl;
+        this.isPublic = isPublic;
         this.createdBy = createdBy;
         this.createdAt = createdAt;
         this.modifiedBy = modifiedBy;
@@ -60,6 +64,7 @@ public class Family {
      * @param name        Family의 이름
      * @param description Family의 간단한 설명
      * @param profileUrl  Family의 프로필 이미지 URL
+     * @param isPublic    Family의 공개 여부 (true: 공개, false: 비공개)
      * @param createdBy   Family를 최초로 생성한 사용자의 ID
      * @param createdAt   Family가 생성된 날짜와 시간
      * @param modifiedBy  Family를 마지막으로 수정한 사용자의 ID
@@ -71,12 +76,13 @@ public class Family {
         String name,
         String description,
         String profileUrl,
+        Boolean isPublic,
         Long createdBy,
         LocalDateTime createdAt,
         Long modifiedBy,
         LocalDateTime modifiedAt
     ) {
-        return new Family(id, name, description, profileUrl, createdBy, createdAt, modifiedBy, modifiedAt);
+        return new Family(id, name, description, profileUrl, isPublic, createdBy, createdAt, modifiedBy, modifiedAt);
     }
 
 
@@ -86,27 +92,31 @@ public class Family {
      * @param name        Family의 이름
      * @param description Family의 간단한 설명
      * @param profileUrl  Family의 프로필 이미지 URL
+     * @param isPublic    Family의 공개 여부 (true: 공개, false: 비공개)
      * @return 초기화된 새로운 Family 객체
      */
     public static Family newFamily(
         String name,
         String description,
-        String profileUrl
+        String profileUrl,
+        Boolean isPublic
     ) {
-        return new Family(null, name, description, profileUrl, null, null, null, null);
+        return new Family(null, name, description, profileUrl, isPublic, null, null, null, null);
     }
 
 
     /**
-     * Family의 이름, 설명 및 프로필 URL을 업데이트합니다.
+     * Family의 이름, 설명, 프로필 URL 및 공개 여부를 업데이트합니다.
      *
      * @param name        변경할 Family 이름
      * @param description 변경할 Family 설명
      * @param profileUrl  변경할 Family 프로필 이미지 URL
+     * @param isPublic    변경할 Family 공개 여부
      */
-    public void update(String name, String description, String profileUrl) {
+    public void update(String name, String description, String profileUrl, Boolean isPublic) {
         this.name = name;
         this.description = description;
         this.profileUrl = profileUrl;
+        this.isPublic = isPublic;
     }
 }
