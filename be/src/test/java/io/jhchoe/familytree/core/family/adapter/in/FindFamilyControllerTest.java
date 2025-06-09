@@ -206,4 +206,77 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
             .statusCode(200)
             .body("$", hasSize(0));
     }
+
+    @Test
+    @WithMockOAuth2User
+    @DisplayName("공개 Family를 검색할 수 있다")
+    void given_keyword_when_find_public_families_then_return_public_families_with_cursor_pagination() {
+        // given
+        // 공개 Family 생성
+        Family publicFamily1 = Family.newFamily("공개가족1", "누구나 가입 가능", "public1.jpg", true);
+        Family publicFamily2 = Family.newFamily("공개가족2", "열린 가족", "public2.jpg", true);
+        // 비공개 Family 생성 (검색 결과에 포함되지 않아야 함)
+        Family privateFamily = Family.newFamily("비공개가족", "가족만", "private.jpg", false);
+        
+        familyJpaRepository.save(FamilyJpaEntity.from(publicFamily1));
+        familyJpaRepository.save(FamilyJpaEntity.from(publicFamily2));
+        familyJpaRepository.save(FamilyJpaEntity.from(privateFamily));
+
+        // when & then
+        given()
+            .contentType(ContentType.JSON)
+            .queryParam("keyword", "공개")
+            .queryParam("size", 10)
+            .when()
+            .get("/api/families/public")
+            .then()
+            .statusCode(200)
+            .body("content", hasSize(2))
+            .body("content[0].name", notNullValue())
+            .body("content[1].name", notNullValue())
+            .body("content[0].canJoin", equalTo(true))
+            .body("content[1].canJoin", equalTo(true))
+            .body("pagination.hasNext", equalTo(false))
+            .body("pagination.size", equalTo(10));
+    }
+
+    @Test
+    @WithMockOAuth2User
+    @DisplayName("키워드 없이 공개 Family 목록을 조회할 수 있다")
+    void given_no_keyword_when_find_public_families_then_return_all_public_families() {
+        // given
+        Family publicFamily1 = Family.newFamily("공개가족1", "설명1", "public1.jpg", true);
+        Family publicFamily2 = Family.newFamily("공개가족2", "설명2", "public2.jpg", true);
+        Family privateFamily = Family.newFamily("비공개가족", "설명3", "private.jpg", false);
+        
+        familyJpaRepository.save(FamilyJpaEntity.from(publicFamily1));
+        familyJpaRepository.save(FamilyJpaEntity.from(publicFamily2));
+        familyJpaRepository.save(FamilyJpaEntity.from(privateFamily));
+
+        // when & then
+        given()
+            .contentType(ContentType.JSON)
+            .queryParam("size", 10)
+            .when()
+            .get("/api/families/public")
+            .then()
+            .statusCode(200)
+            .body("content", hasSize(2)) // 공개 Family만 2개
+            .body("pagination.hasNext", equalTo(false))
+            .body("pagination.size", equalTo(10));
+    }
+
+    @Test
+    @WithMockOAuth2User
+    @DisplayName("size 파라미터가 범위를 벗어나면 400 Bad Request를 반환한다")
+    void given_invalid_size_when_find_public_families_then_return_400() {
+        // when & then
+        given()
+            .contentType(ContentType.JSON)
+            .queryParam("size", 51) // 최대값 50 초과
+            .when()
+            .get("/api/families/public")
+            .then()
+            .statusCode(400);
+    }
 }

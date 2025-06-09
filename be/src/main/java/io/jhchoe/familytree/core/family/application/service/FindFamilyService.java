@@ -5,8 +5,10 @@ import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameContainingQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyUseCase;
 import io.jhchoe.familytree.core.family.application.port.in.FindMyFamiliesQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindPublicFamiliesQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
+import io.jhchoe.familytree.core.family.domain.CursorPage;
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import java.util.List;
@@ -64,5 +66,20 @@ public class FindFamilyService implements FindFamilyUseCase {
             .map(familyId -> findFamilyPort.findById(familyId)
                 .orElseThrow(() -> FTException.NOT_FOUND))
             .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CursorPage<Family> findAll(FindPublicFamiliesQuery query) {
+        Objects.requireNonNull(query, "query must not be null");
+
+        // 공개 Family 검색 수행 (인프라 계층에서 isPublic=true 필터링 + 키워드 검색 + 커서 페이징 처리)
+        return findFamilyPort.findPublicFamiliesByKeyword(
+            query.getKeyword(), 
+            query.getCursor(), 
+            query.getSize()
+        );
     }
 }

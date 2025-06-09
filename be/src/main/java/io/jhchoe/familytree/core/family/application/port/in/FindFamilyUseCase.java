@@ -1,5 +1,6 @@
 package io.jhchoe.familytree.core.family.application.port.in;
 
+import io.jhchoe.familytree.core.family.domain.CursorPage;
 import io.jhchoe.familytree.core.family.domain.Family;
 import java.util.List;
 
@@ -35,4 +36,12 @@ public interface FindFamilyUseCase {
      * @return 조회된 Family 목록, 소속된 Family가 없을 경우 빈 목록을 반환
      */
     List<Family> findAll(FindMyFamiliesQuery query);
+
+    /**
+     * 공개된 Family를 키워드로 검색하여 커서 기반 페이징으로 조회합니다.
+     *
+     * @param query 공개 Family 검색에 필요한 입력 데이터를 포함하는 쿼리 객체
+     * @return 커서 기반 페이징된 공개 Family 목록
+     */
+    CursorPage<Family> findAll(FindPublicFamiliesQuery query);
 }

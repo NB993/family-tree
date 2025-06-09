@@ -2,11 +2,15 @@ package io.jhchoe.familytree.core.family.adapter.in;
 
 import io.jhchoe.familytree.common.auth.domain.AuthFTUser;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
+import io.jhchoe.familytree.core.family.adapter.in.response.CursorPageResponse;
 import io.jhchoe.familytree.core.family.adapter.in.response.FindFamilyResponse;
+import io.jhchoe.familytree.core.family.adapter.in.response.PublicFamilyResponse;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameContainingQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyUseCase;
 import io.jhchoe.familytree.core.family.application.port.in.FindMyFamiliesQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindPublicFamiliesQuery;
+import io.jhchoe.familytree.core.family.domain.CursorPage;
 import io.jhchoe.familytree.core.family.domain.Family;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -86,5 +90,39 @@ public class FindFamilyController {
             .toList();
 
         return ResponseEntity.ok(results);
+    }
+
+    /**
+     * 공개된 Family를 키워드로 검색하여 커서 기반 페이징으로 조회합니다.
+     * 
+     * @param ftUser 인증된 사용자 정보
+     * @param keyword 검색할 키워드 (선택적, null인 경우 모든 공개 Family 조회)
+     * @param cursor 무한 스크롤을 위한 커서 값 (선택적, null인 경우 첫 페이지)
+     * @param size 조회할 Family 개수 (기본값: 20, 최대: 50)
+     * @return 커서 기반 페이징된 공개 Family 목록
+     */
+    @GetMapping("/public")
+    public ResponseEntity<CursorPageResponse<PublicFamilyResponse>> findPublicFamilies(
+        @AuthFTUser FTUser ftUser,
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) String cursor,
+        @RequestParam(defaultValue = "20") int size
+    ) {
+        FindPublicFamiliesQuery query = new FindPublicFamiliesQuery(keyword, cursor, size, ftUser.getId());
+        CursorPage<Family> familyPage = findFamilyUseCase.findAll(query);
+
+        // PublicFamilyResponse로 변환 (구성원 수는 임시로 0 설정, 추후 최적화 필요)
+        List<PublicFamilyResponse> publicFamilies = familyPage.getContent().stream()
+            .map(family -> PublicFamilyResponse.from(family, 0)) // TODO: 실제 구성원 수 계산 로직 추가
+            .toList();
+
+        CursorPageResponse<PublicFamilyResponse> response = new CursorPageResponse<>(
+            publicFamilies,
+            familyPage.getNextCursor(),
+            familyPage.isHasNext(),
+            familyPage.getSize()
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

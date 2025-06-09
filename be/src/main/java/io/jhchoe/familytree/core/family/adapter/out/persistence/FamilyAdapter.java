@@ -6,6 +6,7 @@ import io.jhchoe.familytree.core.family.application.port.out.SaveFamilyPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyTreePort;
+import io.jhchoe.familytree.core.family.domain.CursorPage;
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
@@ -177,11 +178,78 @@ public class FamilyAdapter implements SaveFamilyPort, ModifyFamilyPort, FindFami
      * {@inheritDoc}
      */
     @Override
+    public CursorPage<Family> findPublicFamiliesByKeyword(String keyword, String cursor, int size) {
+        // 공개 Family 조회 (일단 간단한 구현, 추후 성능 최적화 필요)
+        List<FamilyJpaEntity> allPublicFamilies;
+        
+        if (keyword == null || keyword.isBlank()) {
+            allPublicFamilies = familyJpaRepository.findByIsPublicTrueOrderByIdAsc();
+        } else {
+            allPublicFamilies = familyJpaRepository.findByIsPublicTrueAndNameContainingOrderByIdAsc(keyword);
+        }
+
+        // 커서 기반 페이징 처리
+        List<FamilyJpaEntity> filteredFamilies = allPublicFamilies;
+        
+        if (cursor != null) {
+            try {
+                CursorUtils.CursorInfo cursorInfo = CursorUtils.decodeCursor(cursor);
+                // ID 기준으로 커서 이후 데이터만 필터링
+                filteredFamilies = allPublicFamilies.stream()
+                    .filter(family -> family.getId() > cursorInfo.familyId())
+                    .toList();
+            } catch (Exception e) {
+                // 잘못된 커서인 경우 첫 페이지부터 시작
+                filteredFamilies = allPublicFamilies;
+            }
+        }
+
+        // 요청된 size + 1만큼 가져오기 (다음 페이지 존재 여부 확인용)
+        List<FamilyJpaEntity> pageData = filteredFamilies.stream()
+            .limit(size + 1)
+            .toList();
+
+        // 다음 페이지 존재 여부 확인
+        boolean hasNext = pageData.size() > size;
+        if (hasNext) {
+            pageData = pageData.subList(0, size);
+        }
+
+        // Family 도메인 객체로 변환
+        List<Family> families = pageData.stream()
+            .map(FamilyJpaEntity::toFamily)
+            .toList();
+
+        // 다음 커서 생성
+        String nextCursor = null;
+        if (hasNext && !families.isEmpty()) {
+            Family lastFamily = families.get(families.size() - 1);
+            int memberCount = calculateMemberCount(lastFamily.getId());
+            nextCursor = CursorUtils.encodeCursor(lastFamily.getId(), memberCount);
+        }
+
+        return new CursorPage<>(families, nextCursor, hasNext, size);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Optional<FamilyMember> findFamilyMemberByUserId(final Long familyId, final Long userId) {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
         
         return familyMemberJpaRepository.findByFamilyIdAndUserId(familyId, userId)
             .map(FamilyMemberJpaEntity::toFamilyMember);
+    }
+
+    /**
+     * Family의 구성원 수를 계산합니다.
+     * 
+     * @param familyId Family ID
+     * @return 구성원 수
+     */
+    private int calculateMemberCount(Long familyId) {
+        return familyMemberJpaRepository.countByFamilyId(familyId);
     }
 }
