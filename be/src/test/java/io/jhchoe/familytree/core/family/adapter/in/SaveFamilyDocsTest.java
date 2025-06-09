@@ -48,7 +48,7 @@ class SaveFamilyDocsTest extends ApiDocsTestBase {
                 }
                 """)
         .when()
-            .post("/api/family")
+            .post("/api/families")
         .then()
             .status(HttpStatus.CREATED)
             .apply(document("family/save",
@@ -86,7 +86,7 @@ class SaveFamilyDocsTest extends ApiDocsTestBase {
                 }
                 """)
         .when()
-            .post("/api/family")
+            .post("/api/families")
         .then()
             .status(HttpStatus.BAD_REQUEST)
             .apply(document("family/save-invalid-request",
@@ -122,7 +122,7 @@ class SaveFamilyDocsTest extends ApiDocsTestBase {
                 }
                 """)
             .when()
-            .post("/api/family")
+            .post("/api/families")
             .then()
             .status(HttpStatus.BAD_REQUEST)
             .apply(document("family/save-invalid-profile-url",  // 문서 이름 변경

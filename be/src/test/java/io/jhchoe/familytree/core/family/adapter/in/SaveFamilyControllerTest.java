@@ -32,7 +32,7 @@ class SaveFamilyControllerTest extends AcceptanceTestBase {
                 }
                 """)
             .when()
-            .post("/api/family")
+            .post("/api/families")
             .then()
             .statusCode(201)
             .body("id", greaterThan(0));
@@ -53,7 +53,7 @@ class SaveFamilyControllerTest extends AcceptanceTestBase {
                 }
                 """)
             .when()
-            .post("/api/family")
+            .post("/api/families")
             .then()
             .statusCode(201)
             .body("id", greaterThan(0));
@@ -75,7 +75,7 @@ class SaveFamilyControllerTest extends AcceptanceTestBase {
                 }
                 """, emptyName))
             .when()
-            .post("/api/family")
+            .post("/api/families")
             .then()
             .body("validations.size()", greaterThan(0)) // validations 배열 크기 확인
             .body("validations.field", hasItem("name")) // validations 목록 중 field: "name" 존재
@@ -100,7 +100,7 @@ class SaveFamilyControllerTest extends AcceptanceTestBase {
                 }
                 """)
             .when()
-            .post("/api/family")
+            .post("/api/families")
             .then()
             .statusCode(400);
     }
@@ -119,7 +119,7 @@ class SaveFamilyControllerTest extends AcceptanceTestBase {
                 }
                 """)
             .when()
-            .post("/api/family")
+            .post("/api/families")
             .then()
             .statusCode(401);
     }

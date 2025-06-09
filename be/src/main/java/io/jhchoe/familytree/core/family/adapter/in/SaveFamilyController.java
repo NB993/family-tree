@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Family 생성을 위한 REST 컨트롤러입니다.
  */
 @RequiredArgsConstructor
-@RequestMapping("/api/family")
+@RequestMapping("/api/families")
 @RestController
 public class SaveFamilyController {
 
@@ -40,6 +40,7 @@ public class SaveFamilyController {
         Boolean isPublic = "PUBLIC".equals(saveFamilyRequest.visibility());
         
         SaveFamilyCommand command = new SaveFamilyCommand(
+            ftUser.getId(),
             saveFamilyRequest.name(),
             saveFamilyRequest.profileUrl(),
             saveFamilyRequest.description(),

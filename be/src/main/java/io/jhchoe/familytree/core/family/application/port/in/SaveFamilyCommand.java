@@ -17,6 +17,7 @@ public class SaveFamilyCommand {
     private static final Pattern FAMILY_NAME_PATTERN = 
         Pattern.compile("^[^@#$%^&*()+=\\[\\]{}|\\\\:;\"'<>?,./!~`]+$");
 
+    private final Long userId;
     private final String name;
     private String profileUrl;
     private String description;
@@ -25,22 +26,37 @@ public class SaveFamilyCommand {
     /**
      * Family 생성 명령을 위한 생성자(Constructor)입니다.
      * 
+     * @param userId 생성하는 사용자의 ID (필수)
      * @param name Family 이름 (필수, 최대 길이: 20자) - null 또는 공백일 수 없으며, 특수문자는 허용되지 않습니다.
      * @param profileUrl 프로필 URL (선택) - 반드시 "http://" 또는 "https://"로 시작해야 합니다.
      * @param description Family 설명 (선택, 최대 길이: 200자)
      * @param isPublic 공개 여부 (필수) - true: 공개, false: 비공개
      * @throws IllegalArgumentException 입력 값이 유효하지 않을 경우 예외가 발생합니다.
      */
-    public SaveFamilyCommand(String name, String profileUrl, String description, Boolean isPublic) {
+    public SaveFamilyCommand(Long userId, String name, String profileUrl, String description, Boolean isPublic) {
+        validateUserId(userId);
         validateFamilyName(name);
         validateProfileUrl(profileUrl);
         validateDescription(description);
         validateIsPublic(isPublic);
 
+        this.userId = userId;
         this.name = name;
         this.profileUrl = profileUrl;
         this.description = description;
         this.isPublic = isPublic;
+    }
+
+    /**
+     * 사용자 ID의 유효성을 검증합니다.
+     * 
+     * @param userId 검증할 사용자 ID
+     * @throws IllegalArgumentException 사용자 ID가 유효하지 않을 경우
+     */
+    private void validateUserId(Long userId) {
+        if (userId == null || userId <= 0) {
+            throw new IllegalArgumentException("유효한 사용자 ID가 필요합니다.");
+        }
     }
 
     /**

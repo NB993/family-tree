@@ -1,29 +1,35 @@
-docs [with-ai] FT-014 Epic 문서화 및 폴더 구조 정리
+feat [with-ai] FT-015 Family 생성 시 OWNER 권한 자동 부여 - 1단계 코어 계층
 
-- FT-014 Family 관리 시스템 확장 Epic 문서 작성
-- 기존 구현 분석 결과 및 Story별 상세 계획 포함
-- development-docs/ft-014-family-management-system/ 폴더 생성
-- 잘못 명명된 ft-013-family-management 폴더 삭제
-- ticket-numbers.json FT 번호 정정 (18 → 14)
+- Family 생성 시 생성자에게 OWNER 권한을 자동으로 부여하는 로직 구현
+- SaveFamilyCommand에 userId 필드 추가 및 유효성 검증 강화
+- API 경로 표준화: /api/family → /api/families (REST 표준 준수)
 
-## 문서화된 내용
+## 구현된 주요 컴포넌트
 
-### Epic 개요
-- Epic 번호: FT-014
-- Epic 명: Family 관리 시스템 확장
-- 예상 기간: 2주 (4개 Story)
+### 애플리케이션 계층
+- SaveFamilyService: OWNER 권한 자동 부여 로직 추가
+  * FindUserPort를 통한 사용자 정보 조회
+  * SaveFamilyMemberPort를 통한 OWNER 구성원 생성
+  * 트랜잭션 처리로 Family 생성과 구성원 등록을 하나의 단위로 처리
+- SaveFamilyCommand: userId 필드 추가 및 검증 로직 강화
+- SaveFamilyController: API 경로 변경 및 사용자 ID 전달
 
-### Story 구성
-- FT-015: Family API 표준화 및 검증 강화
-- FT-016: 가족명 중복 체크 기능
-- FT-017: Family 목록 및 검색 기능
-- FT-018: Family 권한 기반 접근 제어
+### 특화 사항
+- 기존 Port 인터페이스 재사용 (SaveFamilyMemberPort, FindUserPort)
+- 사용자의 실제 이름과 프로필 URL을 구성원 정보에 반영
+- AuthExceptionCode.USER_NOT_FOUND 예외 처리
 
-### 기술적 고려사항
-- 기존 코드 재사용 전략 정리
-- 데이터베이스 스키마 변경 계획
-- 성능 목표 및 보안 고려사항
-- 예상 위험사항 및 대응책
+## 테스트 구현
+- SaveFamilyServiceTest: OWNER 권한 자동 부여 테스트 ✅
+- SaveFamilyCommandTest: userId 검증 테스트 ✅
+- SaveFamilyControllerTest: API 경로 변경 (일부 인수 테스트 실패 - 2단계에서 해결 예정)
+
+## 해결된 이슈
+- FT-015 마지막 작업 구현: Family 생성자 OWNER 권한 자동 부여
+- REST API 표준 준수: 복수형 엔드포인트 사용
+- 트랜잭션 처리: Family와 FamilyMember 생성의 원자성 보장
 
 ## 다음 단계
-- FT-015 Story 개발 시작 준비 완료
+- 2단계 인프라 계층: 인수 테스트 실패 원인 분석 및 해결
+- 테스트 환경에서 User 데이터 준비 방법 개선
+- @WithMockOAuth2User와 실제 DB User 연동 해결
