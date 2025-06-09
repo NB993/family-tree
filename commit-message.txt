@@ -1,36 +1,42 @@
-feat [with-ai] FT-016 가족명 중복 체크 기능 구현 완료
+docs [with-ai] FT-016 가족명 중복 체크 기능 개발 문서 작성
 
-- 실시간으로 가족명 사용 가능 여부를 확인할 수 있는 API 구현
-- 인증된 사용자만 접근 가능하며 소프트 딜리트된 Family 제외하고 중복 확인
+- FT-016 Story 개발 완료에 따른 상세 기술 문서 작성
+- 설계, 구현, 테스트, 성능, 보안 등 전 영역을 포괄하는 종합 문서
 
-## 구현된 주요 컴포넌트
+## 문서 구성
 
-### 애플리케이션 계층
-- CheckFamilyNameDuplicationUseCase: 가족명 중복 확인 UseCase 인터페이스
-- CheckFamilyNameDuplicationService: UseCase 구현체, 가족명 유효성 검증 및 중복 확인 로직
-- FamilyNameAvailabilityResult: 가족명 사용 가능 여부 결과를 나타내는 도메인 객체
+### 기술 설계 문서
+- 헥사고날 아키텍처 적용 상세 설명
+- API 설계 및 응답 형식 정의
+- 각 계층별 구현 상세 (도메인, 애플리케이션, 인프라, 프레젠테이션)
 
-### 인프라 계층
-- FindFamilyPort.findByName(): 가족명으로 Family 조회하는 포트 메서드 추가
-- FamilyAdapter.findByName(): findByName() 포트 구현
-- FamilyJpaRepository.findByNameAndDeletedFalse(): 소프트 딜리트 제외 가족명 조회 쿼리
+### 구현 상세
+- 핵심 컴포넌트별 코드 구조 및 역할
+- 비즈니스 로직 구현 방식
+- 데이터베이스 쿼리 최적화 방안
 
-### 프레젠테이션 계층
-- CheckFamilyNameController: GET /api/families/check-name API 컨트롤러
-- FamilyNameAvailabilityResponse: 가족명 사용 가능 여부 응답 DTO
+### 테스트 전략
+- 단위 테스트 7개: 비즈니스 로직 및 예외 처리 검증
+- 통합 테스트 9개: API 동작, 인증, 입력 검증 확인
+- 테스트 시나리오 및 커버리지 분석
 
-## 테스트 구현
-- CheckFamilyNameDuplicationServiceTest: 단위 테스트 7개 (유효성 검증, 중복 확인 로직) ✅
-- CheckFamilyNameControllerTest: 통합 테스트 9개 (API 동작, 인증, 예외 처리) ✅
-- 전체 테스트 통과 및 커버리지 확보
+### 보안 및 성능
+- JWT 인증 기반 보안 구현
+- 입력 검증 및 데이터 무결성 보장
+- 소프트 딜리트 고려한 DB 쿼리 최적화
+- 응답 시간 성능 분석 (50-100ms)
 
-## 핵심 특징
-- 헥사고날 아키텍처 원칙 준수
-- JWT 인증 기반 보안 (USER/ADMIN 역할 필요)
-- 소프트 딜리트된 Family 제외한 정확한 중복 확인
-- 입력 유효성 검증 (null, 빈값, 20자 초과 방지)
-- 사용자 친화적 응답 메시지
+### 시스템 통합
+- 기존 Family 도메인 구조와의 호환성
+- 영향도 분석 및 확장성 고려사항
+- 알려진 제한사항 및 향후 개선 방안
+
+## 문서 활용도
+- 신규 개발자 온보딩 자료
+- 유사 기능 개발 시 참고 문서
+- 시스템 유지보수 및 확장 가이드
+- API 사용법 및 예외 처리 가이드
 
 ## 다음 단계
-- FT-016 개발 문서 작성
-- Family 생성 폼에서 실시간 가족명 중복 체크 연동 검토
+- Family 생성 폼에서 실시간 중복 체크 연동
+- 프론트엔드 개발팀과 API 연동 협의
