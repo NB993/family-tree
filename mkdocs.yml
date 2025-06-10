@@ -1,0 +1,77 @@
+site_name: Family Tree - AI 협업 실험 프로젝트
+site_description: AI와 인간의 협업을 통한 백엔드 개발 실험 프로젝트 문서
+site_author: Jaehong Choe
+site_url: https://nb993.github.io/family-tree
+
+repo_name: NB993/family-tree
+repo_url: https://github.com/NB993/family-tree
+
+theme:
+  name: material
+  language: ko
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      type: date
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - 홈: index.md
+  - 프로젝트 개요:
+    - 소개: overview/introduction.md
+    - AI 협업 철학: overview/ai-collaboration-philosophy.md
+    - 아키텍처 선택 이유: overview/architecture-rationale.md
+  - AI 협업 가이드:
+    - 협업 개요: collaboration/overview.md
+    - 백엔드 개발 가이드라인: collaboration/backend-guidelines.md
+    - 명명 규칙: collaboration/naming-conventions.md
+    - 개발 프로세스: collaboration/development-process.md
+  - 아키텍처:
+    - 헥사고날 아키텍처: architecture/hexagonal.md
+    - 계층 구조: architecture/layers.md
+    - 기술 스택: architecture/tech-stack.md
+  - 개발 가이드:
+    - 코딩 표준: development/coding-standards.md
+    - 테스트 가이드라인: development/testing-guidelines.md
+    - 엔티티 매핑: development/entity-mapping.md
+  - 개발 기록:
+    - Epic/Story 목록: records/epic-stories.md
+    - 진행 상황: records/progress.md
+    - 학습된 인사이트: records/insights.md
