@@ -98,24 +98,23 @@ AI는 결국 비용이며, 토큰량에 따라 비용이 발생합니다. 따라
 
 ```
 family-tree/
-├── be/                                  # 백엔드 프로젝트
+├── backend/                            # 백엔드 프로젝트 (Spring Boot + 헥사고날 아키텍처)
 │   ├── src/
 │   │   ├── main/java/io/jhchoe/familytree/
 │   │   │   ├── core/                   # 도메인 계층
 │   │   │   ├── infrastructure/         # 인프라 계층
 │   │   │   └── presentation/           # 프레젠테이션 계층
 │   │   └── test/                       # 테스트 코드
-│   ├── instructions/                   # AI 개발 가이드라인
-│   │   ├── index.md                   # 메인 개발 가이드
-│   │   ├── workflow/                  # 워크플로우 문서
-│   │   ├── coding-standards.md       # 코딩 표준
-│   │   ├── testing-guidelines.md     # 테스트 가이드라인
-│   │   └── commit-guidelines.md      # 커밋 가이드라인
-│   └── planning/                      # 기획 문서
-├── development-docs/                   # 개발 완료 문서
-│   ├── ft-001-*/                      # Epic/Story별 개발 문서
-│   └── ft-002-*/
-├── fe/                                # 프론트엔드 프로젝트 (React)
+│   ├── docs/instructions/              # AI 개발 가이드라인
+│   └── docs/planning/                  # 기획 문서
+├── frontend/                           # 프론트엔드 프로젝트 (React + TypeScript)
+├── docs/
+│   ├── development/                    # 개발 완료 문서
+│   │   ├── ft-001-*/                  # Epic/Story별 개발 문서
+│   │   └── ft-002-*/
+│   ├── architecture/                   # 아키텍처 문서
+│   ├── collaboration/                  # AI 협업 가이드
+│   └── progress/                       # 진행 상황 보고서
 └── README.md                          # 이 파일
 ```
 
@@ -187,6 +186,12 @@ AI가 작성한 인수인계서를 다음 대화에 넘겨주기만 하면 알�
 - **더 효율적인 소통**: AI 간 협업 프로토콜 최적화
 - **비용 최적화 고도화**: 아키텍처 설계를 통한 토큰 효율성 극대화
 
+## 관련 문서
+
+- [AI 협업 가이드라인](./docs/collaboration/)
+- [개발 문서](./docs/development/)
+- [아키텍처 문서](./docs/architecture/)
+- [진행 상황 보고서](./docs/progress/)
 
 ---
 
