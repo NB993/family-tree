@@ -1,13 +1,11 @@
 {
   "PM": 23,
-  "FT": 14,
   "lastUpdated": "2025-06-10",
   "description": {
-    "PM": "Project Management - 프로젝트 관리, 인프라, 워크플로우 개선 작업",
-    "FT": "Family Tree - 실제 사용자 기능 개발 작업"
+    "PM": "Project Management - 프로젝트 관리, 인프라, 워크플로우 개선 작업"
   },
   "lastTickets": {
-    "PM-023": "Family 관리 시스템 기획서 수정 - Story-017 기존 구현 분석 반영",
-    "FT-014": "Family 관리 시스템 확장 (Epic)"
-  }
+    "PM-023": "Family 관리 시스템 기획서 수정 - Story-017 기존 구현 분석 반영"
+  },
+  "note": "FT 코드는 GitHub 이슈 번호로 관리 (2025-06-10부터 변경)"
 }

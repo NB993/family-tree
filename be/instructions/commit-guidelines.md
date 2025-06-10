@@ -9,15 +9,17 @@
 
 ## 1. 커밋 메시지 작성 규칙
 
-### 1.1 티켓 채번 시스템 (Jira 스타일)
+### 1.1 티켓 채번 시스템 (2025-06-10 변경)
 ```
 프로젝트 코드:
 - PM (Project Management): 프로젝트 관리, 인프라, 워크플로우 개선 작업
-- FT (Family Tree): 실제 사용자 기능 개발 작업
+- FT (Family Tree): 실제 사용자 기능 개발 작업 → GitHub 이슈 번호 사용
 
-각 코드별 시퀀스 독립 관리:
-- PM-001, PM-002, PM-003 (프로젝트 관리 작업)
-- FT-001 (Epic), FT-002 (Story), FT-003 (Story), FT-004 (Epic) (기능 개발)
+채번 방식:
+- PM-001, PM-002, PM-003 (프로젝트 관리 - 기존 방식 유지)
+- FT-017, FT-018, FT-019 (GitHub Issue #17, #18, #19 번호 사용)
+
+⚠️ 중요: FT 코드는 2025-06-10부터 GitHub 이슈 번호와 동일하게 사용
 ```
 
 ### 1.2 커밋 메시지 제목 형식
@@ -25,8 +27,8 @@
 {타입} [{협업구분}] {코드}-{번호} {기능명} - {단계}
 
 코드:
-- PM: 프로젝트 관리/인프라/워크플로우 작업
-- FT: Family Tree 기능 개발 작업
+- PM: 프로젝트 관리/인프라/워크플로우 작업 (PM-001, PM-002, ...)
+- FT: Family Tree 기능 개발 작업 (GitHub 이슈 번호 사용: FT-017, FT-018, ...)
 
 타입:
 - feat: 기능 구현
@@ -91,14 +93,14 @@
 
 ## 2. 커밋 메시지 예시
 
-### 2.1 기능 구현 예시 (FT 코드)
+### 2.1 기능 구현 예시 (FT 코드 - GitHub 이슈 번호)
 ```
-feat [by-ai] FT-002 가족트리 데이터 구조 설계 - 1단계 코어 계층
+feat [by-ai] FT-017 디자인 시스템 v1.0 완성 - 모바일 퍼스트 따뜻한 계열
 ```
 
 ### 2.2 프로젝트 관리 작업 예시 (PM 코드)
 ```
-docs [with-ai] PM-001 AI 협업 워크플로우 개선 - 커밋 가이드라인 분리
+docs [with-ai] PM-024 채번 방식 변경 문서화
 ```
 
 ### 2.3 테스트만 작성하는 경우
@@ -220,11 +222,13 @@ execute_terminal_command: rm -f commit-message.txt
 ### 5.1 관련 문서
 - `be/instructions/workflow/ai-collaboration-workflow.md`: 전체 협업 워크플로우
 - `be/instructions/development-process.md`: 개발 프로세스 가이드라인
+- `be/instructions/workflow/ticket-numbering-migration.md`: 채번 방식 변경 내역
 
-### 5.2 티켓 관리
-- Epic/Story 구조는 기획자 AI가 관리
-- 개발자 AI는 할당받은 Story 번호 사용
-- 티켓 번호는 커밋 메시지에 반드시 포함
+### 5.2 티켓 관리 (2025-06-10 변경)
+- PM 코드: `be/instructions/ticket-numbers.json` 파일에서 관리
+- FT 코드: GitHub Issues에서 관리 (이슈 번호 = FT 번호)
+- Epic/Story 구조는 GitHub Issues에서 관리
+- 커밋 메시지에는 반드시 티켓 번호 포함
 
 ---
 
@@ -233,4 +237,5 @@ execute_terminal_command: rm -f commit-message.txt
 | 버전 | 날짜 | 변경 내용 | 작성자 |
 |------|------|-----------|--------|
 | v1.0.0 | 2025-05-27 | 커밋 가이드라인 초기 작성 (워크플로우에서 분리) | Claude AI |
+| v1.1.0 | 2025-06-10 | FT 코드를 GitHub 이슈 번호 기반으로 변경 | 기획자 AI |
 ```
