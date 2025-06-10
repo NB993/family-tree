@@ -24,7 +24,8 @@ public enum FamilyExceptionCode implements ExceptionCodeType {
     SELF_MODIFICATION_NOT_ALLOWED("F014", "자신의 역할이나 상태는 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
     ADMIN_MODIFICATION_NOT_ALLOWED("F015", "관리자는 다른 관리자의 상태를 변경할 수 없습니다.", HttpStatus.FORBIDDEN),
     ANNOUNCEMENT_NOT_FOUND("F016", "존재하지 않는 공지사항입니다.", HttpStatus.NOT_FOUND),
-    INVALID_ANNOUNCEMENT_REQUEST("F017", "잘못된 공지사항 요청입니다.", HttpStatus.BAD_REQUEST);
+    INVALID_ANNOUNCEMENT_REQUEST("F017", "잘못된 공지사항 요청입니다.", HttpStatus.BAD_REQUEST),
+    ACCESS_DENIED("F018", "접근이 거부되었습니다.", HttpStatus.FORBIDDEN);
 
     private final String code;
     private final String message;

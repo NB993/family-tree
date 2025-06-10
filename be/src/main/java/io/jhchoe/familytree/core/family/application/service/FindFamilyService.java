@@ -8,11 +8,13 @@ import io.jhchoe.familytree.core.family.application.port.in.FindMyFamiliesQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindPublicFamiliesQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
+import io.jhchoe.familytree.core.family.application.validation.FamilyMemberAuthorizationValidator;
 import io.jhchoe.familytree.core.family.domain.CursorPage;
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +38,18 @@ public class FindFamilyService implements FindFamilyUseCase {
     public Family find(FindFamilyByIdQuery query) {
         Objects.requireNonNull(query, "query must not be null");
 
-        return findFamilyPort.findById(query.id())
+        // 1. Family 조회
+        Family family = findFamilyPort.findById(query.id())
             .orElseThrow(() -> FTException.NOT_FOUND);
+        
+        // 2. 비공개 Family 접근 제어 (새로 추가)
+        FamilyMember member = Optional.ofNullable(query.currentUserId())
+            .flatMap(userId -> findFamilyMemberPort.findByFamilyIdAndUserId(query.id(), userId))
+            .orElse(null);
+        
+        FamilyMemberAuthorizationValidator.validateFamilyAccessPermission(family, member);
+        
+        return family;
     }
 
     /**

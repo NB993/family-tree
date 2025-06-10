@@ -36,7 +36,8 @@ public class ModifyFamilyController {
                 id,
                 request.name(),
                 request.profileUrl(),
-                request.description()
+                request.description(),
+                ftUser.getId()
         );
         Long familyId = modifyFamilyUseCase.modify(command);
 

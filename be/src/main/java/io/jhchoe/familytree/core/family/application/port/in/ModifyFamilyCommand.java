@@ -17,17 +17,20 @@ public class ModifyFamilyCommand {
     private final String name;
     private final String profileUrl;
     private final String description;
+    private final Long userId;
 
-    public ModifyFamilyCommand(Long id, String name, String profileUrl, String description) {
+    public ModifyFamilyCommand(Long id, String name, String profileUrl, String description, Long userId) {
         validateId(id);
         validateName(name);
         validateProfileUrl(profileUrl);
         validateDescription(description);
+        validateUserId(userId);
 
         this.id = id;
         this.name = name;
         this.profileUrl = profileUrl;
         this.description = description;
+        this.userId = userId;
     }
 
     private void validateId(Long id) {
@@ -61,6 +64,15 @@ public class ModifyFamilyCommand {
     private void validateDescription(String description) {
         if (description != null && description.length() > 200) {
             throw new IllegalArgumentException("Family 설명은 200자 이내로 작성해주세요.");
+        }
+    }
+
+    private void validateUserId(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("사용자 ID는 필수입니다.");
+        }
+        if (userId <= 0) {
+            throw new IllegalArgumentException("유효하지 않은 사용자 ID입니다.");
         }
     }
 }

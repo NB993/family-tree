@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameContainingQuery;
+import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
 import java.time.LocalDateTime;
@@ -31,6 +32,9 @@ public class FindFamilyServiceTest {
     @Mock
     private FindFamilyPort findFamilyPort;
 
+    @Mock
+    private FindFamilyMemberPort findFamilyMemberPort;
+
     @InjectMocks
     private FindFamilyService sut;
 
@@ -39,13 +43,14 @@ public class FindFamilyServiceTest {
     void given_valid_query_when_find_then_return_family() {
         // given
         Long familyId = 1L;
-        FindFamilyByIdQuery query = new FindFamilyByIdQuery(familyId);
+        Long currentUserId = 1L;
+        FindFamilyByIdQuery query = new FindFamilyByIdQuery(familyId, currentUserId);
         Family expectedFamily = Family.withId(
             familyId,
             "name",
             "description",
             "profile",
-            true,
+            true, // 공개 Family로 설정
             2L,
             LocalDateTime.now(),
             2L,
@@ -53,6 +58,7 @@ public class FindFamilyServiceTest {
         );
 
         when(findFamilyPort.findById(familyId)).thenReturn(Optional.of(expectedFamily));
+        // 공개 Family이므로 FamilyMember 조회는 Mock 불필요 (validateFamilyAccessPermission에서 바로 return)
 
         // when
         Family family = sut.find(query);
@@ -86,7 +92,8 @@ public class FindFamilyServiceTest {
     void given_invalid_id_when_find_then_throw_exception() {
         // given
         Long notSavedFamilyId = 999L;
-        FindFamilyByIdQuery query = new FindFamilyByIdQuery(notSavedFamilyId);
+        Long currentUserId = 1L;
+        FindFamilyByIdQuery query = new FindFamilyByIdQuery(notSavedFamilyId, currentUserId);
 
         // when
         when(findFamilyPort.findById(notSavedFamilyId))
@@ -150,9 +157,10 @@ public class FindFamilyServiceTest {
     void given_null_id_when_create_query_then_throw_exception() {
         // given
         Long nullId = null;
+        Long currentUserId = 1L;
 
         // when & then
-        assertThatThrownBy(() -> new FindFamilyByIdQuery(nullId))
+        assertThatThrownBy(() -> new FindFamilyByIdQuery(nullId, currentUserId))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Family ID must not be null");
     }
@@ -162,11 +170,13 @@ public class FindFamilyServiceTest {
     void given_valid_id_when_create_query_then_success() {
         // given
         Long validId = 1L;
+        Long currentUserId = 1L;
 
         // when
-        FindFamilyByIdQuery query = new FindFamilyByIdQuery(validId);
+        FindFamilyByIdQuery query = new FindFamilyByIdQuery(validId, currentUserId);
 
         // then
         assertThat(query.id()).isEqualTo(validId);
+        assertThat(query.currentUserId()).isEqualTo(currentUserId);
     }
 }

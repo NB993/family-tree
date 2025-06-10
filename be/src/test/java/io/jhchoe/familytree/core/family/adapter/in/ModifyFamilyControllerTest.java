@@ -8,9 +8,14 @@ import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaEntity;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaRepository;
+import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaEntity;
+import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
 import io.jhchoe.familytree.core.family.domain.Family;
+import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,16 +31,20 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
     @Autowired
     private FamilyJpaRepository familyJpaRepository;
 
+    @Autowired
+    private FamilyMemberJpaRepository familyMemberJpaRepository;
+
     @AfterEach
     void tearDown() {
         // 테스트 데이터 정리
+        familyMemberJpaRepository.deleteAll();
         familyJpaRepository.deleteAll();
     }
 
     @WithMockOAuth2User
     @Test
     @DisplayName("modifyFamily 메서드는 유효한 request를 받으면 성공적으로 수정 후 상태코드 200을 응답해야 한다.")
-    void given_valid_request_when_modifyFamily_then_return_status_200() {
+    void given_valid_request_when_modify_family_then_return_status_200() {
         // given
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FTUser ftUser = (FTUser) authentication.getPrincipal();
@@ -49,6 +58,13 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         );
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
+
+        // OWNER 권한 구성원 생성 (권한 검증을 위해 필요)
+        FamilyMember ownerMember = FamilyMember.newOwner(
+            familyId, userId, "테스트소유자", "profile.jpg", 
+            LocalDateTime.now(), "KR"
+        );
+        familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
 
         // when & then
         RestAssuredMockMvc
@@ -86,7 +102,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
     @WithMockOAuth2User
     @Test
     @DisplayName("modifyFamily 메서드는 이름이 없는 경우 상태코드 400을 응답해야 한다.")
-    void given_request_without_name_when_modifyFamily_then_return_status_400() {
+    void given_request_without_name_when_modify_family_then_return_status_400() {
         // given
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FTUser ftUser = (FTUser) authentication.getPrincipal();
@@ -133,7 +149,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
     @WithMockOAuth2User
     @Test
     @DisplayName("modifyFamily 메서드는 이름이 100자를 초과하는 경우 상태코드 400을 응답해야 한다.")
-    void given_request_with_name_over_100_chars_when_modifyFamily_then_return_status_400() {
+    void given_request_with_name_over_100_chars_when_modify_family_then_return_status_400() {
         // given
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FTUser ftUser = (FTUser) authentication.getPrincipal();
@@ -180,7 +196,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
     @WithMockOAuth2User
     @Test
     @DisplayName("modifyFamily 메서드는 설명이 200자를 초과하는 경우 상태코드 400을 응답해야 한다.")
-    void given_request_with_description_over_200_chars_when_modifyFamily_then_return_status_400() {
+    void given_request_with_description_over_200_chars_when_modify_family_then_return_status_400() {
         // given
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FTUser ftUser = (FTUser) authentication.getPrincipal();
@@ -227,7 +243,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
     @WithMockOAuth2User
     @Test
     @DisplayName("modifyFamily 메서드는 프로필 URL이 유효하지 않은 경우 상태코드 400을 응답해야 한다.")
-    void given_request_with_invalid_profile_url_when_modifyFamily_then_return_status_400() {
+    void given_request_with_invalid_profile_url_when_modify_family_then_return_status_400() {
         // given
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FTUser ftUser = (FTUser) authentication.getPrincipal();

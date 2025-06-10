@@ -1,0 +1,50 @@
+feat [with-ai] FT-018 Family 권한 기반 접근 제어 구현 완료
+
+- OWNER 전용 Family 수정 권한 제어 및 비공개 Family 접근 제어 구현
+- FamilyMemberAuthorizationValidator를 통한 중앙화된 권한 검증 시스템 구축
+- FindFamilyService 코드 품질 개선 (Optional 체이닝 적용)
+
+## 구현된 주요 컴포넌트
+
+### 애플리케이션 계층
+- FamilyMemberAuthorizationValidator: 권한 검증 전용 유틸리티 클래스
+  * validateOwnerRole(): OWNER 권한 검증
+  * validateFamilyModificationPermission(): Family 수정 권한 검증 (OWNER + ACTIVE 상태)
+  * validateFamilyAccessPermission(): 비공개 Family 접근 제어
+- ModifyFamilyService: OWNER 권한 검증 로직 통합
+- FindFamilyService: 비공개 Family 접근 제어 및 Optional 체이닝 개선
+
+### 도메인 계층
+- FamilyExceptionCode: 권한 관련 예외 코드 추가
+  * PERMISSION_DENIED: 권한 부족 예외
+  * INACTIVE_MEMBER: 비활성 구성원 예외
+  * ACCESS_DENIED: 접근 거부 예외
+
+### 프레젠테이션 계층
+- ModifyFamilyController: OWNER 권한 검증 통합
+- FindFamilyController: 비공개 Family 접근 제어 통합
+- ModifyFamilyCommand: currentUserId 필드 추가
+- FindFamilyByIdQuery: currentUserId 필드 추가
+
+## 테스트 구현
+- FamilyMemberAuthorizationValidatorTest: 권한 검증 로직 단위 테스트 ✅
+- FamilyPermissionControlTest: 권한 제어 통합 테스트 ✅
+- ModifyFamilyServiceTest: 권한 검증 통합 단위 테스트 ✅
+- ModifyFamilyControllerTest: 권한 검증 통합 API 테스트 ✅
+- FindFamilyServiceTest: 접근 제어 단위 테스트 ✅
+- 전체 테스트 통과 확인 및 기존 기능 호환성 유지
+
+## 해결된 이슈
+- Family 수정 권한 제어: OWNER 권한 + ACTIVE 상태 사용자만 수정 가능
+- 비공개 Family 접근 제어: 구성원만 조회 가능, 공개 Family는 모든 사용자 접근 가능
+- FindFamilyService 코드 품질 개선: Optional 체이닝으로 불필요한 null 초기화 제거
+- 테스트 메서드명 표준화: 모든 테스트 메서드를 스네이크 케이스로 통일
+
+## 보안 강화
+- 중앙화된 권한 검증으로 보안 로직 일관성 확보
+- 비공개 Family 정보 보호 및 무단 접근 차단
+- Family 수정 권한의 엄격한 제어 (OWNER 전용)
+
+## 다음 단계
+- FT-019: Family 구성원 관리 기능 구현 예정
+- 추가 권한 기반 기능들에 FamilyMemberAuthorizationValidator 적용 확장

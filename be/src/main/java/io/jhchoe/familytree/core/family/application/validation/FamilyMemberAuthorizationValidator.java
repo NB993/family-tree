@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.application.validation;
 
 import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
@@ -83,6 +84,49 @@ public final class FamilyMemberAuthorizationValidator {
         if (currentMember.getRole() == FamilyMemberRole.ADMIN 
                 && targetMember.getRole().isAtLeast(FamilyMemberRole.ADMIN)) {
             throw new FTException(FamilyExceptionCode.ADMIN_MODIFICATION_NOT_ALLOWED);
+        }
+    }
+    
+    /**
+     * 구성원이 OWNER 권한을 가지고 있는지 검증합니다.
+     *
+     * @param member 검증할 구성원
+     * @throws FTException OWNER 권한이 없는 경우
+     */
+    public static void validateOwnerRole(FamilyMember member) {
+        validateRole(member, FamilyMemberRole.OWNER);
+    }
+    
+    /**
+     * Family 수정/삭제 권한을 검증합니다.
+     * OWNER 권한과 활성 상태를 모두 확인합니다.
+     *
+     * @param member 검증할 구성원
+     * @throws FTException OWNER 권한이 없거나 활성 상태가 아닌 경우
+     */
+    public static void validateFamilyModificationPermission(FamilyMember member) {
+        validateRoleAndStatus(member, FamilyMemberRole.OWNER);
+    }
+    
+    /**
+     * 비공개 Family 접근 권한을 검증합니다.
+     * 공개 Family는 누구나 조회 가능하고, 비공개 Family는 구성원만 조회 가능합니다.
+     *
+     * @param family Family 정보
+     * @param member 현재 사용자의 구성원 정보 (비구성원인 경우 null)
+     * @throws FTException 비공개 Family에 접근할 권한이 없는 경우
+     */
+    public static void validateFamilyAccessPermission(Family family, FamilyMember member) {
+        Objects.requireNonNull(family, "family must not be null");
+        
+        // 공개 Family는 누구나 접근 가능
+        if (family.getIsPublic()) {
+            return;
+        }
+        
+        // 비공개 Family는 구성원만 접근 가능
+        if (member == null) {
+            throw new FTException(FamilyExceptionCode.ACCESS_DENIED);
         }
     }
 }

@@ -46,7 +46,7 @@ public class FindFamilyController {
         @PathVariable Long id,
         @AuthFTUser FTUser ftUser
     ) {
-        FindFamilyByIdQuery query = new FindFamilyByIdQuery(id);
+        FindFamilyByIdQuery query = new FindFamilyByIdQuery(id, ftUser.getId());
         Family family = findFamilyUseCase.find(query);
 
         return ResponseEntity.ok(FindFamilyResponse.from(family));
