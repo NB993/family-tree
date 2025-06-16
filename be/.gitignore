@@ -36,9 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
-# Configuration files with sensitive data
-application-local.yml
-application-prod.yml
+*.yml
 
 # Docker volumes (local data)
 docker/mysql/data/
