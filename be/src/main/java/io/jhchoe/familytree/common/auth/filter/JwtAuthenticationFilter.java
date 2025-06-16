@@ -7,6 +7,7 @@ import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.common.util.MaskingUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,7 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * JWT 토큰을 검증하고 Spring Security Context에 인증 정보를 설정하는 필터입니다.
- * Authorization 헤더에서 Bearer 토큰을 추출하여 검증하고, 유효한 토큰인 경우 인증 정보를 설정합니다.
+ * HttpOnly 쿠키 또는 Authorization 헤더에서 Bearer 토큰을 추출하여 검증하고, 유효한 토큰인 경우 인증 정보를 설정합니다.
  */
 @Slf4j
 @Component
@@ -51,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final FilterChain filterChain
     ) throws ServletException, IOException {
         try {
-            // Authorization 헤더에서 JWT 토큰 추출
+            // HttpOnly 쿠키 또는 Authorization 헤더에서 JWT 토큰 추출
             final String token = extractTokenFromRequest(request);
 
             // 토큰이 존재하고 현재 SecurityContext에 인증 정보가 없는 경우에만 처리
@@ -74,18 +75,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * HTTP 요청의 Authorization 헤더에서 Bearer 토큰을 추출합니다.
+     * HTTP 요청에서 JWT 토큰을 추출합니다.
+     * 우선순위: 1) HttpOnly 쿠키, 2) Authorization 헤더
      *
      * @param request HTTP 요청
      * @return 추출된 JWT 토큰, 없으면 null
      */
     private String extractTokenFromRequest(final HttpServletRequest request) {
-        final String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
+        // 1. HttpOnly 쿠키에서 토큰 추출 (보안 우선)
+        String token = extractTokenFromCookie(request);
+        if (token != null) {
+            log.debug("HttpOnly 쿠키에서 JWT 토큰 추출됨");
+            return token;
+        }
 
+        // 2. Authorization 헤더에서 토큰 추출 (백워드 호환성)
+        final String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(BEARER_PREFIX)) {
+            log.debug("Authorization 헤더에서 JWT 토큰 추출됨");
             return authorizationHeader.substring(BEARER_PREFIX.length());
         }
 
+        return null;
+    }
+
+    /**
+     * HTTP 요청의 쿠키에서 accessToken을 추출합니다.
+     *
+     * @param request HTTP 요청
+     * @return 추출된 JWT 토큰, 없으면 null
+     */
+    private String extractTokenFromCookie(final HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("accessToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
         return null;
     }
 

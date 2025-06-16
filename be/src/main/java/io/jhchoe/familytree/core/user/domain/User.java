@@ -110,14 +110,9 @@ public class User {
         AuthenticationType authenticationType,
         OAuth2Provider oAuth2Provider,
         UserRole role,
-        boolean deleted,
-        Long createdBy,
-        LocalDateTime createdAt,
-        Long modifiedBy,
-        LocalDateTime modifiedAt
+        boolean deleted
     ) {
-        return new User(null, email, name, profileUrl, authenticationType, oAuth2Provider, role, deleted,
-                createdBy, createdAt, modifiedBy, modifiedAt);
+        return new User(null, email, name, profileUrl, authenticationType, oAuth2Provider, role, deleted, null, null, null, null);
     }
 
     /**

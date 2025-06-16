@@ -106,11 +106,7 @@ class SaveFamilyControllerTest extends AcceptanceTestBase {
             AuthenticationType.OAUTH2,             
             OAuth2Provider.GOOGLE,                 
             UserRole.USER,                         
-            false,                                 
-            1L,                                    // 기본 생성자 ID
-            now,                                   
-            1L,                                    // 기본 수정자 ID
-            now                                    
+            false
         );
         
         UserJpaEntity userEntity = UserJpaEntity.ofOAuth2User(testUser);

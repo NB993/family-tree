@@ -1,12 +1,11 @@
 package io.jhchoe.familytree.common.auth.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jhchoe.familytree.common.auth.application.port.in.GenerateJwtTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.GenerateJwtTokenUseCase;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.dto.JwtTokenResponse;
-import io.jhchoe.familytree.common.auth.handler.OAuth2JwtSuccessHandler.OAuth2JwtLoginResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,17 +16,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("OAuth2JwtSuccessHandler 테스트")
@@ -47,23 +45,23 @@ class OAuth2JwtSuccessHandlerTest {
     
     @Captor
     private ArgumentCaptor<GenerateJwtTokenCommand> commandCaptor;
+    
+    @Captor
+    private ArgumentCaptor<Cookie> cookieCaptor;
+    
+    @Captor
+    private ArgumentCaptor<String> redirectUrlCaptor;
 
     private OAuth2JwtSuccessHandler handler;
-    private ObjectMapper objectMapper;
-    private StringWriter responseWriter;
 
     @BeforeEach
-    void setUp() throws Exception {
-        objectMapper = new ObjectMapper();
-        handler = new OAuth2JwtSuccessHandler(generateJwtTokenUseCase, objectMapper);
-        
-        responseWriter = new StringWriter();
-        given(response.getWriter()).willReturn(new PrintWriter(responseWriter));
+    void setUp() {
+        handler = new OAuth2JwtSuccessHandler(generateJwtTokenUseCase);
     }
 
     @Test
-    @DisplayName("OAuth2 로그인 성공 시 JWT 토큰을 발급하고 JSON 응답을 반환한다")
-    void on_authentication_success_generates_jwt_tokens_and_returns_json_response() throws Exception {
+    @DisplayName("OAuth2 로그인 성공 시 JWT 토큰을 HttpOnly 쿠키로 설정하고 프론트엔드로 리다이렉트한다")
+    void on_authentication_success_sets_httponly_cookies_and_redirects() throws Exception {
         // given
         final FTUser ftUser = FTUser.ofOAuth2User(
                 1L,
@@ -82,7 +80,7 @@ class OAuth2JwtSuccessHandlerTest {
         final JwtTokenResponse tokenResponse = JwtTokenResponse.of(
                 "access_token_123",
                 "refresh_token_456", 
-                3600L // 1시간
+                3600L
         );
         given(generateJwtTokenUseCase.generateToken(any(GenerateJwtTokenCommand.class)))
                 .willReturn(tokenResponse);
@@ -91,35 +89,58 @@ class OAuth2JwtSuccessHandlerTest {
         handler.onAuthenticationSuccess(request, response, authentication);
 
         // then
-        // HTTP 응답 헤더 검증
-        then(response).should().setContentType(MediaType.APPLICATION_JSON_VALUE);
-        then(response).should().setCharacterEncoding("UTF-8");
-        then(response).should().setStatus(HttpServletResponse.SC_OK);
-        
         // 토큰 생성 UseCase 호출 검증
         then(generateJwtTokenUseCase).should().generateToken(commandCaptor.capture());
         final GenerateJwtTokenCommand command = commandCaptor.getValue();
         assertThat(command.user()).isEqualTo(ftUser);
         
-        // JSON 응답 검증
-        final String jsonResponse = responseWriter.toString();
-        final OAuth2JwtLoginResponse loginResponse = objectMapper.readValue(jsonResponse, OAuth2JwtLoginResponse.class);
+        // HttpOnly 쿠키 설정 검증
+        then(response).should(times(2)).addCookie(cookieCaptor.capture());
+
+        var cookies = cookieCaptor.getAllValues();
+        assertThat(cookies).hasSize(2);
         
-        assertThat(loginResponse.success()).isTrue();
-        assertThat(loginResponse.message()).isEqualTo("로그인이 성공적으로 완료되었습니다.");
-        assertThat(loginResponse.tokenInfo()).isNotNull();
-        assertThat(loginResponse.tokenInfo().accessToken()).isEqualTo("access_token_123");
-        assertThat(loginResponse.tokenInfo().refreshToken()).isEqualTo("refresh_token_456");
-        assertThat(loginResponse.userInfo()).isNotNull();
-        assertThat(loginResponse.userInfo().id()).isEqualTo(1L);
-        assertThat(loginResponse.userInfo().email()).isEqualTo("test@example.com");
-        assertThat(loginResponse.userInfo().name()).isEqualTo("테스트 사용자");
-        assertThat(loginResponse.errorMessage()).isNull();
+        // Access Token 쿠키 검증
+        Cookie accessTokenCookie = cookies.stream()
+                .filter(cookie -> "accessToken".equals(cookie.getName()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("accessToken 쿠키가 설정되지 않았습니다"));
+        
+        assertThat(accessTokenCookie.getValue()).isEqualTo("access_token_123");
+        assertThat(accessTokenCookie.isHttpOnly()).isTrue();
+        assertThat(accessTokenCookie.getSecure()).isFalse(); // 개발환경
+        assertThat(accessTokenCookie.getPath()).isEqualTo("/");
+        assertThat(accessTokenCookie.getMaxAge()).isEqualTo(300); // 5분
+        
+        // Refresh Token 쿠키 검증
+        Cookie refreshTokenCookie = cookies.stream()
+                .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("refreshToken 쿠키가 설정되지 않았습니다"));
+        
+        assertThat(refreshTokenCookie.getValue()).isEqualTo("refresh_token_456");
+        assertThat(refreshTokenCookie.isHttpOnly()).isTrue();
+        assertThat(refreshTokenCookie.getSecure()).isFalse(); // 개발환경
+        assertThat(refreshTokenCookie.getPath()).isEqualTo("/");
+        assertThat(refreshTokenCookie.getMaxAge()).isEqualTo(7 * 24 * 60 * 60); // 7일
+        
+        // 리다이렉트 URL 검증 (성공 여부만 포함, 사용자 정보는 API로 조회)
+        then(response).should().sendRedirect(redirectUrlCaptor.capture());
+        String redirectUrl = redirectUrlCaptor.getValue();
+        
+        assertThat(redirectUrl).isEqualTo("http://localhost:3000/auth/callback?success=true");
+        
+        // 보안: 토큰과 개인정보가 URL에 포함되지 않았는지 확인
+        assertThat(redirectUrl).doesNotContain("access_token_123");
+        assertThat(redirectUrl).doesNotContain("refresh_token_456");
+        assertThat(redirectUrl).doesNotContain("userId");
+        assertThat(redirectUrl).doesNotContain("email");
+        assertThat(redirectUrl).doesNotContain("name");
     }
 
     @Test
-    @DisplayName("토큰 생성 중 오류 발생 시 에러 응답을 반환한다")
-    void on_token_generation_error_returns_error_response() throws Exception {
+    @DisplayName("토큰 생성 중 오류 발생 시 에러와 함께 프론트엔드로 리다이렉트한다")
+    void on_token_generation_error_redirects_with_error() throws Exception {
         // given
         final FTUser ftUser = FTUser.ofOAuth2User(
                 1L,
@@ -141,38 +162,41 @@ class OAuth2JwtSuccessHandlerTest {
         handler.onAuthenticationSuccess(request, response, authentication);
 
         // then
-        // HTTP 응답 헤더 검증 (에러 상태)
-        then(response).should().setContentType(MediaType.APPLICATION_JSON_VALUE);
-        then(response).should().setCharacterEncoding("UTF-8");
-        then(response).should().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        // 에러 리다이렉트 URL 검증
+        then(response).should().sendRedirect(redirectUrlCaptor.capture());
+        String redirectUrl = redirectUrlCaptor.getValue();
         
-        // JSON 에러 응답 검증
-        final String jsonResponse = responseWriter.toString();
-        final OAuth2JwtLoginResponse loginResponse = objectMapper.readValue(jsonResponse, OAuth2JwtLoginResponse.class);
+        assertThat(redirectUrl).contains("http://localhost:3000/auth/callback");
+        assertThat(redirectUrl).contains("success=false");
+        assertThat(redirectUrl).contains("error=%ED%86%A0%ED%81%B0+%EC%83%9D%EC%84%B1+%EC%8B%A4%ED%8C%A8"); // URL 인코딩됨
         
-        assertThat(loginResponse.success()).isFalse();
-        assertThat(loginResponse.message()).isEqualTo("로그인에 실패했습니다.");
-        assertThat(loginResponse.tokenInfo()).isNull();
-        assertThat(loginResponse.userInfo()).isNull();
-        assertThat(loginResponse.errorMessage()).isEqualTo("토큰 생성 중 오류가 발생했습니다. 다시 시도해주세요.");
+        // 쿠키가 설정되지 않았는지 확인 (토큰 생성 실패 시)
+        then(response).should(never()).addCookie(any(Cookie.class));
     }
 
     @Test
-    @DisplayName("ADMIN 권한 사용자의 JWT 토큰을 성공적으로 발급한다")
-    void generate_jwt_token_for_admin_user_successfully() throws Exception {
+    @DisplayName("정상적인 사용자라면 개인정보 없이 성공 리다이렉트만 수행한다")
+    void redirects_with_success_only_for_valid_user() throws Exception {
         // given
-        final FTUser adminUser = FTUser.ofJwtUser(
+        final FTUser ftUser = FTUser.ofOAuth2User(
                 2L,
-                "관리자",
-                "admin@example.com",
-                "ADMIN"
+                "홍길동 & 김철수",
+                "user+test@example.com",
+                OAuth2Provider.KAKAO,
+                Map.of(
+                    "id", 2L,
+                    "kakao_account", Map.of(
+                        "email", "user+test@example.com",
+                        "profile", Map.of("nickname", "홍길동 & 김철수")
+                    )
+                )
         );
-        given(authentication.getPrincipal()).willReturn(adminUser);
+        given(authentication.getPrincipal()).willReturn(ftUser);
         
         final JwtTokenResponse tokenResponse = JwtTokenResponse.of(
-                "admin_access_token",
-                "admin_refresh_token",
-                3600L // 1시간
+                "access_token_special",
+                "refresh_token_special",
+                3600L
         );
         given(generateJwtTokenUseCase.generateToken(any(GenerateJwtTokenCommand.class)))
                 .willReturn(tokenResponse);
@@ -181,13 +205,27 @@ class OAuth2JwtSuccessHandlerTest {
         handler.onAuthenticationSuccess(request, response, authentication);
 
         // then
-        final String jsonResponse = responseWriter.toString();
-        final OAuth2JwtLoginResponse loginResponse = objectMapper.readValue(jsonResponse, OAuth2JwtLoginResponse.class);
+        // 개인정보 없이 성공만 알리는 깔끔한 리다이렉트 URL 확인
+        then(response).should().sendRedirect(redirectUrlCaptor.capture());
+        String redirectUrl = redirectUrlCaptor.getValue();
+
+        assertThat(redirectUrl).isEqualTo("http://localhost:3000/auth/callback?success=true");
+
+        // 쿠키에는 토큰이 정상적으로 설정되었는지 확인 (AT, RT 각 한 번씩)
+        then(response).should(times(2)).addCookie(cookieCaptor.capture());
+
+        var cookies = cookieCaptor.getAllValues();
+        Cookie accessToken = cookies.stream()
+                .filter(cookie -> "accessToken".equals(cookie.getName()))
+                .findFirst()
+                .orElseThrow();
+
+        Cookie refreshToken = cookies.stream()
+            .filter(cookie -> "refreshToken".equals(cookie.getName()))
+            .findFirst()
+            .orElseThrow();
         
-        assertThat(loginResponse.success()).isTrue();
-        assertThat(loginResponse.userInfo().id()).isEqualTo(2L);
-        assertThat(loginResponse.userInfo().email()).isEqualTo("admin@example.com");
-        assertThat(loginResponse.userInfo().name()).isEqualTo("관리자");
-        assertThat(loginResponse.tokenInfo().accessToken()).isEqualTo("admin_access_token");
+        assertThat(accessToken.getValue()).isEqualTo("access_token_special");
     }
+
 }

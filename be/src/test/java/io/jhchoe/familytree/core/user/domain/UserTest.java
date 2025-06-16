@@ -285,11 +285,7 @@ class UserTest {
             authenticationType,
             oAuth2Provider,
             role,
-            false,
-            null,
-            null,
-            null,
-            null
+            false
         );
 
         // then

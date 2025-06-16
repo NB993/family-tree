@@ -51,11 +51,7 @@ class TokenControllerTest extends AcceptanceTestBase {
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
-            false,
-            null,
-            LocalDateTime.now(),
-            null,
-            LocalDateTime.now()
+            false
         );
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
         
@@ -153,11 +149,7 @@ class TokenControllerTest extends AcceptanceTestBase {
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
-            false,
-            null,
-            LocalDateTime.now(),
-            null,
-            LocalDateTime.now()
+            false
         );
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
         

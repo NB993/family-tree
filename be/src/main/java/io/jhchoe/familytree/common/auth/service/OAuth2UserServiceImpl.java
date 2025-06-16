@@ -89,7 +89,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
      */
     private UserJpaEntity createUser(OAuth2UserInfo userInfo, OAuth2Provider provider) {
         User user = User.newUser(userInfo.getEmail(), userInfo.getName(), userInfo.getImageUrl(),
-                AuthenticationType.OAUTH2, provider, UserRole.USER, false, 0L, LocalDateTime.now(), 0L, LocalDateTime.now());
+                AuthenticationType.OAUTH2, provider, UserRole.USER, false);
 
         return userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
     }
