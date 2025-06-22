@@ -2,14 +2,21 @@ package io.jhchoe.familytree.common.auth.application.service;
 
 import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenUseCase;
 import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenCommand;
+import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenUseCase;
 import io.jhchoe.familytree.common.auth.config.JwtProperties;
+import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
+import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
+import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.auth.dto.JwtTokenResponse;
 import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.common.auth.exception.InvalidTokenException;
 import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
 import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.core.user.application.port.out.FindUserPort;
+import io.jhchoe.familytree.core.user.domain.User;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +54,9 @@ class ModifyJwtTokenServiceTest {
     @Mock
     private DeleteRefreshTokenUseCase deleteRefreshTokenUseCase;
 
+    @Mock
+    private FindUserPort findUserPort;
+
     @Test
     @DisplayName("유효한 Refresh Token으로 토큰 갱신 시 새로운 토큰이 반환됩니다")
     void modify_returns_new_tokens_when_valid_refresh_token() {
@@ -57,10 +67,13 @@ class ModifyJwtTokenServiceTest {
         Long userId = 1L;
         String email = "test@example.com";
         String name = "테스트사용자";
+        String profileUrl = "https://example.com";
         String newAccessToken = "new.access.token";
         String newRefreshToken = "new.refresh.token";
         Long accessTokenExpiration = 3600L;
         Long refreshTokenExpiration = 604800L;
+
+        User user = User.withId(1L, email, name, profileUrl, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, null, null, null, null);
 
         // Mocking: Refresh Token이 유효한 토큰임을 모킹
         when(jwtTokenUtil.validateToken(validRefreshToken)).thenReturn(true);
@@ -80,7 +93,10 @@ class ModifyJwtTokenServiceTest {
         
         // Mocking: RefreshToken 삭제 및 저장 모킹
         doNothing().when(deleteRefreshTokenUseCase).delete(any());
-        doNothing().when(saveRefreshTokenUseCase).save(any());
+        when(saveRefreshTokenUseCase.save(any(SaveRefreshTokenCommand.class))).thenReturn(anyLong());
+
+        // Mocking: User 조회 모킹
+        when(findUserPort.findById(1L)).thenReturn(Optional.of(user));
 
         // when
         JwtTokenResponse response = modifyJwtTokenService.modify(command);
