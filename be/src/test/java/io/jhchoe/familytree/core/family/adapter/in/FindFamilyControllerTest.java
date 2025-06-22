@@ -17,8 +17,6 @@ import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaR
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
-import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
-import io.jhchoe.familytree.core.shared.valueobject.Nationality;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;

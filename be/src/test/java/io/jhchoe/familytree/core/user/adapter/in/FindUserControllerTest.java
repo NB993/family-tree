@@ -4,7 +4,6 @@ import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.exception.FTException;
-import io.jhchoe.familytree.config.FTMockUser;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.core.user.application.port.in.FindUserByNameQuery;
 import io.jhchoe.familytree.core.user.application.port.in.FindUserUseCase;

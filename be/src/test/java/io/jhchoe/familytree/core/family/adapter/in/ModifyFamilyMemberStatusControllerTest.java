@@ -2,7 +2,6 @@ package io.jhchoe.familytree.core.family.adapter.in;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
-import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaRepository;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;

@@ -5,15 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatusHistory;
-import io.jhchoe.familytree.helper.AdapterTestBase;
+import io.jhchoe.familytree.helper.TestcontainersDataJpaTestBase;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("[Unit Test] FamilyMemberStatusHistoryAdapterTest")
-class FamilyMemberStatusHistoryAdapterTest extends AdapterTestBase {
+@DisplayName("[Adapter Test] FamilyMemberStatusHistoryAdapterTest")
+class FamilyMemberStatusHistoryAdapterTest extends TestcontainersDataJpaTestBase {
 
     @Autowired
     private FamilyMemberStatusHistoryJpaRepository familyMemberStatusHistoryJpaRepository;

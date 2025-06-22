@@ -1,18 +1,10 @@
 package io.jhchoe.familytree.core.family.adapter.in;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
-import static org.hamcrest.Matchers.equalTo;
 
-import io.jhchoe.familytree.config.WithMockOAuth2User;
-import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaEntity;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaRepository;
-import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaEntity;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
-import io.jhchoe.familytree.core.family.domain.Family;
-import io.jhchoe.familytree.core.family.domain.FamilyMember;
-import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

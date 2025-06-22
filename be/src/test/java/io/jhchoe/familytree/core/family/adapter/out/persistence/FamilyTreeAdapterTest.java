@@ -6,7 +6,7 @@ import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationshipType;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
-import io.jhchoe.familytree.helper.AdapterTestBase;
+import io.jhchoe.familytree.helper.TestcontainersDataJpaTestBase;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("[Unit Test] FamilyTreeAdapterTest")
-class FamilyTreeAdapterTest extends AdapterTestBase {
+@DisplayName("[Adapter Test] FamilyTreeAdapterTest")
+class FamilyTreeAdapterTest extends TestcontainersDataJpaTestBase {
 
     @Autowired
     private FamilyJpaRepository familyJpaRepository;

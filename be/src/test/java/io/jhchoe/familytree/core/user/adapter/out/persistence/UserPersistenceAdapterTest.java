@@ -5,26 +5,22 @@ import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.core.user.domain.User;
+import io.jhchoe.familytree.helper.TestcontainersDataJpaTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("[Unit Test] UserPersistenceAdapter")
-@DataJpaTest
-@ActiveProfiles("test")
+@DisplayName("[Adapter Test] UserPersistenceAdapter")
 @Import(UserPersistenceAdapter.class)
-class UserPersistenceAdapterTest {
+class UserPersistenceAdapterTest extends TestcontainersDataJpaTestBase {
 
     @Autowired
     private TestEntityManager entityManager;

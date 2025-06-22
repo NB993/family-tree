@@ -27,7 +27,8 @@ public class AnnouncementJpaEntity extends ModifierBaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "content")
     private String content;
 
     /**

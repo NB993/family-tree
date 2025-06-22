@@ -1,7 +1,7 @@
 package io.jhchoe.familytree.common.auth.adapter.out.persistence;
 
 import io.jhchoe.familytree.common.auth.domain.RefreshToken;
-import io.jhchoe.familytree.helper.AdapterTestBase;
+import io.jhchoe.familytree.helper.TestcontainersDataJpaTestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,8 +12,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("[Unit Test] RefreshTokenAdapterTest")
-class RefreshTokenAdapterTest extends AdapterTestBase {
+@DisplayName("[Adapter Test] RefreshTokenAdapterTest")
+class RefreshTokenAdapterTest extends TestcontainersDataJpaTestBase {
 
     @Autowired
     private RefreshTokenJpaRepository refreshTokenJpaRepository;

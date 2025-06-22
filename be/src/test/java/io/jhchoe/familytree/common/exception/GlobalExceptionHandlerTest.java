@@ -2,7 +2,6 @@ package io.jhchoe.familytree.common.exception;
 
 import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.common.exception.ControllerStub.TestRequestBody;
-import io.jhchoe.familytree.config.FTMockUser;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -10,7 +9,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 import static org.hamcrest.Matchers.greaterThan;

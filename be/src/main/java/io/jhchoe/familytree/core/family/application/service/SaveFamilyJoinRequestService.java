@@ -66,7 +66,7 @@ public class SaveFamilyJoinRequestService implements SaveFamilyJoinRequestUseCas
 
         // 4. 가입 가능 수 제한 확인 - 활성 상태의 FamilyMember 수로 확인
         int activeMemberCount = findFamilyMemberPort.countActiveByUserId(command.getRequesterId());
-        if (activeMemberCount > MAX_FAMILY_JOIN_LIMIT) {
+        if (activeMemberCount >= MAX_FAMILY_JOIN_LIMIT) {
             throw new FTException(FamilyExceptionCode.EXCEEDED_FAMILY_JOIN_LIMIT);
         }
 

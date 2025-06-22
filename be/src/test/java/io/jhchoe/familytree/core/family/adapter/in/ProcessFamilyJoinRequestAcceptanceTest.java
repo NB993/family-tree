@@ -2,7 +2,6 @@ package io.jhchoe.familytree.core.family.adapter.in;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 import io.jhchoe.familytree.config.WithMockOAuth2User;

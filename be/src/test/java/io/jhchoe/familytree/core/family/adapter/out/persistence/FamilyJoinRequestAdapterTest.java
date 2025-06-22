@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequest;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequestStatus;
-import io.jhchoe.familytree.helper.AdapterTestBase;
+import io.jhchoe.familytree.helper.TestcontainersDataJpaTestBase;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +14,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("[Unit Test] FamilyJoinRequestAdapterTest")
-class FamilyJoinRequestAdapterTest extends AdapterTestBase {
+@DisplayName("[Adapter Test] FamilyJoinRequestAdapterTest")
+class FamilyJoinRequestAdapterTest extends TestcontainersDataJpaTestBase {
 
     @Autowired
     private FamilyJoinRequestJpaRepository familyJoinRequestJpaRepository;
