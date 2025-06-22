@@ -38,6 +38,7 @@ out/
 
 *.yml
 !docker-compose.yml
+!application-testcontainers.yml
 
 # Docker volumes (local data)
 docker/mysql/data/
