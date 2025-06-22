@@ -1,7 +1,7 @@
 package io.jhchoe.familytree.common.auth.controller;
 
-import io.jhchoe.familytree.common.auth.application.port.in.DeleteJwtTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.DeleteJwtTokenUseCase;
+import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenUseCase;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
@@ -72,7 +72,7 @@ public class TokenController {
     ) {
         log.debug("로그아웃 요청: [User ID: {}]", user.getId());
 
-        DeleteJwtTokenCommand command = new DeleteJwtTokenCommand(user.getId());
+        DeleteRefreshTokenCommand command = new DeleteRefreshTokenCommand(user.getId());
         deleteJwtTokenUseCase.delete(command);
 
         log.debug("로그아웃 완료: [User ID: {}]", user.getId());

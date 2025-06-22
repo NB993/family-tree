@@ -1,7 +1,7 @@
 package io.jhchoe.familytree.common.auth.application.service;
 
-import io.jhchoe.familytree.common.auth.application.port.in.DeleteJwtTokenCommand;
-import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenUseCase;
+import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenCommand;
+import io.jhchoe.familytree.common.auth.application.port.out.DeleteRefreshTokenPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +16,7 @@ import static org.mockito.Mockito.verify;
 
 /**
  * JWT 토큰 삭제 서비스 단위 테스트
+ * 로그아웃 기능을 담당하는 DeleteJwtTokenService를 테스트합니다.
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("[Unit Test] DeleteJwtTokenServiceTest")
@@ -25,23 +26,23 @@ class DeleteJwtTokenServiceTest {
     private DeleteJwtTokenService deleteJwtTokenService;
 
     @Mock
-    private DeleteRefreshTokenUseCase deleteRefreshTokenUseCase;
+    private DeleteRefreshTokenPort deleteRefreshTokenPort;
 
     @Test
     @DisplayName("유효한 사용자 ID로 JWT 토큰 삭제 시 성공합니다")
     void delete_success_when_valid_user_id() {
         // given
         Long userId = 1L;
-        DeleteJwtTokenCommand command = new DeleteJwtTokenCommand(userId);
+        DeleteRefreshTokenCommand command = new DeleteRefreshTokenCommand(userId);
 
-        // Mocking: RefreshToken 삭제 모킹
-        doNothing().when(deleteRefreshTokenUseCase).delete(any());
+        // Mocking: RefreshToken 삭제 성공
+        doNothing().when(deleteRefreshTokenPort).deleteByUserId(userId);
 
         // when
         deleteJwtTokenService.delete(command);
 
         // then
-        verify(deleteRefreshTokenUseCase).delete(any());
+        verify(deleteRefreshTokenPort).deleteByUserId(userId);
     }
 
     @Test

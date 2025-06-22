@@ -1,7 +1,7 @@
 package io.jhchoe.familytree.common.auth.application.service;
 
+import io.jhchoe.familytree.common.auth.application.port.in.DeleteJwtTokenUseCase;
 import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenCommand;
-import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenUseCase;
 import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenUseCase;
 import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenCommand;
@@ -30,7 +30,7 @@ public class ModifyJwtTokenService implements ModifyJwtTokenUseCase {
     private final JwtProperties jwtProperties;
     private final FindUserPort findUserPort;
     private final SaveRefreshTokenUseCase saveRefreshTokenUseCase;
-    private final DeleteRefreshTokenUseCase deleteRefreshTokenUseCase;
+    private final DeleteJwtTokenUseCase deleteJwtTokenUseCase;
 
     /**
      * {@inheritDoc}
@@ -49,7 +49,7 @@ public class ModifyJwtTokenService implements ModifyJwtTokenUseCase {
         String name = jwtTokenUtil.extractName(command.refreshToken());
 
         // 3. 기존 Refresh Token 무효화 (토큰 재사용 방지)
-        deleteRefreshTokenUseCase.delete(new DeleteRefreshTokenCommand(userId));
+        deleteJwtTokenUseCase.delete(new DeleteRefreshTokenCommand(userId));
 
         // 4. 토큰에서 사용자 ID를 추출하여 User 조회 후 FTUser로 변환
         User user = findUserPort.findById(userId)

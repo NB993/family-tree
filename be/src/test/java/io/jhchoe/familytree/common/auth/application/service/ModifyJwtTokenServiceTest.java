@@ -1,6 +1,6 @@
 package io.jhchoe.familytree.common.auth.application.service;
 
-import io.jhchoe.familytree.common.auth.application.port.in.DeleteRefreshTokenUseCase;
+import io.jhchoe.familytree.common.auth.application.port.in.DeleteJwtTokenUseCase;
 import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenUseCase;
@@ -52,7 +52,7 @@ class ModifyJwtTokenServiceTest {
     private SaveRefreshTokenUseCase saveRefreshTokenUseCase;
 
     @Mock
-    private DeleteRefreshTokenUseCase deleteRefreshTokenUseCase;
+    private DeleteJwtTokenUseCase deleteJwtTokenUseCase;
 
     @Mock
     private FindUserPort findUserPort;
@@ -92,7 +92,7 @@ class ModifyJwtTokenServiceTest {
         when(jwtProperties.getRefreshTokenExpiration()).thenReturn(refreshTokenExpiration);
         
         // Mocking: RefreshToken 삭제 및 저장 모킹
-        doNothing().when(deleteRefreshTokenUseCase).delete(any());
+        doNothing().when(deleteJwtTokenUseCase).delete(any());
         when(saveRefreshTokenUseCase.save(any(SaveRefreshTokenCommand.class))).thenReturn(anyLong());
 
         // Mocking: User 조회 모킹
@@ -107,7 +107,7 @@ class ModifyJwtTokenServiceTest {
         assertThat(response.tokenType()).isEqualTo("Bearer");
         assertThat(response.expiresIn()).isEqualTo(accessTokenExpiration);
         
-        verify(deleteRefreshTokenUseCase).delete(any());
+        verify(deleteJwtTokenUseCase).delete(any());
         verify(saveRefreshTokenUseCase).save(any());
     }
 
