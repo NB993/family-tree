@@ -37,6 +37,7 @@ out/
 .vscode/
 
 *.yml
+!docker-compose.yml
 
 # Docker volumes (local data)
 docker/mysql/data/
