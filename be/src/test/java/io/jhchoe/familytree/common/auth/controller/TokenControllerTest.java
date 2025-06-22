@@ -12,6 +12,8 @@ import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
 import io.jhchoe.familytree.core.user.domain.User;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
+import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import java.time.LocalDateTime;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -42,7 +45,7 @@ class TokenControllerTest extends AcceptanceTestBase {
 
     @Test
     @DisplayName("쿠키의 유효한 Refresh Token으로 토큰 갱신 시 200 OK와 새로운 토큰을 반환합니다")
-    void modify_returns_200_and_new_tokens_when_valid_refresh_token_in_cookie() {
+    void modify_returns_200_and_new_tokens_when_valid_refresh_token_in_cookie() throws InterruptedException {
         // given
         User user = User.newUser(
             "test@example.com", 
@@ -65,6 +68,9 @@ class TokenControllerTest extends AcceptanceTestBase {
         );
         refreshTokenJpaRepository.save(RefreshTokenJpaEntity.from(refreshToken));
 
+        // 시간 차이를 강제로 만들기
+        Thread.sleep(1000);  // 1000ms 대기
+
         // when & then - 토큰 갱신 요청 성공 검증  
         given()
             .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
@@ -80,10 +86,9 @@ class TokenControllerTest extends AcceptanceTestBase {
             .body("tokenType", equalTo("Bearer"))
             .body("expiresIn", notNullValue())
             .cookie("refreshToken", notNullValue());
-            
-        // 참고: 쿠키 추출은 MockMvc 환경에서 기술적 제약으로 생략
-        // 하지만 위의 .cookie("refreshToken", notNullValue()) 검증으로 
-        // 새로운 RT가 쿠키로 설정됨을 확인할 수 있음
+
+        RefreshTokenJpaEntity newRefreshToken = refreshTokenJpaRepository.findByUserId(savedUser.getId()).get();
+        assertThat(newRefreshToken.getTokenHash()).isNotEqualTo(validRefreshToken);
     }
 
     @Test
