@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("가족 구성원-관계 조합 객체 테스트")
+@DisplayName("[Unit Test] FamilyMembersWithRelationshipsResponse")
 class FamilyMembersWithRelationshipsResponseTest {
     
     @Test

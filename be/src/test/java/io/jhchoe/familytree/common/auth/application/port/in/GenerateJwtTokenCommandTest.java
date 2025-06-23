@@ -11,7 +11,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("GenerateJwtTokenCommand 테스트")
+@DisplayName("[Unit Test] GenerateJwtTokenCommand")
 class GenerateJwtTokenCommandTest {
 
     @Test

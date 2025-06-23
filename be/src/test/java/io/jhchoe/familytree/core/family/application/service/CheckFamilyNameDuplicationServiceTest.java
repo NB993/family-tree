@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
  * CheckFamilyNameDuplicationService 단위 테스트
  */
 @ExtendWith(MockitoExtension.class)
+@DisplayName("[Unit Test] CheckFamilyNameDuplicationService")
 class CheckFamilyNameDuplicationServiceTest {
 
     @Mock

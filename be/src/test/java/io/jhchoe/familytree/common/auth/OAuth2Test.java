@@ -17,7 +17,7 @@ import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 
-@DisplayName("[통합 테스트] OAuth2 인증")
+@DisplayName("[Acceptance Test] OAuth2 인증")
 class OAuth2Test extends AcceptanceTestBase {
 
     @Nested

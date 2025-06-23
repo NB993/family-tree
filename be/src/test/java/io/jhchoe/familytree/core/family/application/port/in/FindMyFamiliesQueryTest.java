@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 /**
  * FindMyFamiliesQuery 클래스의 단위 테스트입니다.
  */
+@DisplayName("[Unit Test] FindMyFamiliesQuery")
 class FindMyFamiliesQueryTest {
 
     @Test

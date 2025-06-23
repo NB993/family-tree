@@ -26,7 +26,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("GenerateJwtTokenService 테스트")
+@DisplayName("[Unit Test] GenerateJwtTokenService")
 class GenerateJwtTokenServiceTest {
 
     @Mock

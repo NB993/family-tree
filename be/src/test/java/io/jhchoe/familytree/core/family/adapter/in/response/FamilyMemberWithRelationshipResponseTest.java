@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("가족 구성원과 관계 응답 DTO 테스트")
+@DisplayName("[Unit Test] FamilyMemberWithRelationshipResponse(가족 구성원과 관계 응답 DTO)")
 class FamilyMemberWithRelationshipResponseTest {
     
     @Test

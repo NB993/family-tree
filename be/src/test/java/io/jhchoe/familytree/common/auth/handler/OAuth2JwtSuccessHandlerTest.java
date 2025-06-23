@@ -28,7 +28,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("OAuth2JwtSuccessHandler 테스트")
+@DisplayName("[Unit Test] OAuth2JwtSuccessHandler")
 class OAuth2JwtSuccessHandlerTest {
 
     @Mock

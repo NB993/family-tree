@@ -27,6 +27,7 @@ ex) ./gradlew test --tests "*.UserControllerDocsTest" -PincludeTags=user-docs
 기능 2. 테스트 그룹화: 유사한 특성이나 목적을 가진 테스트들을 논리적으로 그룹화 가능.
 기능 3. 빌드 프로세스 커스터마이징: Gradle이나 Maven에서 태그를 기반으로 특정 테스트 세트만 실행하도록 설정 가능.
  */
+@DisplayName("[Docs Test] UserControllerDocsTest")
 public class UserControllerDocsTest extends ApiDocsTestBase {
 
     @Test
