@@ -1,43 +1,44 @@
-export interface FamilyMember {
+/**
+ * 가족 트리 시각화 관련 타입 정의
+ */
+
+import { FamilyMember, FamilyMemberRelationship } from './family';
+
+export interface FamilyTreeNode {
   id: string;
-  name: string;
-  birthDate: string;
-  death: boolean;
-  deathDate?: string;
-  //   gender: "MALE" | "FEMALE";
-  parentId?: string;
-  spouseId?: string;
-  description?: string;
+  member: FamilyMember;
+  children: FamilyTreeNode[];
+  parents: FamilyTreeNode[];
+  relationships: FamilyMemberRelationship[];
+  level: number;
+  generation: number;
+}
+
+export interface FamilyTreeGeneration {
+  level: number;
+  members: FamilyTreeNode[];
+}
+
+export interface FamilyTreeRelation {
+  fromNodeId: string;
+  toNodeId: string;
+  relationshipType: string;
+  customRelationship?: string;
+}
+
+export interface FamilyTreeMetadata {
+  totalMembers: number;
+  generations: number;
+  maxGenerationSize: number;
+  rootMemberId?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Family {
-  members: FamilyMember[];
-  relationships: {
-    parentChild: Array<{
-      parentId: string;
-      childId: string;
-      relationshipType: "BIOLOGICAL" | "ADOPTED";
-    }>;
-    marriage: Array<{
-      spouse1Id: string;
-      spouse2Id: string;
-      marriageDate?: string;
-      divorceDate?: string;
-    }>;
-  };
-}
-
-export interface CreateFamilyMemberDto {
-  name: string;
-  birthDate: string;
-  gender: "MALE" | "FEMALE";
-  parentId?: string;
-  spouseId?: string;
-  description?: string;
-}
-
-export interface UpdateFamilyMemberDto extends Partial<CreateFamilyMemberDto> {
-  id: string;
+export interface FamilyTree {
+  familyId: string;
+  rootNode?: FamilyTreeNode;
+  generations: FamilyTreeGeneration[];
+  relationships: FamilyTreeRelation[];
+  metadata: FamilyTreeMetadata;
 }

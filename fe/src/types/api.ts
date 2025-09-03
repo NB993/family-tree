@@ -10,3 +10,10 @@ export interface PaginatedResponse<T> {
   size: number;
   number: number;
 }
+
+export interface CursorPageResponse<T> {
+  content: T[];
+  hasNext: boolean;
+  nextCursor?: string;
+  totalElements: number;
+}

@@ -1,0 +1,224 @@
+/**
+ * FamilyMemberCard 컴포넌트 스타일
+ */
+
+.ft-family-member-card {
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ft-family-member-card:hover {
+  transform: translateY(-1px);
+}
+
+.ft-family-member-card__content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.ft-family-member-card__avatar-section {
+  flex-shrink: 0;
+}
+
+.ft-family-member-card__avatar {
+  position: relative;
+  width: 56px;
+  height: 56px;
+}
+
+.ft-family-member-card__avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #FFEDD5;
+  transition: border-color 300ms ease;
+}
+
+.ft-family-member-card:hover .ft-family-member-card__avatar-image {
+  border-color: #FED7AA;
+}
+
+.ft-family-member-card__avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F97316 0%, #FB923C 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #FFEDD5;
+  transition: border-color 300ms ease;
+}
+
+.ft-family-member-card:hover .ft-family-member-card__avatar-fallback {
+  border-color: #FED7AA;
+}
+
+.ft-family-member-card__emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.ft-family-member-card__avatar-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+  background: #FFEDD5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #F97316;
+  border: 2px solid #FFFFFF;
+}
+
+.ft-family-member-card__avatar-badge svg {
+  width: 10px;
+  height: 10px;
+}
+
+.ft-family-member-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ft-family-member-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.ft-family-member-card__name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #171717;
+  margin: 0;
+}
+
+.ft-family-member-card__relationship {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: #C2410C;
+  background: #FFEDD5;
+  border: 1px solid #FED7AA;
+  white-space: nowrap;
+}
+
+.ft-family-member-card__relationship--unset {
+  color: #B45309;
+  background: #FEF3C7;
+  border-color: #FDE68A;
+}
+
+.ft-family-member-card__details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+  color: #525252;
+}
+
+.ft-family-member-card__age {
+  font-weight: 500;
+}
+
+.ft-family-member-card__separator {
+  color: #A3A3A3;
+}
+
+.ft-family-member-card__birth-date {
+  color: #737373;
+}
+
+.ft-family-member-card__contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+}
+
+.ft-family-member-card__contact svg {
+  width: 16px;
+  height: 16px;
+  color: #A3A3A3;
+  flex-shrink: 0;
+}
+
+.ft-family-member-card__contact-text {
+  font-weight: 500;
+  color: #525252;
+}
+
+.ft-family-member-card__contact-text--none {
+  color: #A3A3A3;
+}
+
+.ft-family-member-card__contact-text--unsync {
+  color: #D97706;
+}
+
+.ft-family-member-card__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Compact variant */
+.ft-family-member-card--compact .ft-family-member-card__avatar {
+  width: 48px;
+  height: 48px;
+}
+
+.ft-family-member-card--compact .ft-family-member-card__name {
+  font-size: 1rem;
+}
+
+.ft-family-member-card--compact .ft-family-member-card__relationship {
+  font-size: 0.75rem;
+}
+
+.ft-family-member-card--compact .ft-family-member-card__content {
+  gap: 12px;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 767px) {
+  .ft-family-member-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .ft-family-member-card__name {
+    font-size: 1rem;
+  }
+  
+  .ft-family-member-card__relationship {
+    align-self: flex-start;
+  }
+  
+  .ft-family-member-card__details {
+    font-size: 0.8125rem;
+  }
+  
+  .ft-family-member-card__contact {
+    font-size: 0.8125rem;
+    margin-bottom: 12px;
+  }
+  
+  .ft-family-member-card__actions {
+    margin-top: 8px;
+  }
+  
+  .ft-family-member-card--compact .ft-family-member-card__content {
+    gap: 10px;
+  }
+}

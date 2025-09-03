@@ -1,28 +1,7 @@
 import axios from "axios";
 import type {AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError} from "axios";
-import {ApiError, FieldError} from "../types/error";
+import {ApiError, FieldError, ErrorResponse} from "../types/error";
 
-/**
- * API 요청에서 실패 시 반환되는 에러를 설명하는 인터페이스입니다.
- * 서버의 ErrorResponse 클래스 구조와 대응됩니다.
- *
- * 이 인터페이스는 API나 서비스로부터 반환된 에러 세부 정보를 캡슐화하여 제공합니다.
- * `error` 속성은 에러의 성격 및 원인에 대한 중심 정보를 포함합니다.
- *
- * 속성 설명:
- * - `code`: 에러 유형 또는 범주를 고유하게 식별하는 문자열입니다. ex) 'C001'
- * - `message`: 에러를 설명하는 사람 읽을 수 있는 메시지입니다.
- * - `traceId`: 요청을 추적하기 위한 고유 식별자입니다.
- * - `validations` (선택): 검증 실패에 대한 추가적인 문맥을 제공하는 필드별 에러 배열입니다.
- */
-interface ErrorResponse {
-  error: {
-    code: string;
-    message: string;
-    traceId: string;
-    validations?: FieldError[];
-  };
-}
 
 /**
  * API 요청을 관리하는 클라이언트 클래스.
@@ -41,7 +20,7 @@ export class ApiClient {
    */
   private constructor() {
     this.client = axios.create({
-      baseURL: process.env.REACT_APP_API_URL,
+      baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8080',
       timeout: 10000,
       headers: {
         "Content-Type": "application/json",
@@ -79,17 +58,55 @@ export class ApiClient {
    * @private
    */
   private setupInterceptors(): void {
-    // 요청 인터셉터: HTTP 요청이 실제로 전송되기 전에 발생하는 에러를 처리
-    // 예: 잘못된 URL 형식, 요청 헤더 설정 오류, 요청 데이터 변환 오류, 네트워크 연결 실패
+    // 요청 인터셉터: 쿠키 자동 포함 및 CSRF 보호
     this.client.interceptors.request.use(
-        (config: InternalAxiosRequestConfig) => config,
+        (config: InternalAxiosRequestConfig) => {
+          // 쿠키 자동 포함 (HttpOnly 쿠키의 JWT 토큰)
+          config.withCredentials = true;
+          
+          // 백업: localStorage에서 JWT 토큰도 확인 (마이그레이션 기간 동안)
+          const token = localStorage.getItem('accessToken');
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+          return config;
+        },
         (error: AxiosError) => Promise.reject(error)
     );
 
     // 응답 인터셉터에서 에러 처리를 위한 설정
     this.client.interceptors.response.use(
         (response: AxiosResponse) => response,
-        (error: AxiosError<ErrorResponse>) => {
+        async (error: AxiosError<ErrorResponse>) => {
+          const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+          
+          // 401 에러이고 아직 재시도하지 않은 경우
+          if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            
+            try {
+              // 토큰 갱신 시도
+              const { AuthService } = await import('../api/services/authService');
+              const authService = AuthService.getInstance();
+              const tokenResponse = await authService.refreshAccessToken();
+              
+              // 새로운 Access Token 저장
+              authService.saveAccessToken(tokenResponse.accessToken);
+              
+              // 원래 요청에 새 토큰 적용
+              originalRequest.headers.Authorization = `Bearer ${tokenResponse.accessToken}`;
+              
+              // 원래 요청 재시도
+              return this.client(originalRequest);
+            } catch (refreshError) {
+              // 토큰 갱신 실패 - 로그인 페이지로 이동
+              const { AuthService } = await import('../api/services/authService');
+              AuthService.getInstance().clearAllAuthData();
+              window.location.href = '/login';
+              return Promise.reject(refreshError);
+            }
+          }
+          
           if (error.response) {
             const {status, data} = error.response;
             const apiError: ApiError = {
@@ -103,6 +120,8 @@ export class ApiClient {
             if (this.errorHandler) {
               this.errorHandler(apiError);
             }
+            
+            return Promise.reject(apiError);
           }
 
           if (error.request) {
@@ -112,6 +131,8 @@ export class ApiClient {
 
           console.error("exception: ", error.message);
           //todo Unexpected Exception을 처리할 모달 노출
+          
+          return Promise.reject(error);
         }
     );
   }
@@ -159,6 +180,23 @@ export class ApiClient {
       config?: InternalAxiosRequestConfig
   ): Promise<T> {
     const response = await this.client.put<T>(url, data, config);
+    return response.data;
+  }
+
+  /**
+   * HTTP PATCH 요청을 보냅니다.
+   * @template T 요청 결과로 반환받을 데이터의 타입.
+   * @param {string} url 요청할 URL.
+   * @param {unknown} [data] 요청에 포함할 데이터.
+   * @param {InternalAxiosRequestConfig} [config] 추가 요청 설정.
+   * @returns {Promise<T>} 요청 결과 데이터를 포함한 Promise.
+   */
+  public async patch<T>(
+      url: string,
+      data?: unknown,
+      config?: InternalAxiosRequestConfig
+  ): Promise<T> {
+    const response = await this.client.patch<T>(url, data, config);
     return response.data;
   }
 

@@ -509,6 +509,9 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -592,7 +595,7 @@ Content-Length: 130
 <h5 id="_http_요청_2"><a class="link" href="#_http_요청_2">HTTP 요청</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/family?_csrf=0iQ1w35FwfOFuvkGtmxsOBhDNDYlR4CufrMmFq5g0eoHDfXmtEEG-xpwpZKog88zhUFYCygmGVQVfrCDTIUWJpkC449jNcPR HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/families?_csrf=v_InqEaVQwFKBOSArh-dPPZSR9uxTeIlZAR_RJ3YzQY2ASC2i8MSzHf2e2VnNIXmmjKpDMFrarqIe9IIXTFPfK7orDFTNxDT HTTP/1.1
 Content-Type: application/json
 Content-Type: application/json
 Content-Length: 134
@@ -645,6 +648,9 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -672,7 +678,7 @@ Content-Length: 14
 <h6 id="_http_요청_3"><a class="link" href="#_http_요청_3">HTTP 요청</a></h6>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/family?_csrf=NaW3bF7K5rzjcz-_GOIvZ-nnJyi622DXMjX98XaSYxk1LODQA8GDDm2ugITOSwbdfs8bV93QCkqC7gP6B1ebxRemW3wGFNDp HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/families?_csrf=I36jfxhoiqibg699fbZMOsezZAxJDgLsD3RvcbDKn_HYf2M8Qk-aSnkM7J-2tpofSZt4WPKHSTUrNzLBPkVfRdX4_sO6TQUM HTTP/1.1
 Content-Type: application/json
 Content-Type: application/json
 Content-Length: 17
@@ -689,6 +695,9 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -696,15 +705,15 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: SAMEORIGIN
-Content-Length: 236
+Content-Length: 250
 
 {
   "code" : "400",
   "message" : "입력 조건을 위반하였습니다.",
-  "traceId" : "02fe7bbc-509f-4e65-8e79-49cf9b197d26",
+  "traceId" : "98cb7253-a05f-45f4-8d72-1bd749675d1f",
   "validations" : [ {
     "field" : "name",
-    "message" : "must not be blank",
+    "message" : "가족명을 입력해주세요",
     "value" : ""
   } ]
 }</code></pre>
@@ -775,7 +784,7 @@ Content-Length: 236
 <h6 id="_http_요청_4"><a class="link" href="#_http_요청_4">HTTP 요청</a></h6>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/family?_csrf=r-gDzcA2IxvwgYdgrMZZDGMzArq9BseiabDIHHdp2g_MlHRsm41nq_JTRyLd4uNQnuttPVcFL9jfY6SPCtSufxZd6DmooREI HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/families?_csrf=ghjIsBhgefFXwMWHYKeFeH2fQq4vWOyQOSUZsMteu6YxCjEutCyu1HxXHcd6pvPlBoqxS0qqb8wcb429DxV_hv9riZ5VOwgd HTTP/1.1
 Content-Type: application/json
 Content-Type: application/json
 Content-Length: 62
@@ -793,6 +802,9 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -805,7 +817,7 @@ Content-Length: 165
 {
   "code" : "400",
   "message" : "프로필 URL 형식이 유효하지 않습니다.",
-  "traceId" : "c08f2261-eab8-4887-a21b-0143c8d8455e",
+  "traceId" : "97ddcda5-d732-46dd-80e4-0c65eff78da0",
   "validations" : [ ]
 }</code></pre>
 </div>

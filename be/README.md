@@ -1,3 +1,39 @@
+# Family Tree Backend
+
+가족 관계도를 관리하는 백엔드 애플리케이션입니다.
+
+## 🚀 빠른 시작
+
+### 1. 데이터베이스 시작 (Docker)
+```bash
+# MySQL과 Redis 컨테이너 시작
+docker-compose up -d
+
+# 또는 스크립트 사용 (권장)
+./scripts/start-db.sh
+```
+
+### 2. 애플리케이션 실행
+```bash
+# Gradle로 실행 (기본값: local 프로필 = MySQL + Redis)
+./gradlew bootRun
+```
+
+### 3. API 확인
+- API 서버: http://localhost:8080
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- REST Docs: http://localhost:8080/docs/index.html
+
+## 📊 데이터베이스 설정
+
+자세한 데이터베이스 설정은 [DATABASE.md](DATABASE.md)를 참고하세요.
+
+### 프로필별 설정
+- `local`: MySQL + Redis (기본 개발 환경)
+- `test`: 테스트 환경 설정 (H2 인메모리)
+
+---
+
 # Family Tree 비즈니스 로직
 
 ## 핵심 도메인 모델
