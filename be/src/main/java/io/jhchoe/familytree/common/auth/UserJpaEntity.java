@@ -40,15 +40,15 @@ public class UserJpaEntity extends ModifierBaseEntity {
     private String profileUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "authentication_type", nullable = false, columnDefinition = "varchar(255)")
+    @Column(name = "authentication_type", nullable = false, length = 255)
     private AuthenticationType authenticationType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "oauth2_provider", columnDefinition = "varchar(255)")
+    @Column(name = "oauth2_provider", length = 255)
     private OAuth2Provider oAuth2Provider;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, columnDefinition = "varchar(255)")
+    @Column(name = "role", nullable = false, length = 255)
     private UserRole role;
 
     @Column(name = "deleted")
