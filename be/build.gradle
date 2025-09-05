@@ -50,6 +50,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'org.postgresql:postgresql'
 
     //test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -67,6 +68,7 @@ dependencies {
     //testcontainers
     testImplementation 'org.testcontainers:testcontainers'
     testImplementation 'org.testcontainers:mysql'
+    testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:junit-jupiter'
 }
 
