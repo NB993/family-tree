@@ -6,6 +6,7 @@ import io.jhchoe.familytree.common.auth.service.OAuth2UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,6 +44,8 @@ public class SecurityConfig {
                 .requestMatchers("/favicon.ico").permitAll()
                 .requestMatchers("/docs/**").permitAll() // API 문서 접근 허용
                 .requestMatchers("/api/auth/**").permitAll() // JWT 인증 관련 엔드포인트 허용
+                .requestMatchers(HttpMethod.GET, "/api/invites/my").hasAnyRole("USER", "ADMIN") // 내 초대 목록은 인증 필요
+                .requestMatchers(HttpMethod.GET, "/api/invites/*").permitAll() // GET 초대 코드 조회만 익명 접근 허용
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/signup").permitAll()

@@ -31,8 +31,14 @@ public class FindFamilyInviteService implements FindFamilyInviteUseCase {
     public FamilyInvite find(final FindFamilyInviteByCodeQuery query) {
         Objects.requireNonNull(query, "query must not be null");
 
-        return findFamilyInvitePort.findByInviteCode(query.inviteCode())
+        FamilyInvite familyInvite = findFamilyInvitePort.findByInviteCode(query.inviteCode())
             .orElseThrow(() -> new FTException(InviteExceptionCode.INVITE_NOT_FOUND));
+
+        if (familyInvite.isExpired()) {
+            throw new FTException(InviteExceptionCode.INVITE_EXPIRED);
+        }
+
+        return familyInvite;
     }
 
     /**
