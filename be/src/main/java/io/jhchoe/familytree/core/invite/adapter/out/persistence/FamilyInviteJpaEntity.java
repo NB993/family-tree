@@ -45,7 +45,7 @@ public class FamilyInviteJpaEntity {
     /**
      * FamilyInviteJpaEntity 객체를 생성하는 생성자입니다.
      */
-    public FamilyInviteJpaEntity(
+    private FamilyInviteJpaEntity(
         final Long id,
         final Long requesterId,
         final String inviteCode,
