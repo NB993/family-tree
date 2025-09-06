@@ -85,12 +85,19 @@ tasks.register('copyProperties', Copy) {
     }
 }
 
+// 테스트용 설정 파일을 test/resources로 복사
+tasks.register('copyTestProperties', Copy) {
+    from './properties/application-test.yml'
+    into './src/test/resources'
+}
+
 // REST Docs ***
 ext {
     snippetsDir = file('build/generated-snippets')
 }
 
 test {
+    dependsOn copyTestProperties  // 테스트 실행 전 설정 파일 복사
     doFirst {
         delete file("build/generated-snippets")
     }
