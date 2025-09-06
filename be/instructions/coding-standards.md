@@ -2,20 +2,20 @@
 
 ## 기본 원칙
 
-- Java 21 이상의 기능을 활용합니다
-- 불변 객체와 함수형 프로그래밍 스타일을 권장합니다
-- 메서드 매개변수는 `final` 키워드를 사용합니다
-- 모든 클래스와 메서드에 JavaDoc을 작성합니다
-- 인터페이스를 구현하는 쪽에서는 `{@inheritDoc}`을 사용합니다
-- 모든 코드는 가능한 한 간결하고 명확하게 작성합니다
+- Java 21 이상의 기능을 활용한다
+- 불변 객체와 OOP 스타일을 권장합니다. 필요 시 함수형 프로그래밍 스타일을 혼용 가능
+- 메서드 매개변수는 `final` 키워드를 사용한다
+- 모든 클래스와 메서드에 JavaDoc을 작성한다
+- 인터페이스를 구현하는 쪽에서는 `{@inheritDoc}`을 사용한다
+- 모든 코드는 가능한 한 간결하고 명확하게 작성한다
 
 ## 코드 구조 및 스타일
 
 ### 코드 레이아웃
 
-- 들여쓰기는 4칸 공백을 기준으로 합니다
-- 메서드 시그니처에 인자가 3개 이상 선언된 경우 첫 번째 인자부터 모든 인자를 줄바꿈하여 선언합니다
-- 메서드가 길어질 경우 단일 책임 원칙에 따라 더 작은 메서드로 분리합니다
+- 들여쓰기는 4칸 공백을 기준으로 한다
+- 메서드 시그니처에 인자가 3개 이상 선언된 경우 첫 번째 인자부터 모든 인자를 줄바꿈하여 선언한다
+- 메서드가 길어질 경우 단일 책임 원칙에 따라 더 작은 메서드로 분리한다
 - 한 줄에 120자를 넘지 않도록 합니다
 
 ### 명명 컨벤션
@@ -35,8 +35,8 @@
 
 ### 코드 스타일
 
-- Lombok은 `@Getter`, `@RequiredArgsConstructor`만 사용하고, 필요한 경우에만 `@Builder` 패턴 적용합니다
-- Request/Response DTO는 record 타입으로 작성합니다
+- Lombok은 `@Getter`, `@RequiredArgsConstructor`만 사용하고, `@Builder` 패턴은 절대 사용하지 않습니다.
+- API Request/Response DTO는 record 타입으로 작성합니다
 - 조건문은 기본적으로 긍정문으로 작성합니다 (부정문은 가독성을 떨어뜨립니다)
 - 메서드 내에서 return 분기 처리가 있는 경우 기본적으로 빠른 return 문을 사용합니다
 - 상수는 항상 static final로 선언하고, 가능하면 클래스 상단에 배치합니다
@@ -173,6 +173,26 @@ public List<Member> getActiveMembers() {
 }
 ```
 
+### 일대다, 다대다 관계 매핑
+- 양방향 관계에서는 일관성을 유지하기 위한 헬퍼 메서드를 제공합니다
+- `@OneToMany`, `@ManyToMany` 관계에서는 지연 로딩(`fetch = FetchType.LAZY`)을 기본으로 합니다
+
+```java
+@OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+private List<FamilyMemberJpaEntity> members = new ArrayList<>();
+
+// 양방향 관계 헬퍼 메서드
+public void addMember(FamilyMemberJpaEntity member) {
+    this.members.add(member);
+    member.setFamily(this);
+}
+
+public void removeMember(FamilyMemberJpaEntity member) {
+    this.members.remove(member);
+    member.setFamily(null);
+}
+```
+
 ## 비동기 처리
 
 - CompletableFuture, Reactor, RxJava 등을 사용할 때는 적절한 스케줄러와 예외 처리를 항상 포함합니다
@@ -202,6 +222,9 @@ FamilyJpaEntity entity = FamilyJpaEntity.from(domain);
 
 - **메서드 이름 기반 쿼리 우선**: JPQL `@Query` 사용보다는 메서드 이름 기반 쿼리를 우선 사용합니다
 - **JPQL 사용 시 주석 필수**: JPQL `@Query`를 사용해야 하는 경우, 메서드 바로 위에 주석으로 사용 이유를 명시합니다
+- **성능 최적화가 필요한 쿼리는 `@Query` 어노테이션을 사용**하여 JPQL 또는 네이티브 쿼리로 작성합니다
+- **대용량 데이터 처리가 필요한 경우 페이징 처리**를 적용합니다
+- **복잡한 쿼리는 Querydsl**을 사용하여 타입-세이프하게 작성합니다
 
 ```java
 // ✅ 권장: 메서드 이름 기반 쿼리
@@ -214,6 +237,13 @@ List<FamilyMemberJpaEntity> findByFamilyIdAndStatus(Long familyId, FamilyMemberS
  */
 @Query("SELECT f FROM FamilyJpaEntity f WHERE f.id IN (SELECT fm.familyId FROM FamilyMemberJpaEntity fm WHERE fm.userId = :userId)")
 List<FamilyJpaEntity> findFamiliesByUserId(@Param("userId") Long userId);
+
+// JPQL 사용 예시
+@Query("SELECT f FROM family f WHERE f.name LIKE %:keyword%")
+List<FamilyJpaEntity> findByNameContaining(@Param("keyword") String keyword);
+
+// 페이징 처리 예시
+Page<FamilyJpaEntity> findAll(Pageable pageable);
 ```
 
 ## 기타 권장 사항

@@ -1,26 +1,5 @@
 # 테스트 코드 작성 가이드라인
 
-## 테스트 실행 방법
-
-### IDE Run Configuration 사용 (필수)
-- **필수 규칙**: gradle 명령어가 아닌 IDE의 run configuration을 사용하여 테스트 실행
-- **이유**: 
-  - 프로젝트 지침 준수
-  - 일관된 테스트 환경 유지
-  - 토큰 사용량 효율성 (gradle 출력 로그 최소화)
-- **방법**: 
-  1. `get_run_configurations` 도구로 사용 가능한 configuration 확인
-  2. `run_configuration` 도구로 적절한 configuration 실행
-- **금지사항**: 
-  - `./gradlew test` 등의 gradle 명령어 직접 사용 금지
-  - `execute_terminal_command`로 gradle 테스트 실행 금지
-
-### 테스트 실행 절차
-1. 먼저 `get_run_configurations`로 사용 가능한 설정 확인
-2. 적절한 run configuration 선택하여 실행
-3. 전체 테스트 실행 시: "Tests in '{$root}.test'" 사용
-4. 특정 테스트만 실행하고 싶은 경우 별도 configuration이 있는지 확인
-
 ## 테스트 분류
 
 본 프로젝트는 다음과 같은 테스트 종류를 사용합니다:
@@ -215,9 +194,34 @@ class FindFamilyAcceptanceTest extends AcceptanceTestBase {
 
 - 무조건 DB 데이터로 테스트. 기본적으로 mocking 미사용
 - DB 데이터 생성을 위한 JpaRepository `@Autowired`
-- DB 데이터 생성을 위해 도메인JpaEntity 생성 시 기본생성자 사용 금지
-- 도메인 엔티티의 신규 엔티티 생성용 정적 메서드를 이용하여 도메인 엔티티를 생성한 뒤 도메인JpaEntity.from 메서드를 호출하여 생성
 - 절대 `@BeforeEach`에서 테스트용 데이터 생성 금지. 각 테스트 메서드의 given 영역에서 데이터 생성
+
+#### 테스트 시 엔티티 생성 규칙
+
+- 테스트 코드에서는 JpaEntity 기본 생성자를 사용하지 않습니다
+- 도메인 엔티티의 신규 엔티티 생성용 정적 메서드를 이용하여 도메인 엔티티를 생성한 뒤 `JpaEntity.from` 메서드를 호출하여 생성합니다
+- 인수 테스트에서도 동일한 방식으로 테스트 데이터를 생성합니다
+
+```java
+// 올바른 테스트 데이터 생성 방식
+@Test
+void find_returns_family_when_exists() {
+    // given
+    Family family = Family.create("가족이름", "설명", "프로필URL", 1L);
+    FamilyJpaEntity savedEntity = familyJpaRepository.save(FamilyJpaEntity.from(family));
+    
+    // when & then
+    // ...
+}
+
+// 잘못된 방식 (기본 생성자 사용)
+@Test
+void wrong_way_to_create_test_data() {
+    // 절대 사용하지 말 것!
+    FamilyJpaEntity entity = new FamilyJpaEntity();
+    entity.setName("가족이름"); // 컴파일 에러 - final 필드는 변경 불가
+}
+```
 - **모든 테스트 메서드에 `@WithMockOAuth2User` 어노테이션 필수**: 인증이 필요한 API 테스트 시 일관된 Mock OAuth2 사용자 설정
 - GET 메서드 이외에는 `.given()` 다음에 `.postProcessors(SecurityMockMvcRequestPostProcessors.csrf())` 필수 설정
 - 요청 Body 데이터는 Multiline Strings(`"""`)를 이용
@@ -239,8 +243,7 @@ class FindFamilyAcceptanceTest extends AcceptanceTestBase {
 #### 데이터 생성 규칙 (인수 테스트와 동일)
 - 무조건 DB 데이터로 테스트. 기본적으로 mocking 미사용
 - DB 데이터 생성을 위한 JpaRepository `@Autowired`
-- DB 데이터 생성을 위해 도메인JpaEntity 생성 시 기본생성자 사용 금지
-- 도메인 엔티티의 신규 엔티티 생성용 정적 메서드를 이용하여 도메인 엔티티를 생성한 뒤 도메인JpaEntity.from 메서드를 호출하여 생성
+- 테스트 시 엔티티 생성 규칙은 인수 테스트와 동일 (위 인수 테스트 섹션 참조)
 - 절대 `@BeforeEach`에서 테스트용 데이터 생성 금지. 각 테스트 메서드의 given 영역에서 데이터 생성
 
 #### RestAssuredMockMvc + REST Docs 전용 규칙
@@ -272,3 +275,64 @@ class FindFamilyAcceptanceTest extends AcceptanceTestBase {
 - Path Variable 검증 실패: `document("find-family-tree-invalid-path-variable", ...)`
 - Request Parameter 검증 실패: `document("find-family-tree-invalid-request-param", ...)`
 - Request DTO 검증 실패: `document("find-family-tree-invalid-request", ...)`
+
+## 테스트 작성 시점 및 방법
+
+### 코어 계층 테스트
+- **Service**: @InjectMocks, @Mock 사용
+- **Command/Query**: 생성자 유효성 검증
+- **Domain**: 정적 팩토리 메서드 및 비즈니스 로직
+- **테스트 클래스명**: `@DisplayName("[Unit Test] {클래스명}Test")`
+
+### 인프라 계층 테스트  
+- **Adapter**: AdapterTestBase 상속, sut 패턴 사용
+- **JpaEntity**: 변환 메서드 (from, toXxx) 테스트
+- **테스트 대상 변수명**: `sut` (System Under Test)
+- **@BeforeEach**: sut 초기화
+
+### 프레젠테이션 계층 테스트
+- **Controller**: AcceptanceTestBase 상속
+- **실제 DB 사용**: Mocking 미사용 원칙
+- **데이터 생성**: 도메인 정적 메서드 → JpaEntity.from()
+- **@WithMockOAuth2User**: 모든 테스트 메서드에 필수
+
+## 테스트 실패 디버깅
+
+### 단일 테스트 분석 원칙
+**❌ 절대 여러 실패 테스트를 동시에 분석하지 말 것**
+**✅ 반드시 첫 번째 실패 테스트만 선택하여 완전히 해결 후 다음으로 이동**
+
+### 테스트 실패 분석 단계
+
+#### 1. 에러 메시지 정확히 읽기
+```
+[테스트명] > [실패 메시지] FAILED
+    [예외타입] at [파일명.java]:[라인번호]
+```
+
+#### 2. 라인 번호 기반 원인 분석
+- 실패한 라인으로 즉시 이동
+- 해당 라인에서 무엇을 하고 있는지 확인
+- 왜 실패했는지 그 라인만 집중해서 분석
+
+#### 3. 단일 원인 해결
+- 한 번에 하나의 원인만 수정
+- 수정 후 해당 테스트만 다시 실행
+- 통과할 때까지 반복
+
+### 테스트 실행 방법 (Claude Code 환경)
+```bash
+# 전체 테스트 실행
+./gradlew test
+
+# 특정 테스트 클래스 실행
+./gradlew test --tests "FamilyServiceTest"
+
+# 특정 테스트 메서드 실행
+./gradlew test --tests "FamilyServiceTest.find_returns_family_when_exists"
+```
+
+### 테스트 실패 시 금지 사항
+- [ ] 여러 테스트 실패를 한번에 분석하려고 하기
+- [ ] 에러 메시지 읽지 않고 추측으로 원인 찾기
+- [ ] 라인 번호 무시하고 관련 없는 파일 뒤지기

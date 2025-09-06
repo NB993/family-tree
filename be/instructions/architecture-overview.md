@@ -193,10 +193,19 @@ public class FindFamilyController {
 - **역할**: 외부 시스템과의 통신 구현
 - **지침**:
   - 아웃바운드 포트 인터페이스를 구현합니다
-  - JPA 엔티티는 `{도메인}JpaEntity` 형식으로 명명합니다
   - 코어에서는 도메인 객체를 전달받아 아웃바운드 어댑터에서 엔티티로 변환한 후 작업합니다
   - 아웃바운드 어댑터에서 조회한 엔티티는 도메인 객체로 변환하여 응답합니다
-  - JPA 리포지토리는 Spring Data JPA 인터페이스로 정의합니다
+
+#### JPA 엔티티 설계 원칙
+- JPA 엔티티는 `{도메인}JpaEntity` 형식으로 명명합니다
+- 모든 JPA 엔티티는 기본 생성자를 `protected` 접근 제한자로 선언합니다
+- 엔티티 필드는 직접 접근하지 않고 Getter를 통해 접근합니다
+- `@Table`, `@Column` 등의 어노테이션을 명시하여 데이터베이스 스키마와 매핑합니다
+- JPA 리포지토리는 Spring Data JPA 인터페이스로 정의합니다
+
+#### 엔티티-도메인 변환 패턴
+- 엔티티→도메인 변환: JpaEntity의 `toXxx()` 메서드
+- 도메인→엔티티 변환: JpaEntity의 정적 `from()` 메서드
 
 **예시: FamilyAdapter 클래스**
 
@@ -231,3 +240,157 @@ public class FamilyAdapter implements FindFamilyPort {
     }
 }
 ```
+
+#### JPA 엔티티 작성 예시
+
+```java
+package io.jhchoe.familytree.core.family.adapter.out.persistence;
+
+import io.jhchoe.familytree.common.support.ModifierBaseEntity;
+import io.jhchoe.familytree.core.family.domain.Family;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+/**
+ * Family 엔티티를 DB에 저장하기 위한 JPA 엔티티 클래스입니다.
+ */
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity(name = "family")
+public class FamilyJpaEntity extends ModifierBaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "profile_url")
+    private String profileUrl;
+
+    /**
+     * FamilyJpaEntity 객체를 생성하는 생성자입니다.
+     */
+    public FamilyJpaEntity(
+        Long id,
+        String name,
+        String description,
+        String profileUrl,
+        Long createdBy,
+        LocalDateTime createdAt,
+        Long modifiedBy,
+        LocalDateTime modifiedAt
+    ) {
+        super(createdBy, createdAt, modifiedBy, modifiedAt);
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.profileUrl = profileUrl;
+    }
+
+    /**
+     * Family 도메인 객체로부터 JPA 엔티티를 생성합니다.
+     *
+     * @param family 도메인 객체
+     * @return JPA 엔티티
+     */
+    public static FamilyJpaEntity from(Family family) {
+        Objects.requireNonNull(family, "family must not be null");
+        
+        return new FamilyJpaEntity(
+            family.getId(),
+            family.getName(),
+            family.getDescription(),
+            family.getProfileUrl(),
+            family.getCreatedBy(),
+            family.getCreatedAt(),
+            family.getModifiedBy(),
+            family.getModifiedAt()
+        );
+    }
+
+    /**
+     * JPA 엔티티를 도메인 객체로 변환합니다.
+     *
+     * @return 도메인 객체
+     */
+    public Family toFamily() {
+        return Family.withId(
+            id,
+            name,
+            description,
+            profileUrl,
+            getCreatedBy(),
+            getCreatedAt(),
+            getModifiedBy(),
+            getModifiedAt()
+        );
+    }
+}
+```
+
+#### JPA Repository 작성 예시
+
+```java
+package io.jhchoe.familytree.core.family.adapter.out.persistence;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+/**
+ * Family JPA 엔티티에 대한 리포지토리 인터페이스입니다.
+ */
+public interface FamilyJpaRepository extends JpaRepository<FamilyJpaEntity, Long> {
+}
+```
+
+#### 영속성 관련 성능 최적화
+
+##### N+1 문제 방지
+- 연관 엔티티를 조회할 때 N+1 문제를 방지하기 위해 페치 조인을 사용합니다
+- 필요한 경우 `@EntityGraph`를 활용합니다
+- `@OneToMany`, `@ManyToMany` 관계에서는 지연 로딩(`fetch = FetchType.LAZY`)을 기본으로 합니다
+
+```java
+@Query("SELECT f FROM family f JOIN FETCH f.members WHERE f.id = :id")
+Optional<FamilyJpaEntity> findByIdWithMembers(@Param("id") Long id);
+
+@EntityGraph(attributePaths = {"members"})
+Optional<FamilyJpaEntity> findById(Long id);
+```
+
+##### 대량 데이터 처리
+- 대량의 데이터를 처리할 때는 벌크 연산을 활용합니다
+- 페이징 처리 시 카운트 쿼리를 최적화합니다
+
+```java
+@Modifying
+@Query("UPDATE family f SET f.name = :name WHERE f.id = :id")
+int updateName(@Param("id") Long id, @Param("name") String name);
+
+@Query(value = "SELECT f FROM family f",
+       countQuery = "SELECT COUNT(f.id) FROM family f")
+Page<FamilyJpaEntity> findAllWithOptimizedCount(Pageable pageable);
+```
+
+##### 트랜잭션 관리
+- 모든 변경 작업은 트랜잭션 내에서 수행합니다
+- 조회 작업은 `@Transactional(readOnly = true)`를 사용하여 성능을 최적화합니다
+- 트랜잭션 경계는 서비스 계층에서 관리합니다
+
+## 개발 순서
+
+프로젝트 개발은 다음 순서로 진행합니다:
+
+1. **코어 계층 (application)**: Domain → UseCase → Service → Command/Query
+2. **인프라 계층 (adapter/out)**: JpaEntity → Adapter → Repository  
+3. **프레젠테이션 계층 (adapter/in)**: Controller → Request/Response DTO
+
+각 계층 개발 완료 후 테스트 작성 및 검증을 수행합니다.
