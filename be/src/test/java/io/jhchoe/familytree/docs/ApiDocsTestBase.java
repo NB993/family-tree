@@ -18,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * Spring RestDocs + Testcontainers MySQL 조합을 위한 베이스 클래스
+ * Spring RestDocs + Testcontainers PostgreSQL 조합을 위한 베이스 클래스
  * 
  * 특징:
  * - @SpringBootTest로 전체 애플리케이션 컨텍스트 로드
- * - MySQL Testcontainer로 프로덕션 환경과 동일한 데이터베이스
+ * - PostgreSQL Testcontainer로 프로덕션 환경과 동일한 데이터베이스
  * - RestDocs를 통한 API 문서 자동 생성
  * - MockMvc + RestAssured 조합으로 테스트 작성 편의성 제공
  * - Spring Security 통합 테스트 지원
@@ -42,7 +42,7 @@ import org.springframework.web.context.WebApplicationContext;
  *     }
  * }
  */
-@ActiveProfiles("testcontainers")  // H2 대신 MySQL Testcontainer 사용
+@ActiveProfiles("test")  // PostgreSQL Testcontainer 사용
 @ExtendWith({RestDocumentationExtension.class})
 @SpringBootTest
 @Transactional  // 각 테스트 후 롤백으로 데이터 격리
@@ -52,9 +52,9 @@ public abstract class ApiDocsTestBase {
     @Autowired
     private WebApplicationContext applicationContext;
 
-    // MySQL Testcontainer 시작 (클래스 로딩 시 최초 1회)
+    // PostgreSQL Testcontainer 시작 (클래스 로딩 시 최초 1회)
     static {
-        TestcontainersModule.startMySQLContainer();
+        TestcontainersModule.startPostgreSQLContainer();
     }
 
     @BeforeEach

@@ -21,13 +21,12 @@ import org.springframework.web.context.WebApplicationContext;
  * REST API 인수 테스트를 위한 베이스 클래스
  * 
  * 특징:
- * - MySQL Testcontainer 사용으로 프로덕션 환경과 동일한 데이터베이스 테스트
+ * - PostgreSQL Testcontainer 사용으로 프로덕션 환경과 동일한 데이터베이스 테스트
  * - RestAssured + MockMvc를 통한 HTTP API 테스트
  * - Spring REST Docs 자동 문서화
- * - UTF8MB4 지원으로 이모지 테스트 가능
  * - 트랜잭션 롤백으로 테스트 격리
  */
-@ActiveProfiles("testcontainers")  // H2 대신 MySQL Testcontainer 사용
+@ActiveProfiles("test")  // PostgreSQL Testcontainer 사용
 @ExtendWith({RestDocumentationExtension.class})
 @SpringBootTest
 @Transactional  // 각 테스트 후 롤백으로 데이터 격리
@@ -37,9 +36,9 @@ public abstract class AcceptanceTestBase {
     @Autowired
     private WebApplicationContext applicationContext;
 
-    // MySQL Testcontainer 시작 (클래스 로딩 시 최초 1회)
+    // PostgreSQL Testcontainer 시작 (클래스 로딩 시 최초 1회)
     static {
-        TestcontainersModule.startMySQLContainer();
+        TestcontainersModule.startPostgreSQLContainer();
     }
 
     @BeforeEach
