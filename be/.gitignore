@@ -37,7 +37,7 @@ out/
 .vscode/
 
 *.yml
-!docker-compose.yml
+!docker-compose*.yml
 !application-testcontainers.yml
 
 # Docker volumes (local data)
