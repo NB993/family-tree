@@ -205,7 +205,15 @@ public void removeMember(FamilyMemberJpaEntity member) {
 
 - **setter 사용 금지**: 도메인 JPA 엔티티에서는 setter 메서드를 제거합니다
 - **생성자 패턴**: 기본 생성자로 생성한 뒤 setter로 데이터를 주입하는 방식을 금지합니다
-- **팩토리 메서드 활용**: 도메인 엔티티를 생성한 뒤 `from()` 정적 메서드에 넘겨서 JPA 엔티티를 생성합니다
+- **JPA 기본 생성자**: JPA가 필요로 하는 기본 생성자는 protected로 선언합니다
+- **private 생성자 필수**: JpaEntity는 기본 생성자 이외의 모든 생성자는 private으로 선언하여 외부에서 직접 생성을 차단합니다
+- **팩토리 메서드 활용**: 도메인 엔티티를 `from()` 정적 팩토리 메서드로 받아서 JPA 엔티티를 생성합니다
+
+### DB 독립적인 코드 작성
+
+- **JPA 표준 어노테이션 사용**: 특정 DB에 종속적인 기능보다 JPA 표준 어노테이션을 우선 사용합니다
+- **네이티브 쿼리 최소화**: 가능한 JPQL이나 Criteria API를 사용하고, 네이티브 쿼리는 불가피한 경우에만 사용합니다
+- **DB 특화 타입 자제**: PostgreSQL의 `jsonb`, `array` 타입 등 특정 DB만의 타입 사용을 자제합니다
 
 ```java
 // ❌ 금지: setter 사용
