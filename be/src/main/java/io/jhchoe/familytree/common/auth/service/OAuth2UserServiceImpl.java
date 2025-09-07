@@ -5,6 +5,9 @@ import io.jhchoe.familytree.common.auth.UserJpaRepository;
 import io.jhchoe.familytree.common.auth.domain.*;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.common.util.MaskingUtils;
+import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyCommand;
+import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyUseCase;
+import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
 import io.jhchoe.familytree.core.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -25,10 +28,12 @@ import java.util.Map;
 public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
     private final UserJpaRepository userJpaRepository;
+    private final SaveFamilyUseCase saveFamilyUseCase;
 
-    public OAuth2UserServiceImpl(UserJpaRepository userJpaRepository) {
+    public OAuth2UserServiceImpl(UserJpaRepository userJpaRepository, SaveFamilyUseCase saveFamilyUseCase) {
         super();
         this.userJpaRepository = userJpaRepository;
+        this.saveFamilyUseCase = saveFamilyUseCase;
     }
 
     /**
@@ -85,13 +90,37 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
     }
 
     /**
-     * 새로운 OAuth2 사용자를 생성합니다.
+     * 새로운 OAuth2 사용자를 생성하고 자동으로 Family를 생성합니다.
      */
     private UserJpaEntity createUser(OAuth2UserInfo userInfo, OAuth2Provider provider) {
+        // 1. User 생성 및 저장
         User user = User.newUser(userInfo.getEmail(), userInfo.getName(), userInfo.getImageUrl(),
                 AuthenticationType.OAUTH2, provider, UserRole.USER, false);
+        UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
 
-        return userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
+        // 2. Family 자동 생성
+        try {
+            String familyName = savedUser.getName() + "의 가족";
+            String familyDescription = savedUser.getName() + "님의 가족 공간입니다";
+            
+            SaveFamilyCommand familyCommand = new SaveFamilyCommand(
+                savedUser.getId(),
+                familyName,
+                savedUser.getProfileUrl(),
+                familyDescription,
+                false  // 기본값: 비공개
+            );
+            
+            Long familyId = saveFamilyUseCase.save(familyCommand);
+            log.info("회원가입 시 Family 자동 생성 완료: userId={}, familyId={}", 
+                savedUser.getId(), familyId);
+        } catch (Exception e) {
+            log.error("Family 자동 생성 실패: userId={}, error={}", 
+                savedUser.getId(), e.getMessage());
+            throw new FTException(FamilyExceptionCode.FAMILY_AUTO_CREATION_FAILED);
+        }
+        
+        return savedUser;
     }
 
     /**
