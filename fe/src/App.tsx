@@ -17,6 +17,8 @@ import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage';
 import OAuth2CallbackPage from './pages/OAuth2CallbackPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
+import { CreateInvitePage } from './pages/CreateInvitePage';
+import { InviteResponsePage } from './pages/InviteResponsePage';
 
 // Styles
 import './styles/App.css';
@@ -58,7 +60,7 @@ function App() {
             <Routes>
               <Route path="/" element={<RootRedirect />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/auth/callback" element={<AuthCallbackPage />} />
+              <Route path="/auth/callback" element={<OAuth2CallbackPage />} />
               <Route path="/login/oauth2/code/kakao" element={<OAuth2CallbackPage />} />
               <Route path="/login/oauth2/code/google" element={<OAuth2CallbackPage />} />
               <Route path="/home" element={
@@ -78,6 +80,12 @@ function App() {
                   <FamilyMembersPage />
                 </ProtectedRoute>
               } />
+              <Route path="/invites/create" element={
+                <ProtectedRoute>
+                  <CreateInvitePage />
+                </ProtectedRoute>
+              } />
+              <Route path="/invite/:inviteCode" element={<InviteResponsePage />} />
               <Route path="/404" element={<NotFoundPage />} />
               <Route path="*" element={<Navigate to="/404" replace />} />
             </Routes>

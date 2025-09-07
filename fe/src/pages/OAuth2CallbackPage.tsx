@@ -1,78 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { OAuth2Response } from '../types/auth';
 import { AuthService } from '../api/services/authService';
 
 const OAuth2CallbackPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isProcessing, setIsProcessing] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [hasProcessed, setHasProcessed] = useState(false);
 
   useEffect(() => {
+    // 이미 처리했으면 스킵
+    if (hasProcessed) return;
+    
     const urlParams = new URLSearchParams(location.search);
-    const code = urlParams.get('code');
-    const state = urlParams.get('state');
+    const success = urlParams.get('success');
     const error = urlParams.get('error');
 
-    console.log('OAuth2 Callback:', { code, state, error });
+    console.log('OAuth2 Callback:', { success, error, path: location.pathname });
 
     if (error) {
       console.error('OAuth2 로그인 실패:', error);
       alert('로그인에 실패했습니다. 다시 시도해주세요.');
+      setHasProcessed(true);
       navigate('/login');
       return;
     }
 
-    if (code) {
-      // 백엔드로 OAuth2 처리 요청
-      handleOAuth2Callback(code, state);
+    // 백엔드가 성공적으로 리다이렉트한 경우
+    if (success === 'true') {
+      handleOAuth2Success();
     } else {
-      console.log('인증 코드가 없음, 로그인 페이지로 이동');
+      console.log('인증 실패, 로그인 페이지로 이동');
+      setHasProcessed(true);
       navigate('/login');
     }
-  }, [location, navigate]);
+  }, [location, navigate, hasProcessed]);
 
-  const handleOAuth2Callback = async (code: string, state: string | null) => {
-    try {
-      setIsProcessing(true);
-      const authService = AuthService.getInstance();
-      
-      // 백엔드의 OAuth2 콜백 엔드포인트로 요청
-      const response = await fetch(`http://localhost:8080${location.pathname}${location.search}`, {
-        method: 'GET',
-        credentials: 'include', // 쿠키 포함 (Refresh Token이 HttpOnly 쿠키로 설정됨)
-      });
-
-      if (response.ok) {
-        const data: OAuth2Response = await response.json();
-        
-        if (data.success && data.tokenInfo) {
-          // Access Token만 localStorage에 저장 (Refresh Token은 HttpOnly 쿠키로 관리)
-          authService.saveAccessToken(data.tokenInfo.accessToken);
-          
-          // 사용자 정보 저장
-          if (data.userInfo) {
-            authService.saveUserInfo(data.userInfo);
-          }
-          
-          console.log('로그인 성공:', data.userInfo);
-          alert(`${data.userInfo?.name}님, 환영합니다!`);
-          
-          // 홈 페이지로 이동
-          navigate('/home');
-        } else {
-          throw new Error(data.errorMessage || '로그인 처리 중 오류가 발생했습니다.');
-        }
-      } else {
-        throw new Error('서버 응답 오류');
-      }
-    } catch (error) {
-      console.error('OAuth2 처리 실패:', error);
-      alert('로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
-      navigate('/login');
-    } finally {
-      setIsProcessing(false);
-    }
+  const handleOAuth2Success = async () => {
+    // 이미 처리 중이거나 처리 완료된 경우 스킵
+    if (isProcessing || hasProcessed) return;
+    
+    setIsProcessing(true);
+    setHasProcessed(true); // 중복 실행 방지
+    
+    // 백엔드에서 HttpOnly 쿠키로 토큰을 설정했으므로
+    // 바로 홈으로 이동. ProtectedRoute에서 인증 확인
+    console.log('OAuth2 login successful, navigating to /home...');
+    
+    // 홈 페이지로 이동
+    // ProtectedRoute가 useAuth를 통해 /api/user/me를 호출하여 인증 확인
+    setTimeout(() => {
+      navigate('/home');
+    }, 100);
+    
+    setIsProcessing(false);
   };
 
   return (

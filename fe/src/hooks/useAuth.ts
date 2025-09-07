@@ -11,32 +11,30 @@ export const useAuth = (): AuthState => {
     const checkAuthStatus = async () => {
       const authService = AuthService.getInstance();
       
-      // Access Token 존재 여부 확인
-      const accessToken = authService.getAccessToken();
-      
-      if (!accessToken) {
-        // 토큰이 없으면 인증되지 않은 상태
-        setIsAuthenticated(false);
-        setUserInfo(null);
-        setIsLoading(false);
-        return;
-      }
-
       try {
-        // 토큰이 있으면 사용자 정보 조회
+        // HttpOnly 쿠키로 인증된 상태인지 확인하기 위해 사용자 정보 조회
+        console.log('Checking authentication status...');
         const userData = await authService.getCurrentUser();
+        console.log('User data fetched:', userData);
+        
+        // 사용자 정보를 성공적으로 가져왔으면 인증된 상태
         authService.saveUserInfo(userData);
         setUserInfo(userData);
         setIsAuthenticated(true);
       } catch (error) {
         console.error('사용자 정보 조회 실패:', error);
-        // 사용자 정보 조회 실패 시 로컬 정보 확인
+        
+        // 로컬에 저장된 사용자 정보가 있는지 확인
         const localUserInfo = authService.getUserInfo();
+        console.log('Local user info:', localUserInfo);
+        
         if (localUserInfo) {
+          // 로컬 정보가 있으면 일단 사용 (하지만 실제 인증은 쿠키로 확인)
           setUserInfo(localUserInfo);
           setIsAuthenticated(true);
         } else {
-          // 인증 실패로 처리
+          // 완전히 인증되지 않은 상태
+          console.log('Not authenticated');
           setIsAuthenticated(false);
           setUserInfo(null);
           authService.clearAllAuthData();
