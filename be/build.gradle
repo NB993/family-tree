@@ -91,6 +91,9 @@ tasks.register('copyTestProperties', Copy) {
     into './src/test/resources'
 }
 
+// processTestResources가 copyTestProperties 태스크에 의존하도록 설정
+processTestResources.dependsOn('copyTestProperties')
+
 // REST Docs ***
 ext {
     snippetsDir = file('build/generated-snippets')
