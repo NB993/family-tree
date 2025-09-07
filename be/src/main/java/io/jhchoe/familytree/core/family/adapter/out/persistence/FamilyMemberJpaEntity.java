@@ -28,7 +28,10 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
     private Long familyId;
 
     @Column(name = "user_id")
-    private Long userId;
+    private Long userId; // nullable - 비회원도 가능
+
+    @Column(name = "kakao_id")
+    private String kakaoId; // 카카오 ID
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -55,7 +58,8 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
      *
      * @param id          고유 ID
      * @param familyId    Family ID
-     * @param userId      사용자 ID
+     * @param userId      사용자 ID (nullable - 비회원인 경우 null)
+     * @param kakaoId     카카오 ID (nullable)
      * @param name        구성원 이름
      * @param profileUrl  프로필 URL
      * @param birthday    생일
@@ -71,6 +75,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         Long id,
         Long familyId,
         Long userId,
+        String kakaoId,
         String name,
         String profileUrl,
         LocalDateTime birthday,
@@ -86,6 +91,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         this.id = id;
         this.familyId = familyId;
         this.userId = userId;
+        this.kakaoId = kakaoId;
         this.name = name;
         this.profileUrl = profileUrl;
         this.birthday = birthday;
@@ -107,6 +113,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
             familyMember.getId(),
             familyMember.getFamilyId(),
             familyMember.getUserId(),
+            familyMember.getKakaoId(),
             familyMember.getName(),
             familyMember.getProfileUrl(),
             familyMember.getBirthday(),
@@ -126,7 +133,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
      * @return 변환된 FamilyMember 객체
      */
     public FamilyMember toFamilyMember() {
-        return FamilyMember.existingMember(
+        return FamilyMember.withId(
             id,
             familyId,
             userId,

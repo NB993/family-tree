@@ -54,7 +54,7 @@ class AnnouncementServiceTest {
         String content = "공지사항 내용입니다.";
 
         // OWNER 권한을 가진 현재 사용자
-        FamilyMember currentMember = FamilyMember.existingMember(
+        FamilyMember currentMember = FamilyMember.withId(
             2L, familyId, currentUserId, "소유자", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             null, null, null, null
@@ -87,7 +87,7 @@ class AnnouncementServiceTest {
         String content = "공지사항 내용입니다.";
 
         // ADMIN 권한을 가진 현재 사용자
-        FamilyMember currentMember = FamilyMember.existingMember(
+        FamilyMember currentMember = FamilyMember.withId(
             2L, familyId, currentUserId, "관리자", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             null, null, null, null
@@ -120,7 +120,7 @@ class AnnouncementServiceTest {
         String content = "공지사항 내용입니다.";
 
         // 일반 구성원 권한을 가진 현재 사용자
-        FamilyMember currentMember = FamilyMember.existingMember(
+        FamilyMember currentMember = FamilyMember.withId(
             2L, familyId, currentUserId, "일반 구성원", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
@@ -152,7 +152,7 @@ class AnnouncementServiceTest {
         int size = 10;
 
         // 일반 구성원
-        FamilyMember currentMember = FamilyMember.existingMember(
+        FamilyMember currentMember = FamilyMember.withId(
             2L, familyId, currentUserId, "일반 구성원", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
@@ -215,7 +215,7 @@ class AnnouncementServiceTest {
         Long currentUserId = 2L;
 
         // OWNER 권한을 가진 현재 사용자
-        FamilyMember currentMember = FamilyMember.existingMember(
+        FamilyMember currentMember = FamilyMember.withId(
             2L, familyId, currentUserId, "소유자", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             null, null, null, null
@@ -252,7 +252,7 @@ class AnnouncementServiceTest {
         Long currentUserId = 2L;
 
         // ADMIN 권한을 가진 현재 사용자
-        FamilyMember currentMember = FamilyMember.existingMember(
+        FamilyMember currentMember = FamilyMember.withId(
             2L, familyId, currentUserId, "관리자", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             null, null, null, null
@@ -289,7 +289,7 @@ class AnnouncementServiceTest {
         Long currentUserId = 2L;
 
         // ADMIN 권한을 가진 현재 사용자
-        FamilyMember currentMember = FamilyMember.existingMember(
+        FamilyMember currentMember = FamilyMember.withId(
             2L, familyId, currentUserId, "관리자", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             null, null, null, null
@@ -327,7 +327,7 @@ class AnnouncementServiceTest {
         Long currentUserId = 2L;
 
         // 일반 구성원 권한을 가진 현재 사용자
-        FamilyMember currentMember = FamilyMember.existingMember(
+        FamilyMember currentMember = FamilyMember.withId(
             2L, familyId, currentUserId, "일반 구성원", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
@@ -358,7 +358,7 @@ class AnnouncementServiceTest {
         Long currentUserId = 2L;
 
         // OWNER 권한을 가진 현재 사용자
-        FamilyMember currentMember = FamilyMember.existingMember(
+        FamilyMember currentMember = FamilyMember.withId(
             2L, familyId, currentUserId, "소유자", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             null, null, null, null

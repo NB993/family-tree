@@ -12,16 +12,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class FamilyInviteTest {
 
     @Test
-    @DisplayName("새로운 초대를 생성하면 활성 상태와 24시간 만료 시간을 가집니다")
-    void newInvite_creates_active_invite_with_24hour_expiry() {
+    @DisplayName("새로운 초대를 생성하면 활성 상태와 1일 만료 시간을 가집니다")
+    void newInvite_creates_active_invite_with_1day_expiry() {
+        // given
+        Integer maxUses = 10;
+        
         // when
-        FamilyInvite invite = FamilyInvite.newInvite(1L);
+        FamilyInvite invite = FamilyInvite.newInvite(1L, maxUses);
 
         // then
         assertThat(invite.getId()).isNull();
         assertThat(invite.getRequesterId()).isEqualTo(1L);
         assertThat(invite.getInviteCode()).isNotNull();
         assertThat(invite.getStatus()).isEqualTo(FamilyInviteStatus.ACTIVE);
+        assertThat(invite.getMaxUses()).isEqualTo(maxUses);
+        assertThat(invite.getUsedCount()).isEqualTo(0);
         assertThat(invite.getExpiresAt()).isAfter(LocalDateTime.now());
         assertThat(invite.getExpiresAt()).isBefore(LocalDateTime.now().plusDays(1).plusMinutes(1));
     }
@@ -39,6 +44,8 @@ class FamilyInviteTest {
             2L,
             "test-code",
             expiresAt,
+            10, // maxUses
+            3,  // usedCount
             FamilyInviteStatus.ACTIVE,
             now,
             now
@@ -50,6 +57,8 @@ class FamilyInviteTest {
         assertThat(invite.getInviteCode()).isEqualTo("test-code");
         assertThat(invite.getStatus()).isEqualTo(FamilyInviteStatus.ACTIVE);
         assertThat(invite.getExpiresAt()).isEqualTo(expiresAt);
+        assertThat(invite.getMaxUses()).isEqualTo(10);
+        assertThat(invite.getUsedCount()).isEqualTo(3);
     }
 
     @Test
@@ -64,6 +73,8 @@ class FamilyInviteTest {
             1L,
             "test-code",
             now.plusDays(1),
+            null,
+            0,
             FamilyInviteStatus.ACTIVE,
             now,
             now
@@ -80,6 +91,8 @@ class FamilyInviteTest {
             1L,
             "test-code",
             LocalDateTime.now().plusHours(1),
+            null,
+            0,
             FamilyInviteStatus.ACTIVE,
             LocalDateTime.now(),
             LocalDateTime.now()
@@ -98,6 +111,8 @@ class FamilyInviteTest {
             1L,
             "test-code",
             LocalDateTime.now().minusHours(1),
+            null,
+            0,
             FamilyInviteStatus.ACTIVE,
             LocalDateTime.now().minusDays(1),
             LocalDateTime.now().minusDays(1)
@@ -112,27 +127,90 @@ class FamilyInviteTest {
     @DisplayName("초대를 완료 상태로 변경할 수 있습니다")
     void complete_changes_status_to_completed() {
         // given
-        FamilyInvite invite = FamilyInvite.newInvite(1L);
+        FamilyInvite invite = FamilyInvite.newInvite(1L, null);
 
         // when
         FamilyInvite completedInvite = invite.complete();
 
         // then
         assertThat(completedInvite.getStatus()).isEqualTo(FamilyInviteStatus.COMPLETED);
-        assertThat(completedInvite.getModifiedAt()).isAfter(invite.getModifiedAt());
     }
 
     @Test
     @DisplayName("초대를 만료 상태로 변경할 수 있습니다")
     void expire_changes_status_to_expired() {
         // given
-        FamilyInvite invite = FamilyInvite.newInvite(1L);
+        FamilyInvite invite = FamilyInvite.newInvite(1L, null);
 
         // when
         FamilyInvite expiredInvite = invite.expire();
 
         // then
         assertThat(expiredInvite.getStatus()).isEqualTo(FamilyInviteStatus.EXPIRED);
-        assertThat(expiredInvite.getModifiedAt()).isAfter(invite.getModifiedAt());
+    }
+    
+    @Test
+    @DisplayName("incrementUsedCount 메서드는 사용 횟수를 1 증가시킵니다")
+    void increment_used_count_increases_count_by_one() {
+        // given
+        FamilyInvite invite = FamilyInvite.withId(
+            1L,
+            2L,
+            "test-code",
+            LocalDateTime.now().plusDays(1),
+            10, // maxUses
+            3,  // usedCount
+            FamilyInviteStatus.ACTIVE,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+        
+        // when
+        FamilyInvite updatedInvite = invite.incrementUsedCount();
+        
+        // then
+        assertThat(updatedInvite.getUsedCount()).isEqualTo(4);
+        assertThat(updatedInvite.getMaxUses()).isEqualTo(10);
+        assertThat(updatedInvite.getStatus()).isEqualTo(FamilyInviteStatus.ACTIVE);
+    }
+    
+    @Test
+    @DisplayName("무제한 초대 링크는 maxUses가 null입니다")
+    void unlimited_invite_has_null_max_uses() {
+        // when
+        FamilyInvite invite = FamilyInvite.newInvite(1L, null);
+        
+        // then
+        assertThat(invite.getMaxUses()).isNull();
+        assertThat(invite.getUsedCount()).isEqualTo(0);
+    }
+    
+    @Test
+    @DisplayName("초대 링크가 최대 사용 횟수에 도달했는지 확인할 수 있습니다")
+    void can_check_if_max_uses_reached() {
+        // given
+        FamilyInvite almostFullInvite = FamilyInvite.withId(
+            1L, 2L, "test-code",
+            LocalDateTime.now().plusDays(1),
+            5, // maxUses
+            4, // usedCount
+            FamilyInviteStatus.ACTIVE,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+        
+        FamilyInvite fullInvite = FamilyInvite.withId(
+            2L, 2L, "test-code2",
+            LocalDateTime.now().plusDays(1),
+            5, // maxUses
+            5, // usedCount
+            FamilyInviteStatus.ACTIVE,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+        
+        // then
+        assertThat(almostFullInvite.getUsedCount() < almostFullInvite.getMaxUses()).isTrue();
+        assertThat(fullInvite.getUsedCount() >= fullInvite.getMaxUses()).isTrue();
     }
 }

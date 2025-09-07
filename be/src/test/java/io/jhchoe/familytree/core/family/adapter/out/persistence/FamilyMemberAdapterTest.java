@@ -57,6 +57,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         // given
         Long familyId = 1L;
         Long userId = 1L;
+        String kakaoId = "kakaoId";
         String name = "name";
         String profileUrl = "profileUrl";
         LocalDateTime birthday = LocalDateTime.now();
@@ -235,7 +236,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
         
         // 역할을 ADMIN으로 변경
-        FamilyMember memberWithRole = FamilyMember.existingMember(
+        FamilyMember memberWithRole = FamilyMember.withId(
             savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(),
             savedEntity.getName(), savedEntity.getProfileUrl(), savedEntity.getBirthday(),
             savedEntity.getNationality(), savedEntity.getStatus(), FamilyMemberRole.ADMIN,
@@ -263,7 +264,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
         
         // 상태를 SUSPENDED로 변경
-        FamilyMember memberWithStatus = FamilyMember.existingMember(
+        FamilyMember memberWithStatus = FamilyMember.withId(
             savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(),
             savedEntity.getName(), savedEntity.getProfileUrl(), savedEntity.getBirthday(),
             savedEntity.getNationality(), FamilyMemberStatus.SUSPENDED, savedEntity.getRole(),
@@ -298,7 +299,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("modify 메서드는 존재하지 않는 ID로 호출 시 예외를 발생시킨다")
     void throw_exception_when_modify_with_non_existent_id() {
         // given
-        FamilyMember memberWithNonExistentId = FamilyMember.existingMember(
+        FamilyMember memberWithNonExistentId = FamilyMember.withId(
             999L, 1L, 1L, "Member", null, null, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null

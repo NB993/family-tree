@@ -36,6 +36,8 @@ class SaveFamilyInviteServiceTest {
             1L,
             "test-invite-code",
             java.time.LocalDateTime.now().plusDays(1),
+            10,
+            0,
             io.jhchoe.familytree.core.invite.domain.FamilyInviteStatus.ACTIVE,
             java.time.LocalDateTime.now(),
             java.time.LocalDateTime.now()

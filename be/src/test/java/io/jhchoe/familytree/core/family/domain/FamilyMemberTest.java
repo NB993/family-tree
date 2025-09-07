@@ -9,6 +9,83 @@ import org.junit.jupiter.api.Test;
 
 @DisplayName("[Unit Test] FamilyMemberTest")
 class FamilyMemberTest {
+    
+    @Test
+    @DisplayName("newKakaoMember 메서드로 카카오 인증 비회원 FamilyMember를 생성할 수 있다")
+    void new_kakao_member_creates_family_member_without_user_id() {
+        // given
+        Long familyId = 1L;
+        String kakaoId = "kakao_12345";
+        String name = "카카오유저";
+        String profileUrl = "http://example.com/kakao.jpg";
+        
+        // when
+        FamilyMember familyMember = FamilyMember.newKakaoMember(
+            familyId, kakaoId, name, profileUrl
+        );
+        
+        // then
+        assertThat(familyMember.getId()).isNull();
+        assertThat(familyMember.getFamilyId()).isEqualTo(familyId);
+        assertThat(familyMember.getUserId()).isNull(); // 비회원이므로 userId는 null
+        assertThat(familyMember.getKakaoId()).isEqualTo(kakaoId);
+        assertThat(familyMember.getName()).isEqualTo(name);
+        assertThat(familyMember.getProfileUrl()).isEqualTo(profileUrl);
+        assertThat(familyMember.getBirthday()).isNull();
+        assertThat(familyMember.getNationality()).isNull();
+        assertThat(familyMember.getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE);
+        assertThat(familyMember.getRole()).isEqualTo(FamilyMemberRole.MEMBER);
+        assertThat(familyMember.isRegisteredUser()).isFalse(); // 비회원
+        assertThat(familyMember.isKakaoAuthenticated()).isTrue(); // 카카오 인증됨
+    }
+    
+    @Test
+    @DisplayName("newKakaoMember 메서드는 familyId가 null이면 예외가 발생한다")
+    void new_kakao_member_throws_exception_when_family_id_is_null() {
+        // given
+        Long familyId = null;
+        String kakaoId = "kakao_12345";
+        String name = "카카오유저";
+        String profileUrl = "http://example.com/kakao.jpg";
+        
+        // when & then
+        assertThatThrownBy(() -> 
+            FamilyMember.newKakaoMember(familyId, kakaoId, name, profileUrl)
+        ).isInstanceOf(NullPointerException.class)
+         .hasMessage("familyId must not be null");
+    }
+    
+    @Test
+    @DisplayName("newKakaoMember 메서드는 kakaoId가 null이면 예외가 발생한다")
+    void new_kakao_member_throws_exception_when_kakao_id_is_null() {
+        // given
+        Long familyId = 1L;
+        String kakaoId = null;
+        String name = "카카오유저";
+        String profileUrl = "http://example.com/kakao.jpg";
+        
+        // when & then
+        assertThatThrownBy(() -> 
+            FamilyMember.newKakaoMember(familyId, kakaoId, name, profileUrl)
+        ).isInstanceOf(NullPointerException.class)
+         .hasMessage("kakaoId must not be null");
+    }
+    
+    @Test
+    @DisplayName("newKakaoMember 메서드는 name이 null이면 예외가 발생한다")
+    void new_kakao_member_throws_exception_when_name_is_null() {
+        // given
+        Long familyId = 1L;
+        String kakaoId = "kakao_12345";
+        String name = null;
+        String profileUrl = "http://example.com/kakao.jpg";
+        
+        // when & then
+        assertThatThrownBy(() -> 
+            FamilyMember.newKakaoMember(familyId, kakaoId, name, profileUrl)
+        ).isInstanceOf(NullPointerException.class)
+         .hasMessage("name must not be null");
+    }
 
     @Test
     @DisplayName("newOwner 메서드로 OWNER 역할의 FamilyMember를 생성할 수 있다")
@@ -92,7 +169,7 @@ class FamilyMemberTest {
         LocalDateTime modifiedAt = LocalDateTime.now();
         
         // when
-        FamilyMember familyMember = FamilyMember.existingMember(
+        FamilyMember familyMember = FamilyMember.withId(
             id, familyId, userId, name, profileUrl, birthday, nationality, 
             status, FamilyMemberRole.MEMBER, createdBy, createdAt, modifiedBy, modifiedAt
         );
@@ -106,7 +183,7 @@ class FamilyMemberTest {
         assertThat(familyMember.getBirthday()).isEqualTo(birthday);
         assertThat(familyMember.getNationality()).isEqualTo(nationality);
         assertThat(familyMember.getStatus()).isEqualTo(status);
-        // existingMember()는 기본적으로 MEMBER 역할을 부여함 (하위 호환성 유지)
+        // withId()는 기본적으로 MEMBER 역할을 부여함 (하위 호환성 유지)
         assertThat(familyMember.getRole()).isEqualTo(FamilyMemberRole.MEMBER);
         assertThat(familyMember.getCreatedBy()).isEqualTo(createdBy);
         assertThat(familyMember.getCreatedAt()).isEqualTo(createdAt);
@@ -151,7 +228,7 @@ class FamilyMemberTest {
     @DisplayName("updateRole 메서드로 FamilyMember의 역할을 변경할 수 있다")
     void update_role_changes_family_member_role() {
         // given
-        FamilyMember member = FamilyMember.existingMember(
+        FamilyMember member = FamilyMember.withId(
             1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
@@ -183,7 +260,7 @@ class FamilyMemberTest {
     @DisplayName("OWNER 역할은 변경할 수 없다")
     void cannot_change_owner_role() {
         // given
-        FamilyMember owner = FamilyMember.existingMember(
+        FamilyMember owner = FamilyMember.withId(
             1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
@@ -202,7 +279,7 @@ class FamilyMemberTest {
     @DisplayName("updateStatus 메서드로 FamilyMember의 상태를 변경할 수 있다")
     void update_status_changes_family_member_status() {
         // given
-        FamilyMember member = FamilyMember.existingMember(
+        FamilyMember member = FamilyMember.withId(
             1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
@@ -234,7 +311,7 @@ class FamilyMemberTest {
     @DisplayName("OWNER 상태는 변경할 수 없다")
     void cannot_change_owner_status() {
         // given
-        FamilyMember owner = FamilyMember.existingMember(
+        FamilyMember owner = FamilyMember.withId(
             1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
@@ -254,7 +331,7 @@ class FamilyMemberTest {
     void has_role_at_least_checks_if_member_has_required_role() {
         // given
         FamilyMember owner = FamilyMember.newOwner(1L, 2L, "Owner", "", null, "");
-        FamilyMember admin = FamilyMember.existingMember(3L, 1L, 4L, "Admin", "", null, "", 
+        FamilyMember admin = FamilyMember.withId(3L, 1L, 4L, "Admin", "", null, "", 
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN, null, null, null, null);
         FamilyMember member = FamilyMember.newMember(1L, 5L, "Member", "", null, "");
         
@@ -276,11 +353,11 @@ class FamilyMemberTest {
     @DisplayName("isActive 메서드로 구성원이 활성 상태인지 확인할 수 있다")
     void is_active_checks_if_member_is_active() {
         // given
-        FamilyMember activeMember = FamilyMember.existingMember(1L, 2L, 3L, "Active", "", null, "", 
+        FamilyMember activeMember = FamilyMember.withId(1L, 2L, 3L, "Active", "", null, "", 
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, null, null, null, null);
-        FamilyMember suspendedMember = FamilyMember.existingMember(4L, 2L, 5L, "Suspended", "", null, "", 
+        FamilyMember suspendedMember = FamilyMember.withId(4L, 2L, 5L, "Suspended", "", null, "", 
             FamilyMemberStatus.SUSPENDED, FamilyMemberRole.MEMBER, null, null, null, null);
-        FamilyMember bannedMember = FamilyMember.existingMember(6L, 2L, 7L, "Banned", "", null, "", 
+        FamilyMember bannedMember = FamilyMember.withId(6L, 2L, 7L, "Banned", "", null, "", 
             FamilyMemberStatus.BANNED, FamilyMemberRole.MEMBER, null, null, null, null);
         
         // when & then

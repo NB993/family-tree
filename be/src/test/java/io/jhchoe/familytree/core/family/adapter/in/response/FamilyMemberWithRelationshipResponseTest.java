@@ -172,8 +172,8 @@ class FamilyMemberWithRelationshipResponseTest {
     // Helper methods
     
     private FamilyMember createFamilyMember() {
-        return FamilyMember.existingMember(
-            1L, 1L, 1L, "김아버지", "https://example.com/profile.jpg", 
+        return FamilyMember.withId(
+            1L, 1L, 1L, "김아버지", "https://example.com/profile.jpg",
             LocalDateTime.of(1970, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now()

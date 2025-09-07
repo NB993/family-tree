@@ -55,21 +55,21 @@ class FindFamilyJoinRequestServiceTest {
         Long currentUserId = 2L;
         query = new FindFamilyJoinRequestQuery(familyId, currentUserId);
         
-        adminMember = FamilyMember.existingMember(
+        adminMember = FamilyMember.withId(
             1L, familyId, currentUserId, "Admin User", "profile.jpg", 
             LocalDateTime.of(1990, 1, 1, 0, 0),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             null, null, null, null
         );
         
-        ownerMember = FamilyMember.existingMember(
+        ownerMember = FamilyMember.withId(
             2L, familyId, currentUserId, "Owner User", "profile.jpg", 
             LocalDateTime.of(1990, 1, 1, 0, 0),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             null, null, null, null
         );
         
-        regularMember = FamilyMember.existingMember(
+        regularMember = FamilyMember.withId(
             3L, familyId, currentUserId, "Regular User", "profile.jpg", 
             LocalDateTime.of(1990, 1, 1, 0, 0),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
@@ -190,7 +190,7 @@ class FindFamilyJoinRequestServiceTest {
     @DisplayName("비활성화된 구성원이 조회하면 MEMBER_NOT_ACTIVE 예외를 발생시킨다")
     void should_throw_member_not_active_exception_when_member_is_inactive() {
         // given
-        FamilyMember inactiveMember = FamilyMember.existingMember(
+        FamilyMember inactiveMember = FamilyMember.withId(
             1L, query.getFamilyId(), query.getCurrentUserId(), "Inactive Admin", "profile.jpg", 
             LocalDateTime.of(1990, 1, 1, 0, 0),
             "KR", FamilyMemberStatus.SUSPENDED, FamilyMemberRole.ADMIN,

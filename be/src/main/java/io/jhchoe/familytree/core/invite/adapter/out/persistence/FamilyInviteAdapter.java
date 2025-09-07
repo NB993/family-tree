@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.invite.adapter.out.persistence;
 
 import io.jhchoe.familytree.core.invite.application.port.out.FindFamilyInvitePort;
+import io.jhchoe.familytree.core.invite.application.port.out.ModifyFamilyInvitePort;
 import io.jhchoe.familytree.core.invite.application.port.out.SaveFamilyInvitePort;
 import io.jhchoe.familytree.core.invite.domain.FamilyInvite;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @RequiredArgsConstructor
-public class FamilyInviteAdapter implements SaveFamilyInvitePort, FindFamilyInvitePort {
+public class FamilyInviteAdapter implements SaveFamilyInvitePort, FindFamilyInvitePort, ModifyFamilyInvitePort {
 
     private final FamilyInviteJpaRepository familyInviteJpaRepository;
 
@@ -59,6 +60,17 @@ public class FamilyInviteAdapter implements SaveFamilyInvitePort, FindFamilyInvi
      * {@inheritDoc}
      */
     @Override
+    public Optional<FamilyInvite> findByCode(final String code) {
+        Objects.requireNonNull(code, "code must not be null");
+
+        return familyInviteJpaRepository.findByInviteCode(code)
+            .map(FamilyInviteJpaEntity::toFamilyInvite);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<FamilyInvite> findByRequesterId(final Long requesterId) {
         Objects.requireNonNull(requesterId, "requesterId must not be null");
 
@@ -66,5 +78,19 @@ public class FamilyInviteAdapter implements SaveFamilyInvitePort, FindFamilyInvi
             .stream()
             .map(FamilyInviteJpaEntity::toFamilyInvite)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FamilyInvite modify(final FamilyInvite familyInvite) {
+        Objects.requireNonNull(familyInvite, "familyInvite must not be null");
+        Objects.requireNonNull(familyInvite.getId(), "familyInvite.id must not be null");
+
+        final FamilyInviteJpaEntity jpaEntity = FamilyInviteJpaEntity.from(familyInvite);
+        final FamilyInviteJpaEntity savedEntity = familyInviteJpaRepository.save(jpaEntity);
+        
+        return savedEntity.toFamilyInvite();
     }
 }

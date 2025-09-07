@@ -16,7 +16,8 @@ public class FamilyMember {
 
     private final Long id;
     private final Long familyId;
-    private final Long userId;
+    private final Long userId; // nullable - 비회원도 가능
+    private final String kakaoId; // 카카오 ID
     private final String name;
     private final String profileUrl;
     private final LocalDateTime birthday;
@@ -33,7 +34,8 @@ public class FamilyMember {
      *
      * @param id          고유 ID
      * @param familyId    Family ID
-     * @param userId      사용자 ID
+     * @param userId      사용자 ID (nullable - 비회원인 경우 null)
+     * @param kakaoId     카카오 ID (nullable - 카카오 인증을 하지 않은 경우 null)
      * @param name        이름
      * @param profileUrl  프로필 URL
      * @param birthday    생일
@@ -49,6 +51,7 @@ public class FamilyMember {
         Long id,
         Long familyId,
         Long userId,
+        String kakaoId,
         String name,
         String profileUrl,
         LocalDateTime birthday,
@@ -63,6 +66,7 @@ public class FamilyMember {
         this.id = id;
         this.familyId = familyId;
         this.userId = userId;
+        this.kakaoId = kakaoId;
         this.name = name;
         this.profileUrl = profileUrl;
         this.birthday = birthday;
@@ -98,7 +102,7 @@ public class FamilyMember {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
 
-        return new FamilyMember(null, familyId, userId, name, profileUrl, birthday, nationality, 
+        return new FamilyMember(null, familyId, userId, null, name, profileUrl, birthday, nationality, 
                               FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 
                               null, null, null, null);
     }
@@ -108,7 +112,8 @@ public class FamilyMember {
      *
      * @param id          고유 ID
      * @param familyId    Family ID
-     * @param userId      사용자 ID
+     * @param userId      사용자 ID (nullable - 비회원인 경우 null)
+     * @param kakaoId     카카오 ID (nullable)
      * @param name        이름
      * @param profileUrl  프로필 URL
      * @param birthday    생일
@@ -121,7 +126,7 @@ public class FamilyMember {
      * @param modifiedAt  수정 일시
      * @return 새로운 FamilyMember 인스턴스 (ID 및 audit 필드 포함)
      */
-    public static FamilyMember existingMember(
+    public static FamilyMember withId(
         Long id,
         Long familyId,
         Long userId,
@@ -138,11 +143,61 @@ public class FamilyMember {
     ) {
         Objects.requireNonNull(id, "id must not be null");
         Objects.requireNonNull(familyId, "familyId must not be null");
-        Objects.requireNonNull(userId, "userId must not be null");
+        if (userId == null) {
+            throw new IllegalArgumentException("At least one of userId or kakaoId must be provided");
+        }
         Objects.requireNonNull(role, "role must not be null");
 
-        return new FamilyMember(id, familyId, userId, name, profileUrl, birthday, nationality, 
+        return new FamilyMember(id, familyId, userId, null, name, profileUrl, birthday, nationality,
                               status, role, createdBy, createdAt, modifiedBy, modifiedAt);
+    }
+
+    /**
+     * 고유 ID를 가지고 있는 기존 FamilyMember 객체를 생성합니다.
+     *
+     * @param id          고유 ID
+     * @param familyId    Family ID
+     * @param userId      사용자 ID (nullable - 비회원인 경우 null)
+     * @param kakaoId     카카오 ID (nullable)
+     * @param name        이름
+     * @param profileUrl  프로필 URL
+     * @param birthday    생일
+     * @param nationality 국적
+     * @param status      멤버 상태
+     * @param role        멤버 역할
+     * @param createdBy   생성한 사용자 ID
+     * @param createdAt   생성 일시
+     * @param modifiedBy  수정한 사용자 ID
+     * @param modifiedAt  수정 일시
+     * @return 새로운 FamilyMember 인스턴스 (ID 및 audit 필드 포함)
+     */
+    public static FamilyMember withIdKakao(
+        Long id,
+        Long familyId,
+        Long userId,
+        String kakaoId,
+        String name,
+        String profileUrl,
+        LocalDateTime birthday,
+        String nationality,
+        FamilyMemberStatus status,
+        FamilyMemberRole role,
+        Long createdBy,
+        LocalDateTime createdAt,
+        Long modifiedBy,
+        LocalDateTime modifiedAt
+    ) {
+        Objects.requireNonNull(id, "id must not be null");
+        Objects.requireNonNull(familyId, "familyId must not be null");
+        // userId는 nullable - 비회원도 가능
+        // kakaoId와 userId 중 최소 하나는 있어야 함
+        if (userId == null && kakaoId == null) {
+            throw new IllegalArgumentException("At least one of userId or kakaoId must be provided");
+        }
+        Objects.requireNonNull(role, "role must not be null");
+
+        return new FamilyMember(id, familyId, userId, kakaoId, name, profileUrl, birthday, nationality,
+            status, role, createdBy, createdAt, modifiedBy, modifiedAt);
     }
     
     /**
@@ -168,7 +223,7 @@ public class FamilyMember {
         Objects.requireNonNull(userId, "userId must not be null");
 
         return new FamilyMember(
-            null, familyId, userId, name, profileUrl, birthday, nationality, 
+            null, familyId, userId, null, name, profileUrl, birthday, nationality,
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER, 
             null, null, null, null
         );
@@ -200,7 +255,7 @@ public class FamilyMember {
         Objects.requireNonNull(role, "role must not be null");
 
         return new FamilyMember(
-            null, familyId, userId, name, profileUrl, birthday, nationality, 
+            null, familyId, userId, null, name, profileUrl, birthday, nationality, 
             FamilyMemberStatus.ACTIVE, role, null, null, null, null
         );
     }
@@ -221,7 +276,7 @@ public class FamilyMember {
         }
         
         return new FamilyMember(
-            this.id, this.familyId, this.userId, this.name, this.profileUrl, 
+            this.id, this.familyId, this.userId, this.kakaoId, this.name, this.profileUrl, 
             this.birthday, this.nationality, this.status, newRole, 
             this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
         );
@@ -243,7 +298,7 @@ public class FamilyMember {
         }
         
         return new FamilyMember(
-            this.id, this.familyId, this.userId, this.name, this.profileUrl, 
+            this.id, this.familyId, this.userId, this.kakaoId, this.name, this.profileUrl, 
             this.birthday, this.nationality, newStatus, this.role, 
             this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
         );
@@ -266,5 +321,49 @@ public class FamilyMember {
      */
     public boolean isActive() {
         return this.status == FamilyMemberStatus.ACTIVE;
+    }
+    
+    /**
+     * 카카오 OAuth로 인증한 비회원 FamilyMember를 생성합니다.
+     *
+     * @param familyId    Family ID
+     * @param kakaoId     카카오 ID
+     * @param name        이름
+     * @param profileUrl  프로필 URL
+     * @return 새로운 FamilyMember 인스턴스 (userId=null, kakaoId 설정)
+     */
+    public static FamilyMember newKakaoMember(
+        Long familyId,
+        String kakaoId,
+        String name,
+        String profileUrl
+    ) {
+        Objects.requireNonNull(familyId, "familyId must not be null");
+        Objects.requireNonNull(kakaoId, "kakaoId must not be null");
+        Objects.requireNonNull(name, "name must not be null");
+        
+        return new FamilyMember(
+            null, familyId, null, kakaoId, name, profileUrl, null, null,
+            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+            null, null, null, null
+        );
+    }
+    
+    /**
+     * 구성원이 회원인지 확인합니다.
+     *
+     * @return userId가 있으면 true (회원), 없으면 false (비회원)
+     */
+    public boolean isRegisteredUser() {
+        return this.userId != null;
+    }
+    
+    /**
+     * 구성원이 카카오 인증 사용자인지 확인합니다.
+     *
+     * @return kakaoId가 있으면 true, 없으면 false
+     */
+    public boolean isKakaoAuthenticated() {
+        return this.kakaoId != null;
     }
 }

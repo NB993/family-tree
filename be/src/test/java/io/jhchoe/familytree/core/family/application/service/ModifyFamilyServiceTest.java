@@ -59,7 +59,7 @@ class ModifyFamilyServiceTest {
         Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true, null,
             null, null, null);
 
-        FamilyMember ownerMember = FamilyMember.existingMember(
+        FamilyMember ownerMember = FamilyMember.withId(
             1L, familyId, userId, "소유자", "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             userId, NOW, userId, NOW
@@ -101,7 +101,7 @@ class ModifyFamilyServiceTest {
         ModifyFamilyCommand command = new ModifyFamilyCommand(familyId, "Updated Name", "http://example.com/profile",
             "Updated Description", userId);
 
-        FamilyMember ownerMember = FamilyMember.existingMember(
+        FamilyMember ownerMember = FamilyMember.withId(
             1L, familyId, userId, "소유자", "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             userId, NOW, userId, NOW
@@ -129,7 +129,7 @@ class ModifyFamilyServiceTest {
         Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true, null,
             null, null, null);
 
-        FamilyMember ownerMember = FamilyMember.existingMember(
+        FamilyMember ownerMember = FamilyMember.withId(
             1L, familyId, userId, "소유자", "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             userId, NOW, userId, NOW

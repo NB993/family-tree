@@ -30,7 +30,7 @@ class FamilyMemberEntityTest {
         Long modifiedBy = 1002L;
         LocalDateTime modifiedAt = LocalDateTime.now();
 
-        FamilyMember familyMember = FamilyMember.existingMember(
+        FamilyMember familyMember = FamilyMember.withId(
             id, familyId, userId, name, profileUrl, birthday,
             nationality, status, FamilyMemberRole.MEMBER, createdBy, createdAt, modifiedBy, modifiedAt
         );
@@ -85,7 +85,7 @@ class FamilyMemberEntityTest {
         Long modifiedBy = 1002L;
         LocalDateTime modifiedAt = LocalDateTime.now();
 
-        FamilyMember familyMember = FamilyMember.existingMember(
+        FamilyMember familyMember = FamilyMember.withId(
             id, familyId, userId, name, profileUrl, birthday,
             nationality, status, role, createdBy, createdAt, modifiedBy, modifiedAt
         );
@@ -128,10 +128,9 @@ class FamilyMemberEntityTest {
         Long modifiedBy = 1002L;
         LocalDateTime modifiedAt = LocalDateTime.now();
 
-        FamilyMemberJpaEntity entity = new FamilyMemberJpaEntity(
-            id, familyId, userId, name, profileUrl, birthday, nationality,
-            status, role, createdBy, createdAt, modifiedBy, modifiedAt
-        );
+        FamilyMember familyMember = FamilyMember.withId(id, familyId, userId, name, profileUrl, birthday, nationality,
+            status, role, createdBy, createdAt, modifiedBy, modifiedAt);
+        FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
 
         // when
         FamilyMember result = entity.toFamilyMember();
@@ -157,23 +156,22 @@ class FamilyMemberEntityTest {
     @DisplayName("toFamilyMember 메서드는 role이 null인 경우 기본값 MEMBER로 변환해야 한다")
     void given_entity_with_null_role_when_to_family_member_then_return_member_role() {
         // given
-        Long id = 1L;
-        Long familyId = 101L;
-        Long userId = 202L;
-        String name = "Test User";
-        String profileUrl = "http://example.com/profile";
-        LocalDateTime birthday = LocalDateTime.now();
-        String nationality = "Korean";
-        FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
-        FamilyMemberRole role = null; // null 역할
-        Long createdBy = 1001L;
-        LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
-        Long modifiedBy = 1002L;
-        LocalDateTime modifiedAt = LocalDateTime.now();
-
+        // JPA 엔티티를 직접 생성 (role이 null인 상태)
         FamilyMemberJpaEntity entity = new FamilyMemberJpaEntity(
-            id, familyId, userId, name, profileUrl, birthday, nationality,
-            status, role, createdBy, createdAt, modifiedBy, modifiedAt
+            1L,  // id
+            101L,  // familyId
+            202L,  // userId
+            null,  // kakaoId
+            "Test User",  // name
+            "http://example.com/profile",  // profileUrl
+            LocalDateTime.now(),  // birthday
+            "Korean",  // nationality
+            FamilyMemberStatus.ACTIVE,  // status
+            null,  // role이 null
+            1001L,  // createdBy
+            LocalDateTime.now().minusDays(1),  // createdAt
+            1002L,  // modifiedBy
+            LocalDateTime.now()  // modifiedAt
         );
 
         // when

@@ -14,7 +14,11 @@ public enum InviteExceptionCode implements ExceptionCodeType {
     ALREADY_RESPONDED("I004", "이미 응답한 초대입니다.", HttpStatus.CONFLICT),
     INVALID_INVITE_CODE("I005", "유효하지 않은 초대 코드입니다.", HttpStatus.BAD_REQUEST),
     NOT_AUTHORIZED_TO_CREATE_INVITE("I006", "초대를 생성할 권한이 없습니다.", HttpStatus.FORBIDDEN),
-    RESPONSE_NOT_FOUND("I007", "존재하지 않는 초대 응답입니다.", HttpStatus.NOT_FOUND);
+    RESPONSE_NOT_FOUND("I007", "존재하지 않는 초대 응답입니다.", HttpStatus.NOT_FOUND),
+    INVITE_MAX_USES_EXCEEDED("I008", "초대 링크 사용 가능 횟수를 초과했습니다.", HttpStatus.BAD_REQUEST),
+    REQUESTER_HAS_NO_FAMILY("I009", "초대를 생성한 사용자가 어떤 가족에도 속해있지 않습니다.", HttpStatus.BAD_REQUEST),
+    ALREADY_FAMILY_MEMBER("I010", "이미 해당 가족의 구성원입니다.", HttpStatus.CONFLICT),
+    KAKAO_OAUTH_FAILED("I011", "카카오 OAuth 인증에 실패했습니다.", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;

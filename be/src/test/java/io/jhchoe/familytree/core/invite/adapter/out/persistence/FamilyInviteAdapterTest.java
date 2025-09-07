@@ -32,7 +32,7 @@ class FamilyInviteAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("새로운 초대를 저장하고 저장된 초대를 반환합니다")
     void save_returns_saved_invite() {
         // given
-        FamilyInvite invite = FamilyInvite.newInvite(1L);
+        FamilyInvite invite = FamilyInvite.newInvite(1L, 5);
 
         // when
         FamilyInvite savedInvite = sut.save(invite);
@@ -48,7 +48,7 @@ class FamilyInviteAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("ID로 초대를 조회할 수 있습니다")
     void findById_returns_invite_when_exists() {
         // given
-        FamilyInvite invite = FamilyInvite.newInvite(1L);
+        FamilyInvite invite = FamilyInvite.newInvite(1L, 5);
         FamilyInviteJpaEntity savedEntity = familyInviteJpaRepository.save(FamilyInviteJpaEntity.from(invite));
 
         // when
@@ -74,7 +74,7 @@ class FamilyInviteAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("초대 코드로 초대를 조회할 수 있습니다")
     void findByInviteCode_returns_invite_when_exists() {
         // given
-        FamilyInvite invite = FamilyInvite.newInvite(1L);
+        FamilyInvite invite = FamilyInvite.newInvite(1L, 5);
         FamilyInviteJpaEntity savedEntity = familyInviteJpaRepository.save(FamilyInviteJpaEntity.from(invite));
         String inviteCode = savedEntity.getInviteCode();
 
@@ -91,9 +91,9 @@ class FamilyInviteAdapterTest extends TestcontainersDataJpaTestBase {
     void findByRequesterId_returns_invite_list() {
         // given
         Long requesterId = 1L;
-        FamilyInvite invite1 = FamilyInvite.newInvite(requesterId);
-        FamilyInvite invite2 = FamilyInvite.newInvite(requesterId);
-        FamilyInvite invite3 = FamilyInvite.newInvite(2L); // 다른 요청자
+        FamilyInvite invite1 = FamilyInvite.newInvite(requesterId, 5);
+        FamilyInvite invite2 = FamilyInvite.newInvite(requesterId, 5);
+        FamilyInvite invite3 = FamilyInvite.newInvite(2L, 5); // 다른 요청자
 
         familyInviteJpaRepository.save(FamilyInviteJpaEntity.from(invite1));
         familyInviteJpaRepository.save(FamilyInviteJpaEntity.from(invite2));

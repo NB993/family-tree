@@ -70,7 +70,7 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
     @DisplayName("익명 사용자도 초대 코드로 초대 정보를 조회할 수 있다")
     void anonymous_user_can_view_invite_by_code() {
         // given - 초대 링크 생성
-        FamilyInvite invite = FamilyInvite.newInvite(1L);
+        FamilyInvite invite = FamilyInvite.newInvite(1L, 5);
         FamilyInviteJpaEntity saved = familyInviteJpaRepository.save(
             FamilyInviteJpaEntity.from(invite)
         );
@@ -105,7 +105,7 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
     @DisplayName("만료된 초대 코드로 조회하면 400을 반환한다")
     void returns_400_for_expired_invite() {
         // given - 정상 초대 생성 후 저장
-        FamilyInvite invite = FamilyInvite.newInvite(1L);
+        FamilyInvite invite = FamilyInvite.newInvite(1L, 5);
         FamilyInviteJpaEntity entity = FamilyInviteJpaEntity.from(invite);
         FamilyInviteJpaEntity saved = familyInviteJpaRepository.save(entity);
         
@@ -115,6 +115,8 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
             saved.getRequesterId(),
             saved.getInviteCode(),
             LocalDateTime.now().minusHours(1), // 1시간 전 만료
+            10,
+            0,
             saved.getStatus(),
             saved.getCreatedAt(),
             saved.getModifiedAt()
@@ -135,9 +137,9 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
     @WithMockOAuth2User(id = 1L)
     void user_can_view_their_own_invites() {
         // given - 여러 초대 생성
-        FamilyInvite invite1 = FamilyInvite.newInvite(1L);
-        FamilyInvite invite2 = FamilyInvite.newInvite(1L);
-        FamilyInvite otherUserInvite = FamilyInvite.newInvite(2L);
+        FamilyInvite invite1 = FamilyInvite.newInvite(1L, 5);
+        FamilyInvite invite2 = FamilyInvite.newInvite(1L, 5);
+        FamilyInvite otherUserInvite = FamilyInvite.newInvite(2L, 5);
         
         familyInviteJpaRepository.save(FamilyInviteJpaEntity.from(invite1));
         familyInviteJpaRepository.save(FamilyInviteJpaEntity.from(invite2));

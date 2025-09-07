@@ -1,5 +1,6 @@
 package io.jhchoe.familytree.core.invite.adapter.out.persistence;
 
+import io.jhchoe.familytree.common.support.ModifierBaseEntity;
 import io.jhchoe.familytree.core.invite.domain.FamilyInvite;
 import io.jhchoe.familytree.core.invite.domain.FamilyInviteStatus;
 import jakarta.persistence.*;
@@ -17,7 +18,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "family_invite")
 @Entity
-public class FamilyInviteJpaEntity {
+public class FamilyInviteJpaEntity extends ModifierBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,15 +33,15 @@ public class FamilyInviteJpaEntity {
     @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
 
+    @Column(name = "max_uses")
+    private Integer maxUses;
+
+    @Column(name = "used_count", nullable = false)
+    private Integer usedCount;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private FamilyInviteStatus status;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "modified_at", nullable = false)
-    private LocalDateTime modifiedAt;
 
     /**
      * FamilyInviteJpaEntity 객체를 생성하는 생성자입니다.
@@ -50,17 +51,22 @@ public class FamilyInviteJpaEntity {
         final Long requesterId,
         final String inviteCode,
         final LocalDateTime expiresAt,
+        final Integer maxUses,
+        final Integer usedCount,
         final FamilyInviteStatus status,
+        final Long createdBy,
         final LocalDateTime createdAt,
+        final Long modifiedBy,
         final LocalDateTime modifiedAt
     ) {
+        super(createdBy, createdAt, modifiedBy, modifiedAt);
         this.id = id;
         this.requesterId = requesterId;
         this.inviteCode = inviteCode;
         this.expiresAt = expiresAt;
+        this.maxUses = maxUses;
+        this.usedCount = usedCount;
         this.status = status;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 
     /**
@@ -77,8 +83,12 @@ public class FamilyInviteJpaEntity {
             familyInvite.getRequesterId(),
             familyInvite.getInviteCode(),
             familyInvite.getExpiresAt(),
+            familyInvite.getMaxUses(),
+            familyInvite.getUsedCount(),
             familyInvite.getStatus(),
+            familyInvite.getRequesterId(), // createdBy는 requesterId와 동일
             familyInvite.getCreatedAt(),
+            familyInvite.getRequesterId(), // modifiedBy도 requesterId로 초기화
             familyInvite.getModifiedAt()
         );
     }
@@ -94,9 +104,11 @@ public class FamilyInviteJpaEntity {
             requesterId,
             inviteCode,
             expiresAt,
+            maxUses,
+            usedCount,
             status,
-            createdAt,
-            modifiedAt
+            getCreatedAt(),
+            getModifiedAt()
         );
     }
 }

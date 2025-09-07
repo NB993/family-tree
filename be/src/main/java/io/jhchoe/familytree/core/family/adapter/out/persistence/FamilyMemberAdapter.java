@@ -109,6 +109,7 @@ public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMe
                 entity.getId(),
                 entity.getFamilyId(),
                 entity.getUserId(),
+                entity.getKakaoId(), // kakaoId 추가
                 entity.getName(),
                 entity.getProfileUrl(),
                 entity.getBirthday(),
@@ -137,6 +138,22 @@ public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMe
         
         // 저장 및 ID 반환
         return familyMemberJpaRepository.save(entity).getId();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FamilyMember> findByUserId(Long userId) {
+        return findAllByUserId(userId);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FamilyMember> findByFamilyId(Long familyId) {
+        return findAllByFamilyId(familyId);
     }
     
     /**

@@ -46,12 +46,12 @@ class FindFamilyTreeServiceTest {
         
         Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
         
-        FamilyMember centerMember = FamilyMember.existingMember(
+        FamilyMember centerMember = FamilyMember.withId(
             centerMemberId, familyId, 1L, "중심구성원", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
         
-        FamilyMember childMember = FamilyMember.existingMember(
+        FamilyMember childMember = FamilyMember.withId(
             2L, familyId, 2L, "자녀", "child.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
@@ -132,7 +132,7 @@ class FindFamilyTreeServiceTest {
         
         Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
         
-        FamilyMember member = FamilyMember.existingMember(
+        FamilyMember member = FamilyMember.withId(
             1L, familyId, 1L, "구성원", "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
@@ -157,12 +157,12 @@ class FindFamilyTreeServiceTest {
         
         Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
         
-        FamilyMember firstMember = FamilyMember.existingMember(
+        FamilyMember firstMember = FamilyMember.withId(
             1L, familyId, 1L, "첫번째구성원", "profile1.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
         
-        FamilyMember secondMember = FamilyMember.existingMember(
+        FamilyMember secondMember = FamilyMember.withId(
             2L, familyId, 2L, "두번째구성원", "profile2.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );

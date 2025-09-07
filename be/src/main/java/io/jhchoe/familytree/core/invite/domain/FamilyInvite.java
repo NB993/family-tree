@@ -12,6 +12,8 @@ public final class FamilyInvite {
     private final Long requesterId;
     private final String inviteCode;
     private final LocalDateTime expiresAt;
+    private final Integer maxUses;
+    private final Integer usedCount;
     private final FamilyInviteStatus status;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
@@ -21,6 +23,8 @@ public final class FamilyInvite {
         final Long requesterId,
         final String inviteCode,
         final LocalDateTime expiresAt,
+        final Integer maxUses,
+        final Integer usedCount,
         final FamilyInviteStatus status,
         final LocalDateTime createdAt,
         final LocalDateTime modifiedAt
@@ -34,6 +38,8 @@ public final class FamilyInvite {
         this.requesterId = requesterId;
         this.inviteCode = inviteCode;
         this.expiresAt = expiresAt;
+        this.maxUses = maxUses;
+        this.usedCount = usedCount != null ? usedCount : 0;
         this.status = status;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
@@ -43,10 +49,12 @@ public final class FamilyInvite {
      * 새로운 초대를 생성합니다.
      *
      * @param requesterId 초대를 생성한 사용자 ID
+     * @param maxUses 최대 사용 횟수 (null이면 무제한)
      * @return 새로 생성된 초대 (ID는 null, inviteCode는 UUID)
      */
     public static FamilyInvite newInvite(
-        final Long requesterId
+        final Long requesterId,
+        final Integer maxUses
     ) {
         final LocalDateTime now = LocalDateTime.now();
         final LocalDateTime expiresAt = now.plusDays(1);
@@ -56,6 +64,8 @@ public final class FamilyInvite {
             requesterId,
             UUID.randomUUID().toString(),
             expiresAt,
+            maxUses,
+            0,
             FamilyInviteStatus.ACTIVE,
             now,
             now
@@ -69,6 +79,8 @@ public final class FamilyInvite {
      * @param requesterId 초대를 생성한 사용자 ID
      * @param inviteCode 초대 코드
      * @param expiresAt 만료 시간
+     * @param maxUses 최대 사용 횟수
+     * @param usedCount 사용된 횟수
      * @param status 초대 상태
      * @param createdAt 생성 시간
      * @param modifiedAt 수정 시간
@@ -79,6 +91,8 @@ public final class FamilyInvite {
         final Long requesterId,
         final String inviteCode,
         final LocalDateTime expiresAt,
+        final Integer maxUses,
+        final Integer usedCount,
         final FamilyInviteStatus status,
         final LocalDateTime createdAt,
         final LocalDateTime modifiedAt
@@ -90,6 +104,8 @@ public final class FamilyInvite {
             requesterId,
             inviteCode,
             expiresAt,
+            maxUses,
+            usedCount,
             status,
             createdAt,
             modifiedAt
@@ -125,9 +141,11 @@ public final class FamilyInvite {
             requesterId,
             inviteCode,
             expiresAt,
+            maxUses,
+            usedCount,
             FamilyInviteStatus.COMPLETED,
             createdAt,
-            LocalDateTime.now()
+            modifiedAt // JPA Auditing이 자동으로 업데이트
         );
     }
 
@@ -142,9 +160,30 @@ public final class FamilyInvite {
             requesterId,
             inviteCode,
             expiresAt,
+            maxUses,
+            usedCount,
             FamilyInviteStatus.EXPIRED,
             createdAt,
-            LocalDateTime.now()
+            modifiedAt // JPA Auditing이 자동으로 업데이트
+        );
+    }
+    
+    /**
+     * 초대 사용 횟수를 증가시킵니다.
+     *
+     * @return 사용 횟수가 증가된 새로운 초대 객체
+     */
+    public FamilyInvite incrementUsedCount() {
+        return new FamilyInvite(
+            id,
+            requesterId,
+            inviteCode,
+            expiresAt,
+            maxUses,
+            usedCount + 1,
+            status,
+            createdAt,
+            modifiedAt // JPA Auditing이 자동으로 업데이트
         );
     }
 
@@ -174,5 +213,13 @@ public final class FamilyInvite {
 
     public LocalDateTime getModifiedAt() {
         return modifiedAt;
+    }
+    
+    public Integer getMaxUses() {
+        return maxUses;
+    }
+    
+    public Integer getUsedCount() {
+        return usedCount;
     }
 }

@@ -21,7 +21,7 @@ class FamilyMemberAuthorizationValidatorTest {
     @DisplayName("OWNER 권한 검증 - 성공")
     void validate_owner_role_success() {
         // given
-        FamilyMember ownerMember = FamilyMember.existingMember(
+        FamilyMember ownerMember = FamilyMember.withId(
             1L, 1L, 1L, "소유자", "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             1L, NOW, 1L, NOW
@@ -36,7 +36,7 @@ class FamilyMemberAuthorizationValidatorTest {
     @DisplayName("OWNER 권한 검증 - 실패 (ADMIN 권한)")
     void validate_owner_role_fail_admin_role() {
         // given
-        FamilyMember adminMember = FamilyMember.existingMember(
+        FamilyMember adminMember = FamilyMember.withId(
             1L, 1L, 1L, "관리자", "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             1L, NOW, 1L, NOW
@@ -52,7 +52,7 @@ class FamilyMemberAuthorizationValidatorTest {
     @DisplayName("OWNER 권한 검증 - 실패 (MEMBER 권한)")
     void validate_owner_role_fail_member_role() {
         // given
-        FamilyMember member = FamilyMember.existingMember(
+        FamilyMember member = FamilyMember.withId(
             1L, 1L, 1L, "일반구성원", "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             1L, NOW, 1L, NOW
@@ -68,7 +68,7 @@ class FamilyMemberAuthorizationValidatorTest {
     @DisplayName("Family 수정 권한 검증 - 성공")
     void validate_family_modification_permission_success() {
         // given
-        FamilyMember ownerMember = FamilyMember.existingMember(
+        FamilyMember ownerMember = FamilyMember.withId(
             1L, 1L, 1L, "소유자", "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             1L, NOW, 1L, NOW
@@ -83,7 +83,7 @@ class FamilyMemberAuthorizationValidatorTest {
     @DisplayName("Family 수정 권한 검증 - 실패 (ADMIN 권한)")
     void validate_family_modification_permission_fail_admin_role() {
         // given
-        FamilyMember adminMember = FamilyMember.existingMember(
+        FamilyMember adminMember = FamilyMember.withId(
             1L, 1L, 1L, "관리자", "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             1L, NOW, 1L, NOW
@@ -99,7 +99,7 @@ class FamilyMemberAuthorizationValidatorTest {
     @DisplayName("Family 수정 권한 검증 - 실패 (비활성 OWNER)")
     void validate_family_modification_permission_fail_inactive_status() {
         // given
-        FamilyMember suspendedOwner = FamilyMember.existingMember(
+        FamilyMember suspendedOwner = FamilyMember.withId(
             1L, 1L, 1L, "소유자", "profile.jpg", NOW, "KR",
             FamilyMemberStatus.SUSPENDED, FamilyMemberRole.OWNER,
             1L, NOW, 1L, NOW
@@ -133,7 +133,7 @@ class FamilyMemberAuthorizationValidatorTest {
             1L, "비공개가족", "비공개된 가족입니다", "profile.jpg", false,
             1L, NOW, 1L, NOW
         );
-        FamilyMember member = FamilyMember.existingMember(
+        FamilyMember member = FamilyMember.withId(
             1L, 1L, 1L, "구성원", "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             1L, NOW, 1L, NOW

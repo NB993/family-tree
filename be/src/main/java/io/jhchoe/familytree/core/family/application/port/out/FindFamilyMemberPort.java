@@ -58,4 +58,20 @@ public interface FindFamilyMemberPort {
      * @return 사용자가 소속된 FamilyMember 객체 목록
      */
     List<FamilyMember> findAllByUserId(Long userId);
+
+    /**
+     * 특정 사용자가 소속된 모든 Family의 구성원 정보를 조회합니다.
+     *
+     * @param userId 사용자 ID
+     * @return 사용자가 소속된 FamilyMember 객체 목록
+     */
+    List<FamilyMember> findByUserId(Long userId);
+
+    /**
+     * 특정 Family의 모든 구성원을 조회합니다.
+     *
+     * @param familyId 조회할 Family ID
+     * @return FamilyMember 객체 목록
+     */
+    List<FamilyMember> findByFamilyId(Long familyId);
 }
