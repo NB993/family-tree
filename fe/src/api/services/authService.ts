@@ -3,15 +3,13 @@
  * JWT 토큰 갱신, 로그아웃 등 인증 관련 기능 제공
  */
 
-import { ApiClient } from '../client';
-import { AccessTokenResponse, LogoutResponse, UserInfo } from '../../types/auth';
+import type { AccessTokenResponse, LogoutResponse, UserInfo } from '../../types/auth';
 
 export class AuthService {
   private static instance: AuthService;
-  private apiClient: ApiClient;
 
   private constructor() {
-    this.apiClient = ApiClient.getInstance();
+    // 순환 참조를 막기 위해 생성자에서 ApiClient 인스턴스화를 제거합니다.
   }
 
   public static getInstance(): AuthService {
@@ -21,12 +19,19 @@ export class AuthService {
     return AuthService.instance;
   }
 
+  private async getApiClient() {
+    // 동적 import를 사용하여 순환 참조를 해결합니다.
+    const { ApiClient } = await import('../client');
+    return ApiClient.getInstance();
+  }
+
   /**
    * Access Token을 갱신합니다.
    * Refresh Token은 HttpOnly 쿠키로 자동 전송됩니다.
    */
   public async refreshAccessToken(): Promise<AccessTokenResponse> {
-    return this.apiClient.post<AccessTokenResponse>('/api/auth/refresh');
+    const apiClient = await this.getApiClient();
+    return apiClient.post<AccessTokenResponse>('/api/auth/refresh');
   }
 
   /**
@@ -34,14 +39,16 @@ export class AuthService {
    * 서버에서 Refresh Token을 무효화하고 쿠키를 삭제합니다.
    */
   public async logout(): Promise<LogoutResponse> {
-    return this.apiClient.post<LogoutResponse>('/api/auth/logout');
+    const apiClient = await this.getApiClient();
+    return apiClient.post<LogoutResponse>('/api/auth/logout');
   }
 
   /**
    * 현재 인증된 사용자 정보를 조회합니다.
    */
   public async getCurrentUser(): Promise<UserInfo> {
-    return this.apiClient.get<UserInfo>('/api/user/me');
+    const apiClient = await this.getApiClient();
+    return apiClient.get<UserInfo>('/api/user/me');
   }
 
   /**

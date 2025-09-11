@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePublicFamilies } from '../hooks/queries/useFamilyQueries';
 import { JoinFamilyButton } from '../components/family/FamilyJoinRequest';
 import { PublicFamilyResponse } from '../api/services/familyService';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 
 export const FamilySearchPage: React.FC = () => {
   const navigate = useNavigate();

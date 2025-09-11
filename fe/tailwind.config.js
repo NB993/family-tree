@@ -9,16 +9,21 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: "1rem",
+      padding: "2rem",
       screens: {
-        // Mobile-first design with 390px fixed width (iPhone 14 Pro)
-        sm: "390px",
-        md: "390px",
-        lg: "390px",
-        xl: "390px",
-        "2xl": "390px",
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
       },
-      maxWidth: "390px",
+    },
+    screens: {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
     },
     extend: {
       fontFamily: {

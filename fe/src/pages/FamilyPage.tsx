@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { useFamilyDetail, useFamilyMembers, useFamilyAnnouncements } from '../hooks/queries/useFamilyQueries';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 
 const FamilyPage: React.FC = () => {
   const { familyId } = useParams<{ familyId: string }>();

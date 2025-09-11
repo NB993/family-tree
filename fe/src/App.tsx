@@ -6,6 +6,7 @@ import { ApiClient } from './api/client';
 import { ErrorHandlers } from './types/error';
 import { AppLayout } from './components/layout/AppLayout';
 import { ProtectedRoute, RootRedirect } from './components/Auth';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -55,45 +56,47 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="App">
-          <AppLayout maxWidth="mobile" padding>
-            <Routes>
-              <Route path="/" element={<RootRedirect />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/auth/callback" element={<OAuth2CallbackPage />} />
-              <Route path="/login/oauth2/code/kakao" element={<OAuth2CallbackPage />} />
-              <Route path="/login/oauth2/code/google" element={<OAuth2CallbackPage />} />
-              <Route path="/home" element={
-                <ProtectedRoute>
-                  <HomePage />
-                </ProtectedRoute>
-              } />
-              <Route path="/families/create" element={
-                <ProtectedRoute>
-                  <CreateFamilyPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/families/search" element={<FamilySearchPage />} />
-              <Route path="/families/:familyId" element={<FamilyPage />} />
-              <Route path="/families/:familyId/members" element={
-                <ProtectedRoute>
-                  <FamilyMembersPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/invites/create" element={
-                <ProtectedRoute>
-                  <CreateInvitePage />
-                </ProtectedRoute>
-              } />
-              <Route path="/invite/:inviteCode" element={<InviteResponsePage />} />
-              <Route path="/404" element={<NotFoundPage />} />
-              <Route path="*" element={<Navigate to="/404" replace />} />
-            </Routes>
-          </AppLayout>
-        </div>
+        <AuthProvider>
+          <div className="App">
+            <AppLayout maxWidth="mobile" padding>
+              <Routes>
+                <Route path="/" element={<RootRedirect />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/auth/callback" element={<OAuth2CallbackPage />} />
+                <Route path="/login/oauth2/code/kakao" element={<OAuth2CallbackPage />} />
+                <Route path="/login/oauth2/code/google" element={<OAuth2CallbackPage />} />
+                <Route path="/home" element={
+                  <ProtectedRoute>
+                    <HomePage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/families/create" element={
+                  <ProtectedRoute>
+                    <CreateFamilyPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/families/search" element={<FamilySearchPage />} />
+                <Route path="/families/:familyId" element={<FamilyPage />} />
+                <Route path="/families/:familyId/members" element={
+                  <ProtectedRoute>
+                    <FamilyMembersPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/invites/create" element={
+                  <ProtectedRoute>
+                    <CreateInvitePage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/invite/:inviteCode" element={<InviteResponsePage />} />
+                <Route path="/404" element={<NotFoundPage />} />
+                <Route path="*" element={<Navigate to="/404" replace />} />
+              </Routes>
+            </AppLayout>
+          </div>
+        </AuthProvider>
       </Router>
     </QueryClientProvider>
   );
 }
 
-export default App; 
+export default App;

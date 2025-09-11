@@ -101,8 +101,6 @@ export class ApiClient {
             } catch (refreshError) {
               // 토큰 갱신 실패 - 로그인 페이지로 이동
               const { AuthService } = await import('../api/services/authService');
-              AuthService.getInstance().clearAllAuthData();
-              window.location.href = '/login';
               return Promise.reject(refreshError);
             }
           }

@@ -1,20 +1,38 @@
-import React, { useState, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMyFamilies, useFamilyMembers } from '../hooks/queries/useFamilyQueries';
-import { AuthService } from '../api/services/authService';
 import { FamilyMemberWithRelationship } from '../api/services/familyService';
+import { MoreVertical } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const HomePage: React.FC = () => {
   const { data: familiesData, isLoading, isError } = useMyFamilies();
   const navigate = useNavigate();
+  const { userInfo, logout } = useAuth();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFamilyId, setSelectedFamilyId] = useState<number | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
 
   // 선택된 가족의 구성원 데이터 가져오기
   const { data: membersData } = useFamilyMembers(selectedFamilyId || 0);
 
   // 첫 번째 가족을 기본 선택
-  React.useEffect(() => {
+  useEffect(() => {
     if (familiesData && familiesData.length > 0 && !selectedFamilyId) {
       setSelectedFamilyId(familiesData[0].id);
     }
@@ -31,283 +49,222 @@ const HomePage: React.FC = () => {
     );
   }, [membersData, searchTerm]);
 
-  const handleLogout = async () => {
-    try {
-      const authService = AuthService.getInstance();
-      await authService.logout();
-      authService.clearAllAuthData();
-      navigate('/login');
-    } catch (error) {
-      console.error('로그아웃 중 오류 발생:', error);
-      AuthService.getInstance().clearAllAuthData();
-      navigate('/login');
-    }
-  };
-
-  const userInfo = localStorage.getItem('userInfo');
-  const user = userInfo ? JSON.parse(userInfo) : null;
-
   const families = familiesData || [];
   const hasData = families.length > 0 && membersData && membersData.length > 0;
 
   return (
-    <div style={{ 
-      minHeight: '100vh',
-      backgroundColor: '#f8f9fa',
-      padding: '20px'
-    }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        {/* 헤더 영역 */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          marginBottom: '20px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <h1 style={{ fontSize: '24px', margin: 0 }}>
-              🏠 Family Tree
-            </h1>
-            <span style={{ color: '#666', fontSize: '14px' }}>
-              {user ? `${user.name}님` : '가족 트리'}
-            </span>
-          </div>
-          
-          <div style={{ display: 'flex', gap: '10px' }}>
+    <>
+      {/* 헤더 영역 */}
+      <header className="flex justify-between items-center mb-8">
+        <div className="flex items-center gap-4 min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
+            <span className="flex-shrink-0">🏠</span>
+            <span>Family Tree</span>
+          </h1>
+          <span className="hidden sm:inline text-gray-600 truncate">
+            {userInfo ? `${userInfo.name}님의 가족` : '가족 트리'}
+          </span>
+        </div>
+        
+        {/* Mobile Dropdown Menu */}
+        <div className="relative sm:hidden" ref={menuRef}>
+          <button 
+            onClick={() => setIsMenuOpen(prev => !prev)}
+            className="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <MoreVertical className="h-5 w-5 text-gray-600" />
+          </button>
+
+          {isMenuOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
+              <button
+                onClick={() => {
+                  navigate('/profile');
+                  setIsMenuOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                프로필
+              </button>
+              <button
+                onClick={() => {
+                  navigate('/settings');
+                  setIsMenuOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                설정
+              </button>
+              <div className="border-t my-1"></div>
+              <button
+                onClick={logout}
+                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+              >
+                로그아웃
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Buttons */}
+        <div className="hidden sm:flex items-center gap-3">
             <button 
               onClick={() => navigate('/profile')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: 'white',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium whitespace-nowrap"
             >
               프로필
             </button>
             <button 
               onClick={() => navigate('/settings')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: 'white',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium whitespace-nowrap"
             >
-              버튼 영역
+              설정
             </button>
-          </div>
+            <button
+              onClick={logout}
+              className="px-4 py-2 bg-red-50 border border-red-200 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium whitespace-nowrap"
+            >
+              로그아웃
+            </button>
         </div>
+      </header>
 
-        {/* 검색 영역 */}
-        <div style={{
-          backgroundColor: 'white',
-          border: '1px solid #e0e0e0',
-          borderRadius: '8px',
-          padding: '30px',
-          marginBottom: '20px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-            <div style={{ position: 'relative', flex: 1 }}>
-              <span style={{
-                position: 'absolute',
-                left: '12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                fontSize: '18px'
-              }}>🔍</span>
+      {/* 메인 컨텐츠 영역 */}
+      <main className="w-full">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+          
+          {/* 검색 영역 */}
+          <div className="mb-8">
+            <div className="relative mb-6">
+              <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-xl">
+                🔍
+              </span>
               <input
                 type="text"
-                placeholder="FamilyMember 검색 영역"
+                placeholder="가족 구성원 이름, 연락처로 검색"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 12px 12px 40px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '16px',
-                  outline: 'none'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#007bff'}
-                onBlur={(e) => e.target.style.borderColor = '#ddd'}
+                className="w-full pl-12 pr-4 py-4 border-2 border-gray-300 rounded-lg text-lg focus:border-blue-500 focus:outline-none transition-colors"
               />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <button 
+                onClick={() => navigate('/invites/create')}
+                className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-base"
+              >
+                초대링크 생성
+              </button>
+              <button 
+                onClick={() => navigate('/families')}
+                className="flex-1 px-6 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium text-base"
+              >
+                가족 등록하기
+              </button>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-            <button 
-              onClick={() => navigate('/invites/create')}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: 'white',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              초대링크 생성
-            </button>
-            <button 
-              onClick={() => navigate('/families')}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: 'white',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              등록하기
-            </button>
-          </div>
-
+          {/* 데이터 영역 */}
           {!hasData ? (
-            <div style={{
-              textAlign: 'center',
-              padding: '60px 20px',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '8px'
-            }}>
-              <p style={{ color: '#666', fontSize: '16px', lineHeight: '1.6' }}>
-                아직 등록된 가족 정보가 없어요.<br/>
-                가족들에게 초대링크를 전달하거나<br/>
-                직접 가족 정보를 등록해보세요.
+            <div className="text-center py-16 px-4 sm:px-6 bg-gray-50 rounded-lg">
+              <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
+                아직 등록된 가족 정보가 없어요. 가족들에게 초대링크를 전달하거나 직접 가족 정보를 등록해보세요.
               </p>
             </div>
           ) : (
-            <div>
-              {/* 구성원 목록 헤더 */}
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                marginBottom: '15px'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                  <span style={{ fontSize: '14px', color: '#666' }}>이름</span>
-                  <span style={{ fontSize: '14px', color: '#666' }}>생일</span>
-                  <span style={{ fontSize: '14px', color: '#666' }}>연락처</span>
-                  <span style={{ fontSize: '14px', color: '#666' }}>나와의 관계</span>
+            <div className="w-full">
+              {/* 테이블 헤더 - 데스크탑에서만 표시 */}
+              <div className="hidden lg:block border-b-2 border-gray-200 pb-4 mb-4">
+                <div className="grid grid-cols-12 gap-4 px-4 font-semibold text-gray-700">
+                  <div className="col-span-3">이름</div>
+                  <div className="col-span-3">생일</div>
+                  <div className="col-span-3">연락처</div>
+                  <div className="col-span-2">나와의 관계</div>
+                  <div className="col-span-1"></div>
                 </div>
               </div>
 
               {/* 구성원 목록 */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div className="space-y-3">
                 {filteredMembers.map((member: FamilyMemberWithRelationship) => (
                   <div 
                     key={member.memberId}
-                    style={{
-                      padding: '15px 20px',
-                      backgroundColor: 'white',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '4px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      cursor: 'pointer',
-                      transition: 'box-shadow 0.2s'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'}
-                    onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
+                    className="group bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '30px', flex: 1 }}>
-                      <span style={{ fontWeight: 'bold', minWidth: '80px' }}>{member.memberName}</span>
-                      <span style={{ color: '#666', fontSize: '14px', minWidth: '100px' }}>
+                    {/* 데스크탑 레이아웃 */}
+                    <div className="hidden lg:grid grid-cols-12 gap-4 items-center">
+                      <div className="col-span-3 font-medium text-gray-900">
+                        {member.memberName}
+                      </div>
+                      <div className="col-span-3 text-gray-600">
                         {member.memberBirthday ? new Date(member.memberBirthday).toLocaleDateString('ko-KR', { 
                           year: 'numeric', 
                           month: 'long', 
                           day: 'numeric' 
                         }) : '-'}
-                      </span>
-                      <span style={{ color: '#666', fontSize: '14px', minWidth: '120px' }}>
+                      </div>
+                      <div className="col-span-3 text-gray-600">
                         {member.phoneNumberDisplay || '010-xxxx-xxxx'}
-                      </span>
-                      <span style={{ 
-                        color: '#666', 
-                        fontSize: '14px',
-                        minWidth: '80px'
-                      }}>
+                      </div>
+                      <div className="col-span-2 text-gray-600">
                         {member.relationshipDisplayName || '-'}
-                      </span>
+                      </div>
+                      <div className="col-span-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/families/${selectedFamilyId}/members/${member.memberId}`);
+                          }}
+                          className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium transition-colors"
+                        >
+                          입력
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      style={{
-                        padding: '6px 12px',
-                        backgroundColor: 'white',
-                        border: '1px solid #ddd',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '14px'
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/families/${selectedFamilyId}/members/${member.memberId}`);
-                      }}
-                    >
-                      입력
-                    </button>
+
+                    {/* 모바일/태블릿 레이아웃 */}
+                    <div className="lg:hidden">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <div className="font-medium text-gray-900 text-lg mb-1">
+                            {member.memberName}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {member.relationshipDisplayName || '관계 미설정'}
+                          </div>
+                        </div>
+                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+                          {member.relationshipDisplayName || '관계 설정'}
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-1 text-sm text-gray-600 mb-3">
+                        <div>
+                          {member.memberBirthday ? new Date(member.memberBirthday).toLocaleDateString('ko-KR') : '생일 정보 없음'}
+                        </div>
+                        <div>
+                          {member.phoneNumberDisplay || '010-xxxx-xxxx'}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/families/${selectedFamilyId}/members/${member.memberId}`);
+                        }}
+                        className="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium transition-colors"
+                      >
+                        정보 입력
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           )}
         </div>
-
-        {/* 하단 기능 카드들 */}
-        <div style={{ marginTop: '30px' }}>
-          <h3 style={{ fontSize: '18px', marginBottom: '15px' }}>다른 기능들</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-            <div 
-              style={{
-                padding: '25px',
-                backgroundColor: 'white',
-                border: '1px solid #e0e0e0',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                textAlign: 'center',
-                transition: 'box-shadow 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'}
-              onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
-              onClick={() => navigate('/tree')}
-            >
-              <div style={{ fontSize: '32px', marginBottom: '10px' }}>🌳</div>
-              <h4 style={{ margin: '0 0 5px 0', fontSize: '16px' }}>가족 트리</h4>
-              <p style={{ margin: 0, color: '#666', fontSize: '13px' }}>
-                가족 관계도 보기
-              </p>
-            </div>
-            <div 
-              style={{
-                padding: '25px',
-                backgroundColor: 'white',
-                border: '1px solid #e0e0e0',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                textAlign: 'center',
-                transition: 'box-shadow 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'}
-              onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
-              onClick={() => navigate('/contacts')}
-            >
-              <div style={{ fontSize: '32px', marginBottom: '10px' }}>📱</div>
-              <h4 style={{ margin: '0 0 5px 0', fontSize: '16px' }}>연락처</h4>
-              <p style={{ margin: 0, color: '#666', fontSize: '13px' }}>
-                가족 연락처 관리
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 };
 

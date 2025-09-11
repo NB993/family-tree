@@ -1,10 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '../components/common/Card';
+import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  
+  const { isAuthenticated, isLoading } = useAuth();
+
   const handleKakaoLogin = () => {
     // 백엔드의 OAuth2 인증 엔드포인트로 리다이렉트
     window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
@@ -14,6 +16,18 @@ const LoginPage: React.FC = () => {
     // 백엔드의 OAuth2 인증 엔드포인트로 리다이렉트
     window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/home" replace />;
+  }
 
   return (
     <div className="container">
@@ -98,7 +112,7 @@ const LoginPage: React.FC = () => {
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                게스트로 둥러보기
+                게스트로 둘러보기
               </button>
 
               <div className="relative">

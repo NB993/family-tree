@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateFamilyJoinRequest } from '../../../hooks/queries/useFamilyQueries';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface JoinFamilyButtonProps {
   familyId: number | string;
