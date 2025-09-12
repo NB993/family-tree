@@ -58,17 +58,11 @@ export class ApiClient {
    * @private
    */
   private setupInterceptors(): void {
-    // 요청 인터셉터: 쿠키 자동 포함 및 CSRF 보호
+    // 요청 인터셉터: 모든 요청에 쿠키를 자동으로 포함시킵니다.
     this.client.interceptors.request.use(
         (config: InternalAxiosRequestConfig) => {
           // 쿠키 자동 포함 (HttpOnly 쿠키의 JWT 토큰)
           config.withCredentials = true;
-          
-          // 백업: localStorage에서 JWT 토큰도 확인 (마이그레이션 기간 동안)
-          const token = localStorage.getItem('accessToken');
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
           return config;
         },
         (error: AxiosError) => Promise.reject(error)
@@ -85,22 +79,15 @@ export class ApiClient {
             originalRequest._retry = true;
             
             try {
-              // 토큰 갱신 시도
+              // 토큰 갱신 시도 (새 토큰은 HttpOnly 쿠키로 자동 설정됨)
               const { AuthService } = await import('../api/services/authService');
               const authService = AuthService.getInstance();
-              const tokenResponse = await authService.refreshAccessToken();
+              await authService.refreshAccessToken();
               
-              // 새로운 Access Token 저장
-              authService.saveAccessToken(tokenResponse.accessToken);
-              
-              // 원래 요청에 새 토큰 적용
-              originalRequest.headers.Authorization = `Bearer ${tokenResponse.accessToken}`;
-              
-              // 원래 요청 재시도
+              // 원래 요청 재시도 (브라우저가 새로운 쿠키를 자동으로 포함)
               return this.client(originalRequest);
             } catch (refreshError) {
-              // 토큰 갱신 실패 - 로그인 페이지로 이동
-              const { AuthService } = await import('../api/services/authService');
+              // 토큰 갱신 실패 시 로그인 페이지로 이동 등의 처리를 할 수 있습니다.
               return Promise.reject(refreshError);
             }
           }

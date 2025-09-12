@@ -3,7 +3,7 @@
  * JWT 토큰 갱신, 로그아웃 등 인증 관련 기능 제공
  */
 
-import type { AccessTokenResponse, LogoutResponse, UserInfo } from '../../types/auth';
+import type { LogoutResponse, UserInfo } from '../../types/auth';
 
 export class AuthService {
   private static instance: AuthService;
@@ -26,12 +26,13 @@ export class AuthService {
   }
 
   /**
-   * Access Token을 갱신합니다.
+   * Access Token을 갱신하고 HttpOnly 쿠키로 받습니다.
    * Refresh Token은 HttpOnly 쿠키로 자동 전송됩니다.
    */
-  public async refreshAccessToken(): Promise<AccessTokenResponse> {
+  public async refreshAccessToken(): Promise<void> {
     const apiClient = await this.getApiClient();
-    return apiClient.post<AccessTokenResponse>('/api/auth/refresh');
+    // 반환값이 없으므로 await만 사용하여 요청을 보냅니다.
+    await apiClient.post<void>('/api/auth/refresh');
   }
 
   /**
@@ -49,27 +50,6 @@ export class AuthService {
   public async getCurrentUser(): Promise<UserInfo> {
     const apiClient = await this.getApiClient();
     return apiClient.get<UserInfo>('/api/user/me');
-  }
-
-  /**
-   * Access Token을 localStorage에 저장합니다.
-   */
-  public saveAccessToken(accessToken: string): void {
-    localStorage.setItem('accessToken', accessToken);
-  }
-
-  /**
-   * Access Token을 localStorage에서 가져옵니다.
-   */
-  public getAccessToken(): string | null {
-    return localStorage.getItem('accessToken');
-  }
-
-  /**
-   * Access Token을 localStorage에서 제거합니다.
-   */
-  public clearAccessToken(): void {
-    localStorage.removeItem('accessToken');
   }
 
   /**
@@ -105,8 +85,7 @@ export class AuthService {
    * 모든 인증 정보를 localStorage에서 제거합니다.
    */
   public clearAllAuthData(): void {
-    this.clearAccessToken();
+    // AccessToken 관련 로직 제거
     this.clearUserInfo();
-    // refreshToken은 제거하지 않음 (localStorage에 저장하지 않도록 변경됨)
   }
 }
