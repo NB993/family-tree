@@ -2,7 +2,6 @@ package io.jhchoe.familytree.common.config;
 
 import java.util.List;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
@@ -10,8 +9,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class CorsProperties {
 
     private final List<String> allowedOrigins;
+    private final String frontendUrl;
 
-    public CorsProperties(List<String> allowedOrigins) {
+    public CorsProperties(List<String> allowedOrigins, String frontendUrl) {
         this.allowedOrigins = allowedOrigins;
+        this.frontendUrl = frontendUrl;
     }
 }

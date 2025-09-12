@@ -4,8 +4,9 @@ import io.jhchoe.familytree.common.auth.application.port.in.GenerateJwtTokenComm
 import io.jhchoe.familytree.common.auth.application.port.in.GenerateJwtTokenUseCase;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.dto.JwtTokenResponse;
+import io.jhchoe.familytree.common.config.CorsProperties;
+import io.jhchoe.familytree.common.util.CookieManager;
 import io.jhchoe.familytree.common.util.MaskingUtils;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.http.Cookie;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +31,8 @@ import java.nio.charset.StandardCharsets;
 public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
 
     private final GenerateJwtTokenUseCase generateJwtTokenUseCase;
+    private final CookieManager cookieManager;
+    private final CorsProperties corsProperties;
 
     /**
      * OAuth2 인증 성공 시 JWT 토큰을 HttpOnly 쿠키로 설정하고 프론트엔드로 리다이렉트합니다.
@@ -66,11 +68,11 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
             final GenerateJwtTokenCommand command = new GenerateJwtTokenCommand(ftUser);
             final JwtTokenResponse tokenResponse = generateJwtTokenUseCase.generateToken(command);
             
-            // HttpOnly 쿠키로 토큰 설정
-            setSecureTokenCookies(response, tokenResponse);
+            // CookieManager를 사용하여 HttpOnly 쿠키로 토큰 설정
+            cookieManager.addSecureTokenCookies(response, tokenResponse);
             
             // 성공만 알리고, 사용자 정보는 /api/users/me API로 조회하도록 함
-            final String frontendUrl = "http://localhost:3000/auth/callback?success=true";
+            final String frontendUrl = corsProperties.getFrontendUrl() + "/auth/callback?success=true";
             
             response.sendRedirect(frontendUrl);
             
@@ -90,48 +92,15 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     /**
-     * JWT 토큰을 보안이 강화된 HttpOnly 쿠키로 설정합니다.
-     * 
-     * @param response HTTP 응답
-     * @param tokenResponse JWT 토큰 응답
-     */
-    private void setSecureTokenCookies(HttpServletResponse response, JwtTokenResponse tokenResponse) {
-        // Access Token 쿠키 설정
-        Cookie accessTokenCookie = new Cookie("accessToken", tokenResponse.accessToken());
-        accessTokenCookie.setHttpOnly(true);  // XSS 공격 방지
-        accessTokenCookie.setSecure(false);   // 개발환경에서는 false, 운영환경에서는 true (HTTPS)
-        accessTokenCookie.setPath("/");       // 전체 애플리케이션에서 사용
-        accessTokenCookie.setMaxAge(60 * 5); // 5분 (초 단위)
-        accessTokenCookie.setAttribute("SameSite", "Lax"); // CSRF 공격 방지
-        response.addCookie(accessTokenCookie);
-        
-        // Refresh Token 쿠키 설정
-        Cookie refreshTokenCookie = new Cookie("refreshToken", tokenResponse.refreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(false);   // 개발환경에서는 false
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7일 (초 단위)
-        refreshTokenCookie.setAttribute("SameSite", "Lax");
-        response.addCookie(refreshTokenCookie);
-        
-        // 쿠키 설정 완료 (상세 정보는 DEBUG 레벨로)
-        log.debug("보안 쿠키 설정 완료 [AccessToken: {}분] [RefreshToken: {}일] [HttpOnly: true] [SameSite: Lax]", 
-                (60 * 5) / 60, // 5분을 분 단위로 표시
-                (7 * 24 * 60 * 60) / (24 * 60 * 60)); // 7일을 일 단위로 표시
-    }
-
-    /**
      * 토큰 생성 오류 발생 시 프론트엔드로 에러와 함께 리다이렉트합니다.
      */
-    private void handleTokenGenerationError(HttpServletResponse response, @SuppressWarnings("unused") Exception e) throws IOException {
-        final String frontendUrl = "http://localhost:3000/auth/callback" +
-                "?success=false" +
-                "&error=" + URLEncoder.encode("토큰 생성 실패", StandardCharsets.UTF_8);
-        
+    private void handleTokenGenerationError(HttpServletResponse response, Exception e) throws IOException {
+        final String errorMsg = URLEncoder.encode("토큰 생성에 실패했습니다.", StandardCharsets.UTF_8);
+        final String frontendUrl = corsProperties.getFrontendUrl() + "/auth/callback?success=false&error=" + errorMsg;
         response.sendRedirect(frontendUrl);
         
         // 에러 리다이렉트 로깅 (실제 에러 메시지는 URL에 노출하지 않음)
-        log.warn("OAuth2 인증 실패로 에러 페이지 리다이렉트 [URL: {}]", frontendUrl);
+        log.warn("OAuth2 인증 실패로 에러 페이지 리다이렉트");
     }
 
     /**
