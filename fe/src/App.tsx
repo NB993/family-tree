@@ -1,9 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useApiError } from './hooks/useApiError';
-import { ApiClient } from './api/client';
-import { ErrorHandlers } from './types/error';
 import { AppLayout } from './components/layout/AppLayout';
 import { ProtectedRoute, RootRedirect } from './components/Auth';
 import { AuthProvider } from './contexts/AuthContext';
@@ -39,20 +36,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const customHandlers: ErrorHandlers = {
-  S001: (error) => console.error('커스텀 핸들러:', error.message),
-  F001: (error) => console.error('가족 관련 에러:', error.message),
-  A001: (error) => console.error('인증 관련 에러:', error.message),
-};
-
 function App() {
-  const { handleError } = useApiError(customHandlers);
-
-  useEffect(() => {
-    const apiClient = ApiClient.getInstance();
-    apiClient.setErrorHandler(handleError);
-  }, [handleError]);
-
   return (
     <QueryClientProvider client={queryClient}>
       <Router>

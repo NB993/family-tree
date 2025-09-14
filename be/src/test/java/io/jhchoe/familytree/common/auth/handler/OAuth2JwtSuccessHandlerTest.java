@@ -5,7 +5,8 @@ import io.jhchoe.familytree.common.auth.application.port.in.GenerateJwtTokenUseC
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.dto.JwtTokenResponse;
-import jakarta.servlet.http.Cookie;
+import io.jhchoe.familytree.common.config.CorsProperties;
+import io.jhchoe.familytree.common.util.CookieManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,10 +23,10 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("[Unit Test] OAuth2JwtSuccessHandler")
@@ -33,6 +34,12 @@ class OAuth2JwtSuccessHandlerTest {
 
     @Mock
     private GenerateJwtTokenUseCase generateJwtTokenUseCase;
+    
+    @Mock
+    private CookieManager cookieManager;
+    
+    @Mock
+    private CorsProperties corsProperties;
     
     @Mock
     private HttpServletRequest request;
@@ -47,16 +54,13 @@ class OAuth2JwtSuccessHandlerTest {
     private ArgumentCaptor<GenerateJwtTokenCommand> commandCaptor;
     
     @Captor
-    private ArgumentCaptor<Cookie> cookieCaptor;
-    
-    @Captor
     private ArgumentCaptor<String> redirectUrlCaptor;
 
     private OAuth2JwtSuccessHandler handler;
 
     @BeforeEach
     void setUp() {
-        handler = new OAuth2JwtSuccessHandler(generateJwtTokenUseCase);
+        handler = new OAuth2JwtSuccessHandler(generateJwtTokenUseCase, cookieManager, corsProperties);
     }
 
     @Test
@@ -84,6 +88,7 @@ class OAuth2JwtSuccessHandlerTest {
         );
         given(generateJwtTokenUseCase.generateToken(any(GenerateJwtTokenCommand.class)))
                 .willReturn(tokenResponse);
+        given(corsProperties.getFrontendUrl()).willReturn("http://localhost:3000");
 
         // when
         handler.onAuthenticationSuccess(request, response, authentication);
@@ -94,35 +99,8 @@ class OAuth2JwtSuccessHandlerTest {
         final GenerateJwtTokenCommand command = commandCaptor.getValue();
         assertThat(command.user()).isEqualTo(ftUser);
         
-        // HttpOnly 쿠키 설정 검증
-        then(response).should(times(2)).addCookie(cookieCaptor.capture());
-
-        var cookies = cookieCaptor.getAllValues();
-        assertThat(cookies).hasSize(2);
-        
-        // Access Token 쿠키 검증
-        Cookie accessTokenCookie = cookies.stream()
-                .filter(cookie -> "accessToken".equals(cookie.getName()))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("accessToken 쿠키가 설정되지 않았습니다"));
-        
-        assertThat(accessTokenCookie.getValue()).isEqualTo("access_token_123");
-        assertThat(accessTokenCookie.isHttpOnly()).isTrue();
-        assertThat(accessTokenCookie.getSecure()).isFalse(); // 개발환경
-        assertThat(accessTokenCookie.getPath()).isEqualTo("/");
-        assertThat(accessTokenCookie.getMaxAge()).isEqualTo(300); // 5분
-        
-        // Refresh Token 쿠키 검증
-        Cookie refreshTokenCookie = cookies.stream()
-                .filter(cookie -> "refreshToken".equals(cookie.getName()))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("refreshToken 쿠키가 설정되지 않았습니다"));
-        
-        assertThat(refreshTokenCookie.getValue()).isEqualTo("refresh_token_456");
-        assertThat(refreshTokenCookie.isHttpOnly()).isTrue();
-        assertThat(refreshTokenCookie.getSecure()).isFalse(); // 개발환경
-        assertThat(refreshTokenCookie.getPath()).isEqualTo("/");
-        assertThat(refreshTokenCookie.getMaxAge()).isEqualTo(7 * 24 * 60 * 60); // 7일
+        // CookieManager를 통해 HttpOnly 쿠키 설정 검증
+        then(cookieManager).should().addSecureTokenCookies(eq(response), eq(tokenResponse));
         
         // 리다이렉트 URL 검증 (성공 여부만 포함, 사용자 정보는 API로 조회)
         then(response).should().sendRedirect(redirectUrlCaptor.capture());
@@ -157,6 +135,7 @@ class OAuth2JwtSuccessHandlerTest {
         given(authentication.getPrincipal()).willReturn(ftUser);
         given(generateJwtTokenUseCase.generateToken(any(GenerateJwtTokenCommand.class)))
                 .willThrow(new RuntimeException("토큰 생성 실패"));
+        given(corsProperties.getFrontendUrl()).willReturn("http://localhost:3000");
 
         // when
         handler.onAuthenticationSuccess(request, response, authentication);
@@ -170,8 +149,8 @@ class OAuth2JwtSuccessHandlerTest {
         assertThat(redirectUrl).contains("success=false");
         assertThat(redirectUrl).contains("error=%ED%86%A0%ED%81%B0+%EC%83%9D%EC%84%B1+%EC%8B%A4%ED%8C%A8"); // URL 인코딩됨
         
-        // 쿠키가 설정되지 않았는지 확인 (토큰 생성 실패 시)
-        then(response).should(never()).addCookie(any(Cookie.class));
+        // CookieManager가 호출되지 않았는지 확인 (토큰 생성 실패 시)
+        then(cookieManager).should(never()).addSecureTokenCookies(any(), any());
     }
 
     @Test
@@ -200,6 +179,7 @@ class OAuth2JwtSuccessHandlerTest {
         );
         given(generateJwtTokenUseCase.generateToken(any(GenerateJwtTokenCommand.class)))
                 .willReturn(tokenResponse);
+        given(corsProperties.getFrontendUrl()).willReturn("http://localhost:3000");
 
         // when
         handler.onAuthenticationSuccess(request, response, authentication);
@@ -211,21 +191,8 @@ class OAuth2JwtSuccessHandlerTest {
 
         assertThat(redirectUrl).isEqualTo("http://localhost:3000/auth/callback?success=true");
 
-        // 쿠키에는 토큰이 정상적으로 설정되었는지 확인 (AT, RT 각 한 번씩)
-        then(response).should(times(2)).addCookie(cookieCaptor.capture());
-
-        var cookies = cookieCaptor.getAllValues();
-        Cookie accessToken = cookies.stream()
-                .filter(cookie -> "accessToken".equals(cookie.getName()))
-                .findFirst()
-                .orElseThrow();
-
-        Cookie refreshToken = cookies.stream()
-            .filter(cookie -> "refreshToken".equals(cookie.getName()))
-            .findFirst()
-            .orElseThrow();
-        
-        assertThat(accessToken.getValue()).isEqualTo("access_token_special");
+        // CookieManager를 통해 토큰이 정상적으로 설정되었는지 확인
+        then(cookieManager).should().addSecureTokenCookies(eq(response), eq(tokenResponse));
     }
 
 }

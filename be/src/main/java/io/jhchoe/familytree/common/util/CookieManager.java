@@ -52,21 +52,25 @@ public class CookieManager {
         response.addHeader("Set-Cookie", accessTokenCookie.toString());
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
-        log.debug("토큰 쿠키 삭제 완료");
+        log.debug("토큰 쿠키 삭제 완료 [Secure: {}] [SameSite: {}]", isProd, isProd ? "None" : "Lax");
     }
 
     private ResponseCookie createTokenCookie(String name, String value, long maxAge, boolean isProd) {
         return ResponseCookie.from(name, value)
                 .path("/")
                 .maxAge(maxAge)
-                .httpOnly(true)
-                .secure(isProd)
-                .sameSite(isProd ? "None" : "Lax")
+                .httpOnly(true) // XSS 방지
+                .secure(isProd) // prod일 때만 Secure=true
+                .sameSite(isProd ? "None" : "Lax") // 로컬일 때만 SameSite=Lax
+            // 브라우저는 포트번호, 서브도메인 명이 다르더라도 Same Site로 판단한다(cors 보다 판단 기준이 느슨).
+            // 최신 브라우저들은 SameSite=None이면 Secure=true일 때에만 쿠키를 브라우저에 저장한다.
+            // https를 주기 까다로운 로컬환경에서는 보통 Secure=false를 주게되므로 로컬에서 SameSite=None을 주면 브라우저가 쿠키를 저장하지 않아 테스트가 번거롭다.
+            // 때문에 로컬환경에서 Secure=false일 때에도 브라우저가 쿠키를 저장할 수 있도록 SameSite=Lax로 주려고 함.
                 .build();
     }
 
     private boolean isProductionProfile() {
-        return Arrays.asList(environment.getActiveProfiles()).contains("prod");
+        return Arrays.asList(environment.getActiveProfiles()).contains("prod")
+            || Arrays.asList(environment.getActiveProfiles()).contains("dev");
     }
 }
-

@@ -54,10 +54,8 @@ export interface ErrorHandlers {
  * - `validations` (선택): 검증 실패에 대한 추가적인 문맥을 제공하는 필드별 에러 배열입니다.
  */
 export interface ErrorResponse {
-  error: {
-    code: string;
-    message: string;
-    traceId: string;
-    validations?: FieldError[];
-  };
+  code: string;
+  message: string;
+  traceId: string;
+  validations?: FieldError[];
 }

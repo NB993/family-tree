@@ -9,6 +9,7 @@ import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.auth.UserJpaEntity;
 import io.jhchoe.familytree.common.auth.UserJpaRepository;
 import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
+import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.core.user.domain.User;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
@@ -79,9 +80,7 @@ class TokenControllerTest extends AcceptanceTestBase {
             .post("/api/auth/refresh")
         .then()
             .statusCode(HttpStatus.OK.value())
-            .body("accessToken", notNullValue())
-            .body("tokenType", equalTo("Bearer"))
-            .body("expiresIn", notNullValue())
+            .cookie("accessToken", notNullValue())
             .cookie("refreshToken", notNullValue());
 
         RefreshTokenJpaEntity newRefreshToken = refreshTokenJpaRepository.findByUserId(savedUser.getId()).get();
@@ -89,15 +88,17 @@ class TokenControllerTest extends AcceptanceTestBase {
     }
 
     @Test
-    @DisplayName("Refresh Token 쿠키가 없을 때 400 BAD REQUEST를 반환합니다")
-    void modify_returns_400_when_no_refresh_token_cookie() {
+    @DisplayName("Refresh Token 쿠키가 없을 때 401 UNAUTHORIZED를 반환합니다")
+    void modify_returns_401_when_no_refresh_token_cookie() {
         // when & then
         given()
             .postProcessors(SecurityMockMvcRequestPostProcessors.csrf())
         .when()
             .post("/api/auth/refresh")
         .then()
-            .statusCode(HttpStatus.BAD_REQUEST.value());
+            .statusCode(HttpStatus.UNAUTHORIZED.value())
+            .body("code", equalTo(AuthExceptionCode.REFRESH_TOKEN_MISSING.getCode()))
+            .body("message", equalTo(AuthExceptionCode.REFRESH_TOKEN_MISSING.getMessage()));
     }
 
     @Test
@@ -116,7 +117,9 @@ class TokenControllerTest extends AcceptanceTestBase {
         .when()
             .post("/api/auth/refresh")
         .then()
-            .statusCode(HttpStatus.UNAUTHORIZED.value());
+            .statusCode(HttpStatus.UNAUTHORIZED.value())
+            .body("code", equalTo(AuthExceptionCode.INVALID_TOKEN_FORMAT.getCode()))
+            .body("message", equalTo(AuthExceptionCode.INVALID_TOKEN_FORMAT.getMessage()));
     }
 
     @Test
@@ -150,12 +153,13 @@ class TokenControllerTest extends AcceptanceTestBase {
             .statusCode(HttpStatus.OK.value())
             .body("success", equalTo(true))
             .body("message", equalTo("로그아웃이 성공적으로 완료되었습니다."))
-            .cookie("refreshToken", ""); // 쿠키가 빈 값으로 설정됨
+            .cookie("refreshToken", "")
+            .cookie("accessToken", ""); // accessToken도 삭제되었는지 확인
     }
 
     @Test
-    @DisplayName("인증되지 않은 사용자의 로그아웃 시 500 INTERNAL SERVER ERROR를 반환합니다")
-    void delete_returns_500_when_unauthenticated_user() {
+    @DisplayName("인증되지 않은 사용자의 로그아웃 시 401 UNAUTHORIZED를 반환합니다")
+    void delete_returns_401_when_unauthenticated_user() {
         // given - 인증 정보 없이 로그아웃 시도
         
         // when & then
@@ -164,6 +168,8 @@ class TokenControllerTest extends AcceptanceTestBase {
         .when()
             .post("/api/auth/logout")
         .then()
-            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value()); // @AuthenticationPrincipal에서 null이 전달되어 NullPointerException 발생
+            .statusCode(HttpStatus.UNAUTHORIZED.value())
+            .body("code", equalTo(AuthExceptionCode.UNAUTHORIZED.getCode()))
+            .body("message", equalTo(AuthExceptionCode.UNAUTHORIZED.getMessage()));
     }
 }

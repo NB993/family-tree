@@ -43,7 +43,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/favicon.ico").permitAll()
                 .requestMatchers("/docs/**").permitAll() // API 문서 접근 허용
-                .requestMatchers("/api/auth/**").permitAll() // JWT 인증 관련 엔드포인트 허용
+                .requestMatchers("/api/auth/refresh").permitAll() // 토큰 갱신은 인증 없이 허용
                 .requestMatchers(HttpMethod.GET, "/api/invites/my").hasAnyRole("USER", "ADMIN") // 내 초대 목록은 인증 필요
                 .requestMatchers(HttpMethod.GET, "/api/invites/*").permitAll() // GET 초대 코드 조회만 익명 접근 허용
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -60,12 +60,6 @@ public class SecurityConfig {
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin()) // H2-console의 iframe 화면 허용
             )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/") // 로그인 성공 후 기본 이동 경로
-                .failureUrl("/login?error=true")
-                .permitAll() // 로그인 요청은 인증 없이 접근 가능
-            )
             .oauth2Login(oauth2 -> oauth2 // OAuth2 로그인 설정 추가
                 .loginPage("/login")
                 .successHandler(oAuth2JwtSuccessHandler) // JWT 토큰 발급 핸들러 적용
@@ -73,13 +67,9 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(oAuth2UserService)
                 )
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout") // 로그아웃 경로
-                .logoutSuccessUrl("/") // 로그아웃 성공 시 이동 경로
-                .invalidateHttpSession(true) // 세션 무효화
-                .deleteCookies("JSESSIONID") // "JSESSIONID" 쿠키 삭제
-                .permitAll()
+                .authorizationEndpoint(authorization -> authorization
+                    .authorizationRequestRepository(new NoOpAuthorizationRequestRepository())
+                )
             )
             // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

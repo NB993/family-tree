@@ -2,6 +2,25 @@ import React, { createContext, useState, useEffect, useMemo, useContext, ReactNo
 import { useNavigate } from 'react-router-dom';
 import { AuthService } from '../api/services/authService';
 import { AuthState, UserInfo } from '../types/auth';
+import { useApiError } from '../hooks/useApiError';
+import { ApiClient } from '../api/client';
+import { ErrorHandlers } from '../types/error';
+
+// 인증 관련 에러를 처리하는 핸들러
+const authErrorHandlers: ErrorHandlers = {
+  // 인증 실패 (잘못된 토큰 등)
+  A001: (error) => {
+    console.error('인증 실패:', error.message);
+    // 기본 핸들러나 401 상태 코드 핸들러가 로그인 페이지로 보내주므로 중복 작업은 불필요.
+    // 여기서는 에러 로깅만 담당.
+  },
+  // 리프레시 토큰 없음 또는 만료
+  A006: (error) => {
+    debugger;
+    console.error('세션이 만료되었습니다. 다시 로그인해주세요:', error.message);
+    window.location.href = '/login'; // 재로그인 유도
+  },
+};
 
 interface AuthContextType extends AuthState {
   logout: () => Promise<void>;
@@ -16,8 +35,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { handleError } = useApiError(authErrorHandlers);
 
   useEffect(() => {
+    // API 클라이언트에 에러 핸들러를 설정합니다.
+    const apiClient = ApiClient.getInstance();
+    apiClient.setErrorHandler(handleError);
+
     const checkAuthStatus = async () => {
       const authService = AuthService.getInstance();
       try {
@@ -26,6 +50,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setUserInfo(userData);
         setIsAuthenticated(true);
       } catch (error) {
+        // 에러는 useApiError 훅에 의해 전역적으로 처리됩니다.
+        // 여기서는 인증 상태를 false로 설정하는 작업만 수행합니다.
         authService.clearAllAuthData();
         setUserInfo(null);
         setIsAuthenticated(false);
@@ -35,7 +61,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     checkAuthStatus();
-  }, []);
+  }, [handleError]);
 
   const logout = useCallback(async () => {
     const authService = AuthService.getInstance();

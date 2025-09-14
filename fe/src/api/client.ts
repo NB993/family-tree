@@ -13,6 +13,10 @@ export class ApiClient {
   private client: AxiosInstance;
   private errorHandler: ((error: ApiError) => void) | undefined;
 
+  private isRefreshing = false;
+  private failedQueue: Array<{ resolve: (token: string | null) => void, reject: (err: unknown) => void }> = [];
+
+
   /**
    * 클래스의 생성자.
    * Axios 인스턴스를 생성하고, 요청/응답 인터셉터를 설정합니다.
@@ -58,70 +62,63 @@ export class ApiClient {
    * @private
    */
   private setupInterceptors(): void {
-    // 요청 인터셉터: 모든 요청에 쿠키를 자동으로 포함시킵니다.
+    // 요청 인터셉터
     this.client.interceptors.request.use(
         (config: InternalAxiosRequestConfig) => {
-          // 쿠키 자동 포함 (HttpOnly 쿠키의 JWT 토큰)
           config.withCredentials = true;
           return config;
         },
         (error: AxiosError) => Promise.reject(error)
     );
 
-    // 응답 인터셉터에서 에러 처리를 위한 설정
+    // 응답 인터셉터
     this.client.interceptors.response.use(
         (response: AxiosResponse) => response,
         async (error: AxiosError<ErrorResponse>) => {
           const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
-          
-          // 401 에러이고 아직 재시도하지 않은 경우
-          if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-            
-            try {
-              // 토큰 갱신 시도 (새 토큰은 HttpOnly 쿠키로 자동 설정됨)
-              const { AuthService } = await import('../api/services/authService');
-              const authService = AuthService.getInstance();
-              await authService.refreshAccessToken();
-              
-              // 원래 요청 재시도 (브라우저가 새로운 쿠키를 자동으로 포함)
-              return this.client(originalRequest);
-            } catch (refreshError) {
-              // 토큰 갱신 실패 시 로그인 페이지로 이동 등의 처리를 할 수 있습니다.
-              return Promise.reject(refreshError);
-            }
-          }
-          
-          if (error.response) {
-            const {status, data} = error.response;
-            const apiError: ApiError = {
-              code: data.error.code,
-              message: data.error.message,
-              traceId: data.error.traceId,
-              validations: data.error.validations,
-              status
-            };
 
-            if (this.errorHandler) {
-              this.errorHandler(apiError);
-            }
-            
-            return Promise.reject(apiError);
+          if (error.response?.status === 401) {
+            const { AuthService } = await import('../api/services/authService');
+            const authService = AuthService.getInstance();
+
+            await this.handleError(error);
+
+            await authService.refreshAccessToken();
+
+            return this.client(originalRequest);
+          }
+
+          if (error.response) {
+            return this.handleError(error);
           }
 
           if (error.request) {
             console.error("서버로부터 응답이 없습니다.");
-            //todo Unexpected Exception을 처리할 모달 노출
           }
-
           console.error("exception: ", error.message);
-          //todo Unexpected Exception을 처리할 모달 노출
-          
           return Promise.reject(error);
         }
     );
   }
 
+  private handleError(error: AxiosError<ErrorResponse>) {
+    if (error.response) {
+      const { status, data } = error.response;
+      const apiError: ApiError = {
+        code: data.code,
+        message: data.message,
+        traceId: data.traceId,
+        validations: data.validations,
+        status,
+      };
+
+      if (this.errorHandler) {
+        this.errorHandler(apiError);
+      }
+
+      return Promise.reject(apiError);
+    }
+  }
   /**
    * HTTP GET 요청을 보냅니다.
    * @template T 요청 결과로 반환받을 데이터의 타입.

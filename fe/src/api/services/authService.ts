@@ -31,7 +31,6 @@ export class AuthService {
    */
   public async refreshAccessToken(): Promise<void> {
     const apiClient = await this.getApiClient();
-    // 반환값이 없으므로 await만 사용하여 요청을 보냅니다.
     await apiClient.post<void>('/api/auth/refresh');
   }
 

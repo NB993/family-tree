@@ -100,7 +100,7 @@ public class JwtTokenUtil {
     /**
      * JWT 토큰에서 사용자 ID를 추출합니다.
      *
-     * @param token JWT 토큰
+     * @param token JWT¬x 토큰
      * @return 추출된 사용자 ID
      */
     public Long extractUserId(final String token) {

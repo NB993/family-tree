@@ -52,4 +52,4 @@ export const useApiError = (customHandlers?: ErrorHandlers) => {
   }, [customHandlers]);
 
   return { handleError };
-}; 
+};
