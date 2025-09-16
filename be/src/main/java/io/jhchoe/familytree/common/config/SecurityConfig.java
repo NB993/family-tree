@@ -67,9 +67,6 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(oAuth2UserService)
                 )
-                .authorizationEndpoint(authorization -> authorization
-                    .authorizationRequestRepository(new NoOpAuthorizationRequestRepository())
-                )
             )
             // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 이전에 추가
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
