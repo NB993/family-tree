@@ -17,6 +17,6 @@ export const RootRedirect: React.FC = () => {
     );
   }
 
-  // 인증된 경우 홈으로, 게스트는 가족 검색 페이지로 리다이렉트
-  return <Navigate to={isAuthenticated ? "/home" : "/families/search"} replace />;
+  // 인증된 경우 홈으로, 게스트는 로그인 페이지로 리다이렉트
+  return <Navigate to={isAuthenticated ? "/home" : "/login"} replace />;
 };
