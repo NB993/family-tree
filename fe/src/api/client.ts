@@ -14,8 +14,7 @@ export class ApiClient {
   private errorHandler: ((error: ApiError) => void) | undefined;
 
   private isRefreshing = false;
-  private failedQueue: Array<{ resolve: (token: string | null) => void, reject: (err: unknown) => void }> = [];
-
+  private failedQueue: Array<{ resolve: (value: unknown) => void, reject: (reason?: any) => void }> = [];
 
   /**
    * 클래스의 생성자.
@@ -55,6 +54,17 @@ export class ApiClient {
     this.errorHandler = handler;
   }
 
+  private processQueue(error: any, token: string | null = null) {
+    this.failedQueue.forEach(prom => {
+      if (error) {
+        prom.reject(error);
+      } else {
+        prom.resolve(token);
+      }
+    });
+    this.failedQueue = [];
+  }
+
   /**
    * Axios 요청 및 응답 인터셉터를 설정합니다.
    * - 요청 인터셉터: 요청 전 설정을 조정하거나 에러를 처리합니다.
@@ -77,17 +87,47 @@ export class ApiClient {
         async (error: AxiosError<ErrorResponse>) => {
           const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-          if (error.response?.status === 401) {
-            const { AuthService } = await import('../api/services/authService');
-            const authService = AuthService.getInstance();
-
-            await this.handleError(error);
-
-            await authService.refreshAccessToken();
-
-            return this.client(originalRequest);
+          // 토큰 갱신(refresh) 요청 자체가 실패한 경우, 무한 루프를 방지하기 위해 즉시 에러를 반환한다
+          if (originalRequest.url === '/api/auth/refresh') {
+            return Promise.reject(error);
           }
 
+          // 401 에러이고, 재시도한 요청이 아닐 경우
+          if (error.response?.status === 401 && !originalRequest._retry) {
+            if (this.isRefreshing) {
+              // 토큰 갱신이 이미 진행 중이면, 이 요청은 큐에 추가하고 대기
+              return new Promise((resolve, reject) => {
+                this.failedQueue.push({ resolve, reject });
+              }).then(() => this.client(originalRequest));
+            }
+
+            originalRequest._retry = true;
+            this.isRefreshing = true;
+
+            try {
+              const { AuthService } = await import('../api/services/authService');
+              const authService = AuthService.getInstance();
+              await authService.refreshAccessToken(); // 토큰 갱신 시도
+
+              this.processQueue(null, 'new_token'); // 대기 중인 모든 요청 재개
+              return this.client(originalRequest); // 원래 요청 재시도
+
+            } catch (refreshError) {
+              // 토큰 갱신 실패 시 (e.g., 리프레시 토큰 만료)
+              this.processQueue(refreshError, null); // 대기 중인 모든 요청 실패 처리
+
+              // 최종 에러 처리를 호출하되, 여기서 발생하는 rejection은 무시합니다.
+              // (메인 rejection은 아래 Promise.reject(refreshError)가 담당)
+              this.handleError(error).catch(() => {});
+
+              return Promise.reject(refreshError);
+
+            } finally {
+              this.isRefreshing = false;
+            }
+          }
+
+          // 401이 아닌 다른 에러는 여기서 처리
           if (error.response) {
             return this.handleError(error);
           }
@@ -118,6 +158,8 @@ export class ApiClient {
 
       return Promise.reject(apiError);
     }
+
+    return Promise.reject(error);
   }
   /**
    * HTTP GET 요청을 보냅니다.

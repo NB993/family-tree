@@ -9,6 +9,7 @@ import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenUseC
 import io.jhchoe.familytree.common.auth.config.JwtProperties;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.dto.JwtTokenResponse;
+import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.user.application.port.out.FindUserPort;
@@ -53,7 +54,7 @@ public class ModifyJwtTokenService implements ModifyJwtTokenUseCase {
 
         // 4. 토큰에서 사용자 ID를 추출하여 User 조회 후 FTUser로 변환
         User user = findUserPort.findById(userId)
-            .orElseThrow(() -> FTException.NOT_FOUND);
+            .orElseThrow(() -> new FTException(AuthExceptionCode.USER_NOT_FOUND));
 
         FTUser ftUser = FTUser.withId(user.getId(), user.getEmail(), user.getName());
 

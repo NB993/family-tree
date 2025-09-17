@@ -1,7 +1,11 @@
 package io.jhchoe.familytree.common.exception;
 
+import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
+import io.jhchoe.familytree.common.util.CookieManager;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +18,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    
+    private final CookieManager cookieManager;
+
     /**
      * IllegalArgumentException 처리
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(final IllegalArgumentException e, HttpServletRequest request) {
         ErrorResponse errorResponse = ErrorResponse.badRequest(e);
-        log.warn("IllegalArgumentException: [TraceId: {}] [Path: {}] [Method: {}] [Error: {}]", 
+        log.warn("IllegalArgumentException: [TraceId: {}] [Path: {}] [Method: {}] [Error: {}]",
             errorResponse.getTraceId(),
             request.getRequestURI(),
             request.getMethod(),
@@ -118,20 +124,41 @@ public class GlobalExceptionHandler {
      * 비즈니스 예외
      */
     @ExceptionHandler(FTException.class)
-    public ResponseEntity<ErrorResponse> handleFTException(final FTException e, HttpServletRequest request) {
-        ErrorResponse response = ErrorResponse.commonException(e);
-        // FTException에는 현재로서는 400번대 예외만 던질 예정
+    public ResponseEntity<ErrorResponse> handleFTException(
+        final FTException e,
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
+        ErrorResponse errorResponse = ErrorResponse.commonException(e);
+        //todo 시큐리티 쪽으로 이동
+        if (AuthExceptionCode.REFRESH_TOKEN_MISSING.getCode().equals(e.getCode())) {
+            log.warn("Refresh Token Missing Exception: [TraceId: {}] [Path: {}] [Code: {}] [Message: {}]",
+                errorResponse.getTraceId(),
+                request.getRequestURI(),
+                e.getCode(),
+                e.getMessage());
+        }
+
+        // AT 갱신 요청이 핸들러로 넘어온 이후 발생한 예외 처리를 처리하기 위해 분기 추가
+        if (AuthExceptionCode.USER_NOT_FOUND.getCode().equals(e.getCode())) {
+            cookieManager.clearTokenCookies(response); // 토큰 쿠키 초기화
+            log.warn("Token Refresh Exception: [TraceId: {}] [Path: {}] [Code: {}] [Message: {}]",
+                errorResponse.getTraceId(),
+                request.getRequestURI(),
+                e.getCode(),
+                e.getMessage());
+        }
+
         if (e.getStatus().is4xxClientError()) {
-            log.warn("Business Exception: [TraceId: {}] [Path: {}] [Code: {}] [Message: {}]", 
-                response.getTraceId(), 
+            log.warn("Business Exception: [TraceId: {}] [Path: {}] [Code: {}] [Message: {}]",
+                errorResponse.getTraceId(),
                 request.getRequestURI(), 
                 e.getCode(), 
                 e.getMessage());
         }
-        
         return ResponseEntity
             .status(e.getStatus())
-            .body(response);
+            .body(errorResponse);
     }
 
     /**
