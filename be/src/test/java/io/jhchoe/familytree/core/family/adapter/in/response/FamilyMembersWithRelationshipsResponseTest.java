@@ -117,7 +117,7 @@ class FamilyMembersWithRelationshipsResponseTest {
     
     private FamilyMember createFamilyMember(Long id, String name, LocalDateTime birthday) {
         return FamilyMember.withId(
-            id, 1L, 1L, name, "https://example.com/profile.jpg", birthday, "KR",
+            id, 1L, 1L, null, name, null, "https://example.com/profile.jpg", birthday, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
@@ -125,7 +125,7 @@ class FamilyMembersWithRelationshipsResponseTest {
     
     private FamilyMember createSuspendedMember(Long id, String name, LocalDateTime birthday) {
         return FamilyMember.withId(
-            id, 1L, 1L, name, "https://example.com/profile.jpg", birthday, "KR",
+            id, 1L, 1L, null, name, null, "https://example.com/profile.jpg", birthday, "KR",
             FamilyMemberStatus.SUSPENDED, FamilyMemberRole.MEMBER,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );

@@ -22,7 +22,7 @@ class FamilyMemberAuthorizationValidatorTest {
     void validate_owner_role_success() {
         // given
         FamilyMember ownerMember = FamilyMember.withId(
-            1L, 1L, 1L, "소유자", "profile.jpg", NOW, "KR",
+            1L, 1L, 1L, null, "소유자", null, "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             1L, NOW, 1L, NOW
         );
@@ -37,7 +37,7 @@ class FamilyMemberAuthorizationValidatorTest {
     void validate_owner_role_fail_admin_role() {
         // given
         FamilyMember adminMember = FamilyMember.withId(
-            1L, 1L, 1L, "관리자", "profile.jpg", NOW, "KR",
+            1L, 1L, 1L, null, "관리자", null, "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             1L, NOW, 1L, NOW
         );
@@ -53,7 +53,7 @@ class FamilyMemberAuthorizationValidatorTest {
     void validate_owner_role_fail_member_role() {
         // given
         FamilyMember member = FamilyMember.withId(
-            1L, 1L, 1L, "일반구성원", "profile.jpg", NOW, "KR",
+            1L, 1L, 1L, null, "일반구성원", null, "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             1L, NOW, 1L, NOW
         );
@@ -69,7 +69,7 @@ class FamilyMemberAuthorizationValidatorTest {
     void validate_family_modification_permission_success() {
         // given
         FamilyMember ownerMember = FamilyMember.withId(
-            1L, 1L, 1L, "소유자", "profile.jpg", NOW, "KR",
+            1L, 1L, 1L, null, "소유자", null, "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             1L, NOW, 1L, NOW
         );
@@ -84,7 +84,7 @@ class FamilyMemberAuthorizationValidatorTest {
     void validate_family_modification_permission_fail_admin_role() {
         // given
         FamilyMember adminMember = FamilyMember.withId(
-            1L, 1L, 1L, "관리자", "profile.jpg", NOW, "KR",
+            1L, 1L, 1L, null, "관리자", null, "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             1L, NOW, 1L, NOW
         );
@@ -100,7 +100,7 @@ class FamilyMemberAuthorizationValidatorTest {
     void validate_family_modification_permission_fail_inactive_status() {
         // given
         FamilyMember suspendedOwner = FamilyMember.withId(
-            1L, 1L, 1L, "소유자", "profile.jpg", NOW, "KR",
+            1L, 1L, 1L, null, "소유자", null, "profile.jpg", NOW, "KR",
             FamilyMemberStatus.SUSPENDED, FamilyMemberRole.OWNER,
             1L, NOW, 1L, NOW
         );
@@ -134,7 +134,7 @@ class FamilyMemberAuthorizationValidatorTest {
             1L, NOW, 1L, NOW
         );
         FamilyMember member = FamilyMember.withId(
-            1L, 1L, 1L, "구성원", "profile.jpg", NOW, "KR",
+            1L, 1L, 1L, null, "구성원", null, "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             1L, NOW, 1L, NOW
         );

@@ -63,7 +63,7 @@ class ProcessFamilyJoinRequestServiceTest {
 
         // 현재 사용자가 OWNER 권한을 가진 구성원
         FamilyMember ownerMember = FamilyMember.withId(
-            1L, familyId, currentUserId, "소유자", "profile.jpg",
+            1L, familyId, currentUserId, null, "소유자", null, "profile.jpg",
             LocalDateTime.now(), "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             currentUserId, LocalDateTime.now(), currentUserId, LocalDateTime.now()
         );
@@ -126,7 +126,7 @@ class ProcessFamilyJoinRequestServiceTest {
 
         // 현재 사용자가 MEMBER 권한을 가진 구성원
         FamilyMember memberMember = FamilyMember.withId(
-            1L, familyId, currentUserId, "일반 구성원", "profile.jpg",
+            1L, familyId, currentUserId, null, "일반 구성원", null, "profile.jpg",
             LocalDateTime.now(), "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             currentUserId, LocalDateTime.now(), currentUserId, LocalDateTime.now()
         );

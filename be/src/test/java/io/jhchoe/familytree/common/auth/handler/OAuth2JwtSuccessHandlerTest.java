@@ -9,6 +9,8 @@ import io.jhchoe.familytree.common.config.CorsProperties;
 import io.jhchoe.familytree.common.util.CookieManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -134,7 +136,7 @@ class OAuth2JwtSuccessHandlerTest {
         );
         given(authentication.getPrincipal()).willReturn(ftUser);
         given(generateJwtTokenUseCase.generateToken(any(GenerateJwtTokenCommand.class)))
-                .willThrow(new RuntimeException("토큰 생성 실패"));
+                .willThrow(new RuntimeException("토큰 생성에 실패했습니다."));
         given(corsProperties.getFrontendUrl()).willReturn("http://localhost:3000");
 
         // when
@@ -144,10 +146,10 @@ class OAuth2JwtSuccessHandlerTest {
         // 에러 리다이렉트 URL 검증
         then(response).should().sendRedirect(redirectUrlCaptor.capture());
         String redirectUrl = redirectUrlCaptor.getValue();
-        
+        String errorMsg = URLEncoder.encode("토큰 생성에 실패했습니다.", StandardCharsets.UTF_8);
         assertThat(redirectUrl).contains("http://localhost:3000/auth/callback");
         assertThat(redirectUrl).contains("success=false");
-        assertThat(redirectUrl).contains("error=%ED%86%A0%ED%81%B0+%EC%83%9D%EC%84%B1+%EC%8B%A4%ED%8C%A8"); // URL 인코딩됨
+        assertThat(redirectUrl).contains("error=" + errorMsg);
         
         // CookieManager가 호출되지 않았는지 확인 (토큰 생성 실패 시)
         then(cookieManager).should(never()).addSecureTokenCookies(any(), any());

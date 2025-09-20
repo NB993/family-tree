@@ -98,8 +98,10 @@ class SaveInviteResponseWithKakaoServiceTest {
             1L,
             10L, // familyId
             100L, // userId (requesterId와 동일)
+            null, // kakaoId
             "요청자",
             null,
+            null, // relationship
             null,
             null,
             FamilyMemberStatus.ACTIVE,
@@ -258,6 +260,7 @@ class SaveInviteResponseWithKakaoServiceTest {
             null,
             "kakao_12345",
             "기존유저",
+            null, // relationship
             null,
             null,
             null,

@@ -56,21 +56,21 @@ class FindFamilyJoinRequestServiceTest {
         query = new FindFamilyJoinRequestQuery(familyId, currentUserId);
         
         adminMember = FamilyMember.withId(
-            1L, familyId, currentUserId, "Admin User", "profile.jpg", 
+            1L, familyId, currentUserId, null, "Admin User", null, "profile.jpg", 
             LocalDateTime.of(1990, 1, 1, 0, 0),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             null, null, null, null
         );
         
         ownerMember = FamilyMember.withId(
-            2L, familyId, currentUserId, "Owner User", "profile.jpg", 
+            2L, familyId, currentUserId, null, "Owner User", null, "profile.jpg", 
             LocalDateTime.of(1990, 1, 1, 0, 0),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             null, null, null, null
         );
         
         regularMember = FamilyMember.withId(
-            3L, familyId, currentUserId, "Regular User", "profile.jpg", 
+            3L, familyId, currentUserId, null, "Regular User", null, "profile.jpg", 
             LocalDateTime.of(1990, 1, 1, 0, 0),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
@@ -191,7 +191,7 @@ class FindFamilyJoinRequestServiceTest {
     void should_throw_member_not_active_exception_when_member_is_inactive() {
         // given
         FamilyMember inactiveMember = FamilyMember.withId(
-            1L, query.getFamilyId(), query.getCurrentUserId(), "Inactive Admin", "profile.jpg", 
+            1L, query.getFamilyId(), query.getCurrentUserId(), null, "Inactive Admin", null, "profile.jpg", 
             LocalDateTime.of(1990, 1, 1, 0, 0),
             "KR", FamilyMemberStatus.SUSPENDED, FamilyMemberRole.ADMIN,
             null, null, null, null

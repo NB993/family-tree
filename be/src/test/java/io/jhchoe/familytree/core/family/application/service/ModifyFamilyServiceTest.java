@@ -60,7 +60,7 @@ class ModifyFamilyServiceTest {
             null, null, null);
 
         FamilyMember ownerMember = FamilyMember.withId(
-            1L, familyId, userId, "소유자", "profile.jpg", NOW, "KR",
+            1L, familyId, userId, null, "소유자", null, "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             userId, NOW, userId, NOW
         );
@@ -102,10 +102,11 @@ class ModifyFamilyServiceTest {
             "Updated Description", userId);
 
         FamilyMember ownerMember = FamilyMember.withId(
-            1L, familyId, userId, "소유자", "profile.jpg", NOW, "KR",
+            1L, familyId, userId, null, "소유자", null, "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             userId, NOW, userId, NOW
         );
+
 
         // Mocking: 권한 검증은 통과하지만 Family 조회 실패
         doNothing().when(familyValidationService).validateFamilyExists(familyId);
@@ -130,7 +131,7 @@ class ModifyFamilyServiceTest {
             null, null, null);
 
         FamilyMember ownerMember = FamilyMember.withId(
-            1L, familyId, userId, "소유자", "profile.jpg", NOW, "KR",
+            1L, familyId, userId, null, "소유자", null, "profile.jpg", NOW, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             userId, NOW, userId, NOW
         );

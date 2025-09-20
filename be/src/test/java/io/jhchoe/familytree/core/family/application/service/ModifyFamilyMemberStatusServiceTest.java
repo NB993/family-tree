@@ -280,7 +280,7 @@ class ModifyFamilyMemberStatusServiceTest {
      */
     private FamilyMember createFamilyMember(Long id, Long familyId, Long userId, FamilyMemberRole role) {
         return FamilyMember.withId(
-            id, familyId, userId, "Test User", "profile.jpg",
+            id, familyId, userId, null, "Test User", null, "profile.jpg",
             LocalDateTime.now(), "KR", FamilyMemberStatus.ACTIVE, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );

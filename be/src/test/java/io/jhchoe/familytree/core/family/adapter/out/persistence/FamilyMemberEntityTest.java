@@ -20,6 +20,7 @@ class FamilyMemberEntityTest {
         Long id = 1L;
         Long familyId = 101L;
         Long userId = 202L;
+        String kakaoId = "kakao";
         String name = "Test Name";
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.now();
@@ -31,7 +32,7 @@ class FamilyMemberEntityTest {
         LocalDateTime modifiedAt = LocalDateTime.now();
 
         FamilyMember familyMember = FamilyMember.withId(
-            id, familyId, userId, name, profileUrl, birthday,
+            id, familyId, userId, kakaoId, name, null, profileUrl, birthday,
             nationality, status, FamilyMemberRole.MEMBER, createdBy, createdAt, modifiedBy, modifiedAt
         );
 
@@ -74,6 +75,7 @@ class FamilyMemberEntityTest {
         Long id = 1L;
         Long familyId = 101L;
         Long userId = 202L;
+        String kakaoId = "kakao";
         String name = "Admin User";
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.now();
@@ -86,7 +88,7 @@ class FamilyMemberEntityTest {
         LocalDateTime modifiedAt = LocalDateTime.now();
 
         FamilyMember familyMember = FamilyMember.withId(
-            id, familyId, userId, name, profileUrl, birthday,
+            id, familyId, userId, kakaoId, name, null, profileUrl, birthday,
             nationality, status, role, createdBy, createdAt, modifiedBy, modifiedAt
         );
 
@@ -117,6 +119,7 @@ class FamilyMemberEntityTest {
         Long id = 1L;
         Long familyId = 101L;
         Long userId = 202L;
+        String kakaoId = "kakao";
         String name = "Test User";
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.now();
@@ -128,7 +131,7 @@ class FamilyMemberEntityTest {
         Long modifiedBy = 1002L;
         LocalDateTime modifiedAt = LocalDateTime.now();
 
-        FamilyMember familyMember = FamilyMember.withId(id, familyId, userId, name, profileUrl, birthday, nationality,
+        FamilyMember familyMember = FamilyMember.withId(id, familyId, userId, kakaoId, name, null, profileUrl, birthday, nationality,
             status, role, createdBy, createdAt, modifiedBy, modifiedAt);
         FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
 
@@ -163,6 +166,7 @@ class FamilyMemberEntityTest {
             202L,  // userId
             null,  // kakaoId
             "Test User",  // name
+            "Relationsship", // relationship
             "http://example.com/profile",  // profileUrl
             LocalDateTime.now(),  // birthday
             "Korean",  // nationality

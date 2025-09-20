@@ -170,7 +170,7 @@ class FamilyMemberTest {
         
         // when
         FamilyMember familyMember = FamilyMember.withId(
-            id, familyId, userId, name, profileUrl, birthday, nationality, 
+            id, familyId, userId, null, name, null, profileUrl, birthday, nationality, 
             status, FamilyMemberRole.MEMBER, createdBy, createdAt, modifiedBy, modifiedAt
         );
         
@@ -229,7 +229,7 @@ class FamilyMemberTest {
     void update_role_changes_family_member_role() {
         // given
         FamilyMember member = FamilyMember.withId(
-            1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
+            1L, 2L, 3L, null, "홍길동", null, "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
@@ -261,7 +261,7 @@ class FamilyMemberTest {
     void cannot_change_owner_role() {
         // given
         FamilyMember owner = FamilyMember.withId(
-            1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
+            1L, 2L, 3L, null, "홍길동", null, "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
@@ -280,7 +280,7 @@ class FamilyMemberTest {
     void update_status_changes_family_member_status() {
         // given
         FamilyMember member = FamilyMember.withId(
-            1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
+            1L, 2L, 3L, null, "홍길동", null, "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
@@ -312,7 +312,7 @@ class FamilyMemberTest {
     void cannot_change_owner_status() {
         // given
         FamilyMember owner = FamilyMember.withId(
-            1L, 2L, 3L, "홍길동", "http://example.com/profile.jpg",
+            1L, 2L, 3L, null, "홍길동", null, "http://example.com/profile.jpg",
             LocalDateTime.of(1990, 1, 1, 0, 0), "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
@@ -331,7 +331,7 @@ class FamilyMemberTest {
     void has_role_at_least_checks_if_member_has_required_role() {
         // given
         FamilyMember owner = FamilyMember.newOwner(1L, 2L, "Owner", "", null, "");
-        FamilyMember admin = FamilyMember.withId(3L, 1L, 4L, "Admin", "", null, "", 
+        FamilyMember admin = FamilyMember.withId(3L, 1L, 4L, null, "Admin", null, null, null, "",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN, null, null, null, null);
         FamilyMember member = FamilyMember.newMember(1L, 5L, "Member", "", null, "");
         
@@ -353,11 +353,11 @@ class FamilyMemberTest {
     @DisplayName("isActive 메서드로 구성원이 활성 상태인지 확인할 수 있다")
     void is_active_checks_if_member_is_active() {
         // given
-        FamilyMember activeMember = FamilyMember.withId(1L, 2L, 3L, "Active", "", null, "", 
+        FamilyMember activeMember = FamilyMember.withId(1L, 2L, 3L, null, "Active", null, null, null, "",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, null, null, null, null);
-        FamilyMember suspendedMember = FamilyMember.withId(4L, 2L, 5L, "Suspended", "", null, "", 
+        FamilyMember suspendedMember = FamilyMember.withId(4L, 2L, 5L, null, "Suspended", null, null, null, "",
             FamilyMemberStatus.SUSPENDED, FamilyMemberRole.MEMBER, null, null, null, null);
-        FamilyMember bannedMember = FamilyMember.withId(6L, 2L, 7L, "Banned", "", null, "", 
+        FamilyMember bannedMember = FamilyMember.withId(6L, 2L, 7L, null, "Banned", null, null, null, "",
             FamilyMemberStatus.BANNED, FamilyMemberRole.MEMBER, null, null, null, null);
         
         // when & then

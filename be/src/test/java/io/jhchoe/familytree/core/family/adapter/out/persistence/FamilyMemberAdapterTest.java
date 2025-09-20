@@ -237,8 +237,8 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         
         // 역할을 ADMIN으로 변경
         FamilyMember memberWithRole = FamilyMember.withId(
-            savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(),
-            savedEntity.getName(), savedEntity.getProfileUrl(), savedEntity.getBirthday(),
+            savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(), null, 
+            savedEntity.getName(), null, savedEntity.getProfileUrl(), savedEntity.getBirthday(),
             savedEntity.getNationality(), savedEntity.getStatus(), FamilyMemberRole.ADMIN,
             savedEntity.getCreatedBy(), savedEntity.getCreatedAt(), savedEntity.getModifiedBy(), savedEntity.getModifiedAt()
         );
@@ -265,8 +265,8 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         
         // 상태를 SUSPENDED로 변경
         FamilyMember memberWithStatus = FamilyMember.withId(
-            savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(),
-            savedEntity.getName(), savedEntity.getProfileUrl(), savedEntity.getBirthday(),
+            savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(), null,
+            savedEntity.getName(), null, savedEntity.getProfileUrl(), savedEntity.getBirthday(),
             savedEntity.getNationality(), FamilyMemberStatus.SUSPENDED, savedEntity.getRole(),
             savedEntity.getCreatedBy(), savedEntity.getCreatedAt(), savedEntity.getModifiedBy(), savedEntity.getModifiedAt()
         );
@@ -300,7 +300,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
     void throw_exception_when_modify_with_non_existent_id() {
         // given
         FamilyMember memberWithNonExistentId = FamilyMember.withId(
-            999L, 1L, 1L, "Member", null, null, "KR",
+            999L, 1L, 1L, null, "Member", null, null, null, "KR",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
         );

@@ -47,12 +47,12 @@ class FindFamilyTreeServiceTest {
         Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
         
         FamilyMember centerMember = FamilyMember.withId(
-            centerMemberId, familyId, 1L, "중심구성원", "profile.jpg", LocalDateTime.now(),
+            centerMemberId, familyId, 1L, null, "중심구성원", null, "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
         
         FamilyMember childMember = FamilyMember.withId(
-            2L, familyId, 2L, "자녀", "child.jpg", LocalDateTime.now(),
+            2L, familyId, 2L, null, "자녀", null, "child.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
         
@@ -133,7 +133,7 @@ class FindFamilyTreeServiceTest {
         Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
         
         FamilyMember member = FamilyMember.withId(
-            1L, familyId, 1L, "구성원", "profile.jpg", LocalDateTime.now(),
+            1L, familyId, 1L, null, "구성원", null, "profile.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
         
@@ -158,12 +158,12 @@ class FindFamilyTreeServiceTest {
         Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
         
         FamilyMember firstMember = FamilyMember.withId(
-            1L, familyId, 1L, "첫번째구성원", "profile1.jpg", LocalDateTime.now(),
+            1L, familyId, 1L, null, "첫번째구성원", null, "profile1.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
         
         FamilyMember secondMember = FamilyMember.withId(
-            2L, familyId, 2L, "두번째구성원", "profile2.jpg", LocalDateTime.now(),
+            2L, familyId, 2L, null, "두번째구성원", null, "profile2.jpg", LocalDateTime.now(),
             "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
         );
         

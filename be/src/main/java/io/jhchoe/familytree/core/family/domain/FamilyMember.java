@@ -19,6 +19,7 @@ public class FamilyMember {
     private final Long userId; // nullable - 비회원도 가능
     private final String kakaoId; // 카카오 ID
     private final String name;
+    private final String relationship;
     private final String profileUrl;
     private final LocalDateTime birthday;
     private final String nationality;
@@ -37,6 +38,7 @@ public class FamilyMember {
      * @param userId      사용자 ID (nullable - 비회원인 경우 null)
      * @param kakaoId     카카오 ID (nullable - 카카오 인증을 하지 않은 경우 null)
      * @param name        이름
+     * @param relationship 나와의 관계
      * @param profileUrl  프로필 URL
      * @param birthday    생일
      * @param nationality 국적
@@ -53,6 +55,7 @@ public class FamilyMember {
         Long userId,
         String kakaoId,
         String name,
+        String relationship,
         String profileUrl,
         LocalDateTime birthday,
         String nationality,
@@ -68,6 +71,7 @@ public class FamilyMember {
         this.userId = userId;
         this.kakaoId = kakaoId;
         this.name = name;
+        this.relationship = relationship;
         this.profileUrl = profileUrl;
         this.birthday = birthday;
         this.nationality = nationality;
@@ -102,7 +106,7 @@ public class FamilyMember {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
 
-        return new FamilyMember(null, familyId, userId, null, name, profileUrl, birthday, nationality, 
+        return new FamilyMember(null, familyId, userId, null, name, null, profileUrl, birthday, nationality,
                               FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 
                               null, null, null, null);
     }
@@ -130,7 +134,9 @@ public class FamilyMember {
         Long id,
         Long familyId,
         Long userId,
+        String kakaoId,
         String name,
+        String relationship,
         String profileUrl,
         LocalDateTime birthday,
         String nationality,
@@ -143,12 +149,10 @@ public class FamilyMember {
     ) {
         Objects.requireNonNull(id, "id must not be null");
         Objects.requireNonNull(familyId, "familyId must not be null");
-        if (userId == null) {
-            throw new IllegalArgumentException("At least one of userId or kakaoId must be provided");
-        }
+        Objects.requireNonNull(name, "name must not be null");
         Objects.requireNonNull(role, "role must not be null");
 
-        return new FamilyMember(id, familyId, userId, null, name, profileUrl, birthday, nationality,
+        return new FamilyMember(id, familyId, userId, kakaoId, name, relationship, profileUrl, birthday, nationality,
                               status, role, createdBy, createdAt, modifiedBy, modifiedAt);
     }
 
@@ -177,6 +181,7 @@ public class FamilyMember {
         Long userId,
         String kakaoId,
         String name,
+        String relationship,
         String profileUrl,
         LocalDateTime birthday,
         String nationality,
@@ -189,14 +194,11 @@ public class FamilyMember {
     ) {
         Objects.requireNonNull(id, "id must not be null");
         Objects.requireNonNull(familyId, "familyId must not be null");
-        // userId는 nullable - 비회원도 가능
-        // kakaoId와 userId 중 최소 하나는 있어야 함
-        if (userId == null && kakaoId == null) {
-            throw new IllegalArgumentException("At least one of userId or kakaoId must be provided");
-        }
+        Objects.requireNonNull(kakaoId, "kakaoId must not be null");
+        Objects.requireNonNull(name, "name must not be null");
         Objects.requireNonNull(role, "role must not be null");
 
-        return new FamilyMember(id, familyId, userId, kakaoId, name, profileUrl, birthday, nationality,
+        return new FamilyMember(id, familyId, userId, kakaoId, name, relationship, profileUrl, birthday, nationality,
             status, role, createdBy, createdAt, modifiedBy, modifiedAt);
     }
     
@@ -223,7 +225,7 @@ public class FamilyMember {
         Objects.requireNonNull(userId, "userId must not be null");
 
         return new FamilyMember(
-            null, familyId, userId, null, name, profileUrl, birthday, nationality,
+            null, familyId, userId, null, name, null, profileUrl, birthday, nationality,
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER, 
             null, null, null, null
         );
@@ -255,7 +257,7 @@ public class FamilyMember {
         Objects.requireNonNull(role, "role must not be null");
 
         return new FamilyMember(
-            null, familyId, userId, null, name, profileUrl, birthday, nationality, 
+            null, familyId, userId, null, name, null, profileUrl, birthday, nationality,
             FamilyMemberStatus.ACTIVE, role, null, null, null, null
         );
     }
@@ -276,7 +278,7 @@ public class FamilyMember {
         }
         
         return new FamilyMember(
-            this.id, this.familyId, this.userId, this.kakaoId, this.name, this.profileUrl, 
+            this.id, this.familyId, this.userId, this.kakaoId, this.name, this.relationship, this.profileUrl,
             this.birthday, this.nationality, this.status, newRole, 
             this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
         );
@@ -298,7 +300,7 @@ public class FamilyMember {
         }
         
         return new FamilyMember(
-            this.id, this.familyId, this.userId, this.kakaoId, this.name, this.profileUrl, 
+            this.id, this.familyId, this.userId, this.kakaoId, this.name, this.relationship, this.profileUrl,
             this.birthday, this.nationality, newStatus, this.role, 
             this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
         );
@@ -343,7 +345,7 @@ public class FamilyMember {
         Objects.requireNonNull(name, "name must not be null");
         
         return new FamilyMember(
-            null, familyId, null, kakaoId, name, profileUrl, null, null,
+            null, familyId, null, kakaoId, name, null, profileUrl, null, null,
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
         );
