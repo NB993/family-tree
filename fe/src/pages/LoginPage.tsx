@@ -9,12 +9,12 @@ const LoginPage: React.FC = () => {
 
   const handleKakaoLogin = () => {
     // 백엔드의 OAuth2 인증 엔드포인트로 리다이렉트
-    window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
+    window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
   };
 
   const handleGoogleLogin = () => {
     // 백엔드의 OAuth2 인증 엔드포인트로 리다이렉트
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
   };
 
   if (isLoading) {
