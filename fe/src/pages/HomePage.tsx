@@ -68,7 +68,7 @@ const HomePage: React.FC = () => {
         
         {/* Mobile Dropdown Menu */}
         <div className="relative sm:hidden" ref={menuRef}>
-          <button 
+          <button
             onClick={() => setIsMenuOpen(prev => !prev)}
             className="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
           >
@@ -77,7 +77,7 @@ const HomePage: React.FC = () => {
 
           {isMenuOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
-              <button
+              {/* <button
                 onClick={() => {
                   navigate('/profile');
                   setIsMenuOpen(false);
@@ -95,7 +95,7 @@ const HomePage: React.FC = () => {
               >
                 설정
               </button>
-              <div className="border-t my-1"></div>
+              <div className="border-t my-1"></div> */}
               <button
                 onClick={logout}
                 className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
@@ -108,18 +108,18 @@ const HomePage: React.FC = () => {
 
         {/* Desktop Buttons */}
         <div className="hidden sm:flex items-center gap-3">
-            <button 
+            {/* <button
               onClick={() => navigate('/profile')}
               className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium whitespace-nowrap"
             >
               프로필
             </button>
-            <button 
+            <button
               onClick={() => navigate('/settings')}
               className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium whitespace-nowrap"
             >
               설정
-            </button>
+            </button> */}
             <button
               onClick={logout}
               className="px-4 py-2 bg-red-50 border border-red-200 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium whitespace-nowrap"
