@@ -45,6 +45,7 @@ public class FTSpringSecurityExceptionHandler implements AuthenticationEntryPoin
         ErrorResponse errorResponse = ErrorResponse.commonException(ftException);
         response.setStatus(ftException.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
 
         objectMapper.writeValue(response.getWriter(), errorResponse);
     }
@@ -61,6 +62,7 @@ public class FTSpringSecurityExceptionHandler implements AuthenticationEntryPoin
         ErrorResponse errorResponse = ErrorResponse.commonException(FTException.ACCESS_DENIED);
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
 
         objectMapper.writeValue(response.getWriter(), errorResponse);
     }
