@@ -42,6 +42,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/favicon.ico").permitAll()
+                .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/docs/**").permitAll() // API 문서 접근 허용
                 .requestMatchers("/api/auth/refresh").permitAll() // 토큰 갱신은 인증 없이 허용
                 .requestMatchers(HttpMethod.GET, "/api/invites/my").hasAnyRole("USER", "ADMIN") // 내 초대 목록은 인증 필요
