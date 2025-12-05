@@ -5,23 +5,24 @@ import { AuthState, UserInfo } from '../types/auth';
 import { useApiError } from '../hooks/useApiError';
 import { ApiClient } from '../api/client';
 import { ErrorHandlers } from '../types/error';
+import { logger } from '../utils/logger';
 
 // 인증 관련 에러를 처리하는 핸들러
 const authErrorHandlers: ErrorHandlers = {
   // 인증 실패 (잘못된 토큰 등)
   A001: (error) => {
-    console.error('인증 실패:', error.message);
+    logger.error('인증 실패:', error.message);
     // 기본 핸들러나 401 상태 코드 핸들러가 로그인 페이지로 보내주므로 중복 작업은 불필요.
     // 여기서는 에러 로깅만 담당.
   },
   // 리프레시 토큰으로 유저 조회 실패
   A002: (error) => {
-    console.error('인증 싫패. 다시 로그인해주세요:', error.message);
+    logger.error('인증 실패. 다시 로그인해주세요:', error.message);
     window.location.href = '/login'; // 재로그인 유도
   },
   // 리프레시 토큰 없음 또는 만료
   A006: (error) => {
-    console.error('세션이 만료되었습니다. 다시 로그인해주세요:', error.message);
+    logger.error('세션이 만료되었습니다. 다시 로그인해주세요:', error.message);
     window.location.href = '/login'; // 재로그인 유도
   },
 };
@@ -72,7 +73,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       await authService.logout();
     } catch (error) {
-      console.error('Logout API call failed, proceeding with client-side logout', error);
+      logger.error('Logout API call failed, proceeding with client-side logout', error);
     } finally {
       authService.clearAllAuthData();
       setIsAuthenticated(false);

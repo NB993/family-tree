@@ -1,6 +1,7 @@
 import axios from "axios";
 import type {AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError} from "axios";
 import {ApiError, FieldError, ErrorResponse} from "../types/error";
+import {logger} from "../utils/logger";
 
 
 /**
@@ -133,9 +134,9 @@ export class ApiClient {
           }
 
           if (error.request) {
-            console.error("서버로부터 응답이 없습니다.");
+            logger.error("서버로부터 응답이 없습니다.");
           }
-          console.error("exception: ", error.message);
+          logger.error("exception: ", error.message);
           return Promise.reject(error);
         }
     );

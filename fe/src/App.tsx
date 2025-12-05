@@ -14,7 +14,6 @@ import { FamilySearchPage } from './pages/FamilySearch';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage';
 import OAuth2CallbackPage from './pages/OAuth2CallbackPage';
-import AuthCallbackPage from './pages/AuthCallbackPage';
 import { CreateInvitePage } from './pages/CreateInvitePage';
 import { InviteResponsePage } from './pages/InviteResponsePage';
 
