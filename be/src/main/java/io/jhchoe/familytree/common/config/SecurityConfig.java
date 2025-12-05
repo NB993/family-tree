@@ -3,6 +3,7 @@ package io.jhchoe.familytree.common.config;
 import io.jhchoe.familytree.common.auth.filter.JwtAuthenticationFilter;
 import io.jhchoe.familytree.common.auth.handler.OAuth2JwtFailureHandler;
 import io.jhchoe.familytree.common.auth.handler.OAuth2JwtSuccessHandler;
+import io.jhchoe.familytree.common.auth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import io.jhchoe.familytree.common.auth.service.OAuth2UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2JwtSuccessHandler oAuth2JwtSuccessHandler;
     private final OAuth2JwtFailureHandler oAuth2JwtFailureHandler;
+    private final HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
     private final CorsProperties corsProperties;
 
     @Bean
@@ -65,6 +67,9 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2 // OAuth2 로그인 설정 추가
                 .loginPage("/login")
+                .authorizationEndpoint(authorization -> authorization
+                    .authorizationRequestRepository(cookieAuthorizationRequestRepository) // 쿠키 기반 인증 요청 저장소
+                )
                 .successHandler(oAuth2JwtSuccessHandler) // JWT 토큰 발급 핸들러 적용
                 .failureHandler(oAuth2JwtFailureHandler) // JSON 응답 실패 핸들러 적용
                 .userInfoEndpoint(userInfo -> userInfo
