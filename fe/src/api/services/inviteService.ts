@@ -24,6 +24,18 @@ export interface MyInvite {
   modifiedAt: string;
 }
 
+export interface AcceptInviteWithKakaoRequest {
+  inviteCode: string;
+  kakaoId: string;
+  email: string;
+  name: string;
+  profileUrl?: string;
+}
+
+export interface AcceptInviteWithKakaoResponse {
+  memberId: number;
+}
+
 class InviteApi {
   private client: ApiClient;
 
@@ -50,6 +62,13 @@ class InviteApi {
    */
   async getMyInvites(): Promise<MyInvite[]> {
     return await this.client.get<MyInvite[]>('/api/invites/my');
+  }
+
+  /**
+   * 카카오 OAuth를 통해 초대를 수락합니다.
+   */
+  async acceptInviteWithKakao(request: AcceptInviteWithKakaoRequest): Promise<AcceptInviteWithKakaoResponse> {
+    return await this.client.post<AcceptInviteWithKakaoResponse>('/api/invites/response/kakao', request);
   }
 }
 

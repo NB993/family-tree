@@ -15,10 +15,11 @@ export const InviteResponsePage: React.FC = () => {
   });
 
   const handleKakaoLogin = () => {
-    // 카카오 OAuth 로그인으로 리다이렉트
-    const redirectUrl = `${window.location.origin}/invite/${inviteCode}/callback`;
-    const kakaoAuthUrl = `/api/oauth2/authorization/kakao?redirect_uri=${encodeURIComponent(redirectUrl)}`;
-    window.location.href = kakaoAuthUrl;
+    // 1. 초대 코드를 쿠키에 저장
+    document.cookie = `invite_code=${inviteCode}; path=/; max-age=300; SameSite=Lax`;
+
+    // 2. 백엔드 Spring Security OAuth 엔드포인트로 이동
+    window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
   };
 
   if (isLoading) {

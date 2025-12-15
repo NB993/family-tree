@@ -16,6 +16,7 @@ import LoginPage from './pages/LoginPage';
 import OAuth2CallbackPage from './pages/OAuth2CallbackPage';
 import { CreateInvitePage } from './pages/CreateInvitePage';
 import { InviteResponsePage } from './pages/InviteResponsePage';
+import { InviteCallbackPage } from './pages/InviteCallbackPage';
 
 // Styles
 import './styles/App.css';
@@ -71,6 +72,8 @@ function App() {
                   </ProtectedRoute>
                 } />
                 <Route path="/invite/:inviteCode" element={<InviteResponsePage />} />
+                <Route path="/invite/:inviteCode/callback" element={<InviteCallbackPage />} />
+                <Route path="/invite/callback" element={<InviteCallbackPage />} />
                 <Route path="/404" element={<NotFoundPage />} />
                 <Route path="*" element={<Navigate to="/404" replace />} />
               </Routes>

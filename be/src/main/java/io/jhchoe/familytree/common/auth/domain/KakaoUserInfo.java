@@ -58,12 +58,24 @@ public class KakaoUserInfo implements OAuth2UserInfo {
         if (profile != null && profile.get("profile_image_url") != null) {
             return (String) profile.get("profile_image_url");
         }
-        
+
         // 카카오 계정 정보가 없으면 properties에서 찾아봄
         if (properties != null) {
             return (String) properties.get("profile_image");
         }
-        
+
         return "";
+    }
+
+    /**
+     * 카카오 계정의 생일 정보를 반환합니다.
+     * 현재는 account_birthday scope가 준비 단계이므로 항상 null을 반환합니다.
+     *
+     * @return 생일 정보 (현재는 항상 null)
+     */
+    public String getBirthday() {
+        // account_birthday scope는 준비만 하고 실제로 사용하지 않음
+        // 향후 필요 시 구현: return account != null ? (String) account.get("birthday") : null;
+        return null;
     }
 }

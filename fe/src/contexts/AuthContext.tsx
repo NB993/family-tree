@@ -1,11 +1,31 @@
 import React, { createContext, useState, useEffect, useMemo, useContext, ReactNode, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthService } from '../api/services/authService';
 import { AuthState, UserInfo } from '../types/auth';
 import { useApiError } from '../hooks/useApiError';
 import { ApiClient } from '../api/client';
 import { ErrorHandlers } from '../types/error';
 import { logger } from '../utils/logger';
+
+// 인증이 필요 없는 공개 페이지 경로 패턴
+const PUBLIC_PATHS = [
+  '/login',
+  '/auth/callback',
+  '/login/oauth2/code/kakao',
+  '/login/oauth2/code/google',
+  /^\/invite\/[^/]+$/, // /invite/:inviteCode
+  /^\/invite\/[^/]+\/callback$/, // /invite/:inviteCode/callback
+];
+
+// 현재 경로가 공개 페이지인지 확인하는 함수
+const isPublicPath = (pathname: string): boolean => {
+  return PUBLIC_PATHS.some(path => {
+    if (typeof path === 'string') {
+      return pathname === path;
+    }
+    return path.test(pathname);
+  });
+};
 
 // 인증 관련 에러를 처리하는 핸들러
 const authErrorHandlers: ErrorHandlers = {
@@ -40,6 +60,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const { handleError } = useApiError(authErrorHandlers);
 
   useEffect(() => {
@@ -48,6 +69,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     apiClient.setErrorHandler(handleError);
 
     const checkAuthStatus = async () => {
+      // 공개 페이지에서는 인증 체크를 건너뜁니다.
+      if (isPublicPath(location.pathname)) {
+        setIsLoading(false);
+        return;
+      }
+
       const authService = AuthService.getInstance();
       try {
         const userData = await authService.getCurrentUser();
@@ -66,7 +93,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     checkAuthStatus();
-  }, [handleError]);
+  }, [handleError, location.pathname]);
 
   const logout = useCallback(async () => {
     const authService = AuthService.getInstance();
