@@ -20,10 +20,11 @@ class FamilyMemberTest {
         String profileUrl = "http://example.com/kakao.jpg";
         
         // when
+        LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
         FamilyMember familyMember = FamilyMember.newKakaoMember(
-            familyId, kakaoId, name, profileUrl
+            familyId, null, kakaoId, name, profileUrl, birthday
         );
-        
+
         // then
         assertThat(familyMember.getId()).isNull();
         assertThat(familyMember.getFamilyId()).isEqualTo(familyId);
@@ -31,7 +32,7 @@ class FamilyMemberTest {
         assertThat(familyMember.getKakaoId()).isEqualTo(kakaoId);
         assertThat(familyMember.getName()).isEqualTo(name);
         assertThat(familyMember.getProfileUrl()).isEqualTo(profileUrl);
-        assertThat(familyMember.getBirthday()).isNull();
+        assertThat(familyMember.getBirthday()).isEqualTo(birthday);
         assertThat(familyMember.getNationality()).isNull();
         assertThat(familyMember.getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE);
         assertThat(familyMember.getRole()).isEqualTo(FamilyMemberRole.MEMBER);
@@ -49,8 +50,8 @@ class FamilyMemberTest {
         String profileUrl = "http://example.com/kakao.jpg";
         
         // when & then
-        assertThatThrownBy(() -> 
-            FamilyMember.newKakaoMember(familyId, kakaoId, name, profileUrl)
+        assertThatThrownBy(() ->
+            FamilyMember.newKakaoMember(familyId, null, kakaoId, name, profileUrl, LocalDateTime.of(1990, 1, 1, 0, 0))
         ).isInstanceOf(NullPointerException.class)
          .hasMessage("familyId must not be null");
     }
@@ -65,8 +66,8 @@ class FamilyMemberTest {
         String profileUrl = "http://example.com/kakao.jpg";
         
         // when & then
-        assertThatThrownBy(() -> 
-            FamilyMember.newKakaoMember(familyId, kakaoId, name, profileUrl)
+        assertThatThrownBy(() ->
+            FamilyMember.newKakaoMember(familyId, null, kakaoId, name, profileUrl, LocalDateTime.of(1990, 1, 1, 0, 0))
         ).isInstanceOf(NullPointerException.class)
          .hasMessage("kakaoId must not be null");
     }
@@ -81,8 +82,8 @@ class FamilyMemberTest {
         String profileUrl = "http://example.com/kakao.jpg";
         
         // when & then
-        assertThatThrownBy(() -> 
-            FamilyMember.newKakaoMember(familyId, kakaoId, name, profileUrl)
+        assertThatThrownBy(() ->
+            FamilyMember.newKakaoMember(familyId, null, kakaoId, name, profileUrl, LocalDateTime.of(1990, 1, 1, 0, 0))
         ).isInstanceOf(NullPointerException.class)
          .hasMessage("name must not be null");
     }

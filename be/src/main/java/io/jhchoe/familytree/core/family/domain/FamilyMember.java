@@ -326,26 +326,31 @@ public class FamilyMember {
     }
     
     /**
-     * 카카오 OAuth로 인증한 비회원 FamilyMember를 생성합니다.
+     * 카카오 OAuth로 인증한 FamilyMember를 생성합니다.
+     * User가 있으면 userId를 함께 저장하고, 없으면 kakaoId만 저장합니다.
      *
      * @param familyId    Family ID
+     * @param userId      사용자 ID (nullable - User가 없으면 null)
      * @param kakaoId     카카오 ID
      * @param name        이름
      * @param profileUrl  프로필 URL
-     * @return 새로운 FamilyMember 인스턴스 (userId=null, kakaoId 설정)
+     * @param birthday    생일
+     * @return 새로운 FamilyMember 인스턴스
      */
     public static FamilyMember newKakaoMember(
         Long familyId,
+        Long userId,
         String kakaoId,
         String name,
-        String profileUrl
+        String profileUrl,
+        LocalDateTime birthday
     ) {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(kakaoId, "kakaoId must not be null");
         Objects.requireNonNull(name, "name must not be null");
-        
+
         return new FamilyMember(
-            null, familyId, null, kakaoId, name, null, profileUrl, null, null,
+            null, familyId, userId, kakaoId, name, null, profileUrl, birthday, null,
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
         );

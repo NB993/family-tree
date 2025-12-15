@@ -40,4 +40,15 @@ public class UserPersistenceAdapter implements FindUserPort {
         return userJpaRepository.findById(id)
             .map(UserJpaEntity::toUser);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<User> findByEmail(String email) {
+        Objects.requireNonNull(email, "email must not be null");
+
+        return userJpaRepository.findByEmail(email)
+            .map(UserJpaEntity::toUser);
+    }
 }

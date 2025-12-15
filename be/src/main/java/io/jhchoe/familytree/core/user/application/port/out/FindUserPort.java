@@ -26,4 +26,12 @@ public interface FindUserPort {
      * @return 조회된 사용자 정보
      */
     Optional<User> findById(Long id);
+
+    /**
+     * 이메일로 사용자를 조회합니다.
+     *
+     * @param email 검색할 이메일
+     * @return 조회된 사용자 정보
+     */
+    Optional<User> findByEmail(String email);
 }
