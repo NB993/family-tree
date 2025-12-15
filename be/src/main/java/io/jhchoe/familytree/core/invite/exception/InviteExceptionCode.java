@@ -18,7 +18,8 @@ public enum InviteExceptionCode implements ExceptionCodeType {
     INVITE_MAX_USES_EXCEEDED("I008", "초대 링크 사용 가능 횟수를 초과했습니다.", HttpStatus.BAD_REQUEST),
     REQUESTER_HAS_NO_FAMILY("I009", "초대를 생성한 사용자가 어떤 가족에도 속해있지 않습니다.", HttpStatus.BAD_REQUEST),
     ALREADY_FAMILY_MEMBER("I010", "이미 해당 가족의 구성원입니다.", HttpStatus.CONFLICT),
-    KAKAO_OAUTH_FAILED("I011", "카카오 OAuth 인증에 실패했습니다.", HttpStatus.BAD_REQUEST);
+    KAKAO_OAUTH_FAILED("I011", "카카오 OAuth 인증에 실패했습니다.", HttpStatus.BAD_REQUEST),
+    CANNOT_ACCEPT_OWN_INVITE("I012", "자신이 생성한 초대를 수락할 수 없습니다.", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;
