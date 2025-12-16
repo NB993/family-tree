@@ -13,6 +13,8 @@ import org.springframework.util.SerializationUtils;
 
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OAuth2 인증 요청을 쿠키에 저장하는 Repository입니다.
@@ -41,6 +43,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
 
     /**
      * OAuth2 인증 요청을 쿠키에 저장합니다.
+     * URL 파라미터에 invite_code가 있으면 additionalParameters에 포함시킵니다.
      */
     @Override
     public void saveAuthorizationRequest(
@@ -54,7 +57,27 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
             return;
         }
 
-        final String serialized = serialize(authorizationRequest);
+        // 1. URL에서 invite_code 파라미터 추출
+        final String inviteCode = request.getParameter("invite_code");
+
+        // 2. invite_code가 있으면 OAuth2AuthorizationRequest에 추가
+        OAuth2AuthorizationRequest modifiedRequest = authorizationRequest;
+        if (inviteCode != null && !inviteCode.isBlank()) {
+            log.info("초대 코드 감지. OAuth2 인증 요청에 포함 [inviteCode: {}]", inviteCode);
+
+            // OAuth2AuthorizationRequest는 불변 객체이므로 Builder 사용
+            Map<String, Object> additionalParams = new HashMap<>(
+                authorizationRequest.getAdditionalParameters()
+            );
+            additionalParams.put("invite_code", inviteCode);
+
+            modifiedRequest = OAuth2AuthorizationRequest
+                .from(authorizationRequest)
+                .additionalParameters(additionalParams)
+                .build();
+        }
+
+        final String serialized = serialize(modifiedRequest);
         addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, serialized, COOKIE_EXPIRE_SECONDS);
         log.debug("OAuth2 인증 요청을 쿠키에 저장했습니다 [Cookie Size: {} bytes]", serialized.length());
     }

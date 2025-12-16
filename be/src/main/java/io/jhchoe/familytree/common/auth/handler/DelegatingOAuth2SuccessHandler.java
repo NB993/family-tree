@@ -7,11 +7,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.SerializationUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * OAuth2 인증 성공 시 초대 여부에 따라 적절한 핸들러로 위임하는 핸들러입니다.
@@ -44,8 +46,8 @@ public class DelegatingOAuth2SuccessHandler implements AuthenticationSuccessHand
         final Authentication authentication
     ) throws IOException, ServletException {
 
-        // 1. 쿠키에서 invite_code 확인
-        final String inviteCode = extractInviteCodeFromCookie(request);
+        // 1. OAuth2AuthorizationRequest에서 invite_code 확인
+        final String inviteCode = extractInviteCodeFromAuthorizationRequest(request);
 
         if (inviteCode != null && !inviteCode.isBlank()) {
             log.info("초대 수락 OAuth 감지: inviteCode={}", inviteCode);
@@ -57,21 +59,61 @@ public class DelegatingOAuth2SuccessHandler implements AuthenticationSuccessHand
     }
 
     /**
-     * 쿠키에서 invite_code를 추출합니다.
+     * OAuth2AuthorizationRequest의 additionalParameters에서 invite_code를 추출합니다.
      *
      * @param request HTTP 요청
      * @return 초대 코드 (없으면 null)
      */
-    private String extractInviteCodeFromCookie(final HttpServletRequest request) {
-        final Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
+    private String extractInviteCodeFromAuthorizationRequest(final HttpServletRequest request) {
+        try {
+            // 1. 쿠키에서 oauth2_auth_request 추출
+            final Cookie[] cookies = request.getCookies();
+            if (cookies == null) {
+                return null;
+            }
+
+            Cookie authRequestCookie = null;
+            for (Cookie cookie : cookies) {
+                if ("oauth2_auth_request".equals(cookie.getName())) {
+                    authRequestCookie = cookie;
+                    break;
+                }
+            }
+
+            if (authRequestCookie == null) {
+                log.debug("oauth2_auth_request 쿠키를 찾을 수 없습니다");
+                return null;
+            }
+
+            // 2. OAuth2AuthorizationRequest 역직렬화
+            final String value = authRequestCookie.getValue();
+            if (value == null || value.isEmpty()) {
+                return null;
+            }
+
+            final byte[] decoded = Base64.getUrlDecoder().decode(value);
+            final OAuth2AuthorizationRequest authorizationRequest =
+                (OAuth2AuthorizationRequest) SerializationUtils.deserialize(decoded);
+
+            if (authorizationRequest == null) {
+                return null;
+            }
+
+            // 3. additionalParameters에서 invite_code 추출
+            final Object inviteCode = authorizationRequest
+                .getAdditionalParameters()
+                .get("invite_code");
+
+            if (inviteCode != null) {
+                log.debug("OAuth2 인증 요청에서 초대 코드 추출 성공 [inviteCode: {}]", inviteCode);
+                return inviteCode.toString();
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            log.error("OAuth2 인증 요청에서 초대 코드 추출 실패", e);
             return null;
         }
-
-        return Arrays.stream(cookies)
-            .filter(cookie -> "invite_code".equals(cookie.getName()))
-            .findFirst()
-            .map(Cookie::getValue)
-            .orElse(null);
     }
 }

@@ -10,15 +10,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.SerializationUtils;
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * 초대 수락용 OAuth2 인증 성공 핸들러입니다.
@@ -52,8 +53,8 @@ public class OAuth2InviteSuccessHandler implements AuthenticationSuccessHandler 
         // 1. FTUser 추출
         final FTUser ftUser = (FTUser) authentication.getPrincipal();
 
-        // 2. 쿠키에서 초대 코드 읽기
-        final String inviteCode = extractInviteCodeFromCookie(request);
+        // 2. OAuth2AuthorizationRequest에서 초대 코드 읽기
+        final String inviteCode = extractInviteCodeFromAuthorizationRequest(request);
 
         if (inviteCode == null || inviteCode.isBlank()) {
             log.error("초대 코드가 없음. 에러 페이지로 리다이렉트");
@@ -82,10 +83,7 @@ public class OAuth2InviteSuccessHandler implements AuthenticationSuccessHandler 
             log.info("초대 수락 완료 [inviteCode: {}] [memberId: {}] [email: {}]",
                      inviteCode, memberId, ftUser.getEmail());
 
-            // 6. invite_code 쿠키 삭제
-            deleteInviteCodeCookie(response);
-
-            // 7. 성공 리다이렉트
+            // 6. 성공 리다이렉트
             final String redirectUrl = corsProperties.getFrontendUrl()
                 + "/invite/" + inviteCode + "/callback?success=true";
 
@@ -147,37 +145,62 @@ public class OAuth2InviteSuccessHandler implements AuthenticationSuccessHandler 
     }
 
     /**
-     * invite_code 쿠키를 삭제합니다.
-     *
-     * @param response HTTP 응답
-     */
-    private void deleteInviteCodeCookie(final HttpServletResponse response) {
-        final ResponseCookie cookie = ResponseCookie.from("invite_code", "")
-            .path("/")
-            .maxAge(0)
-            .build();
-
-        response.addHeader("Set-Cookie", cookie.toString());
-        log.debug("invite_code 쿠키 삭제 완료");
-    }
-
-    /**
-     * 쿠키에서 invite_code를 추출합니다.
+     * OAuth2AuthorizationRequest의 additionalParameters에서 invite_code를 추출합니다.
      *
      * @param request HTTP 요청
      * @return 초대 코드 (없으면 null)
      */
-    private String extractInviteCodeFromCookie(final HttpServletRequest request) {
-        final Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
+    private String extractInviteCodeFromAuthorizationRequest(final HttpServletRequest request) {
+        try {
+            // 1. 쿠키에서 oauth2_auth_request 추출
+            final Cookie[] cookies = request.getCookies();
+            if (cookies == null) {
+                return null;
+            }
+
+            Cookie authRequestCookie = null;
+            for (Cookie cookie : cookies) {
+                if ("oauth2_auth_request".equals(cookie.getName())) {
+                    authRequestCookie = cookie;
+                    break;
+                }
+            }
+
+            if (authRequestCookie == null) {
+                log.debug("oauth2_auth_request 쿠키를 찾을 수 없습니다");
+                return null;
+            }
+
+            // 2. OAuth2AuthorizationRequest 역직렬화
+            final String value = authRequestCookie.getValue();
+            if (value == null || value.isEmpty()) {
+                return null;
+            }
+
+            final byte[] decoded = Base64.getUrlDecoder().decode(value);
+            final OAuth2AuthorizationRequest authorizationRequest =
+                (OAuth2AuthorizationRequest) SerializationUtils.deserialize(decoded);
+
+            if (authorizationRequest == null) {
+                return null;
+            }
+
+            // 3. additionalParameters에서 invite_code 추출
+            final Object inviteCode = authorizationRequest
+                .getAdditionalParameters()
+                .get("invite_code");
+
+            if (inviteCode != null) {
+                log.debug("OAuth2 인증 요청에서 초대 코드 추출 성공 [inviteCode: {}]", inviteCode);
+                return inviteCode.toString();
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            log.error("OAuth2 인증 요청에서 초대 코드 추출 실패", e);
             return null;
         }
-
-        return Arrays.stream(cookies)
-            .filter(cookie -> "invite_code".equals(cookie.getName()))
-            .findFirst()
-            .map(Cookie::getValue)
-            .orElse(null);
     }
 
     /**
