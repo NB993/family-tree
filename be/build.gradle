@@ -73,10 +73,6 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 processResources.dependsOn('copyProperties')
 
 tasks.register('copyProperties', Copy) {
@@ -101,6 +97,7 @@ ext {
 }
 
 test {
+    useJUnitPlatform()
     dependsOn copyTestProperties  // 테스트 실행 전 설정 파일 복사
     doFirst {
         delete file("build/generated-snippets")

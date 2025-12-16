@@ -1,4 +1,5 @@
-# Dockerfile
-FROM openjdk:17-jdk-alpine
-COPY target/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+FROM amazoncorretto:21-alpine
+
+COPY build/libs/*.jar family-tree.jar
+
+ENTRYPOINT ["java", "-jar", "family-tree.jar"]
