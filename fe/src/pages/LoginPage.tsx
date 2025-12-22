@@ -8,13 +8,13 @@ const LoginPage: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
   const handleKakaoLogin = () => {
-    // 백엔드의 OAuth2 인증 엔드포인트로 리다이렉트
-    window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
+    // Vercel rewrites를 통해 Cloudflare Worker로 프록시 (Safari 서드파티 쿠키 문제 해결)
+    window.location.href = '/oauth2/authorization/kakao';
   };
 
   const handleGoogleLogin = () => {
-    // 백엔드의 OAuth2 인증 엔드포인트로 리다이렉트
-    window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
+    // Vercel rewrites를 통해 Cloudflare Worker로 프록시 (Safari 서드파티 쿠키 문제 해결)
+    window.location.href = '/oauth2/authorization/google';
   };
 
   if (isLoading) {

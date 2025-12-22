@@ -15,8 +15,9 @@ export const InviteResponsePage: React.FC = () => {
   });
 
   const handleKakaoLogin = () => {
-    // 백엔드 OAuth 엔드포인트에 invite_code를 Query Parameter로 전달
-    const oauthUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao?invite_code=${inviteCode}`;
+    // Vercel rewrites를 통해 Cloudflare Worker로 프록시 (Safari 서드파티 쿠키 문제 해결)
+    // invite_code를 Query Parameter로 전달
+    const oauthUrl = `/oauth2/authorization/kakao?invite_code=${inviteCode}`;
     window.location.href = oauthUrl;
   };
 

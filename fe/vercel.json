@@ -4,6 +4,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://olhae.olhaeapi.workers.dev/:path*"
+    },
+    {
+      "source": "/oauth2/:path*",
+      "destination": "https://olhae.olhaeapi.workers.dev/oauth2/:path*"
     }
   ]
 }
