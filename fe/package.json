@@ -25,8 +25,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "env-cmd -f .env.development.local react-scripts start",
     "build": "react-scripts build",
+    "build:dev": "env-cmd -f .env.development react-scripts build",
+    "build:prod": "env-cmd -f .env.production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -50,6 +52,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
+    "env-cmd": "^11.0.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17"
   }

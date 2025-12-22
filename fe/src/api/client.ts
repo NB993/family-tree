@@ -24,7 +24,13 @@ export class ApiClient {
    */
   private constructor() {
     this.client = axios.create({
-      baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8080',
+      // Nullish coalescing (??) 사용 이유:
+      // - 배포 환경(개발/운영 서버)에서 Vercel Rewrites 사용 시 REACT_APP_API_URL='' (빈 문자열)
+      // - 빈 문자열은 의도적인 값으로, 상대 경로(/api/*)로 요청하여 Same Origin 유지
+      // - || 연산자: 빈 문자열을 falsy로 판단 → fallback 'localhost:8080' 실행 (❌ 배포 환경에서 오작동)
+      // - ?? 연산자: 빈 문자열을 그대로 사용, undefined/null만 fallback 실행 (✅ 올바른 동작)
+      // - 실제 동작: 배포 환경 빈 문자열('') → Rewrites로 Same Origin 쿠키 작동
+      baseURL: process.env.REACT_APP_API_URL ?? 'http://localhost:8080',
       timeout: 10000,
       headers: {
         "Content-Type": "application/json",
