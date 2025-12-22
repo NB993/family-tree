@@ -8,6 +8,10 @@
     {
       "source": "/oauth2/:path*",
       "destination": "https://olhae.olhaeapi.workers.dev/oauth2/:path*"
+    },
+    {
+      "source": "/login/oauth2/:path*",
+      "destination": "https://olhae.olhaeapi.workers.dev/login/oauth2/:path*"
     }
   ]
 }
