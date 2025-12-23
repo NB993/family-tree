@@ -36,6 +36,7 @@ class UserTest {
             email,
             name,
             profileUrl,
+            null, // kakaoId
             authenticationType,
             oAuth2Provider,
             role,
@@ -79,6 +80,7 @@ class UserTest {
             email,
             name,
             null,
+            null, // kakaoId
             authenticationType,
             oAuth2Provider,
             role,
@@ -109,6 +111,7 @@ class UserTest {
             email,
             name,
             null,
+            null, // kakaoId
             authenticationType,
             oAuth2Provider,
             role,
@@ -139,6 +142,7 @@ class UserTest {
             email,
             name,
             null,
+            null, // kakaoId
             authenticationType,
             oAuth2Provider,
             role,
@@ -169,6 +173,7 @@ class UserTest {
             email,
             name,
             null,
+            null, // kakaoId
             authenticationType,
             oAuth2Provider,
             role,
@@ -199,6 +204,7 @@ class UserTest {
             email,
             name,
             null,
+            null, // kakaoId
             authenticationType,
             oAuth2Provider,
             role,
@@ -221,6 +227,7 @@ class UserTest {
             "test@example.com",
             "Test User",
             null,
+            null, // kakaoId
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
@@ -248,6 +255,7 @@ class UserTest {
             "test@example.com",
             "Test User",
             null,
+            null, // kakaoId
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
@@ -282,6 +290,7 @@ class UserTest {
             email,
             name,
             profileUrl,
+            null, // kakaoId
             authenticationType,
             oAuth2Provider,
             role,
@@ -313,6 +322,7 @@ class UserTest {
             "test@example.com",
             null,
             null,
+            null, // kakaoId
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
@@ -340,6 +350,7 @@ class UserTest {
             "test@example.com",
             null,
             null,
+            null, // kakaoId
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,

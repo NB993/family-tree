@@ -39,18 +39,19 @@ class FindUserControllerTest extends AcceptanceTestBase {
         List<User> mockUsers = new ArrayList<>();
         
         User user = User.withId(
-            1L, 
-            "test@example.com", 
-            "홍길동", 
+            1L,
+            "test@example.com",
+            "홍길동",
             "profile.jpg",
+            null, // kakaoId
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
             false,
-                1L,
-                LocalDateTime.now(),
-                1L,
-                LocalDateTime.now()
+            1L,
+            LocalDateTime.now(),
+            1L,
+            LocalDateTime.now()
         );
         mockUsers.add(user);
         

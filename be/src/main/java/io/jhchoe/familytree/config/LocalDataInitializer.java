@@ -71,6 +71,7 @@ public class LocalDataInitializer implements ApplicationRunner {
             email,
             name,
             "https://ui-avatars.com/api/?name=" + name + "&background=random",
+            null, // kakaoId (테스트 데이터)
             AuthenticationType.OAUTH2,
             provider, // OAuth2Provider 명시적 설정
             UserRole.USER,

@@ -145,7 +145,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("findById 메서드는 ID로 FamilyMember를 조회할 수 있다")
     void return_family_member_when_exists_by_id() {
         // given
-        FamilyMember member = FamilyMember.newOwner(1L, 1L, "Owner", null, null, "KR");
+        FamilyMember member = FamilyMember.newOwner(1L, 1L, null, "Owner", null, null, "KR");
         FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
         FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
         
@@ -199,7 +199,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         Long familyId = 1L;
         
         // OWNER 생성
-        FamilyMember owner = FamilyMember.newOwner(familyId, 1L, "Owner", null, null, "KR");
+        FamilyMember owner = FamilyMember.newOwner(familyId, 1L, null, "Owner", null, null, "KR");
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(owner));
         
         // ADMIN 생성  
@@ -336,7 +336,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("save 메서드는 OWNER 역할의 FamilyMember를 저장할 수 있다")
     void save_owner_family_member_successfully() {
         // given
-        FamilyMember owner = FamilyMember.newOwner(1L, 1L, "Owner", null, null, "KR");
+        FamilyMember owner = FamilyMember.newOwner(1L, 1L, null, "Owner", null, null, "KR");
         
         // when
         Long savedId = sut.save(owner);

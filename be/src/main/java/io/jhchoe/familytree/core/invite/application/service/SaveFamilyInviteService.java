@@ -26,7 +26,7 @@ public class SaveFamilyInviteService implements SaveFamilyInviteUseCase {
     public String save(final SaveFamilyInviteCommand command) {
         Objects.requireNonNull(command, "command must not be null");
 
-        // 새로운 초대 생성 (무제한 초대 링크)
+        // 새로운 초대 생성 (기본 5회)
         final FamilyInvite familyInvite = FamilyInvite.newInvite(command.requesterId(), null);
 
         // 초대 저장

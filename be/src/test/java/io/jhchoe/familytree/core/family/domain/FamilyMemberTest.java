@@ -101,7 +101,7 @@ class FamilyMemberTest {
         
         // when
         FamilyMember familyMember = FamilyMember.newOwner(
-            familyId, userId, name, profileUrl, birthday, nationality
+            familyId, userId, null, name, profileUrl, birthday, nationality
         );
         
         // then
@@ -331,7 +331,7 @@ class FamilyMemberTest {
     @DisplayName("hasRoleAtLeast 메서드로 특정 역할 이상의 권한을 가지고 있는지 확인할 수 있다")
     void has_role_at_least_checks_if_member_has_required_role() {
         // given
-        FamilyMember owner = FamilyMember.newOwner(1L, 2L, "Owner", "", null, "");
+        FamilyMember owner = FamilyMember.newOwner(1L, 2L, null, "Owner", "", null, "");
         FamilyMember admin = FamilyMember.withId(3L, 1L, 4L, null, "Admin", null, null, null, "",
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN, null, null, null, null);
         FamilyMember member = FamilyMember.newMember(1L, 5L, "Member", "", null, "");

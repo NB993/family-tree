@@ -4,7 +4,6 @@ import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.SaveFamilyMemberPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
-import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.invite.application.port.in.SaveInviteResponseWithKakaoCommand;
 import io.jhchoe.familytree.core.invite.application.port.in.SaveInviteResponseWithKakaoUseCase;
 import io.jhchoe.familytree.core.invite.application.port.out.FindFamilyInvitePort;
@@ -81,8 +80,9 @@ public class SaveInviteResponseWithKakaoService implements SaveInviteResponseWit
         FamilyMember requesterMember = requesterMembers.get(0);
         Long familyId = requesterMember.getFamilyId();
 
-        // 6. 초대를 보낸 사람이 OWNER인지 확인 (OWNER는 자기 초대를 수락할 수 없음)
-        if (requesterMember.getRole() == FamilyMemberRole.OWNER) {
+        // 6. 자기 자신이 보낸 초대는 수락할 수 없음 (kakaoId로 비교)
+        String requesterKakaoId = requesterMember.getKakaoId();
+        if (requesterKakaoId != null && requesterKakaoId.equals(command.getKakaoId())) {
             throw new FTException(InviteExceptionCode.CANNOT_ACCEPT_OWN_INVITE);
         }
 

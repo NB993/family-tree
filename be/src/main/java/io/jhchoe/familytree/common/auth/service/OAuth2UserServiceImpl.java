@@ -93,9 +93,18 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
      * 새로운 OAuth2 사용자를 생성하고 자동으로 Family를 생성합니다.
      */
     private UserJpaEntity createUser(OAuth2UserInfo userInfo, OAuth2Provider provider) {
-        // 1. User 생성 및 저장
-        User user = User.newUser(userInfo.getEmail(), userInfo.getName(), userInfo.getImageUrl(),
-                AuthenticationType.OAUTH2, provider, UserRole.USER, false);
+        // 1. User 생성 및 저장 (kakaoId 포함)
+        String kakaoId = userInfo.getId();
+        User user = User.newUser(
+            userInfo.getEmail(),
+            userInfo.getName(),
+            userInfo.getImageUrl(),
+            kakaoId,
+            AuthenticationType.OAUTH2,
+            provider,
+            UserRole.USER,
+            false
+        );
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
 
         // 2. Family 자동 생성

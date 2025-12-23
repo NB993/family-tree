@@ -54,6 +54,7 @@ public class SaveFamilyService implements SaveFamilyUseCase {
         FamilyMember owner = FamilyMember.newOwner(
             familyId,
             command.getUserId(),
+            user.getKakaoId(),     // 사용자의 카카오 ID 사용
             user.getName(),        // 사용자의 실제 이름 사용
             user.getProfileUrl(),  // 사용자의 프로필 URL 사용
             null,                  // 생일은 선택사항 (추후 확장 가능)

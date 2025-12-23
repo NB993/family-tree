@@ -44,7 +44,7 @@ class FindUserServiceTest {
         int size = 10;
         FindUserByNameQuery query = new FindUserByNameQuery(name, page, size);
         
-        User user = User.withId(1L, "test@example.com", "홍길동", "profile.jpg",
+        User user = User.withId(1L, "test@example.com", "홍길동", "profile.jpg", null,
                 AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, 2L, LocalDateTime.now(), 2L, LocalDateTime.now());
         List<User> users = List.of(user);
         

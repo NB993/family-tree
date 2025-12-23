@@ -46,16 +46,17 @@ class TokenControllerTest extends AcceptanceTestBase {
     void modify_returns_200_and_new_tokens_when_valid_refresh_token_in_cookie() throws InterruptedException {
         // given
         User user = User.newUser(
-            "test@example.com", 
-            "테스트사용자", 
+            "test@example.com",
+            "테스트사용자",
             "profile.jpg",
+            null, // kakaoId
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
             false
         );
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
-        
+
         // 실제 유효한 Refresh Token 생성
         String validRefreshToken = jwtTokenUtil.generateRefreshToken(savedUser.getId());
         
@@ -128,9 +129,10 @@ class TokenControllerTest extends AcceptanceTestBase {
     void delete_returns_200_and_success_message_when_authenticated_user() {
         // given
         User user = User.newUser(
-            "test@example.com", 
-            "테스트사용자", 
+            "test@example.com",
+            "테스트사용자",
             "profile.jpg",
+            null, // kakaoId
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,

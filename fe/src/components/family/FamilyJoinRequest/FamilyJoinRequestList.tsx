@@ -20,7 +20,7 @@ export const FamilyJoinRequestList: React.FC<FamilyJoinRequestListProps> = ({ fa
         message,
       });
     } catch (error) {
-      console.error('가입 요청 승인 중 오류가 발생했습니다:', error);
+      console.error('참여 요청 승인 중 오류가 발생했습니다:', error);
     }
   };
 
@@ -33,7 +33,7 @@ export const FamilyJoinRequestList: React.FC<FamilyJoinRequestListProps> = ({ fa
         message,
       });
     } catch (error) {
-      console.error('가입 요청 거절 중 오류가 발생했습니다:', error);
+      console.error('참여 요청 거절 중 오류가 발생했습니다:', error);
     }
   };
 
@@ -64,7 +64,7 @@ export const FamilyJoinRequestList: React.FC<FamilyJoinRequestListProps> = ({ fa
     return (
       <div className="family-card bg-red-50 border-red-200">
         <div className="text-center py-8">
-          <p className="text-red-600 mb-2">가입 요청을 불러오는 중 오류가 발생했습니다.</p>
+          <p className="text-red-600 mb-2">참여 요청을 불러오는 중 오류가 발생했습니다.</p>
           <p className="text-sm text-red-500">{error.message}</p>
         </div>
       </div>
@@ -77,10 +77,10 @@ export const FamilyJoinRequestList: React.FC<FamilyJoinRequestListProps> = ({ fa
         <div className="text-center py-12">
           <div className="text-5xl mb-4">📝</div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            가입 요청이 없습니다
+            참여 요청이 없습니다
           </h3>
           <p className="text-gray-500">
-            새로운 가족 구성원의 가입 요청을 기다리고 있습니다.
+            새로운 멤버의 참여 요청을 기다리고 있습니다.
           </p>
         </div>
       </div>
@@ -97,7 +97,7 @@ export const FamilyJoinRequestList: React.FC<FamilyJoinRequestListProps> = ({ fa
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-gray-900">
-          가입 요청 관리
+          참여 요청 관리
         </h2>
         <div className="text-sm text-gray-500">
           총 {joinRequests.length}건

@@ -73,7 +73,7 @@ class ModifyJwtTokenServiceTest {
         Long accessTokenExpiration = 3600L;
         Long refreshTokenExpiration = 604800L;
 
-        User user = User.withId(1L, email, name, profileUrl, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, null, null, null, null);
+        User user = User.withId(1L, email, name, profileUrl, null, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, null, null, null, null);
 
         // Mocking: Refresh Token이 유효한 토큰임을 모킹
         when(jwtTokenUtil.validateToken(validRefreshToken)).thenReturn(true);

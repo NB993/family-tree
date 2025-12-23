@@ -17,6 +17,7 @@ public class User {
     private final String email;
     private final String name;
     private final String profileUrl;
+    private final String kakaoId;
     private final AuthenticationType authenticationType;
     private final OAuth2Provider oAuth2Provider;
     private final UserRole role;
@@ -31,6 +32,7 @@ public class User {
         String email,
         String name,
         String profileUrl,
+        String kakaoId,
         AuthenticationType authenticationType,
         OAuth2Provider oAuth2Provider,
         UserRole role,
@@ -44,6 +46,7 @@ public class User {
         this.email = email;
         this.name = name;
         this.profileUrl = profileUrl;
+        this.kakaoId = kakaoId;
         this.authenticationType = authenticationType;
         this.oAuth2Provider = oAuth2Provider;
         this.role = role;
@@ -61,9 +64,11 @@ public class User {
      * @param email 이메일
      * @param name 이름
      * @param profileUrl 프로필 URL
+     * @param kakaoId 카카오 ID
      * @param authenticationType 인증 유형
      * @param oAuth2Provider OAuth2 제공자
      * @param role 사용자 역할
+     * @param deleted 삭제 여부
      * @param createdBy 생성한 사용자 ID
      * @param createdAt 생성일시
      * @param modifiedBy 수정한 사용자 ID
@@ -75,6 +80,7 @@ public class User {
         String email,
         String name,
         String profileUrl,
+        String kakaoId,
         AuthenticationType authenticationType,
         OAuth2Provider oAuth2Provider,
         UserRole role,
@@ -90,29 +96,34 @@ public class User {
         Objects.requireNonNull(authenticationType, "authenticationType must not be null");
         Objects.requireNonNull(role, "role must not be null");
 
-        return new User(id, email, name, profileUrl, authenticationType, oAuth2Provider, role, deleted,
+        return new User(id, email, name, profileUrl, kakaoId, authenticationType, oAuth2Provider, role, deleted,
                 createdBy, createdAt, modifiedBy, modifiedAt);
     }
 
     /**
      * 신규 사용자 정보로 User 객체를 생성합니다.
+     *
      * @param email 이메일
      * @param name 이름
      * @param profileUrl 프로필 URL
+     * @param kakaoId 카카오 ID
      * @param authenticationType 인증유형
      * @param oAuth2Provider OAuth2 제공자
+     * @param role 사용자 역할
+     * @param deleted 삭제 여부
      * @return 생성된 User 객체
      */
     public static User newUser(
         String email,
         String name,
         String profileUrl,
+        String kakaoId,
         AuthenticationType authenticationType,
         OAuth2Provider oAuth2Provider,
         UserRole role,
         boolean deleted
     ) {
-        return new User(null, email, name, profileUrl, authenticationType, oAuth2Provider, role, deleted, null, null, null, null);
+        return new User(null, email, name, profileUrl, kakaoId, authenticationType, oAuth2Provider, role, deleted, null, null, null, null);
     }
 
     /**

@@ -237,8 +237,8 @@ class SaveInviteResponseWithKakaoServiceTest {
     }
 
     @Test
-    @DisplayName("초대 생성자가 OWNER인 경우 예외가 발생한다")
-    void throw_exception_when_requester_is_owner() {
+    @DisplayName("자기가 보낸 초대를 자기가 수락하면 예외가 발생한다")
+    void throw_exception_when_accept_own_invite() {
         // given
         // 초대 링크 조회 모킹
         when(findFamilyInvitePort.findByCode("invite-code-123"))
@@ -248,12 +248,12 @@ class SaveInviteResponseWithKakaoServiceTest {
         when(findUserPort.findByEmail("kakao@example.com"))
             .thenReturn(Optional.empty());
 
-        // 초대 생성자의 FamilyMember 조회 모킹 - OWNER 역할
-        FamilyMember ownerMember = FamilyMember.withId(
+        // 초대 생성자의 FamilyMember 조회 모킹 - 동일한 kakaoId
+        FamilyMember requesterMember = FamilyMember.withId(
             1L,
             10L, // familyId
             100L, // userId (requesterId와 동일)
-            null, // kakaoId
+            "kakao_12345", // kakaoId - command의 kakaoId와 동일
             "소유자",
             null,
             null, // relationship
@@ -267,7 +267,7 @@ class SaveInviteResponseWithKakaoServiceTest {
             null
         );
         when(findFamilyMemberPort.findByUserId(100L))
-            .thenReturn(List.of(ownerMember));
+            .thenReturn(List.of(requesterMember));
 
         // when & then
         assertThatThrownBy(() -> saveInviteResponseWithKakaoService.save(command))

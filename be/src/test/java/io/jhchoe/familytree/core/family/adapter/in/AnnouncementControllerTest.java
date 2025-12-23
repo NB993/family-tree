@@ -40,7 +40,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
         );
         familyMemberJpaRepository.save(
             FamilyMemberJpaEntity.from(FamilyMember.newOwner(
-                family.getId(), 1L, "소유자", null, now, "KR"
+                family.getId(), 1L, null, "소유자", null, now, "KR"
             ))
         );
 
@@ -73,7 +73,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
         );
         familyMemberJpaRepository.save(
             FamilyMemberJpaEntity.from(FamilyMember.newOwner(
-                family.getId(), 1L, "소유자", null, now, "KR"
+                family.getId(), 1L, null, "소유자", null, now, "KR"
             ))
         );
 
@@ -107,7 +107,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
         );
         familyMemberJpaRepository.save(
             FamilyMemberJpaEntity.from(FamilyMember.newOwner(
-                family.getId(), 1L, "소유자", null, now, "KR"
+                family.getId(), 1L, null, "소유자", null, now, "KR"
             ))
         );
         

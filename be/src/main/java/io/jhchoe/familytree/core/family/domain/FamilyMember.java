@@ -207,6 +207,7 @@ public class FamilyMember {
      *
      * @param familyId    가족 ID
      * @param userId      사용자 ID
+     * @param kakaoId     카카오 ID
      * @param name        이름
      * @param profileUrl  프로필 URL
      * @param birthday    생일
@@ -216,6 +217,7 @@ public class FamilyMember {
     public static FamilyMember newOwner(
         Long familyId,
         Long userId,
+        String kakaoId,
         String name,
         String profileUrl,
         LocalDateTime birthday,
@@ -225,8 +227,8 @@ public class FamilyMember {
         Objects.requireNonNull(userId, "userId must not be null");
 
         return new FamilyMember(
-            null, familyId, userId, null, name, null, profileUrl, birthday, nationality,
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER, 
+            null, familyId, userId, kakaoId, name, null, profileUrl, birthday, nationality,
+            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             null, null, null, null
         );
     }

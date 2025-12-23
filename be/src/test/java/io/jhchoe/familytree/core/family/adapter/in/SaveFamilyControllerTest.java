@@ -100,12 +100,13 @@ class SaveFamilyControllerTest extends AcceptanceTestBase {
         
         // 신규 사용자로 생성 (ID 자동 생성)
         User testUser = User.newUser(
-            "test@example.com",                    
-            "테스트사용자",                          
-            "https://example.com/test-profile.jpg", 
-            AuthenticationType.OAUTH2,             
-            OAuth2Provider.GOOGLE,                 
-            UserRole.USER,                         
+            "test@example.com",
+            "테스트사용자",
+            "https://example.com/test-profile.jpg",
+            null, // kakaoId
+            AuthenticationType.OAUTH2,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
             false
         );
         
