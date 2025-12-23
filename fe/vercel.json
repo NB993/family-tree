@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://olhae.olhaeapi.workers.dev/:path*"
+      "destination": "https://olhae.olhaeapi.workers.dev/api/:path*"
     },
     {
       "source": "/oauth2/:path*",
