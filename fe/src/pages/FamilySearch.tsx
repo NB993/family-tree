@@ -60,11 +60,11 @@ export const FamilySearchPage: React.FC = () => {
               </button>
             )}
             <h1 className="text-2xl font-bold text-gray-900">
-              가족 찾기
+              그룹 찾기
             </h1>
           </div>
           <p className="text-gray-600">
-            공개된 가족을 검색하고 가입 요청을 보내보세요
+            공개된 그룹을 검색하고 참여 요청을 보내보세요
           </p>
           
           {/* 게스트 상태 표시 */}
@@ -91,7 +91,7 @@ export const FamilySearchPage: React.FC = () => {
               type="text"
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
-              placeholder="가족 이름으로 검색..."
+              placeholder="그룹 이름으로 검색..."
               className="w-full px-4 py-3 pl-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
@@ -120,7 +120,7 @@ export const FamilySearchPage: React.FC = () => {
         {error && (
           <div className="family-card bg-red-50 border-red-200">
             <div className="text-center py-8">
-              <p className="text-red-600 mb-2">가족 목록을 불러오는 중 오류가 발생했습니다.</p>
+              <p className="text-red-600 mb-2">그룹 목록을 불러오는 중 오류가 발생했습니다.</p>
               <p className="text-sm text-red-500 mb-4">{error.message}</p>
               <button
                 onClick={() => refetch()}
@@ -140,12 +140,12 @@ export const FamilySearchPage: React.FC = () => {
                 <div className="text-center py-12">
                   <div className="text-5xl mb-4">🔍</div>
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    {searchKeyword ? '검색 결과가 없습니다' : '공개된 가족이 없습니다'}
+                    {searchKeyword ? '검색 결과가 없습니다' : '공개된 그룹이 없습니다'}
                   </h3>
                   <p className="text-gray-500">
-                    {searchKeyword 
+                    {searchKeyword
                       ? '다른 키워드로 검색해보세요'
-                      : '아직 공개된 가족이 없습니다.'
+                      : '아직 공개된 그룹이 없습니다.'
                     }
                   </p>
                   {isAuthenticated && (
@@ -153,7 +153,7 @@ export const FamilySearchPage: React.FC = () => {
                       onClick={() => navigate('/families/create')}
                       className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
                     >
-                      첫 번째 공개 가족 만들기
+                      첫 번째 공개 그룹 만들기
                     </button>
                   )}
                 </div>
@@ -164,7 +164,7 @@ export const FamilySearchPage: React.FC = () => {
                 <div className="flex items-center justify-between mb-4">
                   <p className="text-sm text-gray-600">
                     {searchKeyword && `"${searchKeyword}" 검색 결과 `}
-                    총 {familiesData.totalElements}개 가족
+                    총 {familiesData.totalElements}개 그룹
                   </p>
                   {familiesData.hasNext && (
                     <p className="text-xs text-gray-500">
@@ -212,7 +212,7 @@ export const FamilySearchPage: React.FC = () => {
                 {familiesData.hasNext && (
                   <div className="text-center py-6">
                     <p className="text-sm text-gray-500">
-                      더 많은 가족이 있습니다. 검색어를 구체화해보세요.
+                      더 많은 그룹이 있습니다. 검색어를 구체화해보세요.
                     </p>
                   </div>
                 )}

@@ -108,7 +108,7 @@ export const InviteCallbackPage: React.FC = () => {
               </h2>
 
               <p style={{ color: '#666', margin: 0, lineHeight: '1.6' }}>
-                가족 구성원으로 등록되었습니다.<br />
+                멤버로 등록되었습니다.<br />
                 감사합니다!
               </p>
 
@@ -126,7 +126,7 @@ export const InviteCallbackPage: React.FC = () => {
                   lineHeight: '1.6'
                 }}>
                   💡 이 창을 닫으셔도 됩니다.<br />
-                  초대를 보낸 가족이 여러분의 정보를 확인할 수 있습니다.
+                  초대를 보낸 분이 여러분의 정보를 확인할 수 있습니다.
                 </p>
               </div>
             </div>
@@ -142,10 +142,10 @@ export const InviteCallbackPage: React.FC = () => {
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>
-                📱 Family Tree 서비스
+                📱 오래오래
               </span>
               <p style={{ fontSize: '14px', color: '#666', margin: 0, lineHeight: '1.6' }}>
-                가족 관계를 디지털로 기록하고 공유하는 서비스입니다.<br />
+                소중한 사람들의 연락처를 기록하고 공유하는 서비스입니다.<br />
                 관심이 있으시다면 회원가입 후 이용해보세요!
               </p>
             </div>
@@ -231,7 +231,7 @@ export const InviteCallbackPage: React.FC = () => {
                 color: '#999',
                 margin: 0
               }}>
-                문제가 계속되면 초대를 보낸 가족에게 문의해주세요.
+                문제가 계속되면 초대를 보낸 분에게 문의해주세요.
               </p>
             </div>
           </div>

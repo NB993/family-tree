@@ -168,9 +168,9 @@ export const InviteResponsePage: React.FC = () => {
         display: 'flex',
         alignItems: 'center'
       }}>
-        <h1 style={{ margin: 0, fontSize: '20px' }}>가족 정보 제공</h1>
+        <h1 style={{ margin: 0, fontSize: '20px' }}>정보 제공</h1>
       </div>
-      
+
       <div style={{ padding: '20px' }}>
         <div style={{ padding: '24px', border: '1px solid #e0e0e0', borderRadius: '8px', background: '#fff' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -179,7 +179,7 @@ export const InviteResponsePage: React.FC = () => {
                 안녕하세요! 👋
               </h1>
               <p style={{ textAlign: 'center', color: '#333', margin: 0 }}>
-                가족 구성원 정보 수집을 위한 초대를 받으셨습니다.
+                연락처 수집을 위한 초대를 받으셨습니다.
               </p>
               <p style={{ textAlign: 'center', color: '#666', fontSize: '14px', margin: 0 }}>
                 아래 버튼을 눌러 간단한 정보를 제공해주세요.
@@ -200,8 +200,7 @@ export const InviteResponsePage: React.FC = () => {
                   • 이름<br />
                   • 프로필 사진 (카카오 프로필)<br />
                   • 생년월일 (선택)<br />
-                  • 연락처 (선택)<br />
-                  • 가족 관계 (선택)
+                  • 연락처 (선택)
                 </span>
               </div>
             </div>
@@ -217,7 +216,7 @@ export const InviteResponsePage: React.FC = () => {
                   🔒 개인정보 보호
                 </span>
                 <span style={{ fontSize: '14px', color: '#666' }}>
-                  제공하신 정보는 가족 트리 생성 목적으로만 사용되며,<br />
+                  제공하신 정보는 연락처 관리 목적으로만 사용되며,<br />
                   안전하게 보호됩니다.
                 </span>
               </div>
@@ -256,7 +255,7 @@ export const InviteResponsePage: React.FC = () => {
               ❓ 도움이 필요하신가요?
             </span>
             <span style={{ fontSize: '14px', color: '#666' }}>
-              초대를 보낸 가족에게 문의해주세요.
+              초대를 보낸 분에게 문의해주세요.
             </span>
           </div>
         </div>

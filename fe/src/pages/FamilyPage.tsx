@@ -22,8 +22,8 @@ const FamilyPage: React.FC = () => {
     return (
       <div className="container">
         <div className="text-center py-20">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">가족 ID가 없습니다</h2>
-          <p className="text-gray-600">올바른 가족 페이지로 이동해주세요.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">그룹 ID가 없습니다</h2>
+          <p className="text-gray-600">올바른 그룹 페이지로 이동해주세요.</p>
         </div>
       </div>
     );
@@ -34,7 +34,7 @@ const FamilyPage: React.FC = () => {
       <div className="container">
         <div className="text-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">가족 정보를 불러오는 중...</p>
+          <p className="mt-4 text-gray-600">그룹 정보를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -49,13 +49,13 @@ const FamilyPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                  {familyData?.name || '우리 가족'}
+                  {familyData?.name || '우리 그룹'}
                 </h1>
                 <p className="text-gray-600">
-                  {familyData?.description || '가족에 대한 설명이 없습니다'}
+                  {familyData?.description || '그룹에 대한 설명이 없습니다'}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="text-sm text-gray-500">구성원 {members.length}명</span>
+                  <span className="text-sm text-gray-500">멤버 {members.length}명</span>
                   {familyData?.isPublic ? (
                     <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">
                       공개
@@ -90,22 +90,12 @@ const FamilyPage: React.FC = () => {
               <CardContent>
                 <div className="text-center py-6">
                   <div className="text-3xl mb-2">👥</div>
-                  <h3 className="font-semibold text-gray-900 mb-1">구성원</h3>
+                  <h3 className="font-semibold text-gray-900 mb-1">멤버</h3>
                   <p className="text-sm text-gray-600">{members.length}명</p>
                 </div>
               </CardContent>
             </Card>
           </Link>
-
-          <Card clickable>
-            <CardContent>
-              <div className="text-center py-6">
-                <div className="text-3xl mb-2">🌳</div>
-                <h3 className="font-semibold text-gray-900 mb-1">가족 트리</h3>
-                <p className="text-sm text-gray-600">관계도 보기</p>
-              </div>
-            </CardContent>
-          </Card>
 
           <Card clickable>
             <CardContent>
@@ -122,18 +112,18 @@ const FamilyPage: React.FC = () => {
               <div className="text-center py-6">
                 <div className="text-3xl mb-2">📅</div>
                 <h3 className="font-semibold text-gray-900 mb-1">일정</h3>
-                <p className="text-sm text-gray-600">가족 일정</p>
+                <p className="text-sm text-gray-600">그룹 일정</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* 최근 구성원 */}
+        {/* 최근 멤버 */}
         {members.length > 0 && (
           <Card className="mb-6">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">최근 구성원</h3>
+                <h3 className="text-lg font-semibold text-gray-900">최근 멤버</h3>
                 <Link to={`/families/${familyId}/members`}>
                   <Button variant="ghost" size="sm">
                     전체 보기

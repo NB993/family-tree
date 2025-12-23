@@ -58,11 +58,10 @@ const HomePage: React.FC = () => {
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-4 min-w-0">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <span className="flex-shrink-0">🏠</span>
-            <span>Family Tree</span>
+            <span>오래오래</span>
           </h1>
           <span className="hidden sm:inline text-gray-600 truncate">
-            {userInfo ? `${userInfo.name}님의 가족` : '가족 트리'}
+            {userInfo ? `${userInfo.name}님의 오래오래` : ''}
           </span>
         </div>
         
@@ -141,7 +140,7 @@ const HomePage: React.FC = () => {
               </span>
               <input
                 type="text"
-                placeholder="가족 구성원 이름, 연락처로 검색"
+                placeholder="이름, 연락처로 검색"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 border-2 border-gray-300 rounded-lg text-lg focus:border-blue-500 focus:outline-none transition-colors"
@@ -155,11 +154,11 @@ const HomePage: React.FC = () => {
               >
                 초대링크 생성
               </button>
-              <button 
+              <button
                 onClick={() => navigate('/families')}
                 className="flex-1 px-6 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium text-base"
               >
-                가족 등록하기
+                멤버 등록하기
               </button>
             </div>
           </div>
@@ -168,7 +167,7 @@ const HomePage: React.FC = () => {
           {!hasData ? (
             <div className="text-center py-16 px-4 sm:px-6 bg-gray-50 rounded-lg">
               <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
-                아직 등록된 가족 정보가 없어요. 가족들에게 초대링크를 전달하거나 직접 가족 정보를 등록해보세요.
+                아직 등록된 멤버가 없어요. 초대링크를 전달하거나 직접 멤버 정보를 등록해보세요.
               </p>
             </div>
           ) : (
@@ -176,10 +175,9 @@ const HomePage: React.FC = () => {
               {/* 테이블 헤더 - 데스크탑에서만 표시 */}
               <div className="hidden lg:block border-b-2 border-gray-200 pb-4 mb-4">
                 <div className="grid grid-cols-12 gap-4 px-4 font-semibold text-gray-700">
-                  <div className="col-span-3">이름</div>
+                  <div className="col-span-4">이름</div>
                   <div className="col-span-3">생일</div>
-                  <div className="col-span-3">연락처</div>
-                  <div className="col-span-2">나와의 관계</div>
+                  <div className="col-span-4">연락처</div>
                   <div className="col-span-1"></div>
                 </div>
               </div>
@@ -193,21 +191,18 @@ const HomePage: React.FC = () => {
                   >
                     {/* 데스크탑 레이아웃 */}
                     <div className="hidden lg:grid grid-cols-12 gap-4 items-center">
-                      <div className="col-span-3 font-medium text-gray-900">
+                      <div className="col-span-4 font-medium text-gray-900">
                         {member.memberName}
                       </div>
                       <div className="col-span-3 text-gray-600">
-                        {member.memberBirthday ? new Date(member.memberBirthday).toLocaleDateString('ko-KR', { 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
+                        {member.memberBirthday ? new Date(member.memberBirthday).toLocaleDateString('ko-KR', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
                         }) : '-'}
                       </div>
-                      <div className="col-span-3 text-gray-600">
+                      <div className="col-span-4 text-gray-600">
                         {member.phoneNumberDisplay || '010-xxxx-xxxx'}
-                      </div>
-                      <div className="col-span-2 text-gray-600">
-                        {member.relationshipDisplayName || '-'}
                       </div>
                       <div className="col-span-1">
                         <button
@@ -224,20 +219,12 @@ const HomePage: React.FC = () => {
 
                     {/* 모바일/태블릿 레이아웃 */}
                     <div className="lg:hidden">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <div className="font-medium text-gray-900 text-lg mb-1">
-                            {member.memberName}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {member.relationshipDisplayName || '관계 미설정'}
-                          </div>
+                      <div className="mb-3">
+                        <div className="font-medium text-gray-900 text-lg mb-1">
+                          {member.memberName}
                         </div>
-                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
-                          {member.relationshipDisplayName || '관계 설정'}
-                        </span>
                       </div>
-                      
+
                       <div className="space-y-1 text-sm text-gray-600 mb-3">
                         <div>
                           {member.memberBirthday ? new Date(member.memberBirthday).toLocaleDateString('ko-KR') : '생일 정보 없음'}

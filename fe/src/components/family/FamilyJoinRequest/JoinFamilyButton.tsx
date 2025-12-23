@@ -29,7 +29,7 @@ export const JoinFamilyButton: React.FC<JoinFamilyButtonProps> = ({
     // 게스트인 경우 로그인 페이지로 이동
     if (!isAuthenticated) {
       const shouldLogin = window.confirm(
-        '가족 가입 요청을 하려면 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?'
+        '그룹 참여 요청을 하려면 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?'
       );
       if (shouldLogin) {
         navigate('/login', { state: { from: `/families/${familyId}` } });
@@ -38,9 +38,9 @@ export const JoinFamilyButton: React.FC<JoinFamilyButtonProps> = ({
     }
 
     const confirm = window.confirm(
-      familyName 
-        ? `"${familyName}" 가족에 가입 요청을 보내시겠습니까?`
-        : '이 가족에 가입 요청을 보내시겠습니까?'
+      familyName
+        ? `"${familyName}" 그룹에 참여 요청을 보내시겠습니까?`
+        : '이 그룹에 참여 요청을 보내시겠습니까?'
     );
 
     if (!confirm) return;
@@ -50,11 +50,11 @@ export const JoinFamilyButton: React.FC<JoinFamilyButtonProps> = ({
     try {
       await createJoinRequest.mutateAsync(familyId);
       onSuccess?.();
-      alert('가입 요청이 성공적으로 전송되었습니다. 관리자의 승인을 기다려주세요.');
+      alert('참여 요청이 성공적으로 전송되었습니다. 관리자의 승인을 기다려주세요.');
     } catch (error) {
-      console.error('가입 요청 중 오류가 발생했습니다:', error);
+      console.error('참여 요청 중 오류가 발생했습니다:', error);
       onError?.(error as Error);
-      alert('가입 요청 중 오류가 발생했습니다. 다시 시도해주세요.');
+      alert('참여 요청 중 오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setIsRequesting(false);
     }
@@ -78,7 +78,7 @@ export const JoinFamilyButton: React.FC<JoinFamilyButtonProps> = ({
           요청 중...
         </div>
       ) : (
-        '가족 가입 요청'
+        '참여 요청'
       )}
     </button>
   );

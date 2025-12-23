@@ -29,12 +29,12 @@ const CreateFamilyPage: React.FC = () => {
       });
       
       // 성공 메시지와 함께 홈으로 이동
-      alert('가족이 성공적으로 생성되었습니다!');
+      alert('그룹이 성공적으로 생성되었습니다!');
       navigate('/home');
     },
     onError: (error: any) => {
-      console.error('가족 생성 실패:', error);
-      alert('가족 생성에 실패했습니다. 다시 시도해주세요.');
+      console.error('그룹 생성 실패:', error);
+      alert('그룹 생성에 실패했습니다. 다시 시도해주세요.');
     },
   });
 
@@ -45,9 +45,9 @@ const CreateFamilyPage: React.FC = () => {
     const newErrors: Record<string, string> = {};
     
     if (!formData.name.trim()) {
-      newErrors.name = '가족명을 입력해주세요.';
+      newErrors.name = '그룹명을 입력해주세요.';
     } else if (formData.name.length < 2) {
-      newErrors.name = '가족명은 2자 이상 입력해주세요.';
+      newErrors.name = '그룹명은 2자 이상 입력해주세요.';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -83,7 +83,7 @@ const CreateFamilyPage: React.FC = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-gray-900">
-                  새 가족 만들기
+                  새 그룹 만들기
                 </h1>
                 <Button
                   variant="outline"
@@ -94,16 +94,16 @@ const CreateFamilyPage: React.FC = () => {
                 </Button>
               </div>
               <p className="text-gray-600 mt-2">
-                새로운 가족을 만들어 구성원들과 연결하세요
+                새로운 그룹을 만들어 멤버들과 연결하세요
               </p>
             </CardHeader>
             
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* 가족명 */}
+                {/* 그룹명 */}
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    가족명 *
+                    그룹명 *
                   </label>
                   <input
                     type="text"
@@ -114,7 +114,7 @@ const CreateFamilyPage: React.FC = () => {
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 ${
                       errors.name ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="우리 가족"
+                    placeholder="그룹명 입력"
                   />
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -138,10 +138,10 @@ const CreateFamilyPage: React.FC = () => {
                   </select>
                 </div>
 
-                {/* 가족 소개 */}
+                {/* 그룹 소개 */}
                 <div>
                   <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                    가족 소개
+                    그룹 소개
                   </label>
                   <textarea
                     id="description"
@@ -150,7 +150,7 @@ const CreateFamilyPage: React.FC = () => {
                     onChange={handleChange}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="우리 가족을 소개해주세요 (선택사항)"
+                    placeholder="그룹을 소개해주세요 (선택사항)"
                   />
                 </div>
 
@@ -186,7 +186,7 @@ const CreateFamilyPage: React.FC = () => {
                     fullWidth
                     loading={createFamilyMutation.isPending}
                   >
-                    가족 만들기
+                    그룹 만들기
                   </Button>
                 </div>
               </form>

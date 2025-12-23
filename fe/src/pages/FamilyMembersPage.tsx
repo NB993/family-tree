@@ -29,8 +29,8 @@ const FamilyMembersPage: React.FC = () => {
     return (
       <div className="container">
         <div className="text-center py-20">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">가족 ID가 없습니다</h2>
-          <p className="text-gray-600">올바른 가족 페이지로 이동해주세요.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">그룹 ID가 없습니다</h2>
+          <p className="text-gray-600">올바른 그룹 페이지로 이동해주세요.</p>
         </div>
       </div>
     );
@@ -41,7 +41,7 @@ const FamilyMembersPage: React.FC = () => {
       <div className="container">
         <div className="text-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">가족 구성원 정보를 불러오는 중...</p>
+          <p className="mt-4 text-gray-600">멤버 정보를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -52,7 +52,7 @@ const FamilyMembersPage: React.FC = () => {
       <div className="container">
         <div className="text-center py-20">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">오류가 발생했습니다</h2>
-          <p className="text-gray-600 mb-6">가족 구성원 정보를 불러올 수 없습니다.</p>
+          <p className="text-gray-600 mb-6">멤버 정보를 불러올 수 없습니다.</p>
           <Button onClick={() => window.location.reload()}>다시 시도</Button>
         </div>
       </div>
@@ -71,10 +71,10 @@ const FamilyMembersPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  {familyData?.name || '우리 가족'}
+                  {familyData?.name || '우리 그룹'}
                 </h1>
                 <p className="text-gray-600">
-                  구성원 {members.length}명
+                  멤버 {members.length}명
                 </p>
               </div>
               <div className="flex gap-2">
@@ -82,27 +82,27 @@ const FamilyMembersPage: React.FC = () => {
                   설정
                 </Button>
                 <Button variant="primary" size="sm">
-                  구성원 추가
+                  멤버 추가
                 </Button>
               </div>
             </div>
           </CardHeader>
         </Card>
 
-        {/* 구성원 목록 */}
+        {/* 멤버 목록 */}
         {members.length === 0 ? (
           <Card className="text-center">
             <CardContent>
               <div className="py-12">
                 <div className="text-6xl mb-4">👥</div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  아직 구성원이 없습니다
+                  아직 멤버가 없습니다
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  첫 번째 가족 구성원을 추가해보세요
+                  첫 번째 멤버를 추가해보세요
                 </p>
                 <Button variant="primary" size="lg">
-                  구성원 추가하기
+                  멤버 추가하기
                 </Button>
               </div>
             </CardContent>
@@ -111,7 +111,7 @@ const FamilyMembersPage: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">
-                가족 구성원
+                멤버 목록
               </h2>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <span>이름순 정렬</span>
@@ -143,13 +143,13 @@ const FamilyMembersPage: React.FC = () => {
                   <div className="text-2xl font-bold text-orange-500">
                     {members.length}
                   </div>
-                  <div className="text-sm text-gray-600">총 구성원</div>
+                  <div className="text-sm text-gray-600">총 멤버</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-orange-500">
                     {members.filter(m => m.member.status === 'ACTIVE').length}
                   </div>
-                  <div className="text-sm text-gray-600">활성 구성원</div>
+                  <div className="text-sm text-gray-600">활성 멤버</div>
                 </div>
               </div>
             </CardContent>
