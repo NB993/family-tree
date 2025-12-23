@@ -156,7 +156,19 @@ public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMe
     public List<FamilyMember> findByFamilyId(Long familyId) {
         return findAllByFamilyId(familyId);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<FamilyMember> findByUserIdAndRole(Long userId, FamilyMemberRole role) {
+        Objects.requireNonNull(userId, "userId must not be null");
+        Objects.requireNonNull(role, "role must not be null");
+
+        return familyMemberJpaRepository.findByUserIdAndRole(userId, role)
+                .map(this::mapToDomainEntity);
+    }
+
     /**
      * JPA 엔티티를 도메인 엔티티로 변환합니다.
      *

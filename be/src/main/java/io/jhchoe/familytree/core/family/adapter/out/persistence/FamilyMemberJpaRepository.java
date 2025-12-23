@@ -1,5 +1,6 @@
 package io.jhchoe.familytree.core.family.adapter.out.persistence;
 
+import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import java.util.List;
 import java.util.Optional;
@@ -59,4 +60,13 @@ public interface FamilyMemberJpaRepository extends JpaRepository<FamilyMemberJpa
      * @return 구성원 수
      */
     int countByFamilyId(Long familyId);
+
+    /**
+     * 특정 사용자의 특정 역할을 가진 구성원을 조회합니다.
+     *
+     * @param userId 사용자 ID
+     * @param role 역할
+     * @return 조회된 FamilyMember 엔티티
+     */
+    Optional<FamilyMemberJpaEntity> findByUserIdAndRole(Long userId, FamilyMemberRole role);
 }

@@ -1,6 +1,9 @@
 package io.jhchoe.familytree.core.invite.adapter.in;
 
 import io.jhchoe.familytree.config.WithMockOAuth2User;
+import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaEntity;
+import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
+import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.invite.adapter.out.persistence.FamilyInviteJpaEntity;
 import io.jhchoe.familytree.core.invite.adapter.out.persistence.FamilyInviteJpaRepository;
 import io.jhchoe.familytree.core.invite.domain.FamilyInvite;
@@ -38,24 +41,33 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
 
     @Autowired
     private FamilyInviteJpaRepository familyInviteJpaRepository;
-    
+
+    @Autowired
+    private FamilyMemberJpaRepository familyMemberJpaRepository;
+
     @AfterEach
     void tearDown() {
         familyInviteJpaRepository.deleteAll();
+        familyMemberJpaRepository.deleteAll();
     }
 
     @Test
-    @DisplayName("인증된 사용자가 초대 링크를 생성할 수 있다")
+    @DisplayName("OWNER인 사용자가 초대 링크를 생성할 수 있다")
     @WithMockOAuth2User(id = 1L)
     void authenticated_user_can_create_invite_link() {
-        // given
+        // given - OWNER FamilyMember 생성
         Long familyId = 10L;
+        Long userId = 1L;
+        FamilyMember ownerMember = FamilyMember.newOwner(
+            familyId, userId, null, "소유자", null, null, null
+        );
+        familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
 
         // when & then
         RestAssuredMockMvc.given()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
-            .post("/api/families/{familyId}/invites", familyId)
+            .post("/api/invites")
             .then()
             .status(HttpStatus.OK)
             .body("inviteCode", notNullValue())
@@ -65,7 +77,7 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
         assertThat(familyInviteJpaRepository.findAll()).hasSize(1);
         FamilyInviteJpaEntity saved = familyInviteJpaRepository.findAll().get(0);
         assertThat(saved.getFamilyId()).isEqualTo(familyId);
-        assertThat(saved.getRequesterId()).isEqualTo(1L);
+        assertThat(saved.getRequesterId()).isEqualTo(userId);
         assertThat(saved.getStatus()).isEqualTo(FamilyInviteStatus.ACTIVE);
         assertThat(saved.getExpiresAt()).isAfter(LocalDateTime.now());
     }
@@ -169,7 +181,7 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
         RestAssuredMockMvc.given()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
-            .post("/api/families/{familyId}/invites", 10L)
+            .post("/api/invites")
             .then()
             .status(HttpStatus.UNAUTHORIZED);
     }

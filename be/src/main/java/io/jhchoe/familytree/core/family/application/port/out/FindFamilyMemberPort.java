@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.application.port.out;
 
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,4 +75,13 @@ public interface FindFamilyMemberPort {
      * @return FamilyMember 객체 목록
      */
     List<FamilyMember> findByFamilyId(Long familyId);
+
+    /**
+     * 특정 사용자의 특정 역할을 가진 구성원 정보를 조회합니다.
+     *
+     * @param userId 사용자 ID
+     * @param role 역할
+     * @return 조회된 FamilyMember 객체를 포함하는 Optional, 존재하지 않는 경우 빈 Optional 반환
+     */
+    Optional<FamilyMember> findByUserIdAndRole(Long userId, FamilyMemberRole role);
 }
