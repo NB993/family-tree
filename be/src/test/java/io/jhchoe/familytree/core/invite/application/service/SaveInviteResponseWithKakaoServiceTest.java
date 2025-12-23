@@ -71,6 +71,7 @@ class SaveInviteResponseWithKakaoServiceTest {
 
         activeInvite = FamilyInvite.withId(
             1L,
+            10L, // familyId
             100L, // requesterId
             "invite-code-123",
             LocalDateTime.now().plusDays(1),
@@ -112,9 +113,9 @@ class SaveInviteResponseWithKakaoServiceTest {
         when(findUserPort.findByEmail("kakao@example.com"))
             .thenReturn(Optional.empty());
 
-        // 초대 생성자의 FamilyMember 조회 모킹
-        when(findFamilyMemberPort.findByUserId(100L))
-            .thenReturn(List.of(requesterMember));
+        // 초대 생성자의 해당 Family 멤버십 조회 모킹
+        when(findFamilyMemberPort.findByFamilyIdAndUserId(10L, 100L))
+            .thenReturn(Optional.of(requesterMember));
 
         // 가족 구성원 조회 모킹 - 기존 구성원 없음
         when(findFamilyMemberPort.findByFamilyId(10L))
@@ -161,6 +162,7 @@ class SaveInviteResponseWithKakaoServiceTest {
         // given
         FamilyInvite expiredInvite = FamilyInvite.withId(
             1L,
+            10L, // familyId
             100L,
             "invite-code-123",
             LocalDateTime.now().minusDays(1), // 만료됨
@@ -189,6 +191,7 @@ class SaveInviteResponseWithKakaoServiceTest {
         // given
         FamilyInvite fullInvite = FamilyInvite.withId(
             1L,
+            10L, // familyId
             100L,
             "invite-code-123",
             LocalDateTime.now().plusDays(1),
@@ -212,8 +215,8 @@ class SaveInviteResponseWithKakaoServiceTest {
     }
 
     @Test
-    @DisplayName("초대 생성자가 가족에 속해있지 않으면 예외가 발생한다")
-    void throw_exception_when_requester_has_no_family() {
+    @DisplayName("초대 생성자가 해당 가족에 속해있지 않으면 예외가 발생한다")
+    void throw_exception_when_requester_not_family_member() {
         // given
         // 초대 링크 조회 모킹
         when(findFamilyInvitePort.findByCode("invite-code-123"))
@@ -223,16 +226,16 @@ class SaveInviteResponseWithKakaoServiceTest {
         when(findUserPort.findByEmail("kakao@example.com"))
             .thenReturn(Optional.empty());
 
-        // 초대 생성자의 FamilyMember 조회 모킹 - 가족 없음
-        when(findFamilyMemberPort.findByUserId(100L))
-            .thenReturn(Collections.emptyList()); // 가족 없음
+        // 초대 생성자의 해당 Family 멤버십 조회 모킹 - 해당 가족의 멤버가 아님
+        when(findFamilyMemberPort.findByFamilyIdAndUserId(10L, 100L))
+            .thenReturn(Optional.empty()); // 해당 가족의 멤버가 아님
 
         // when & then
         assertThatThrownBy(() -> saveInviteResponseWithKakaoService.save(command))
             .isInstanceOf(FTException.class)
             .satisfies(exception -> {
                 FTException ftException = (FTException) exception;
-                assertThat(ftException.getCode()).isEqualTo(InviteExceptionCode.REQUESTER_HAS_NO_FAMILY.getCode());
+                assertThat(ftException.getCode()).isEqualTo(InviteExceptionCode.REQUESTER_NOT_FAMILY_MEMBER.getCode());
             });
     }
 
@@ -249,7 +252,7 @@ class SaveInviteResponseWithKakaoServiceTest {
             .thenReturn(Optional.empty());
 
         // 초대 생성자의 FamilyMember 조회 모킹 - 동일한 kakaoId
-        FamilyMember requesterMember = FamilyMember.withId(
+        FamilyMember requesterMemberWithSameKakaoId = FamilyMember.withId(
             1L,
             10L, // familyId
             100L, // userId (requesterId와 동일)
@@ -266,8 +269,8 @@ class SaveInviteResponseWithKakaoServiceTest {
             null,
             null
         );
-        when(findFamilyMemberPort.findByUserId(100L))
-            .thenReturn(List.of(requesterMember));
+        when(findFamilyMemberPort.findByFamilyIdAndUserId(10L, 100L))
+            .thenReturn(Optional.of(requesterMemberWithSameKakaoId));
 
         // when & then
         assertThatThrownBy(() -> saveInviteResponseWithKakaoService.save(command))
@@ -290,9 +293,9 @@ class SaveInviteResponseWithKakaoServiceTest {
         when(findUserPort.findByEmail("kakao@example.com"))
             .thenReturn(Optional.empty());
 
-        // 초대 생성자의 FamilyMember 조회 모킹
-        when(findFamilyMemberPort.findByUserId(100L))
-            .thenReturn(List.of(requesterMember));
+        // 초대 생성자의 해당 Family 멤버십 조회 모킹
+        when(findFamilyMemberPort.findByFamilyIdAndUserId(10L, 100L))
+            .thenReturn(Optional.of(requesterMember));
 
         // 이미 같은 kakaoId를 가진 멤버가 존재
         FamilyMember existingKakaoMember = FamilyMember.withIdKakao(

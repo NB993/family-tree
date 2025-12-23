@@ -41,6 +41,7 @@ class FindFamilyInviteServiceTest {
         FindFamilyInviteByCodeQuery query = new FindFamilyInviteByCodeQuery(inviteCode);
         FamilyInvite expectedInvite = FamilyInvite.withId(
             1L,
+            10L, // familyId
             1L,
             inviteCode,
             LocalDateTime.now().plusDays(1),
@@ -85,6 +86,7 @@ class FindFamilyInviteServiceTest {
         FindFamilyInviteByIdQuery query = new FindFamilyInviteByIdQuery(inviteId);
         FamilyInvite expectedInvite = FamilyInvite.withId(
             inviteId,
+            10L, // familyId
             1L,
             "test-code",
             LocalDateTime.now().plusDays(1),
@@ -112,10 +114,10 @@ class FindFamilyInviteServiceTest {
         Long requesterId = 1L;
         FindFamilyInvitesByRequesterIdQuery query = new FindFamilyInvitesByRequesterIdQuery(requesterId);
         List<FamilyInvite> expectedInvites = List.of(
-            FamilyInvite.withId(1L, requesterId, "code1", LocalDateTime.now().plusDays(1),
+            FamilyInvite.withId(1L, 10L, requesterId, "code1", LocalDateTime.now().plusDays(1),
                 10, 0, FamilyInviteStatus.ACTIVE, LocalDateTime.now(), LocalDateTime.now()),
-            FamilyInvite.withId(2L, requesterId, "code2", LocalDateTime.now().plusDays(1),
-                10,  0, FamilyInviteStatus.COMPLETED, LocalDateTime.now(), LocalDateTime.now())
+            FamilyInvite.withId(2L, 10L, requesterId, "code2", LocalDateTime.now().plusDays(1),
+                10, 0, FamilyInviteStatus.COMPLETED, LocalDateTime.now(), LocalDateTime.now())
         );
 
         // Mocking: 요청자 ID로 조회 시 초대 목록 반환

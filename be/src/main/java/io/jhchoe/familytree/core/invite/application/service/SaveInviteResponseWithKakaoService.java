@@ -69,24 +69,20 @@ public class SaveInviteResponseWithKakaoService implements SaveInviteResponseWit
             log.info("User 없음. kakaoId만 저장: email={}", email);
         }
 
-        // 5. 초대를 생성한 사용자의 Family 찾기
-        // requesterId로 해당 사용자가 속한 Family를 찾음
-        List<FamilyMember> requesterMembers = findFamilyMemberPort.findByUserId(invite.getRequesterId());
-        if (requesterMembers.isEmpty()) {
-            throw new FTException(InviteExceptionCode.REQUESTER_HAS_NO_FAMILY);
-        }
-        
-        // 사용자는 하나의 Family에만 속한다고 가정
-        FamilyMember requesterMember = requesterMembers.get(0);
-        Long familyId = requesterMember.getFamilyId();
+        // 5. 초대에서 familyId 직접 가져옴
+        Long familyId = invite.getFamilyId();
 
-        // 6. 자기 자신이 보낸 초대는 수락할 수 없음 (kakaoId로 비교)
+        // 6. 초대를 생성한 사용자의 해당 Family 멤버십 조회
+        FamilyMember requesterMember = findFamilyMemberPort.findByFamilyIdAndUserId(familyId, invite.getRequesterId())
+            .orElseThrow(() -> new FTException(InviteExceptionCode.REQUESTER_NOT_FAMILY_MEMBER));
+
+        // 7. 자기 자신이 보낸 초대는 수락할 수 없음 (kakaoId로 비교)
         String requesterKakaoId = requesterMember.getKakaoId();
         if (requesterKakaoId != null && requesterKakaoId.equals(command.getKakaoId())) {
             throw new FTException(InviteExceptionCode.CANNOT_ACCEPT_OWN_INVITE);
         }
 
-        // 7. 이미 해당 카카오 ID로 가입한 멤버가 있는지 확인
+        // 8. 이미 해당 카카오 ID로 가입한 멤버가 있는지 확인
         List<FamilyMember> existingMembers = findFamilyMemberPort.findByFamilyId(familyId);
         boolean alreadyExists = existingMembers.stream()
             .anyMatch(member -> command.getKakaoId().equals(member.getKakaoId()));
@@ -95,7 +91,7 @@ public class SaveInviteResponseWithKakaoService implements SaveInviteResponseWit
             throw new FTException(InviteExceptionCode.ALREADY_FAMILY_MEMBER);
         }
 
-        // 8. FamilyMember 생성
+        // 9. FamilyMember 생성
         LocalDateTime fixedBirthday = LocalDateTime.of(1990, 1, 1, 0, 0);
 
         FamilyMember newMember = FamilyMember.newKakaoMember(
@@ -107,10 +103,10 @@ public class SaveInviteResponseWithKakaoService implements SaveInviteResponseWit
             fixedBirthday        // 임의 고정 값
         );
 
-        // 9. FamilyMember 저장
+        // 10. FamilyMember 저장
         Long savedMemberId = saveFamilyMemberPort.save(newMember);
 
-        // 10. 초대 링크 사용 횟수 증가 및 완료 처리
+        // 11. 초대 링크 사용 횟수 증가 및 완료 처리
         FamilyInvite updatedInvite = invite.incrementUsedCount();
 
         // 최대 사용 횟수 도달 시 상태를 COMPLETED로 변경

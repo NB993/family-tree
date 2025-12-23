@@ -48,11 +48,14 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
     @DisplayName("인증된 사용자가 초대 링크를 생성할 수 있다")
     @WithMockOAuth2User(id = 1L)
     void authenticated_user_can_create_invite_link() {
+        // given
+        Long familyId = 10L;
+
         // when & then
         RestAssuredMockMvc.given()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
-            .post("/api/invites")
+            .post("/api/families/{familyId}/invites", familyId)
             .then()
             .status(HttpStatus.OK)
             .body("inviteCode", notNullValue())
@@ -61,6 +64,7 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
         // then - DB 확인
         assertThat(familyInviteJpaRepository.findAll()).hasSize(1);
         FamilyInviteJpaEntity saved = familyInviteJpaRepository.findAll().get(0);
+        assertThat(saved.getFamilyId()).isEqualTo(familyId);
         assertThat(saved.getRequesterId()).isEqualTo(1L);
         assertThat(saved.getStatus()).isEqualTo(FamilyInviteStatus.ACTIVE);
         assertThat(saved.getExpiresAt()).isAfter(LocalDateTime.now());
@@ -70,7 +74,7 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
     @DisplayName("익명 사용자도 초대 코드로 초대 정보를 조회할 수 있다")
     void anonymous_user_can_view_invite_by_code() {
         // given - 초대 링크 생성
-        FamilyInvite invite = FamilyInvite.newInvite(1L, 5);
+        FamilyInvite invite = FamilyInvite.newInvite(10L, 1L, 5);
         FamilyInviteJpaEntity saved = familyInviteJpaRepository.save(
             FamilyInviteJpaEntity.from(invite)
         );
@@ -105,13 +109,14 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
     @DisplayName("만료된 초대 코드로 조회하면 400을 반환한다")
     void returns_400_for_expired_invite() {
         // given - 정상 초대 생성 후 저장
-        FamilyInvite invite = FamilyInvite.newInvite(1L, 5);
+        FamilyInvite invite = FamilyInvite.newInvite(10L, 1L, 5);
         FamilyInviteJpaEntity entity = FamilyInviteJpaEntity.from(invite);
         FamilyInviteJpaEntity saved = familyInviteJpaRepository.save(entity);
-        
+
         // 저장된 엔티티를 다시 조회하여 만료된 초대로 업데이트
         FamilyInvite expiredInvite = FamilyInvite.withId(
             saved.getId(),
+            saved.getFamilyId(),
             saved.getRequesterId(),
             saved.getInviteCode(),
             LocalDateTime.now().minusHours(1), // 1시간 전 만료
@@ -137,10 +142,10 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
     @WithMockOAuth2User(id = 1L)
     void user_can_view_their_own_invites() {
         // given - 여러 초대 생성
-        FamilyInvite invite1 = FamilyInvite.newInvite(1L, 5);
-        FamilyInvite invite2 = FamilyInvite.newInvite(1L, 5);
-        FamilyInvite otherUserInvite = FamilyInvite.newInvite(2L, 5);
-        
+        FamilyInvite invite1 = FamilyInvite.newInvite(10L, 1L, 5);
+        FamilyInvite invite2 = FamilyInvite.newInvite(10L, 1L, 5);
+        FamilyInvite otherUserInvite = FamilyInvite.newInvite(10L, 2L, 5);
+
         familyInviteJpaRepository.save(FamilyInviteJpaEntity.from(invite1));
         familyInviteJpaRepository.save(FamilyInviteJpaEntity.from(invite2));
         familyInviteJpaRepository.save(FamilyInviteJpaEntity.from(otherUserInvite));
@@ -164,7 +169,7 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
         RestAssuredMockMvc.given()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
-            .post("/api/invites")
+            .post("/api/families/{familyId}/invites", 10L)
             .then()
             .status(HttpStatus.UNAUTHORIZED);
     }

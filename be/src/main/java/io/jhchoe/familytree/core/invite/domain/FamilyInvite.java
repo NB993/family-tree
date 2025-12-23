@@ -9,6 +9,7 @@ import java.util.UUID;
  */
 public final class FamilyInvite {
     private final Long id;
+    private final Long familyId;
     private final Long requesterId;
     private final String inviteCode;
     private final LocalDateTime expiresAt;
@@ -20,6 +21,7 @@ public final class FamilyInvite {
 
     private FamilyInvite(
         final Long id,
+        final Long familyId,
         final Long requesterId,
         final String inviteCode,
         final LocalDateTime expiresAt,
@@ -29,12 +31,14 @@ public final class FamilyInvite {
         final LocalDateTime createdAt,
         final LocalDateTime modifiedAt
     ) {
+        Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(requesterId, "requesterId must not be null");
         Objects.requireNonNull(inviteCode, "inviteCode must not be null");
         Objects.requireNonNull(expiresAt, "expiresAt must not be null");
         Objects.requireNonNull(status, "status must not be null");
 
         this.id = id;
+        this.familyId = familyId;
         this.requesterId = requesterId;
         this.inviteCode = inviteCode;
         this.expiresAt = expiresAt;
@@ -48,19 +52,22 @@ public final class FamilyInvite {
     /**
      * 새로운 초대를 생성합니다.
      *
+     * @param familyId 초대할 가족 ID
      * @param requesterId 초대를 생성한 사용자 ID
      * @param maxUses 최대 사용 횟수 (null이면 무제한)
      * @return 새로 생성된 초대 (ID는 null, inviteCode는 UUID)
      */
     public static FamilyInvite newInvite(
+        final Long familyId,
         final Long requesterId,
         final Integer maxUses
     ) {
         final LocalDateTime now = LocalDateTime.now();
         final LocalDateTime expiresAt = now.plusDays(1);
-        
+
         return new FamilyInvite(
             null,
+            familyId,
             requesterId,
             UUID.randomUUID().toString(),
             expiresAt,
@@ -76,6 +83,7 @@ public final class FamilyInvite {
      * 기존 초대 데이터를 도메인 객체로 복원합니다.
      *
      * @param id 초대 ID
+     * @param familyId 초대할 가족 ID
      * @param requesterId 초대를 생성한 사용자 ID
      * @param inviteCode 초대 코드
      * @param expiresAt 만료 시간
@@ -88,6 +96,7 @@ public final class FamilyInvite {
      */
     public static FamilyInvite withId(
         final Long id,
+        final Long familyId,
         final Long requesterId,
         final String inviteCode,
         final LocalDateTime expiresAt,
@@ -98,9 +107,10 @@ public final class FamilyInvite {
         final LocalDateTime modifiedAt
     ) {
         Objects.requireNonNull(id, "id must not be null");
-        
+
         return new FamilyInvite(
             id,
+            familyId,
             requesterId,
             inviteCode,
             expiresAt,
@@ -138,6 +148,7 @@ public final class FamilyInvite {
     public FamilyInvite complete() {
         return new FamilyInvite(
             id,
+            familyId,
             requesterId,
             inviteCode,
             expiresAt,
@@ -157,6 +168,7 @@ public final class FamilyInvite {
     public FamilyInvite expire() {
         return new FamilyInvite(
             id,
+            familyId,
             requesterId,
             inviteCode,
             expiresAt,
@@ -176,6 +188,7 @@ public final class FamilyInvite {
     public FamilyInvite incrementUsedCount() {
         return new FamilyInvite(
             id,
+            familyId,
             requesterId,
             inviteCode,
             expiresAt,
@@ -189,6 +202,10 @@ public final class FamilyInvite {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getFamilyId() {
+        return familyId;
     }
 
     public String getInviteCode() {

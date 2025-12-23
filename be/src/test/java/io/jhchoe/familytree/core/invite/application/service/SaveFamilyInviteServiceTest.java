@@ -30,9 +30,10 @@ class SaveFamilyInviteServiceTest {
     @DisplayName("초대를 생성하고 초대 코드를 반환합니다")
     void save_creates_invite_and_returns_invite_code() {
         // given
-        SaveFamilyInviteCommand command = new SaveFamilyInviteCommand(1L);
+        SaveFamilyInviteCommand command = new SaveFamilyInviteCommand(10L, 1L);
         FamilyInvite savedInvite = FamilyInvite.withId(
             1L,
+            10L,
             1L,
             "test-invite-code",
             java.time.LocalDateTime.now().plusDays(1),

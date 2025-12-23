@@ -24,6 +24,9 @@ public class FamilyInviteJpaEntity extends ModifierBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "family_id", nullable = false)
+    private Long familyId;
+
     @Column(name = "requester_id", nullable = false)
     private Long requesterId;
 
@@ -48,6 +51,7 @@ public class FamilyInviteJpaEntity extends ModifierBaseEntity {
      */
     private FamilyInviteJpaEntity(
         final Long id,
+        final Long familyId,
         final Long requesterId,
         final String inviteCode,
         final LocalDateTime expiresAt,
@@ -61,6 +65,7 @@ public class FamilyInviteJpaEntity extends ModifierBaseEntity {
     ) {
         super(createdBy, createdAt, modifiedBy, modifiedAt);
         this.id = id;
+        this.familyId = familyId;
         this.requesterId = requesterId;
         this.inviteCode = inviteCode;
         this.expiresAt = expiresAt;
@@ -80,6 +85,7 @@ public class FamilyInviteJpaEntity extends ModifierBaseEntity {
 
         return new FamilyInviteJpaEntity(
             familyInvite.getId(),
+            familyInvite.getFamilyId(),
             familyInvite.getRequesterId(),
             familyInvite.getInviteCode(),
             familyInvite.getExpiresAt(),
@@ -101,6 +107,7 @@ public class FamilyInviteJpaEntity extends ModifierBaseEntity {
     public FamilyInvite toFamilyInvite() {
         return FamilyInvite.withId(
             id,
+            familyId,
             requesterId,
             inviteCode,
             expiresAt,
