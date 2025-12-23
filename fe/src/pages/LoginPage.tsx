@@ -9,12 +9,12 @@ const LoginPage: React.FC = () => {
 
   const handleKakaoLogin = () => {
     // Vercel rewrites를 통해 Cloudflare Worker로 프록시 (Safari 서드파티 쿠키 문제 해결)
-    window.location.href = '/oauth2/authorization/kakao';
+    window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao`;
   };
 
   const handleGoogleLogin = () => {
     // Vercel rewrites를 통해 Cloudflare Worker로 프록시 (Safari 서드파티 쿠키 문제 해결)
-    window.location.href = '/oauth2/authorization/google';
+    window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
   };
 
   if (isLoading) {
