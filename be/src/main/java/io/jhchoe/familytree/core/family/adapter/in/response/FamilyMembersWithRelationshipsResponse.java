@@ -50,15 +50,14 @@ public class FamilyMembersWithRelationshipsResponse {
     /**
      * Family 홈 API 응답용 데이터 구조로 변환합니다.
      * 현재 사용자 기준으로 각 구성원과의 관계 정보를 매핑합니다.
-     * 
+     *
      * <p>변환 규칙:</p>
      * <ul>
      *   <li>ACTIVE 상태 구성원만 포함</li>
-     *   <li>현재 사용자 본인 제외</li>
      *   <li>나이순(어린 순서) 정렬</li>
      *   <li>관계 정보가 없는 경우 Optional.empty() 처리</li>
      * </ul>
-     * 
+     *
      * @param currentUserId 현재 로그인한 사용자 ID (null 불허)
      * @return Family 홈 API 응답 리스트
      * @throws IllegalArgumentException currentUserId가 null이거나 0 이하인 경우
@@ -68,10 +67,9 @@ public class FamilyMembersWithRelationshipsResponse {
         if (currentUserId <= 0) {
             throw new IllegalStateException("currentUserId must be positive");
         }
-        
+
         return members.stream()
             .filter(member -> member.getStatus() == FamilyMemberStatus.ACTIVE)
-            .filter(member -> !member.getId().equals(currentUserId)) // 본인 제외
             .map(member -> {
                 Optional<FamilyMemberRelationship> relationship = 
                     findRelationship(currentUserId, member.getId());
