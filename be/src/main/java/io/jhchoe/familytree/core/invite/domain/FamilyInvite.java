@@ -1,5 +1,7 @@
 package io.jhchoe.familytree.core.invite.domain;
 
+import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.core.invite.exception.InviteExceptionCode;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -8,6 +10,11 @@ import java.util.UUID;
  * FamilyInvite는 정보 수집을 위한 초대 링크를 나타내는 도메인 엔티티입니다.
  */
 public final class FamilyInvite {
+
+    private static final int DEFAULT_MAX_USES = 5;
+    private static final int MIN_MAX_USES = 1;
+    private static final int MAX_MAX_USES = 100;
+
     private final Long id;
     private final Long familyId;
     private final Long requesterId;
@@ -50,18 +57,36 @@ public final class FamilyInvite {
     }
 
     /**
+     * 기본 최대 사용 횟수로 새로운 초대를 생성합니다.
+     *
+     * @param familyId 초대할 가족 ID
+     * @param requesterId 초대를 생성한 사용자 ID
+     * @return 새로 생성된 초대 (ID는 null, inviteCode는 UUID)
+     */
+    public static FamilyInvite newInvite(
+        final Long familyId,
+        final Long requesterId
+    ) {
+        return newInvite(familyId, requesterId, DEFAULT_MAX_USES);
+    }
+
+    /**
      * 새로운 초대를 생성합니다.
      *
      * @param familyId 초대할 가족 ID
      * @param requesterId 초대를 생성한 사용자 ID
-     * @param maxUses 최대 사용 횟수 (null이면 무제한)
+     * @param maxUses 최대 사용 횟수 (null이면 기본값 사용)
      * @return 새로 생성된 초대 (ID는 null, inviteCode는 UUID)
+     * @throws FTException maxUses가 유효 범위(1~100)를 벗어난 경우
      */
     public static FamilyInvite newInvite(
         final Long familyId,
         final Long requesterId,
         final Integer maxUses
     ) {
+        final int effectiveMaxUses = Objects.requireNonNullElse(maxUses, DEFAULT_MAX_USES);
+        validateMaxUses(effectiveMaxUses);
+
         final LocalDateTime now = LocalDateTime.now();
         final LocalDateTime expiresAt = now.plusDays(1);
 
@@ -71,12 +96,24 @@ public final class FamilyInvite {
             requesterId,
             UUID.randomUUID().toString(),
             expiresAt,
-            maxUses,
+            effectiveMaxUses,
             0,
             FamilyInviteStatus.ACTIVE,
             now,
             now
         );
+    }
+
+    /**
+     * maxUses 값이 유효한 범위 내에 있는지 검증합니다.
+     *
+     * @param maxUses 검증할 최대 사용 횟수
+     * @throws FTException maxUses가 유효 범위(1~100)를 벗어난 경우
+     */
+    private static void validateMaxUses(final int maxUses) {
+        if (maxUses < MIN_MAX_USES || maxUses > MAX_MAX_USES) {
+            throw new FTException(InviteExceptionCode.INVALID_MAX_USES);
+        }
     }
 
     /**

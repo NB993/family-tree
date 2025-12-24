@@ -39,8 +39,8 @@ public class SaveFamilyInviteService implements SaveFamilyInviteUseCase {
 
         final Long familyId = ownerMember.getFamilyId();
 
-        // 새로운 초대 생성 (기본 5회)
-        final FamilyInvite familyInvite = FamilyInvite.newInvite(familyId, command.requesterId(), null);
+        // 새로운 초대 생성 (기본값 사용)
+        final FamilyInvite familyInvite = FamilyInvite.newInvite(familyId, command.requesterId());
 
         // 초대 저장
         final FamilyInvite savedInvite = saveFamilyInvitePort.save(familyInvite);

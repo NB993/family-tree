@@ -183,13 +183,13 @@ class FamilyInviteTest {
     }
     
     @Test
-    @DisplayName("무제한 초대 링크는 maxUses가 null입니다")
-    void unlimited_invite_has_null_max_uses() {
+    @DisplayName("maxUses에 null을 전달하면 기본값(5)이 적용됩니다")
+    void null_max_uses_applies_default_value() {
         // when
         FamilyInvite invite = FamilyInvite.newInvite(10L, 1L, null);
 
         // then
-        assertThat(invite.getMaxUses()).isNull();
+        assertThat(invite.getMaxUses()).isEqualTo(5);
         assertThat(invite.getUsedCount()).isEqualTo(0);
     }
     
