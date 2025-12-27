@@ -1,22 +1,56 @@
 # Family Tree Project - Claude Code Configuration
 
-## 스킬 기반 협업
+## 프로젝트 개요
 
-이 프로젝트는 Claude Agent Skills를 사용합니다.
+| 구분 | 기술 스택 |
+|------|----------|
+| Backend | Spring Boot 3.4.2, Java 21, Spring Security + OAuth2 |
+| Frontend | React (`/fe`) |
+| Mobile | Android (`/android`) |
+| Database | PostgreSQL (로컬: Docker, 운영: PostgreSQL) |
+| Test | JUnit 5, TestContainers, REST Docs, Rest Assured |
+| Architecture | 헥사고날 아키텍처 (상세: Skills 참조) |
+
+### 주요 명령어
+
+```bash
+cd be && ./gradlew test      # 테스트 실행
+cd be && ./gradlew build     # 빌드 (API 문서 포함)
+```
+
+## TDD 기반 스킬 협업
+
+이 프로젝트는 TDD 기반 Claude Agent Skills를 사용합니다.
 작업 맥락에 따라 관련 스킬이 자동으로 로드됩니다.
 
-### 사용 가능한 스킬 (8개)
+### 사용 가능한 스킬 (6개)
 
 | 스킬 | 용도 |
 |------|------|
-| `core-develop` | Domain, UseCase, Service, Command/Query 개발 |
-| `infra-develop` | JpaEntity, Adapter, Repository 개발 |
-| `presentation-develop` | Controller, Request/Response DTO 개발 |
-| `core-unit-test` | 코어 계층 단위 테스트 |
-| `infra-unit-test` | 인프라 계층 단위 테스트 |
-| `acceptance-test` | 인수 테스트 |
-| `api-docs-test` | API 문서 테스트 |
+| `prd-to-test` | PRD에서 테스트 케이스 도출 |
+| `core-tdd` | Domain, UseCase, Service, Command/Query TDD 개발 |
+| `infra-tdd` | JpaEntity, Adapter, Repository TDD 개발 |
+| `presentation-tdd` | Controller, Request/Response DTO TDD 개발 |
+| `refactor` | 리팩토링 전용 |
 | `commit` | 커밋 메시지 작성 |
+
+## TDD 워크플로우
+
+```
+PRD 작성 → prd-to-test → core-tdd → infra-tdd → presentation-tdd → commit
+                │              │           │              │
+                ▼              ▼           ▼              ▼
+         테스트 케이스      Red→Green   Red→Green    Red→Green
+            도출          →Refactor   →Refactor    →Refactor
+```
+
+### TDD 순서
+
+1. **PRD 분석** (prd-to-test): 요구사항 → 테스트 케이스 도출
+2. **코어 계층** (core-tdd): 테스트 → Domain/Service 구현
+3. **인프라 계층** (infra-tdd): 테스트 → Adapter 구현
+4. **프레젠테이션 계층** (presentation-tdd): 테스트 → Controller 구현
+5. **커밋** (commit): 커밋 메시지 작성
 
 ## 필수 규칙 요약
 
@@ -39,12 +73,6 @@
 - `@Builder` 패턴 사용 금지
 - JpaEntity에서 setter 사용 금지
 - `be/instructions/` 수정 시 승인 필요
-
-## 개발 순서
-
-1. **코어**: Domain → UseCase → Service → Command/Query
-2. **인프라**: JpaEntity → Adapter → Repository
-3. **프레젠테이션**: Controller → Request/Response DTO
 
 ## 레거시 지침 (참고용)
 
