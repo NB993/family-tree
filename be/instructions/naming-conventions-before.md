@@ -18,7 +18,7 @@
 #### 1. UseCase 인터페이스명
 - **단수형 사용**: `FindFamilyMemberUseCase` (O), `FindFamilyMembersUseCase` (X)
 - **패턴**: `{동사}{도메인객체}UseCase`
-- **예시**:
+- **예시**: 
   - `FindFamilyMemberUseCase`
   - `SaveFamilyMemberUseCase`
   - `ModifyFamilyMemberUseCase`
@@ -35,7 +35,7 @@ public interface FindFamilyMemberUseCase {
     FamilyMember find(FindFamilyMemberByIdQuery query);
     FamilyMember find(FindFamilyMemberByEmailQuery query);
     FamilyMember find(FindFamilyMemberByUserIdQuery query);
-
+    
     // 복수 조회 - 메서드명은 항상 findAll()
     List<FamilyMember> findAll(FindAllFamilyMembersQuery query);
     List<FamilyMember> findAll(FindActiveFamilyMembersByFamilyIdQuery query);
@@ -56,27 +56,13 @@ public interface FindFamilyMemberUseCase {
 
 ### Query 클래스 명명 규칙
 
-#### Query 객체는 record 타입으로 작성
-```java
-// ✅ Query 객체는 반드시 record로 작성
-public record FindFamilyMemberByIdQuery(Long familyId, Long memberId) {
-    public FindFamilyMemberByIdQuery {
-        Objects.requireNonNull(familyId, "familyId는 null일 수 없습니다");
-        Objects.requireNonNull(memberId, "memberId는 null일 수 없습니다");
-    }
-}
-
-// ❌ class로 작성 금지
-public class FindFamilyMemberByIdQuery { ... }
-```
-
 #### 단일 필드 기준 조회
 ```java
 // ID 기준
 FindFamilyMemberByIdQuery
 FindUserByIdQuery
 
-// 이메일 기준
+// 이메일 기준  
 FindUserByEmailQuery
 FindFamilyMemberByEmailQuery
 
@@ -113,8 +99,8 @@ public interface FindFamilyMemberUseCase {
     FamilyMember find(FindFamilyMemberByIdQuery query);
     FamilyMember find(FindFamilyMemberByEmailQuery query);
     FamilyMember find(FindFamilyMemberByUserIdQuery query);
-
-    // 모든 복수 조회는 findAll() 메서드명 통일
+    
+    // 모든 복수 조회는 findAll() 메서드명 통일  
     List<FamilyMember> findAll(FindAllFamilyMembersQuery query);
     List<FamilyMember> findAll(FindActiveFamilyMembersByFamilyIdQuery query);
     List<FamilyMember> findAll(FindFamilyMembersByRoleQuery query);
@@ -145,7 +131,7 @@ public interface FindFamilyMemberUseCase {
 3. **실패 처리**: "조회 실패 시 어떻게 처리하시겠습니까? (예외/Optional)"
 4. **권한 제한**: "조회 대상에 권한 제한이 있나요?"
 
-#### 복수 조회 UseCase
+#### 복수 조회 UseCase  
 1. **필터링**: "어떤 조건으로 필터링하시겠습니까? (상태/역할/날짜범위)"
 2. **정렬**: "정렬 기준은 무엇입니까? (생성일/이름/사용자정의)"
 3. **권한**: "권한별 접근 제한이 있나요?"
@@ -158,9 +144,8 @@ public interface FindFamilyMemberUseCase {
 - [ ] `By{필드명}` 형태로 조회 필드가 명시되었는가?
 - [ ] 복수 조회의 경우 필터링 조건이 명시되었는가?
 - [ ] 하나의 Query가 하나의 명확한 조회 책임만 가지는가?
-- [ ] record 타입으로 작성되었는가?
 
-#### UseCase 메서드명 검증
+#### UseCase 메서드명 검증  
 - [ ] 단건 조회는 모두 `find()` 메서드명을 사용하는가?
 - [ ] 복수 조회는 모두 `findAll()` 메서드명을 사용하는가?
 - [ ] `findById()`, `findByEmail()`, `findMembers()` 등 금지된 메서드명을 사용하지 않았는가?
@@ -184,7 +169,7 @@ public interface FindFamilyMemberUseCase {
 
 - 클래스: PascalCase (예: `FamilyMember`)
 - 인터페이스: PascalCase (예: `FindFamilyUseCase`)
-- 메서드, 변수: camelCase (예: `find()`, `familyId`)
+- 메서드, 변수: camelCase (예: `findById()`, `familyId`)
 - 상수: UPPER_SNAKE_CASE (예: `MAX_FAMILY_MEMBERS`)
 - 패키지: 소문자 (예: `io.jhchoe.familytree.core.family.domain`)
 
@@ -196,13 +181,13 @@ public interface FindFamilyMemberUseCase {
   - 서술문: "~합니다" 형식으로 끝냅니다
   - 의문문: "~합니까?" 형식으로 끝냅니다
   - 명령문: "~하세요" 형식으로 끝냅니다
-
+  
 - **JavaDoc 패턴**:
   - 클래스 설명: "{클래스명}은/는 {주요 기능}을 담당하는 {종류}입니다."
   - 메서드 설명: "{동작}을/를 {수행방식}으로 수행합니다."
   - 파라미터 설명: "{파라미터명}: {역할}" 형식으로 작성합니다
   - 반환값 설명: "조회된 {객체} 반환, 존재하지 않을 경우 {대체값} 반환" 형식으로 작성합니다
-
+  
 - **상속 구현 시**: 서비스 클래스가 인터페이스를 구현할 경우 `{@inheritDoc}` 주석을 사용합니다
 
 ### 예시
@@ -217,7 +202,7 @@ public class UserService implements FindUserUseCase {
      * {@inheritDoc}
      */
     @Override
-    public User find(FindUserByIdQuery query) {
+    public User findById(Long id) {
         // 구현...
     }
 }
@@ -225,11 +210,11 @@ public class UserService implements FindUserUseCase {
 /**
  * 사용자 ID로 사용자를 조회합니다.
  *
- * @param query 조회할 사용자의 ID를 포함하는 쿼리 객체
+ * @param id 조회할 사용자의 ID
  * @return 조회된 사용자, 존재하지 않을 경우 예외 발생
  * @throws UserNotFoundException 사용자를 찾을 수 없는 경우 발생
  */
-User find(FindUserByIdQuery query);
+User findById(Long id);
 ```
 
 ## 엔티티-도메인 변환 패턴
@@ -242,7 +227,7 @@ User find(FindUserByIdQuery query);
 ```java
 // 도메인 → 엔티티 변환
 public static XxxJpaEntity from(Xxx domainObject) {
-    Objects.requireNonNull(domainObject, "domainObject는 null일 수 없습니다");
+    Objects.requireNonNull(domainObject, "domainObject must not be null");
     // 변환 로직
     return new XxxJpaEntity(...);
 }
@@ -301,7 +286,6 @@ public static FamilyMember newMember(String name, FamilyRole role, LocalDate bir
  * @return 복원된 가족 구성원 (ID 포함)
  */
 public static FamilyMember withId(Long id, String name, FamilyRole role, LocalDate birthDate) {
-    Objects.requireNonNull(id, "id는 null일 수 없습니다");
     return new FamilyMember(id, name, role, birthDate);
 }
 ```

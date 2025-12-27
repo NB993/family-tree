@@ -29,120 +29,15 @@
   - 생성자는 private, 정적 팩토리 메서드 활용
   - 모든 필드는 final로 선언
 
-**예시: Family 도메인 객체**
-
-```java
-package io.jhchoe.familytree.core.family.domain;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
-
-/**
- * Family 도메인 객체입니다.
- */
-public final class Family {
-    private final Long id;
-    private final String name;
-    private final String description;
-    private final String profileUrl;
-    private final Long createdBy;
-    private final LocalDateTime createdAt;
-    private final Long modifiedBy;
-    private final LocalDateTime modifiedAt;
-
-    private Family(
-        Long id,
-        String name,
-        String description,
-        String profileUrl,
-        Long createdBy,
-        LocalDateTime createdAt,
-        Long modifiedBy,
-        LocalDateTime modifiedAt
-    ) {
-        Objects.requireNonNull(name, "name은 null일 수 없습니다");
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("name은 비어있을 수 없습니다");
-        }
-
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.profileUrl = profileUrl;
-        this.createdBy = createdBy;
-        this.createdAt = createdAt;
-        this.modifiedBy = modifiedBy;
-        this.modifiedAt = modifiedAt;
-    }
-
-    /**
-     * 새로운 Family를 생성합니다.
-     *
-     * @param name 가족 이름
-     * @param description 설명
-     * @param profileUrl 프로필 URL
-     * @param userId 생성자 ID
-     * @return 새로 생성된 Family (ID 없음)
-     */
-    public static Family newFamily(
-        String name,
-        String description,
-        String profileUrl,
-        Long userId
-    ) {
-        LocalDateTime now = LocalDateTime.now();
-        return new Family(null, name, description, profileUrl, userId, now, userId, now);
-    }
-
-    /**
-     * 기존 Family 데이터를 도메인 객체로 복원합니다.
-     *
-     * @param id Family ID
-     * @param name 가족 이름
-     * @param description 설명
-     * @param profileUrl 프로필 URL
-     * @param createdBy 생성자 ID
-     * @param createdAt 생성일시
-     * @param modifiedBy 수정자 ID
-     * @param modifiedAt 수정일시
-     * @return 복원된 Family (ID 포함)
-     */
-    public static Family withId(
-        Long id,
-        String name,
-        String description,
-        String profileUrl,
-        Long createdBy,
-        LocalDateTime createdAt,
-        Long modifiedBy,
-        LocalDateTime modifiedAt
-    ) {
-        Objects.requireNonNull(id, "id는 null일 수 없습니다");
-        return new Family(id, name, description, profileUrl, createdBy, createdAt, modifiedBy, modifiedAt);
-    }
-
-    // Getter 메서드들
-    public Long getId() { return id; }
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public String getProfileUrl() { return profileUrl; }
-    public Long getCreatedBy() { return createdBy; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public Long getModifiedBy() { return modifiedBy; }
-    public LocalDateTime getModifiedAt() { return modifiedAt; }
-}
-```
-
 ### 인바운드 포트 계층
 - **위치**: `core/{도메인명}/application/port/in/`
 - **역할**: 애플리케이션이 외부에 제공하는 기능 인터페이스 정의
 - **지침**:
   - 각 유스케이스는 단일 메서드를 가진 인터페이스로 정의합니다
-  - 입력 파라미터는 Command 또는 Query 객체(record)로 캡슐화합니다
-  - Command/Query 객체는 생성자에서 유효성 검증을 수행합니다
+  - 입력 파라미터는 Command 또는 Query 객체로 캡슐화합니다
+  - Command 객체는 생성자에서 유효성 검증을 수행합니다
   - 반환 타입은 조회의 경우 도메인 객체를, 생성 또는 수정의 경우 ID(식별자)를 사용합니다
   - 유스케이스 메서드는 Optional 타입을 리턴하지 않습니다. Optional 데이터에 대한 분기 처리는 구현체 Service 클래스의 메서드 내부에서 처리합니다
-  - **메서드명은 `find()`, `findAll()`, `save()`, `modify()`, `delete()`로 통일합니다**
 
 **예시: FindFamilyUseCase 인터페이스**
 
@@ -163,27 +58,7 @@ public interface FindFamilyUseCase {
      * @return 조회된 Family 객체, 존재하지 않을 경우 예외 발생
      * @throws FTException 해당 ID의 Family가 존재하지 않을 경우
      */
-    Family find(FindFamilyByIdQuery query);
-}
-```
-
-**예시: FindFamilyByIdQuery record**
-
-```java
-package io.jhchoe.familytree.core.family.application.port.in;
-
-import java.util.Objects;
-
-/**
- * ID로 Family를 조회하기 위한 쿼리 객체입니다.
- */
-public record FindFamilyByIdQuery(Long id) {
-    public FindFamilyByIdQuery {
-        Objects.requireNonNull(id, "id는 null일 수 없습니다");
-        if (id <= 0) {
-            throw new IllegalArgumentException("id는 0보다 커야 합니다");
-        }
-    }
+    Family findById(FindFamilyQuery query);
 }
 ```
 
@@ -215,7 +90,7 @@ public record FindFamilyByIdQuery(Long id) {
 package io.jhchoe.familytree.core.family.application.service;
 
 import io.jhchoe.familytree.common.exception.FTException;
-import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByIdQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindFamilyQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyUseCase;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
@@ -239,10 +114,10 @@ public class FindFamilyService implements FindFamilyUseCase {
      */
     @Override
     @Transactional(readOnly = true)
-    public Family find(FindFamilyByIdQuery query) {
-        Objects.requireNonNull(query, "query는 null일 수 없습니다");
+    public Family findById(FindFamilyQuery query) {
+        Objects.requireNonNull(query, "query must not be null");
 
-        return findFamilyPort.find(query.id())
+        return findFamilyPort.find(query.getId())
             .orElseThrow(() -> new FTException(FamilyExceptionCode.FAMILY_NOT_FOUND));
     }
 }
@@ -269,7 +144,7 @@ public class FindFamilyService implements FindFamilyUseCase {
 package io.jhchoe.familytree.core.family.adapter.in;
 
 import io.jhchoe.familytree.core.family.adapter.in.response.FindFamilyResponse;
-import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByIdQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindFamilyQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyUseCase;
 import io.jhchoe.familytree.core.family.domain.Family;
 import lombok.RequiredArgsConstructor;
@@ -296,13 +171,13 @@ public class FindFamilyController {
      * @return 조회된 Family 정보
      */
     @GetMapping("/{id}")
-    public ResponseEntity<FindFamilyResponse> find(@PathVariable Long id) {
+    public ResponseEntity<FindFamilyResponse> findById(@PathVariable Long id) {
         // 1. 쿼리 객체 생성
-        FindFamilyByIdQuery query = new FindFamilyByIdQuery(id);
-
+        FindFamilyQuery query = new FindFamilyQuery(id);
+        
         // 2. 유스케이스 실행
-        Family family = findFamilyUseCase.find(query);
-
+        Family family = findFamilyUseCase.findById(query);
+        
         // 3. 응답 변환 및 반환
         FindFamilyResponse response = new FindFamilyResponse(
             family.getId(),
@@ -311,7 +186,7 @@ public class FindFamilyController {
             family.getProfileUrl(),
             family.getCreatedAt()
         );
-
+        
         return ResponseEntity.ok(response);
     }
 }
@@ -329,7 +204,6 @@ public class FindFamilyController {
 #### JPA 엔티티 설계 원칙
 - JPA 엔티티는 `{도메인}JpaEntity` 형식으로 명명합니다
 - 모든 JPA 엔티티는 기본 생성자를 `protected` 접근 제한자로 선언합니다
-- **기본 생성자 이외의 모든 생성자는 `private`으로 선언합니다**
 - 엔티티 필드는 직접 접근하지 않고 Getter를 통해 접근합니다
 - `@Table`, `@Column` 등의 어노테이션을 명시하여 데이터베이스 스키마와 매핑합니다
 - JPA 리포지토리는 Spring Data JPA 인터페이스로 정의합니다
@@ -364,8 +238,8 @@ public class FamilyAdapter implements FindFamilyPort {
      */
     @Override
     public Optional<Family> find(Long id) {
-        Objects.requireNonNull(id, "id는 null일 수 없습니다");
-
+        Objects.requireNonNull(id, "id must not be null");
+        
         return familyJpaRepository.findById(id)
             .map(FamilyJpaEntity::toFamily);
     }
@@ -410,7 +284,7 @@ public class FamilyJpaEntity extends ModifierBaseEntity {
     /**
      * FamilyJpaEntity 객체를 생성하는 생성자입니다.
      */
-    private FamilyJpaEntity(
+    public FamilyJpaEntity(
         Long id,
         String name,
         String description,
@@ -434,8 +308,8 @@ public class FamilyJpaEntity extends ModifierBaseEntity {
      * @return JPA 엔티티
      */
     public static FamilyJpaEntity from(Family family) {
-        Objects.requireNonNull(family, "family는 null일 수 없습니다");
-
+        Objects.requireNonNull(family, "family must not be null");
+        
         return new FamilyJpaEntity(
             family.getId(),
             family.getName(),
@@ -521,7 +395,7 @@ Page<FamilyJpaEntity> findAllWithOptimizedCount(Pageable pageable);
 프로젝트 개발은 다음 순서로 진행합니다:
 
 1. **코어 계층 (application)**: Domain → UseCase → Service → Command/Query
-2. **인프라 계층 (adapter/out)**: JpaEntity → Adapter → Repository
+2. **인프라 계층 (adapter/out)**: JpaEntity → Adapter → Repository  
 3. **프레젠테이션 계층 (adapter/in)**: Controller → Request/Response DTO
 
 각 계층 개발 완료 후 테스트 작성 및 검증을 수행합니다.

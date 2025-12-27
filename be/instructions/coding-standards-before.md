@@ -36,7 +36,7 @@
 ### 코드 스타일
 
 - Lombok은 `@Getter`, `@RequiredArgsConstructor`만 사용하고, `@Builder` 패턴은 절대 사용하지 않습니다.
-- API Request/Response DTO 및 Command/Query 객체는 record 타입으로 작성합니다
+- API Request/Response DTO는 record 타입으로 작성합니다
 - 조건문은 기본적으로 긍정문으로 작성합니다 (부정문은 가독성을 떨어뜨립니다)
 - 메서드 내에서 return 분기 처리가 있는 경우 기본적으로 빠른 return 문을 사용합니다
 - 상수는 항상 static final로 선언하고, 가능하면 클래스 상단에 배치합니다
@@ -46,7 +46,6 @@
 ### 기본 원칙
 
 - 예외는 명확하고 의미있는 메시지와 함께 발생시킵니다
-- **예외 메시지는 한글로 작성합니다**
 - 예외를 무시하지 않습니다. 반드시 처리하거나 명시적으로 상위로 전파합니다
 - Try-catch 블록 내에서는 최소한의 코드만 포함합니다
 - 체크 예외(Checked Exception)보다는 언체크 예외(Unchecked Exception)를 선호합니다
@@ -55,7 +54,7 @@
 
 - 예외는 유스케이스에서 발생시키며 어댑터에서 예외를 발생시키지 않습니다
 - 도메인 엔티티의 유효성 검증은 생성자 또는 팩토리 메서드에서 수행합니다
-- Command/Query 객체는 생성자에서 유효성 검증을 수행합니다
+- Command 객체는 생성자에서 유효성 검증을 수행합니다
 - 예외 처리 시에는 FTException을 사용하고, 적절한 예외 코드를 지정합니다
 
 ### 코어 계층 null 체크 규칙
@@ -63,7 +62,7 @@
 **중요**: 코어 계층(애플리케이션 서비스)에서 Command/Query 객체가 null인 경우 NPE를 발생시켜야 합니다.
 
 - **목적**: 개발자 실수를 조기에 발견하여 개발 단계에서 수정하도록 유도
-- **방법**: `Objects.requireNonNull(query, "query는 null일 수 없습니다")` 사용
+- **방법**: `Objects.requireNonNull(query, "query must not be null")` 사용
 - **이유**: Command/Query 객체는 생성자에서 이미 사용자 입력 검증을 완료했으므로, 코어 계층까지 null이 넘어오는 것은 개발자의 실수임
 
 ```java
@@ -71,8 +70,8 @@
 @Override
 @Transactional(readOnly = true)
 public FamilyMember find(FindFamilyMemberByIdQuery query) {
-    Objects.requireNonNull(query, "query는 null일 수 없습니다"); // NPE 발생 → 500 에러
-
+    Objects.requireNonNull(query, "query must not be null"); // NPE 발생 → 500 에러
+    
     // 비즈니스 로직...
     return member;
 }
@@ -81,7 +80,7 @@ public FamilyMember find(FindFamilyMemberByIdQuery query) {
 @Override
 public FamilyMember find(FindFamilyMemberByIdQuery query) {
     if (query == null) {
-        throw new IllegalArgumentException("query는 null일 수 없습니다"); // 400 에러로 오해 가능
+        throw new IllegalArgumentException("query must not be null"); // 400 에러로 오해 가능
     }
     // ...
 }
@@ -93,19 +92,17 @@ public FamilyMember find(FindFamilyMemberByIdQuery query) {
 
 ```java
 // Query 객체 생성자에서는 IllegalArgumentException
-public record FindFamilyMemberByIdQuery(Long familyId, Long currentUserId, Long targetMemberId) {
-    public FindFamilyMemberByIdQuery {
-        if (familyId == null || familyId <= 0) {
-            throw new IllegalArgumentException("유효한 가족 ID가 필요합니다");
-        }
-        // ...
+public FindFamilyMemberByIdQuery(Long familyId, Long currentUserId, Long targetMemberId) {
+    if (familyId == null || familyId <= 0) {
+        throw new IllegalArgumentException("유효한 가족 ID가 필요합니다."); // 400 에러
     }
+    // ...
 }
 
 // 코어 계층에서는 Objects.requireNonNull
 @Override
 public FamilyMember find(FindFamilyMemberByIdQuery query) {
-    Objects.requireNonNull(query, "query는 null일 수 없습니다");
+    Objects.requireNonNull(query, "query must not be null"); // 500 에러
     // ...
 }
 ```
@@ -116,11 +113,11 @@ public FamilyMember find(FindFamilyMemberByIdQuery query) {
 
 ```java
 // 1. Family 존재 여부 검증 → FAMILY_NOT_FOUND
-familyValidationService.validateFamilyExists(query.familyId());
+familyValidationService.validateFamilyExists(query.getFamilyId());
 
-// 2. 구성원 권한 검증 → NOT_FAMILY_MEMBER
+// 2. 구성원 권한 검증 → NOT_FAMILY_MEMBER  
 FamilyMember currentMember = findFamilyMemberPort
-    .findByFamilyIdAndUserId(query.familyId(), query.currentUserId())
+    .findByFamilyIdAndUserId(query.getFamilyId(), query.getCurrentUserId())
     .orElseThrow(() -> new FTException(FamilyExceptionCode.NOT_FAMILY_MEMBER));
 ```
 
@@ -136,14 +133,14 @@ private Family(
     Long modifiedBy,
     LocalDateTime modifiedAt
 ) {
-    Objects.requireNonNull(name, "name은 null일 수 없습니다");
+    Objects.requireNonNull(name, "name must not be null");
     if (name.isBlank()) {
-        throw new IllegalArgumentException("name은 비어있을 수 없습니다");
+        throw new IllegalArgumentException("name must not be blank");
     }
     if (name.length() > 50) {
-        throw new IllegalArgumentException("name은 50자를 초과할 수 없습니다");
+        throw new IllegalArgumentException("name length must be less than or equal to 50");
     }
-
+    
     this.id = id;
     this.name = name;
     this.description = description;
@@ -225,7 +222,7 @@ entity.setName("패밀리명");
 entity.setDescription("설명");
 
 // ✅ 권장: from() 정적 메서드 사용
-Family domain = Family.newFamily("패밀리명", "설명", "프로필URL", 1L);
+Family domain = Family.create("패밀리명", "설명", "프로필URL", 1L);
 FamilyJpaEntity entity = FamilyJpaEntity.from(domain);
 ```
 
@@ -379,9 +376,9 @@ public final class Family {
         Long modifiedBy,
         LocalDateTime modifiedAt
     ) {
-        Objects.requireNonNull(name, "name은 null일 수 없습니다");
+        Objects.requireNonNull(name, "name must not be null");
         // 유효성 검증
-
+        
         this.id = id;
         this.name = name;
         this.description = description;
@@ -393,7 +390,7 @@ public final class Family {
     }
 
     // 새 엔티티 생성
-    public static Family newFamily(
+    public static Family create(
         String name,
         String description,
         String profileUrl,
@@ -401,7 +398,7 @@ public final class Family {
     ) {
         LocalDateTime now = LocalDateTime.now();
         return new Family(
-            null, name, description, profileUrl,
+            null, name, description, profileUrl, 
             userId, now, userId, now
         );
     }
@@ -436,18 +433,12 @@ public final class Family {
 }
 ```
 
-### Command/Query 객체 작성 예시 (record)
+### Command/Query 객체 작성 예시
 
 ```java
-/**
- * ID로 Family를 조회하기 위한 쿼리 객체입니다.
- */
-public record FindFamilyByIdQuery(Long id) {
-    public FindFamilyByIdQuery {
-        Objects.requireNonNull(id, "id는 null일 수 없습니다");
-        if (id <= 0) {
-            throw new IllegalArgumentException("id는 0보다 커야 합니다");
-        }
+public record FindFamilyQuery(Long id) {
+    public FindFamilyQuery {
+        Objects.requireNonNull(id, "id must not be null");
     }
 }
 ```
@@ -465,8 +456,8 @@ public class FindFamilyService implements FindFamilyUseCase {
      */
     @Override
     @Transactional(readOnly = true)
-    public Family find(final FindFamilyByIdQuery query) {
-        Objects.requireNonNull(query, "query는 null일 수 없습니다");
+    public Family findById(final FindFamilyQuery query) {
+        Objects.requireNonNull(query, "query must not be null");
 
         return findFamilyPort.find(query.id())
             .orElseThrow(() -> new FTException(FamilyExceptionCode.FAMILY_NOT_FOUND));

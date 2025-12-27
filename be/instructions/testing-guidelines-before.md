@@ -28,18 +28,18 @@
 @DisplayName("관리자 권한이 있을 때 공지사항 작성에 성공합니다")
 void save_success_when_user_has_admin_role() {
     // given
-    FamilyMember adminMember = FamilyMember.withId(
+    FamilyMember adminMember = FamilyMember.withRole(
         1L, 1L, 1L, "관리자", "profile.jpg", now(),
         "KR", ACTIVE, ADMIN, null, null, null, null
     );
     when(findFamilyMemberPort.findByFamilyIdAndUserId(anyLong(), anyLong()))
         .thenReturn(Optional.of(adminMember));
-
+    
     // when
     Long savedId = announcementService.save(new SaveAnnouncementCommand(
         1L, 1L, "공지사항", "내용"
     ));
-
+    
     // then
     assertThat(savedId).isNotNull();
     verify(saveAnnouncementPort).save(any(Announcement.class));
@@ -52,7 +52,7 @@ void save_success_when_user_has_admin_role() {
 @Test
 @DisplayName("ID가 null인 경우 IllegalArgumentException이 발생합니다")
 void throw_exception_when_id_is_null() {
-    assertThatThrownBy(() -> new FindFamilyByIdQuery(null))
+    assertThatThrownBy(() -> new FindFamilyQuery(null))
         .isInstanceOf(IllegalArgumentException.class);
 }
 ```
@@ -71,7 +71,7 @@ void throw_exception_when_id_is_null() {
 
 - 테스트 클래스에 `@DisplayName("[Unit Test] {Service 클래스명}Test"` 선언합니다
 - Service 변수에 `@InjectMocks` 선언합니다
-- Service 클래스가 의존하는 outbound port는 `@Mock`을 선언하여 Mocking합니다
+- Service 클래스가 의존하는 outbound port는 `@MockitoBean`을 선언하여 Mocking합니다
 - 각 Mocking 코드에 주석으로 Mocking의 의도를 설명합니다
 
 ```java
@@ -81,26 +81,26 @@ class FindFamilyServiceTest {
 
     @InjectMocks
     private FindFamilyService findFamilyService;
-
+    
     @Mock
     private FindFamilyPort findFamilyPort;
-
+    
     @Test
     @DisplayName("유효한 ID로 조회 시 Family 객체를 반환합니다")
     void return_family_when_id_is_valid() {
         // given
         Long familyId = 1L;
-        FindFamilyByIdQuery query = new FindFamilyByIdQuery(familyId);
+        FindFamilyQuery query = new FindFamilyQuery(familyId);
         Family expectedFamily = Family.withId(
             familyId, "가족이름", "설명", "프로필URL", 1L, now(), 1L, now()
         );
-
+        
         // Mocking: 유효한 ID로 Family 조회 모킹
         when(findFamilyPort.find(familyId)).thenReturn(Optional.of(expectedFamily));
-
+        
         // when
-        Family actualFamily = findFamilyService.find(query);
-
+        Family actualFamily = findFamilyService.findById(query);
+        
         // then
         assertThat(actualFamily).isEqualTo(expectedFamily);
     }
@@ -121,24 +121,25 @@ class FamilyAdapterTest extends AdapterTestBase {
 
     @Autowired
     private FamilyJpaRepository familyJpaRepository;
-
+    
     private FamilyAdapter sut;
-
+    
     @BeforeEach
     void setUp() {
         sut = new FamilyAdapter(familyJpaRepository);
     }
-
+    
     @Test
     @DisplayName("ID로 조회 시 Family 객체를 반환합니다")
     void find_returns_family_when_exists() {
-        // given - 도메인 객체 생성 후 JpaEntity.from() 사용
-        Family family = Family.newFamily("가족이름", "설명", "프로필URL", 1L);
-        FamilyJpaEntity savedEntity = familyJpaRepository.save(FamilyJpaEntity.from(family));
-
+        // given
+        FamilyJpaEntity savedEntity = familyJpaRepository.save(
+            new FamilyJpaEntity(null, "가족이름", "설명", "프로필URL", 1L, now(), 1L, now())
+        );
+        
         // when
         Optional<Family> result = sut.find(savedEntity.getId());
-
+        
         // then
         assertThat(result).isPresent();
         assertThat(result.get().getId()).isEqualTo(savedEntity.getId());
@@ -166,15 +167,15 @@ class FindFamilyAcceptanceTest extends AcceptanceTestBase {
 
     @Autowired
     private FamilyJpaRepository familyJpaRepository;
-
+    
     @Test
     @DisplayName("존재하는 ID로 가족 조회 시 200 OK와 가족 정보를 반환합니다")
     void find_returns_200_and_family_when_exists() {
         // given
-        Family family = Family.newFamily("가족이름", "설명", "프로필URL", 1L);
+        Family family = Family.create("가족이름", "설명", "프로필URL", 1L);
         FamilyJpaEntity savedEntity = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedEntity.getId();
-
+        
         // when & then
         given()
             .when()
@@ -198,34 +199,27 @@ class FindFamilyAcceptanceTest extends AcceptanceTestBase {
 #### 테스트 시 엔티티 생성 규칙
 
 - 테스트 코드에서는 JpaEntity 기본 생성자를 사용하지 않습니다
-- 도메인 엔티티의 신규 엔티티 생성용 정적 메서드(`newXxx()`)를 이용하여 도메인 엔티티를 생성한 뒤 `JpaEntity.from()` 메서드를 호출하여 생성합니다
+- 도메인 엔티티의 신규 엔티티 생성용 정적 메서드를 이용하여 도메인 엔티티를 생성한 뒤 `JpaEntity.from` 메서드를 호출하여 생성합니다
 - 인수 테스트에서도 동일한 방식으로 테스트 데이터를 생성합니다
 
 ```java
-// ✅ 올바른 테스트 데이터 생성 방식
+// 올바른 테스트 데이터 생성 방식
 @Test
 void find_returns_family_when_exists() {
-    // given - newXxx() + from() 패턴 사용
-    Family family = Family.newFamily("가족이름", "설명", "프로필URL", 1L);
+    // given
+    Family family = Family.create("가족이름", "설명", "프로필URL", 1L);
     FamilyJpaEntity savedEntity = familyJpaRepository.save(FamilyJpaEntity.from(family));
-
+    
     // when & then
     // ...
 }
 
-// ❌ 잘못된 방식 (기본 생성자 직접 사용)
+// 잘못된 방식 (기본 생성자 사용)
 @Test
 void wrong_way_to_create_test_data() {
     // 절대 사용하지 말 것!
     FamilyJpaEntity entity = new FamilyJpaEntity();
-    entity.setName("가족이름"); // 컴파일 에러 - setter 없음
-}
-
-// ❌ 잘못된 방식 (JpaEntity 생성자 직접 호출)
-@Test
-void also_wrong_way() {
-    // 절대 사용하지 말 것! - private 생성자
-    FamilyJpaEntity entity = new FamilyJpaEntity(null, "가족이름", "설명", "프로필URL", 1L, now(), 1L, now());
+    entity.setName("가족이름"); // 컴파일 에러 - final 필드는 변경 불가
 }
 ```
 - **모든 테스트 메서드에 `@WithMockOAuth2User` 어노테이션 필수**: 인증이 필요한 API 테스트 시 일관된 Mock OAuth2 사용자 설정
@@ -249,7 +243,7 @@ void also_wrong_way() {
 #### 데이터 생성 규칙 (인수 테스트와 동일)
 - 무조건 DB 데이터로 테스트. 기본적으로 mocking 미사용
 - DB 데이터 생성을 위한 JpaRepository `@Autowired`
-- 테스트 시 엔티티 생성 규칙은 인수 테스트와 동일: `newXxx()` + `from()` 패턴 사용
+- 테스트 시 엔티티 생성 규칙은 인수 테스트와 동일 (위 인수 테스트 섹션 참조)
 - 절대 `@BeforeEach`에서 테스트용 데이터 생성 금지. 각 테스트 메서드의 given 영역에서 데이터 생성
 
 #### RestAssuredMockMvc + REST Docs 전용 규칙
@@ -290,7 +284,7 @@ void also_wrong_way() {
 - **Domain**: 정적 팩토리 메서드 및 비즈니스 로직
 - **테스트 클래스명**: `@DisplayName("[Unit Test] {클래스명}Test")`
 
-### 인프라 계층 테스트
+### 인프라 계층 테스트  
 - **Adapter**: AdapterTestBase 상속, sut 패턴 사용
 - **JpaEntity**: 변환 메서드 (from, toXxx) 테스트
 - **테스트 대상 변수명**: `sut` (System Under Test)
@@ -299,14 +293,14 @@ void also_wrong_way() {
 ### 프레젠테이션 계층 테스트
 - **Controller**: AcceptanceTestBase 상속
 - **실제 DB 사용**: Mocking 미사용 원칙
-- **데이터 생성**: `newXxx()` → `JpaEntity.from()`
+- **데이터 생성**: 도메인 정적 메서드 → JpaEntity.from()
 - **@WithMockOAuth2User**: 모든 테스트 메서드에 필수
 
 ## 테스트 실패 디버깅
 
 ### 단일 테스트 분석 원칙
-**절대 여러 실패 테스트를 동시에 분석하지 말 것**
-**반드시 첫 번째 실패 테스트만 선택하여 완전히 해결 후 다음으로 이동**
+**❌ 절대 여러 실패 테스트를 동시에 분석하지 말 것**
+**✅ 반드시 첫 번째 실패 테스트만 선택하여 완전히 해결 후 다음으로 이동**
 
 ### 테스트 실패 분석 단계
 
