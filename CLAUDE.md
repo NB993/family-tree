@@ -23,10 +23,11 @@ cd be && ./gradlew build     # 빌드 (API 문서 포함)
 이 프로젝트는 TDD 기반 Claude Agent Skills를 사용합니다.
 작업 맥락에 따라 관련 스킬이 자동으로 로드됩니다.
 
-### 사용 가능한 스킬 (6개)
+### 사용 가능한 스킬 (7개)
 
 | 스킬 | 용도 |
 |------|------|
+| `write-prd` | PRD 작성 (시니어 전문가 검토) |
 | `prd-to-test` | PRD에서 테스트 케이스 도출 |
 | `core-tdd` | Domain, UseCase, Service, Command/Query TDD 개발 |
 | `infra-tdd` | JpaEntity, Adapter, Repository TDD 개발 |
@@ -37,20 +38,21 @@ cd be && ./gradlew build     # 빌드 (API 문서 포함)
 ## TDD 워크플로우
 
 ```
-PRD 작성 → prd-to-test → core-tdd → infra-tdd → presentation-tdd → commit
-                │              │           │              │
-                ▼              ▼           ▼              ▼
-         테스트 케이스      Red→Green   Red→Green    Red→Green
-            도출          →Refactor   →Refactor    →Refactor
+write-prd → prd-to-test → core-tdd → infra-tdd → presentation-tdd → commit
+    │            │             │           │              │
+    ▼            ▼             ▼           ▼              ▼
+PRD 작성    테스트 케이스   Red→Green   Red→Green    Red→Green
+(전문가검토)    도출       →Refactor   →Refactor    →Refactor
 ```
 
 ### TDD 순서
 
-1. **PRD 분석** (prd-to-test): 요구사항 → 테스트 케이스 도출
-2. **코어 계층** (core-tdd): 테스트 → Domain/Service 구현
-3. **인프라 계층** (infra-tdd): 테스트 → Adapter 구현
-4. **프레젠테이션 계층** (presentation-tdd): 테스트 → Controller 구현
-5. **커밋** (commit): 커밋 메시지 작성
+1. **PRD 작성** (write-prd): 기능 아이디어 → PRD (시니어 전문가 검토)
+2. **PRD 분석** (prd-to-test): 요구사항 → 테스트 케이스 도출
+3. **코어 계층** (core-tdd): 테스트 → Domain/Service 구현
+4. **인프라 계층** (infra-tdd): 테스트 → Adapter 구현
+5. **프레젠테이션 계층** (presentation-tdd): 테스트 → Controller 구현
+6. **커밋** (commit): 커밋 메시지 작성
 
 ## 필수 규칙 요약
 
