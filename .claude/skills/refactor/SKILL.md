@@ -31,4 +31,6 @@ description: TDD의 Refactor 단계 전용 스킬. 테스트가 통과하는 상
 
 ## 상세 지침
 
+**[필수] 아래 참조 문서를 모두 읽은 후 작업을 시작하세요:**
+
 - **리팩토링 기법**: [guidelines.md](guidelines.md)

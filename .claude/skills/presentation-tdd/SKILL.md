@@ -34,6 +34,8 @@ description: 프레젠테이션 계층(Controller, Request/Response DTO) TDD 개
 
 ## 상세 지침
 
+**[필수] 아래 참조 문서를 모두 읽은 후 작업을 시작하세요:**
+
 - **TDD 사이클**: [tdd-cycle.md](tdd-cycle.md)
 - **명명 규칙**: [naming.md](naming.md)
 - **아키텍처**: [architecture.md](architecture.md)
