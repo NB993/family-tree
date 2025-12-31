@@ -1,6 +1,6 @@
 ---
 name: prd-to-test
-description: PRD(요구사항)를 분석하여 테스트 케이스를 도출합니다. TDD의 시작점으로, 구현 전에 테스트 시나리오를 정의합니다. Outside-In TDD 접근법 적용.
+description: PRD(요구사항)를 분석하여 테스트 케이스를 도출합니다. TDD의 시작점으로, 구현 전에 테스트 시나리오를 정의합니다. Inside-Out TDD 접근법 적용.
 ---
 
 # PRD → 테스트 케이스 도출
@@ -8,7 +8,7 @@ description: PRD(요구사항)를 분석하여 테스트 케이스를 도출합�
 ## 목적
 
 - 요구사항을 테스트 가능한 단위로 분해
-- Outside-In TDD의 시작점 제공
+- Inside-Out TDD의 시작점 제공
 - 테스트 범위 사전 정의
 - 구현 전 검증 기준 명확화
 
