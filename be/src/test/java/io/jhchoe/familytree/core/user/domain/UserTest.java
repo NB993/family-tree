@@ -29,6 +29,7 @@ class UserTest {
         LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
         Long modifiedBy = 2L;
         LocalDateTime modifiedAt = LocalDateTime.now();
+        LocalDateTime birthday = LocalDateTime.of(1990, 5, 15, 0, 0);
 
         // when
         User user = User.withId(
@@ -44,7 +45,8 @@ class UserTest {
             createdBy,
             createdAt,
             modifiedBy,
-            modifiedAt
+            modifiedAt,
+            birthday
         );
 
         // then
@@ -61,6 +63,7 @@ class UserTest {
         assertThat(user.getCreatedAt()).isEqualTo(createdAt);
         assertThat(user.getModifiedBy()).isEqualTo(modifiedBy);
         assertThat(user.getModifiedAt()).isEqualTo(modifiedAt);
+        assertThat(user.getBirthday()).isEqualTo(birthday);
     }
 
     @Test
@@ -88,41 +91,11 @@ class UserTest {
             null,
             null,
             null,
-            null
-        ))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("id must not be null");
-    }
-
-    @Test
-    @DisplayName("withId 메서드는 email이 null일 경우 예외를 발생시켜야 한다")
-    void given_null_email_when_create_user_with_id_then_throw_exception() {
-        // given
-        Long id = 1L;
-        String email = null;
-        String name = "Test User";
-        AuthenticationType authenticationType = AuthenticationType.OAUTH2;
-        OAuth2Provider oAuth2Provider = OAuth2Provider.GOOGLE;
-        UserRole role = UserRole.USER;
-
-        // when & then
-        assertThatThrownBy(() -> User.withId(
-            id,
-            email,
-            name,
-            null,
-            null, // kakaoId
-            authenticationType,
-            oAuth2Provider,
-            role,
-            false,
-            null,
-            null,
             null,
             null
         ))
             .isInstanceOf(NullPointerException.class)
-            .hasMessage("email must not be null");
+            .hasMessage("id는 null일 수 없습니다");
     }
 
     @Test
@@ -150,41 +123,11 @@ class UserTest {
             null,
             null,
             null,
-            null
-        ))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("authenticationType must not be null");
-    }
-
-    @Test
-    @DisplayName("withId 메서드는 oAuth2Provider가 null일 경우 예외를 발생시켜야 한다")
-    void given_null_oauth2_provider_when_create_user_with_id_then_throw_exception() {
-        // given
-        Long id = 1L;
-        String email = "test@example.com";
-        String name = "Test User";
-        AuthenticationType authenticationType = AuthenticationType.OAUTH2;
-        OAuth2Provider oAuth2Provider = null;
-        UserRole role = UserRole.USER;
-
-        // when & then
-        assertThatThrownBy(() -> User.withId(
-            id,
-            email,
-            name,
-            null,
-            null, // kakaoId
-            authenticationType,
-            oAuth2Provider,
-            role,
-            false,
-            null,
-            null,
             null,
             null
         ))
             .isInstanceOf(NullPointerException.class)
-            .hasMessage("oAuth2Provider must not be null");
+            .hasMessage("authenticationType은 null일 수 없습니다");
     }
 
     @Test
@@ -212,10 +155,11 @@ class UserTest {
             null,
             null,
             null,
+            null,
             null
         ))
             .isInstanceOf(NullPointerException.class)
-            .hasMessage("role must not be null");
+            .hasMessage("role은 null일 수 없습니다");
     }
 
     @Test
@@ -232,6 +176,7 @@ class UserTest {
             OAuth2Provider.GOOGLE,
             UserRole.USER,
             false,
+            null,
             null,
             null,
             null,
@@ -263,6 +208,7 @@ class UserTest {
             null,
             null,
             null,
+            null,
             null
         );
         String nameToCompare = "Different Name";
@@ -284,6 +230,7 @@ class UserTest {
         AuthenticationType authenticationType = AuthenticationType.OAUTH2;
         OAuth2Provider oAuth2Provider = OAuth2Provider.GOOGLE;
         UserRole role = UserRole.USER;
+        LocalDateTime birthday = LocalDateTime.of(1990, 5, 15, 0, 0);
 
         // when
         User user = User.newUser(
@@ -294,7 +241,8 @@ class UserTest {
             authenticationType,
             oAuth2Provider,
             role,
-            false
+            false,
+            birthday
         );
 
         // then
@@ -307,6 +255,7 @@ class UserTest {
         assertThat(user.getOAuth2Provider()).isEqualTo(oAuth2Provider);
         assertThat(user.getRole()).isEqualTo(UserRole.USER);
         assertThat(user.isDeleted()).isFalse();
+        assertThat(user.getBirthday()).isEqualTo(birthday);
         assertThat(user.getCreatedBy()).isNull();
         assertThat(user.getCreatedAt()).isNull();
         assertThat(user.getModifiedBy()).isNull();
@@ -327,6 +276,7 @@ class UserTest {
             OAuth2Provider.GOOGLE,
             UserRole.USER,
             false,
+            null,
             null,
             null,
             null,
@@ -358,6 +308,7 @@ class UserTest {
             null,
             null,
             null,
+            null,
             null
         );
         String nameToCompare = "Test User";
@@ -367,5 +318,97 @@ class UserTest {
 
         // then
         assertThat(result).isFalse();
+    }
+
+    // ===== PRD-001: User 도메인 확장 테스트 =====
+
+    @Test
+    @DisplayName("birthday를 포함하여 User를 생성할 수 있다")
+    void create_user_with_birthday() {
+        // given
+        Long id = 1L;
+        String email = "test@example.com";
+        String name = "Test User";
+        LocalDateTime birthday = LocalDateTime.of(1990, 1, 15, 0, 0);
+
+        // when
+        User user = User.withId(
+            id,
+            email,
+            name,
+            null,
+            null,
+            AuthenticationType.OAUTH2,
+            OAuth2Provider.KAKAO,
+            UserRole.USER,
+            false,
+            null,
+            null,
+            null,
+            null,
+            birthday
+        );
+
+        // then
+        assertThat(user.getBirthday()).isEqualTo(birthday);
+    }
+
+    @Test
+    @DisplayName("email이 null인 User를 생성할 수 있다 - 수동 등록 사용자용")
+    void create_user_with_null_email() {
+        // given
+        Long id = 1L;
+        String name = "수동 등록 사용자";
+
+        // when
+        User user = User.withId(
+            id,
+            null, // email nullable
+            name,
+            null,
+            null,
+            AuthenticationType.NONE,
+            null, // NONE 타입은 OAuth2Provider도 nullable
+            UserRole.USER,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+
+        // then
+        assertThat(user.getEmail()).isNull();
+        assertThat(user.getName()).isEqualTo(name);
+    }
+
+    @Test
+    @DisplayName("NONE 인증 타입으로 User를 생성할 수 있다 - 수동 등록 사용자용")
+    void create_user_with_none_authentication_type() {
+        // given
+        String name = "수동 등록 사용자";
+
+        // when
+        User user = User.newManualUser(name, null, null);
+
+        // then
+        assertThat(user.getId()).isNull();
+        assertThat(user.getAuthenticationType()).isEqualTo(AuthenticationType.NONE);
+        assertThat(user.getName()).isEqualTo(name);
+        assertThat(user.getEmail()).isNull();
+    }
+
+    @Test
+    @DisplayName("newManualUser로 생성된 사용자는 로그인 불가능하다")
+    void manual_user_is_not_loginable() {
+        // given
+        User user = User.newManualUser("수동 사용자", null, LocalDateTime.of(2000, 5, 1, 0, 0));
+
+        // when
+        boolean loginable = user.getAuthenticationType().isLoginable();
+
+        // then
+        assertThat(loginable).isFalse();
     }
 }

@@ -103,7 +103,8 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
             AuthenticationType.OAUTH2,
             provider,
             UserRole.USER,
-            false
+            false,
+            null // birthday - OAuth2 로그인 시 생일 정보 없음
         );
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
 

@@ -53,7 +53,8 @@ class TokenControllerTest extends AcceptanceTestBase {
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
-            false
+            false,
+            null // birthday
         );
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
 
@@ -136,10 +137,11 @@ class TokenControllerTest extends AcceptanceTestBase {
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
-            false
+            false,
+            null // birthday
         );
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
-        
+
         RefreshToken refreshToken = RefreshToken.newRefreshToken(
             savedUser.getId(),
             "user.refresh.token",

@@ -30,7 +30,7 @@ public class UserJpaEntity extends ModifierBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email")
     private String email;
 
     @Column(name = "name")
@@ -57,6 +57,9 @@ public class UserJpaEntity extends ModifierBaseEntity {
     @Column(name = "kakao_id")
     private String kakaoId;
 
+    @Column(name = "birthday")
+    private LocalDateTime birthday;
+
     /**
      * OAuth2 로그인 기반의 회원 가입용 팩토리 메서드
      *
@@ -79,7 +82,8 @@ public class UserJpaEntity extends ModifierBaseEntity {
                 user.getCreatedBy(),
                 user.getCreatedAt(),
                 user.getModifiedBy(),
-                user.getModifiedAt()
+                user.getModifiedAt(),
+                user.getBirthday()
         );
     }
 
@@ -87,18 +91,19 @@ public class UserJpaEntity extends ModifierBaseEntity {
      * 조회용 생성자입니다.
      *
      * @param id 사용자 ID
-     * @param email 이메일
+     * @param email 이메일 (nullable - 수동 등록 사용자)
      * @param name 이름
      * @param profileUrl 프로필 URL
      * @param kakaoId 카카오 ID
      * @param authenticationType 인증 유형
-     * @param oAuth2Provider OAuth2 제공자
+     * @param oAuth2Provider OAuth2 제공자 (nullable - NONE 타입 사용자)
      * @param role 사용자 역할
      * @param deleted 삭제 여부
      * @param createdBy 생성자
      * @param createdAt 생성일시
      * @param modifiedBy 수정자
      * @param modifiedAt 수정일시
+     * @param birthday 생년월일
      */
     private UserJpaEntity(
         final Long id,
@@ -113,7 +118,8 @@ public class UserJpaEntity extends ModifierBaseEntity {
         final Long createdBy,
         final LocalDateTime createdAt,
         final Long modifiedBy,
-        final LocalDateTime modifiedAt
+        final LocalDateTime modifiedAt,
+        final LocalDateTime birthday
     ) {
         super(createdBy, createdAt, modifiedBy, modifiedAt);
         this.id = id;
@@ -125,6 +131,7 @@ public class UserJpaEntity extends ModifierBaseEntity {
         this.oAuth2Provider = oAuth2Provider;
         this.role = role;
         this.deleted = deleted;
+        this.birthday = birthday;
     }
 
     /**
@@ -146,7 +153,8 @@ public class UserJpaEntity extends ModifierBaseEntity {
                 getCreatedBy(),
                 getCreatedAt(),
                 getModifiedBy(),
-                getModifiedAt()
+                getModifiedAt(),
+                birthday
         );
     }
 }

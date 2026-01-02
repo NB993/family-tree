@@ -75,7 +75,8 @@ public class LocalDataInitializer implements ApplicationRunner {
             AuthenticationType.OAUTH2,
             provider, // OAuth2Provider 명시적 설정
             UserRole.USER,
-            false // deleted
+            false, // deleted
+            null // birthday
         );
         
         UserJpaEntity userEntity = UserJpaEntity.ofOAuth2User(user);

@@ -60,7 +60,7 @@ class SaveFamilyServiceTest {
             userId, "test@example.com", "홍길동", "http://example.com/user-profile",
             null, // kakaoId
             AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false,
-            userId, LocalDateTime.now(), userId, LocalDateTime.now()
+            userId, LocalDateTime.now(), userId, LocalDateTime.now(), null // birthday
         );
 
         // Mocking: 사용자 조회 성공

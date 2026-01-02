@@ -221,7 +221,8 @@ class CheckFamilyNameControllerTest extends AcceptanceTestBase {
             AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
-            false
+            false,
+            null // birthday
         );
         
         UserJpaEntity userEntity = UserJpaEntity.ofOAuth2User(testUser);

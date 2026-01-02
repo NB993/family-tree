@@ -32,9 +32,9 @@ class UserPersistenceAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("이름 검색 시 포함된 이름을 가진 사용자 목록을 반환한다")
     void given_name_substring_when_find_by_name_containing_then_return_matching_users() {
         // given
-        User user1 = User.newUser("test1@example.com", "홍길동", "profile1.jpg", null, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false);
-        User user2 = User.newUser("test2@example.com", "홍길순", "profile2.jpg", null, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false);
-        User user3 = User.newUser("test3@example.com", "김철수", "profile3.jpg", null, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false);
+        User user1 = User.newUser("test1@example.com", "홍길동", "profile1.jpg", null, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, null);
+        User user2 = User.newUser("test2@example.com", "홍길순", "profile2.jpg", null, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, null);
+        User user3 = User.newUser("test3@example.com", "김철수", "profile3.jpg", null, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, null);
 
         entityManager.persist(UserJpaEntity.ofOAuth2User(user1));
         entityManager.persist(UserJpaEntity.ofOAuth2User(user2));
@@ -57,7 +57,7 @@ class UserPersistenceAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("이름 검색 시 결과가 없으면 빈 목록을 반환한다")
     void given_non_existent_name_when_find_by_name_containing_then_return_empty_list() {
         // given
-        User user = User.newUser("test@example.com", "홍길동", "profile.jpg", null, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false);
+        User user = User.newUser("test@example.com", "홍길동", "profile.jpg", null, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, null);
         entityManager.persist(UserJpaEntity.ofOAuth2User(user));
         entityManager.flush();
 
@@ -84,7 +84,8 @@ class UserPersistenceAdapterTest extends TestcontainersDataJpaTestBase {
                 AuthenticationType.OAUTH2,
                 OAuth2Provider.GOOGLE,
                 UserRole.USER,
-                false
+                false,
+                null // birthday
             );
             entityManager.persist(UserJpaEntity.ofOAuth2User(user));
         }

@@ -51,7 +51,8 @@ class FindUserControllerTest extends AcceptanceTestBase {
             1L,
             LocalDateTime.now(),
             1L,
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            null // birthday
         );
         mockUsers.add(user);
         

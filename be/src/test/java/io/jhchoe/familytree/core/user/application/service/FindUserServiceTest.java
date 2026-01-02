@@ -45,7 +45,7 @@ class FindUserServiceTest {
         FindUserByNameQuery query = new FindUserByNameQuery(name, page, size);
         
         User user = User.withId(1L, "test@example.com", "홍길동", "profile.jpg", null,
-                AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, 2L, LocalDateTime.now(), 2L, LocalDateTime.now());
+                AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, 2L, LocalDateTime.now(), 2L, LocalDateTime.now(), null);
         List<User> users = List.of(user);
         
         when(findUserPort.findByNameContaining(eq(name), any())).thenReturn(users);

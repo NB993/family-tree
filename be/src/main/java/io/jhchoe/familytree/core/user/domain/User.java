@@ -26,6 +26,7 @@ public class User {
     private final LocalDateTime createdAt;
     private final Long modifiedBy;
     private final LocalDateTime modifiedAt;
+    private final LocalDateTime birthday;
 
     private User(
         Long id,
@@ -40,7 +41,8 @@ public class User {
         Long createdBy,
         LocalDateTime createdAt,
         Long modifiedBy,
-        LocalDateTime modifiedAt
+        LocalDateTime modifiedAt,
+        LocalDateTime birthday
     ) {
         this.id = id;
         this.email = email;
@@ -55,24 +57,26 @@ public class User {
         this.createdAt = createdAt;
         this.modifiedBy = modifiedBy;
         this.modifiedAt = modifiedAt;
+        this.birthday = birthday;
     }
 
     /**
      * 기존 사용자 정보로 User 객체를 생성합니다.
      *
      * @param id 사용자 ID
-     * @param email 이메일
+     * @param email 이메일 (nullable - 수동 등록 사용자)
      * @param name 이름
      * @param profileUrl 프로필 URL
      * @param kakaoId 카카오 ID
      * @param authenticationType 인증 유형
-     * @param oAuth2Provider OAuth2 제공자
+     * @param oAuth2Provider OAuth2 제공자 (nullable - NONE 타입 사용자)
      * @param role 사용자 역할
      * @param deleted 삭제 여부
      * @param createdBy 생성한 사용자 ID
      * @param createdAt 생성일시
      * @param modifiedBy 수정한 사용자 ID
      * @param modifiedAt 수정일시
+     * @param birthday 생년월일
      * @return 생성된 User 객체
      */
     public static User withId(
@@ -88,16 +92,15 @@ public class User {
         Long createdBy,
         LocalDateTime createdAt,
         Long modifiedBy,
-        LocalDateTime modifiedAt
+        LocalDateTime modifiedAt,
+        LocalDateTime birthday
     ) {
-        Objects.requireNonNull(id, "id must not be null");
-        Objects.requireNonNull(email, "email must not be null");
-        Objects.requireNonNull(oAuth2Provider, "oAuth2Provider must not be null");
-        Objects.requireNonNull(authenticationType, "authenticationType must not be null");
-        Objects.requireNonNull(role, "role must not be null");
+        Objects.requireNonNull(id, "id는 null일 수 없습니다");
+        Objects.requireNonNull(authenticationType, "authenticationType은 null일 수 없습니다");
+        Objects.requireNonNull(role, "role은 null일 수 없습니다");
 
         return new User(id, email, name, profileUrl, kakaoId, authenticationType, oAuth2Provider, role, deleted,
-                createdBy, createdAt, modifiedBy, modifiedAt);
+                createdBy, createdAt, modifiedBy, modifiedAt, birthday);
     }
 
     /**
@@ -111,6 +114,7 @@ public class User {
      * @param oAuth2Provider OAuth2 제공자
      * @param role 사용자 역할
      * @param deleted 삭제 여부
+     * @param birthday 생년월일
      * @return 생성된 User 객체
      */
     public static User newUser(
@@ -121,9 +125,29 @@ public class User {
         AuthenticationType authenticationType,
         OAuth2Provider oAuth2Provider,
         UserRole role,
-        boolean deleted
+        boolean deleted,
+        LocalDateTime birthday
     ) {
-        return new User(null, email, name, profileUrl, kakaoId, authenticationType, oAuth2Provider, role, deleted, null, null, null, null);
+        return new User(null, email, name, profileUrl, kakaoId, authenticationType, oAuth2Provider, role, deleted,
+                null, null, null, null, birthday);
+    }
+
+    /**
+     * 수동 등록 사용자를 생성합니다.
+     * 로그인할 수 없는 사용자입니다 (애완동물, 아이 등).
+     *
+     * @param name 이름
+     * @param profileUrl 프로필 URL
+     * @param birthday 생년월일
+     * @return 생성된 User 객체
+     */
+    public static User newManualUser(
+        String name,
+        String profileUrl,
+        LocalDateTime birthday
+    ) {
+        return new User(null, null, name, profileUrl, null, AuthenticationType.NONE, null, UserRole.USER, false,
+                null, null, null, null, birthday);
     }
 
     /**
