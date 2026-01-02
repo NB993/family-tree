@@ -44,21 +44,24 @@ cd be && ./gradlew build     # 빌드 (API 문서 포함)
 ## TDD 워크플로우
 
 ```
-write-prd → prd-to-test → core-tdd → infra-tdd → presentation-tdd → commit
-    │            │             │           │              │
-    ▼            ▼             ▼           ▼              ▼
-PRD 작성    테스트 케이스   Red→Green   Red→Green    Red→Green
-(전문가검토)    도출       →Refactor   →Refactor    →Refactor
+write-prd → [/clear] → 코드베이스 탐색 → prd-to-test → core-tdd → infra-tdd → presentation-tdd → commit
+    │                        │                │             │           │              │
+    ▼                        ▼                ▼             ▼           ▼              ▼
+PRD 작성               PRD 기반으로      테스트 케이스   Red→Green   Red→Green    Red→Green
+(전문가검토)           관련 코드 파악       도출        →Refactor   →Refactor    →Refactor
 ```
 
 ### TDD 순서
 
 1. **PRD 작성** (write-prd): 기능 아이디어 → PRD (시니어 전문가 검토)
-2. **PRD 분석** (prd-to-test): 요구사항 → 테스트 케이스 도출
-3. **코어 계층** (core-tdd): 테스트 → Domain/Service 구현
-4. **인프라 계층** (infra-tdd): 테스트 → Adapter 구현
-5. **프레젠테이션 계층** (presentation-tdd): 테스트 → Controller 구현
-6. **커밋** (commit): 커밋 메시지 작성
+2. **코드베이스 탐색** (수동): PRD 문서를 읽고 관련 코드 구조 파악 (`/clear` 후 컨텍스트 복구용)
+3. **PRD 분석** (prd-to-test): 요구사항 → 테스트 케이스 도출
+4. **코어 계층** (core-tdd): 테스트 → Domain/Service 구현
+5. **인프라 계층** (infra-tdd): 테스트 → Adapter 구현
+6. **프레젠테이션 계층** (presentation-tdd): 테스트 → Controller 구현
+7. **커밋** (commit): 커밋 메시지 작성
+
+> **Note**: `/clear` 실행 후에는 PRD 문서 경로를 알려주고, 관련 코드베이스를 먼저 탐색하도록 요청하세요.
 
 ## 필수 규칙 요약
 
