@@ -10,6 +10,7 @@ import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaR
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import java.time.LocalDateTime;
@@ -41,7 +42,7 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
     void modify_family_owner_role_success() {
         // given
         Long userId = 1L;
-        Family family = Family.newFamily("원본가족명", "원본설명", "http://example.com/profile", true);
+        Family family = FamilyFixture.newFamily("원본가족명", "원본설명", "http://example.com/profile", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
 
@@ -76,7 +77,7 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
         // given
         Long ownerId = 1L;
         Long adminId = 2L;
-        Family family = Family.newFamily("원본가족명", "원본설명", "http://example.com/profile", true);
+        Family family = FamilyFixture.newFamily("원본가족명", "원본설명", "http://example.com/profile", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
 
@@ -118,7 +119,7 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
         // given
         Long ownerId = 1L;
         Long memberId = 3L;
-        Family family = Family.newFamily("원본가족명", "원본설명", "http://example.com/profile", true);
+        Family family = FamilyFixture.newFamily("원본가족명", "원본설명", "http://example.com/profile", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
 
@@ -159,7 +160,7 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
     void find_family_private_member_success() {
         // given
         Long userId = 1L;
-        Family privateFamily = Family.newFamily("비공개가족", "비공개된가족입니다", "http://example.com/profile", false);
+        Family privateFamily = FamilyFixture.newFamily("비공개가족", "비공개된가족입니다", "http://example.com/profile", false);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(privateFamily));
         Long familyId = savedFamily.getId();
 
@@ -186,7 +187,7 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
     void find_family_private_non_member_fail() {
         // given
         Long ownerId = 1L;
-        Family privateFamily = Family.newFamily("비공개가족", "비공개된가족입니다", "http://example.com/profile", false);
+        Family privateFamily = FamilyFixture.newFamily("비공개가족", "비공개된가족입니다", "http://example.com/profile", false);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(privateFamily));
         Long familyId = savedFamily.getId();
 
@@ -212,7 +213,7 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
     void find_family_public_non_member_success() {
         // given
         Long ownerId = 1L;
-        Family publicFamily = Family.newFamily("공개가족", "공개된가족입니다", "http://example.com/profile", true);
+        Family publicFamily = FamilyFixture.newFamily("공개가족", "공개된가족입니다", "http://example.com/profile", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(publicFamily));
         Long familyId = savedFamily.getId();
 

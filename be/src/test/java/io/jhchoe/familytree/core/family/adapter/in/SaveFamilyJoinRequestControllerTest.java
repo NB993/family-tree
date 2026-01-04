@@ -19,6 +19,7 @@ import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaE
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequest;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequestStatus;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
@@ -217,7 +218,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
      */
     private Long createFamily(String name, String description) {
         // 도메인 객체를 먼저 생성한 후 JpaEntity로 변환
-        Family family = Family.newFamily(name, description, null, true);
+        Family family = FamilyFixture.newFamily(name, description, null, true);
         FamilyJpaEntity entity = FamilyJpaEntity.from(family);
         return familyJpaRepository.save(entity).getId();
     }

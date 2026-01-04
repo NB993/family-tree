@@ -13,6 +13,7 @@ import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
@@ -45,10 +46,7 @@ class FindFamilyMemberRoleAcceptanceTest extends AcceptanceTestBase {
         Long userId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성 (withId로 필요한 필드 포함)
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, userId, now, userId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -104,10 +102,7 @@ class FindFamilyMemberRoleAcceptanceTest extends AcceptanceTestBase {
         Long currentUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-           true,  ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -164,10 +159,7 @@ class FindFamilyMemberRoleAcceptanceTest extends AcceptanceTestBase {
         Long userId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, userId, now, userId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         

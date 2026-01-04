@@ -8,6 +8,7 @@ import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -92,10 +93,7 @@ class FamilyMemberAuthorizationValidatorTest {
     @DisplayName("비공개 Family 접근 제어 - 성공 (공개 Family)")
     void validate_family_access_permission_success_public_family() {
         // given
-        Family publicFamily = Family.withId(
-            1L, "공개가족", "공개된 가족입니다", "profile.jpg", true,
-            1L, NOW, 1L, NOW
-        );
+        Family publicFamily = FamilyFixture.withId(1L, "공개가족", "공개된 가족입니다", "profile.jpg", true);
 
         // when & then (비구성원도 접근 가능)
         assertThatNoException()
@@ -106,10 +104,7 @@ class FamilyMemberAuthorizationValidatorTest {
     @DisplayName("비공개 Family 접근 제어 - 성공 (비공개 Family + 구성원)")
     void validate_family_access_permission_success_private_family_member() {
         // given
-        Family privateFamily = Family.withId(
-            1L, "비공개가족", "비공개된 가족입니다", "profile.jpg", false,
-            1L, NOW, 1L, NOW
-        );
+        Family privateFamily = FamilyFixture.withId(1L, "비공개가족", "비공개된 가족입니다", "profile.jpg", false);
         FamilyMember member = FamilyMemberFixture.withId(1L);
 
         // when & then
@@ -121,10 +116,7 @@ class FamilyMemberAuthorizationValidatorTest {
     @DisplayName("비공개 Family 접근 제어 - 실패 (비공개 Family + 비구성원)")
     void validate_family_access_permission_fail_private_family_non_member() {
         // given
-        Family privateFamily = Family.withId(
-            1L, "비공개가족", "비공개된 가족입니다", "profile.jpg", false,
-            1L, NOW, 1L, NOW
-        );
+        Family privateFamily = FamilyFixture.withId(1L, "비공개가족", "비공개된 가족입니다", "profile.jpg", false);
 
         // when & then
         assertThatThrownBy(() -> FamilyMemberAuthorizationValidator.validateFamilyAccessPermission(privateFamily, null))

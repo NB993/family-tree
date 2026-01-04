@@ -3,6 +3,7 @@ package io.jhchoe.familytree.core.family.application.service;
 import io.jhchoe.familytree.core.family.application.port.in.FamilyNameAvailabilityResult;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,17 +53,7 @@ class CheckFamilyNameDuplicationServiceTest {
     void should_return_available_false_when_family_name_already_exists() {
         // given
         String familyName = "기존가족";
-        Family existingFamily = Family.withId(
-            1L,
-            familyName,
-            "기존 가족 설명",
-            "http://example.com/profile.jpg",
-            true,
-            1L,
-            LocalDateTime.now(),
-            1L,
-            LocalDateTime.now()
-        );
+        Family existingFamily = FamilyFixture.withId(1L, familyName, "기존 가족 설명", "http://example.com/profile.jpg", true);
         
         given(findFamilyPort.findByName(familyName)).willReturn(Optional.of(existingFamily));
 

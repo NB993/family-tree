@@ -8,6 +8,7 @@ import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaEntity;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyJpaRepository;
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.user.domain.User;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.jhchoe.familytree.test.fixture.UserFixture;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -192,7 +193,7 @@ class CheckFamilyNameControllerTest extends AcceptanceTestBase {
         Long testUserId = createTestUserAndGetId();
         LocalDateTime now = LocalDateTime.now();
         
-        Family family = Family.newFamily(
+        Family family = FamilyFixture.newFamily(
             familyName,
             "테스트 가족 설명",
             "https://example.com/test-family.jpg",

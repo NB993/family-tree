@@ -13,6 +13,7 @@ import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaE
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequest;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequestStatus;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
@@ -55,10 +56,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -104,10 +102,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 100L;
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -160,10 +155,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 100L;
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -225,10 +217,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -283,10 +272,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -332,10 +318,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 100L;
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -389,10 +372,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 100L;
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -445,10 +425,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long currentUserId = 1L; // WithMockOAuth2User 기본 사용자 ID (Family 구성원 아님)
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -518,10 +495,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -576,10 +550,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -646,10 +617,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -694,10 +662,7 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = Family.withId(
-            null, "테스트 가족", "가족 설명", "profile.jpg",
-            true, ownerUserId, now, ownerUserId, now
-        );
+        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         

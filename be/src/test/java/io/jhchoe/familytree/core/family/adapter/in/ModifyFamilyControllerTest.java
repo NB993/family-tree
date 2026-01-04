@@ -12,6 +12,7 @@ import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaE
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import java.time.LocalDateTime;
@@ -49,7 +50,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         FTUser ftUser = (FTUser) authentication.getPrincipal();
         Long userId = ftUser.getId();
 
-        Family family = Family.newFamily(
+        Family family = FamilyFixture.newFamily(
             "Original Family Name",
             "Original description",
             "http://example.com/original-profile",
@@ -107,7 +108,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         FTUser ftUser = (FTUser) authentication.getPrincipal();
         Long userId = ftUser.getId();
 
-        Family family = Family.newFamily(
+        Family family = FamilyFixture.newFamily(
             "Original Family Name",
             "Original description",
             "http://example.com/original-profile",
@@ -154,7 +155,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         FTUser ftUser = (FTUser) authentication.getPrincipal();
         Long userId = ftUser.getId();
 
-        Family family = Family.newFamily(
+        Family family = FamilyFixture.newFamily(
             "Original Family Name",
             "Original description",
             "http://example.com/original-profile",
@@ -201,7 +202,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         FTUser ftUser = (FTUser) authentication.getPrincipal();
         Long userId = ftUser.getId();
 
-        Family family = Family.newFamily(
+        Family family = FamilyFixture.newFamily(
             "Original Family Name",
             "Original description",
             "http://example.com/original-profile",
@@ -248,7 +249,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         FTUser ftUser = (FTUser) authentication.getPrincipal();
         Long userId = ftUser.getId();
 
-        Family family = Family.newFamily(
+        Family family = FamilyFixture.newFamily(
             "Original Family Name",
             "Original description",
             "http://example.com/original-profile",

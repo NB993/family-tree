@@ -16,6 +16,7 @@ import io.jhchoe.familytree.core.family.application.validation.FamilyValidationS
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -54,8 +55,7 @@ class ModifyFamilyServiceTest {
         ModifyFamilyCommand command = new ModifyFamilyCommand(familyId, "Updated Name", "http://example.com/profile",
             "Updated Description", userId);
 
-        Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true, null,
-            null, null, null);
+        Family family = FamilyFixture.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true);
 
         FamilyMember ownerMember = FamilyMemberFixture.withIdAndRole(1L, familyId, userId, FamilyMemberRole.OWNER);
 
@@ -116,8 +116,7 @@ class ModifyFamilyServiceTest {
         Long userId = 1L;
         ModifyFamilyCommand command = new ModifyFamilyCommand(familyId, "Updated Name", "http://example.com/profile",
             "Updated Description", userId);
-        Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true, null,
-            null, null, null);
+        Family family = FamilyFixture.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true);
 
         FamilyMember ownerMember = FamilyMemberFixture.withIdAndRole(1L, familyId, userId, FamilyMemberRole.OWNER);
 

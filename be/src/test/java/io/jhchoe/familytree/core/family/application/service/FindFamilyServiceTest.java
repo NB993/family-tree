@@ -10,6 +10,7 @@ import io.jhchoe.familytree.core.family.application.port.in.FindFamilyByNameCont
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.Family;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -45,17 +46,7 @@ public class FindFamilyServiceTest {
         Long familyId = 1L;
         Long currentUserId = 1L;
         FindFamilyByIdQuery query = new FindFamilyByIdQuery(familyId, currentUserId);
-        Family expectedFamily = Family.withId(
-            familyId,
-            "name",
-            "description",
-            "profile",
-            true, // 공개 Family로 설정
-            2L,
-            LocalDateTime.now(),
-            2L,
-            LocalDateTime.now()
-        );
+        Family expectedFamily = FamilyFixture.withId(familyId, "name", "description", "profile", true);
 
         when(findFamilyPort.findById(familyId)).thenReturn(Optional.of(expectedFamily));
         // 공개 Family이므로 FamilyMember 조회는 Mock 불필요 (validateFamilyAccessPermission에서 바로 return)
@@ -138,8 +129,8 @@ public class FindFamilyServiceTest {
         // given
         FindFamilyByNameContainingQuery query = new FindFamilyByNameContainingQuery("가족");
 
-        Family family = Family.newFamily("가족 이름1", "설명", "프로필 url", true);
-        Family family2 = Family.newFamily("가족 이름2", "설명", "프로필 url", true);
+        Family family = FamilyFixture.newFamily("가족 이름1", "설명", "프로필 url", true);
+        Family family2 = FamilyFixture.newFamily("가족 이름2", "설명", "프로필 url", true);
 
         // when
         when(findFamilyPort.findByNameContaining(query.getName()))

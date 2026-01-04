@@ -16,6 +16,7 @@ import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaE
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.common.mapper.TypeRef;
@@ -50,7 +51,7 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     @DisplayName("가족 정보를 ID로 조회할 수 있다")
     void given_id_when_find_family_by_then_return_family_with_status_200() {
         // given
-        Family family = Family.newFamily("Family Name", "descrption", "profileUrl", true);
+        Family family = FamilyFixture.newFamily("Family Name", "descrption", "profileUrl", true);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
 
         // when & then
@@ -105,8 +106,8 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     @DisplayName("name 으로 Family 정보를 조회할 경우 입력한 name 문자열을 포함하는 모든 Family 목록을 반환한다")
     void given_name_when_find_families_then_return_families_with_status_200() {
         // given
-        Family family1 = Family.newFamily("Family Name1", "description1", "profileUrl1", true);
-        Family family2 = Family.newFamily("Family Name2", "description2", "profileUrl2", true);
+        Family family1 = FamilyFixture.newFamily("Family Name1", "description1", "profileUrl1", true);
+        Family family2 = FamilyFixture.newFamily("Family Name2", "description2", "profileUrl2", true);
         FamilyJpaEntity savedFamily1 = familyJpaRepository.save(FamilyJpaEntity.from(family1));
         FamilyJpaEntity savedFamily2 = familyJpaRepository.save(FamilyJpaEntity.from(family2));
 
@@ -142,9 +143,9 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
         Long currentUserId = 100L;
         
         // Family 생성
-        Family family1 = Family.newFamily("우리가족", "행복한 우리 가족", "profile1.jpg", false);
-        Family family2 = Family.newFamily("친척가족", "큰집 가족", "profile2.jpg", true);
-        Family family3 = Family.newFamily("다른가족", "관련없는 가족", "profile3.jpg", false);
+        Family family1 = FamilyFixture.newFamily("우리가족", "행복한 우리 가족", "profile1.jpg", false);
+        Family family2 = FamilyFixture.newFamily("친척가족", "큰집 가족", "profile2.jpg", true);
+        Family family3 = FamilyFixture.newFamily("다른가족", "관련없는 가족", "profile3.jpg", false);
         
         FamilyJpaEntity savedFamily1 = familyJpaRepository.save(FamilyJpaEntity.from(family1));
         FamilyJpaEntity savedFamily2 = familyJpaRepository.save(FamilyJpaEntity.from(family2));
@@ -185,7 +186,7 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     void given_user_with_no_families_when_find_my_families_then_return_empty_list() {
         // given
         // 다른 사용자의 Family는 있지만 현재 사용자(200L)는 소속되지 않음
-        Family family = Family.newFamily("다른가족", "관련없는 가족", "profile.jpg", false);
+        Family family = FamilyFixture.newFamily("다른가족", "관련없는 가족", "profile.jpg", false);
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         
         FamilyMember member = FamilyMember.withRole(
@@ -211,10 +212,10 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     void given_keyword_when_find_public_families_then_return_public_families_with_cursor_pagination() {
         // given
         // 공개 Family 생성
-        Family publicFamily1 = Family.newFamily("공개가족1", "누구나 가입 가능", "public1.jpg", true);
-        Family publicFamily2 = Family.newFamily("공개가족2", "열린 가족", "public2.jpg", true);
+        Family publicFamily1 = FamilyFixture.newFamily("공개가족1", "누구나 가입 가능", "public1.jpg", true);
+        Family publicFamily2 = FamilyFixture.newFamily("공개가족2", "열린 가족", "public2.jpg", true);
         // 비공개 Family 생성 (검색 결과에 포함되지 않아야 함)
-        Family privateFamily = Family.newFamily("비공개가족", "가족만", "private.jpg", false);
+        Family privateFamily = FamilyFixture.newFamily("비공개가족", "가족만", "private.jpg", false);
         
         familyJpaRepository.save(FamilyJpaEntity.from(publicFamily1));
         familyJpaRepository.save(FamilyJpaEntity.from(publicFamily2));
@@ -243,9 +244,9 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     @DisplayName("키워드 없이 공개 Family 목록을 조회할 수 있다")
     void given_no_keyword_when_find_public_families_then_return_all_public_families() {
         // given
-        Family publicFamily1 = Family.newFamily("공개가족1", "설명1", "public1.jpg", true);
-        Family publicFamily2 = Family.newFamily("공개가족2", "설명2", "public2.jpg", true);
-        Family privateFamily = Family.newFamily("비공개가족", "설명3", "private.jpg", false);
+        Family publicFamily1 = FamilyFixture.newFamily("공개가족1", "설명1", "public1.jpg", true);
+        Family publicFamily2 = FamilyFixture.newFamily("공개가족2", "설명2", "public2.jpg", true);
+        Family privateFamily = FamilyFixture.newFamily("비공개가족", "설명3", "private.jpg", false);
         
         familyJpaRepository.save(FamilyJpaEntity.from(publicFamily1));
         familyJpaRepository.save(FamilyJpaEntity.from(publicFamily2));

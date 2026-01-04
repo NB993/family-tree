@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.adapter.out.persistence;
 
 import io.jhchoe.familytree.core.family.domain.Family;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.jhchoe.familytree.helper.TestcontainersDataJpaTestBase;
 import org.junit.jupiter.api.DisplayName;
@@ -30,11 +31,11 @@ class FamilyEmojiIntegrationTest extends TestcontainersDataJpaTestBase {
         Long creatorId = 1L;
         
         // 도메인 객체에서 생성 (가이드라인 준수)
-        Family domainFamily = Family.newFamily(
+        Family domainFamily = FamilyFixture.newFamily(
                 familyNameWithEmoji,
                 descriptionWithEmoji,
                 profileUrl,
-                true // isPublic
+                true
         );
         
         // 도메인 → JPA 엔티티 변환
@@ -56,11 +57,11 @@ class FamilyEmojiIntegrationTest extends TestcontainersDataJpaTestBase {
         // given
         String complexEmoji = "🎂🎉🎈🎁🥳💐🍰🎊";
         
-        Family domainFamily = Family.newFamily(
+        Family domainFamily = FamilyFixture.newFamily(
                 "생일파티",
                 complexEmoji,
                 "https://example.com/party.jpg",
-                true // isPublic
+                true
         );
         
         FamilyJpaEntity familyEntity = FamilyJpaEntity.from(domainFamily);
@@ -81,11 +82,11 @@ class FamilyEmojiIntegrationTest extends TestcontainersDataJpaTestBase {
         String mixedText = "안녕하세요! 👋 저희는 김씨 가족입니다 🏡 반갑습니다! 😊";
         String familyName = "김씨 가족";
         
-        Family domainFamily = Family.newFamily(
+        Family domainFamily = FamilyFixture.newFamily(
                 familyName,
                 mixedText,
                 "https://example.com/kim-family.jpg",
-                true // isPublic
+                true
         );
         
         FamilyJpaEntity familyEntity = FamilyJpaEntity.from(domainFamily);

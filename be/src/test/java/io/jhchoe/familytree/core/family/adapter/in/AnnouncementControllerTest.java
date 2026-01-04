@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.*;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.*;
 import io.jhchoe.familytree.core.family.domain.*;
+import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import java.time.LocalDateTime;
@@ -36,7 +37,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         FamilyJpaEntity family = familyJpaRepository.save(
-            FamilyJpaEntity.from(Family.newFamily("가족", "설명", null, true))
+            FamilyJpaEntity.from(FamilyFixture.newFamily("가족", "설명", null, true))
         );
         familyMemberJpaRepository.save(
             FamilyMemberJpaEntity.from(FamilyMember.newOwner(
@@ -69,7 +70,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         FamilyJpaEntity family = familyJpaRepository.save(
-            FamilyJpaEntity.from(Family.newFamily("가족", "설명", null, true))
+            FamilyJpaEntity.from(FamilyFixture.newFamily("가족", "설명", null, true))
         );
         familyMemberJpaRepository.save(
             FamilyMemberJpaEntity.from(FamilyMember.newOwner(
@@ -103,7 +104,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         FamilyJpaEntity family = familyJpaRepository.save(
-            FamilyJpaEntity.from(Family.newFamily("가족", "설명", null, true))
+            FamilyJpaEntity.from(FamilyFixture.newFamily("가족", "설명", null, true))
         );
         familyMemberJpaRepository.save(
             FamilyMemberJpaEntity.from(FamilyMember.newOwner(
@@ -141,7 +142,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
     void save_announcement_returns_401_when_user_not_authenticated() {
         // given
         FamilyJpaEntity family = familyJpaRepository.save(
-            FamilyJpaEntity.from(Family.newFamily("가족", "설명", null, true))
+            FamilyJpaEntity.from(FamilyFixture.newFamily("가족", "설명", null, true))
         );
 
         // when & then
