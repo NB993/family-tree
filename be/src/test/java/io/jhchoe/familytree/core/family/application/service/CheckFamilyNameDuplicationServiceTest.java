@@ -53,7 +53,7 @@ class CheckFamilyNameDuplicationServiceTest {
     void should_return_available_false_when_family_name_already_exists() {
         // given
         String familyName = "기존가족";
-        Family existingFamily = FamilyFixture.withId(1L, familyName, "기존 가족 설명", "http://example.com/profile.jpg", true);
+        Family existingFamily = FamilyFixture.withId(1L, familyName, true);
         
         given(findFamilyPort.findByName(familyName)).willReturn(Optional.of(existingFamily));
 

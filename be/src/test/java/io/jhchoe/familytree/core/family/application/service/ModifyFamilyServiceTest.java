@@ -55,7 +55,7 @@ class ModifyFamilyServiceTest {
         ModifyFamilyCommand command = new ModifyFamilyCommand(familyId, "Updated Name", "http://example.com/profile",
             "Updated Description", userId);
 
-        Family family = FamilyFixture.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true);
+        Family family = FamilyFixture.withId(familyId);
 
         FamilyMember ownerMember = FamilyMemberFixture.withIdAndRole(1L, familyId, userId, FamilyMemberRole.OWNER);
 
@@ -116,7 +116,7 @@ class ModifyFamilyServiceTest {
         Long userId = 1L;
         ModifyFamilyCommand command = new ModifyFamilyCommand(familyId, "Updated Name", "http://example.com/profile",
             "Updated Description", userId);
-        Family family = FamilyFixture.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true);
+        Family family = FamilyFixture.withId(familyId);
 
         FamilyMember ownerMember = FamilyMemberFixture.withIdAndRole(1L, familyId, userId, FamilyMemberRole.OWNER);
 

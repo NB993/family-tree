@@ -15,7 +15,7 @@ class FindFamilyResponseTest {
     @DisplayName("Family 도메인 객체에서 FindFamilyResponse로 변환할 수 있다")
     void create_response_from_family_domain() {
         // given
-        Family family = FamilyFixture.withId(1L, "테스트 가족", "테스트 가족 설명", "http://example.com/profile.jpg", true);
+        Family family = FamilyFixture.withId(1L);
 
         // when
         FindFamilyResponse response = FindFamilyResponse.from(family);
@@ -35,7 +35,7 @@ class FindFamilyResponseTest {
     @DisplayName("Family에서 변환된 FindFamilyResponse의 필드가 정확히 매핑된다")
     void field_mapping_is_correct() {
         // given
-        Family family = FamilyFixture.withId(2L, "다른 가족", "다른 설명", "http://example.com/other.jpg", true);
+        Family family = FamilyFixture.withId(2L);
 
         // when
         FindFamilyResponse response = FindFamilyResponse.from(family);

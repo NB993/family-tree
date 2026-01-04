@@ -37,7 +37,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         FamilyJpaEntity family = familyJpaRepository.save(
-            FamilyJpaEntity.from(FamilyFixture.newFamily("가족", "설명", null, true))
+            FamilyJpaEntity.from(FamilyFixture.newFamily())
         );
         familyMemberJpaRepository.save(
             FamilyMemberJpaEntity.from(FamilyMember.newOwner(
@@ -70,7 +70,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         FamilyJpaEntity family = familyJpaRepository.save(
-            FamilyJpaEntity.from(FamilyFixture.newFamily("가족", "설명", null, true))
+            FamilyJpaEntity.from(FamilyFixture.newFamily())
         );
         familyMemberJpaRepository.save(
             FamilyMemberJpaEntity.from(FamilyMember.newOwner(
@@ -104,7 +104,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         FamilyJpaEntity family = familyJpaRepository.save(
-            FamilyJpaEntity.from(FamilyFixture.newFamily("가족", "설명", null, true))
+            FamilyJpaEntity.from(FamilyFixture.newFamily())
         );
         familyMemberJpaRepository.save(
             FamilyMemberJpaEntity.from(FamilyMember.newOwner(
@@ -142,7 +142,7 @@ class AnnouncementControllerTest extends AcceptanceTestBase {
     void save_announcement_returns_401_when_user_not_authenticated() {
         // given
         FamilyJpaEntity family = familyJpaRepository.save(
-            FamilyJpaEntity.from(FamilyFixture.newFamily("가족", "설명", null, true))
+            FamilyJpaEntity.from(FamilyFixture.newFamily())
         );
 
         // when & then

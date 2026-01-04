@@ -46,7 +46,7 @@ public class FindFamilyServiceTest {
         Long familyId = 1L;
         Long currentUserId = 1L;
         FindFamilyByIdQuery query = new FindFamilyByIdQuery(familyId, currentUserId);
-        Family expectedFamily = FamilyFixture.withId(familyId, "name", "description", "profile", true);
+        Family expectedFamily = FamilyFixture.withId(familyId);
 
         when(findFamilyPort.findById(familyId)).thenReturn(Optional.of(expectedFamily));
         // 공개 Family이므로 FamilyMember 조회는 Mock 불필요 (validateFamilyAccessPermission에서 바로 return)
@@ -129,8 +129,8 @@ public class FindFamilyServiceTest {
         // given
         FindFamilyByNameContainingQuery query = new FindFamilyByNameContainingQuery("가족");
 
-        Family family = FamilyFixture.newFamily("가족 이름1", "설명", "프로필 url", true);
-        Family family2 = FamilyFixture.newFamily("가족 이름2", "설명", "프로필 url", true);
+        Family family = FamilyFixture.newFamily("가족 이름1");
+        Family family2 = FamilyFixture.newFamily("가족 이름2");
 
         // when
         when(findFamilyPort.findByNameContaining(query.getName()))

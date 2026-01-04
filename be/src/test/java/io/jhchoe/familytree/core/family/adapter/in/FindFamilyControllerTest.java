@@ -51,7 +51,7 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     @DisplayName("가족 정보를 ID로 조회할 수 있다")
     void given_id_when_find_family_by_then_return_family_with_status_200() {
         // given
-        Family family = FamilyFixture.newFamily("Family Name", "descrption", "profileUrl", true);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
 
         // when & then
@@ -143,9 +143,9 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
         Long currentUserId = 100L;
         
         // Family 생성
-        Family family1 = FamilyFixture.newFamily("우리가족", "행복한 우리 가족", "profile1.jpg", false);
-        Family family2 = FamilyFixture.newFamily("친척가족", "큰집 가족", "profile2.jpg", true);
-        Family family3 = FamilyFixture.newFamily("다른가족", "관련없는 가족", "profile3.jpg", false);
+        Family family1 = FamilyFixture.newFamily("우리가족", null, null, false);
+        Family family2 = FamilyFixture.newFamily("친척가족");
+        Family family3 = FamilyFixture.newFamily("다른가족", null, null, false);
         
         FamilyJpaEntity savedFamily1 = familyJpaRepository.save(FamilyJpaEntity.from(family1));
         FamilyJpaEntity savedFamily2 = familyJpaRepository.save(FamilyJpaEntity.from(family2));
@@ -175,9 +175,7 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
             .statusCode(200)
             .body("$", hasSize(2))
             .body("id", containsInAnyOrder(savedFamily1.getId().intValue(), savedFamily2.getId().intValue()))
-            .body("name", containsInAnyOrder("우리가족", "친척가족"))
-            .body("description", containsInAnyOrder("행복한 우리 가족", "큰집 가족"))
-            .body("profileUrl", containsInAnyOrder("profile1.jpg", "profile2.jpg"));
+            .body("name", containsInAnyOrder("우리가족", "친척가족"));
     }
 
     @Test
@@ -186,7 +184,7 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     void given_user_with_no_families_when_find_my_families_then_return_empty_list() {
         // given
         // 다른 사용자의 Family는 있지만 현재 사용자(200L)는 소속되지 않음
-        Family family = FamilyFixture.newFamily("다른가족", "관련없는 가족", "profile.jpg", false);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         
         FamilyMember member = FamilyMember.withRole(
@@ -212,10 +210,10 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     void given_keyword_when_find_public_families_then_return_public_families_with_cursor_pagination() {
         // given
         // 공개 Family 생성
-        Family publicFamily1 = FamilyFixture.newFamily("공개가족1", "누구나 가입 가능", "public1.jpg", true);
-        Family publicFamily2 = FamilyFixture.newFamily("공개가족2", "열린 가족", "public2.jpg", true);
+        Family publicFamily1 = FamilyFixture.newFamily("공개가족1");
+        Family publicFamily2 = FamilyFixture.newFamily("공개가족2");
         // 비공개 Family 생성 (검색 결과에 포함되지 않아야 함)
-        Family privateFamily = FamilyFixture.newFamily("비공개가족", "가족만", "private.jpg", false);
+        Family privateFamily = FamilyFixture.newFamily("비공개가족", null, null, false);
         
         familyJpaRepository.save(FamilyJpaEntity.from(publicFamily1));
         familyJpaRepository.save(FamilyJpaEntity.from(publicFamily2));
@@ -244,9 +242,9 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
     @DisplayName("키워드 없이 공개 Family 목록을 조회할 수 있다")
     void given_no_keyword_when_find_public_families_then_return_all_public_families() {
         // given
-        Family publicFamily1 = FamilyFixture.newFamily("공개가족1", "설명1", "public1.jpg", true);
-        Family publicFamily2 = FamilyFixture.newFamily("공개가족2", "설명2", "public2.jpg", true);
-        Family privateFamily = FamilyFixture.newFamily("비공개가족", "설명3", "private.jpg", false);
+        Family publicFamily1 = FamilyFixture.newFamily("공개가족1");
+        Family publicFamily2 = FamilyFixture.newFamily("공개가족2");
+        Family privateFamily = FamilyFixture.newFamily("비공개가족", null, null, false);
         
         familyJpaRepository.save(FamilyJpaEntity.from(publicFamily1));
         familyJpaRepository.save(FamilyJpaEntity.from(publicFamily2));

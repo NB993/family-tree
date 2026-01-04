@@ -52,7 +52,7 @@ class FindFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -99,7 +99,7 @@ class FindFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 100L;
         
         // Family 생성
-        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -145,7 +145,7 @@ class FindFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 100L;
         
         // Family 생성
-        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -181,7 +181,7 @@ class FindFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long currentUserId = 1L; // WithMockOAuth2User 기본 사용자 ID (Family 구성원 아님)
         
         // Family 생성
-        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -238,7 +238,7 @@ class FindFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         

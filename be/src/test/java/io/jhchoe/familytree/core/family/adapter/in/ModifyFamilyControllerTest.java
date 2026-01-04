@@ -50,12 +50,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         FTUser ftUser = (FTUser) authentication.getPrincipal();
         Long userId = ftUser.getId();
 
-        Family family = FamilyFixture.newFamily(
-            "Original Family Name",
-            "Original description",
-            "http://example.com/original-profile",
-            true
-        );
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
 
@@ -108,12 +103,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         FTUser ftUser = (FTUser) authentication.getPrincipal();
         Long userId = ftUser.getId();
 
-        Family family = FamilyFixture.newFamily(
-            "Original Family Name",
-            "Original description",
-            "http://example.com/original-profile",
-            true
-        );
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
 
@@ -141,9 +131,9 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .then()
             .statusCode(200)
             .body("id", equalTo(familyId.intValue()))
-            .body("name", equalTo("Original Family Name"))
-            .body("description", equalTo("Original description"))
-            .body("profileUrl", equalTo("http://example.com/original-profile"));
+            .body("name", equalTo("테스트가족"))
+            .body("description", equalTo("테스트 가족 설명"))
+            .body("profileUrl", equalTo("https://example.com/family-profile.jpg"));
     }
 
     @WithMockOAuth2User
@@ -155,12 +145,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         FTUser ftUser = (FTUser) authentication.getPrincipal();
         Long userId = ftUser.getId();
 
-        Family family = FamilyFixture.newFamily(
-            "Original Family Name",
-            "Original description",
-            "http://example.com/original-profile",
-            true
-        );
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
 
@@ -188,9 +173,9 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .then()
             .statusCode(200)
             .body("id", equalTo(familyId.intValue()))
-            .body("name", equalTo("Original Family Name"))
-            .body("description", equalTo("Original description"))
-            .body("profileUrl", equalTo("http://example.com/original-profile"));
+            .body("name", equalTo("테스트가족"))
+            .body("description", equalTo("테스트 가족 설명"))
+            .body("profileUrl", equalTo("https://example.com/family-profile.jpg"));
     }
 
     @WithMockOAuth2User
@@ -202,12 +187,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         FTUser ftUser = (FTUser) authentication.getPrincipal();
         Long userId = ftUser.getId();
 
-        Family family = FamilyFixture.newFamily(
-            "Original Family Name",
-            "Original description",
-            "http://example.com/original-profile",
-            true
-        );
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
 
@@ -235,9 +215,9 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .then()
             .statusCode(200)
             .body("id", equalTo(familyId.intValue()))
-            .body("name", equalTo("Original Family Name"))
-            .body("description", equalTo("Original description"))
-            .body("profileUrl", equalTo("http://example.com/original-profile"));
+            .body("name", equalTo("테스트가족"))
+            .body("description", equalTo("테스트 가족 설명"))
+            .body("profileUrl", equalTo("https://example.com/family-profile.jpg"));
     }
 
     @WithMockOAuth2User
@@ -249,12 +229,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         FTUser ftUser = (FTUser) authentication.getPrincipal();
         Long userId = ftUser.getId();
 
-        Family family = FamilyFixture.newFamily(
-            "Original Family Name",
-            "Original description",
-            "http://example.com/original-profile",
-            true
-        );
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
 
@@ -282,8 +257,8 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
             .then()
             .statusCode(200)
             .body("id", equalTo(familyId.intValue()))
-            .body("name", equalTo("Original Family Name"))
-            .body("description", equalTo("Original description"))
-            .body("profileUrl", equalTo("http://example.com/original-profile"));
+            .body("name", equalTo("테스트가족"))
+            .body("description", equalTo("테스트 가족 설명"))
+            .body("profileUrl", equalTo("https://example.com/family-profile.jpg"));
     }
 }

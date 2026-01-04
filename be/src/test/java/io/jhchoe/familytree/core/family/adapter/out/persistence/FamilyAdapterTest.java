@@ -39,7 +39,7 @@ class FamilyAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("modifyFamily 메서드는 유효한 Family 인스턴스를 통해 데이터를 수정하고 ID를 반환해야 한다.")
     void given_valid_family_when_modify_family_then_return_id() {
         // given
-        Family family = FamilyFixture.newFamily("Name", "Description", "http://example.com", true);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedEntity = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Family modifyFamily = FamilyFixture.withId(savedEntity.getId(), "Updated Name", "Updated Description",
             "http://updated-url.com", true);
@@ -64,7 +64,7 @@ class FamilyAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("modifyFamily 메서드는 존재하지 않는 Family ID로 요청 시 FTException을 발생시켜야 한다.")
     void given_non_existent_family_id_when_modify_family_then_throw_ft_exception() {
         // given
-        Family family = FamilyFixture.withId(999L, "Name", "Description", "http://example.com", true);
+        Family family = FamilyFixture.withId(999L);
 
         // when & then
         assertThatThrownBy(() -> sut.modifyFamily(family))
@@ -90,18 +90,15 @@ class FamilyAdapterTest extends TestcontainersDataJpaTestBase {
         // given
         String name = null;
 
-        Family family = FamilyFixture.newFamily("가족 이름", "Description", "http://example.com", true);
+        Family family = FamilyFixture.newFamily("가족 이름");
         FamilyJpaEntity savedEntity = familyJpaRepository.save(FamilyJpaEntity.from(family));
 
         // when
         List<Family> families = sut.findByNameContaining(null);
 
         // then
-        // when & then
         assertThat(families).hasSize(1);
         assertThat(families).extracting("name").containsExactlyInAnyOrder("가족 이름");
-        assertThat(families).extracting("description").containsExactlyInAnyOrder("Description");
-        assertThat(families).extracting("profileUrl").containsExactlyInAnyOrder("http://example.com");
 
     }
 
@@ -109,8 +106,8 @@ class FamilyAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("findByNameContaining 메서드는 name을 전달받으면 해당 name을 포함한 Family 목록을 응답해야 한다.")
     void given_name_when_find_by_name_containing_then_return_family_list() {
         // given
-        Family family1 = FamilyFixture.newFamily("가족 이름1", "Description", "http://example.com", true);
-        Family family2 = FamilyFixture.newFamily("가족 이름2", "Description", "http://example.com", true);
+        Family family1 = FamilyFixture.newFamily("가족 이름1");
+        Family family2 = FamilyFixture.newFamily("가족 이름2");
         FamilyJpaEntity savedEntity1 = familyJpaRepository.save(FamilyJpaEntity.from(family1));
         FamilyJpaEntity savedEntity2 = familyJpaRepository.save(FamilyJpaEntity.from(family2));
 

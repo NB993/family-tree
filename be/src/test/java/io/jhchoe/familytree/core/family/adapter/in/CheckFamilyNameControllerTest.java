@@ -193,12 +193,7 @@ class CheckFamilyNameControllerTest extends AcceptanceTestBase {
         Long testUserId = createTestUserAndGetId();
         LocalDateTime now = LocalDateTime.now();
         
-        Family family = FamilyFixture.newFamily(
-            familyName,
-            "테스트 가족 설명",
-            "https://example.com/test-family.jpg",
-            true
-        );
+        Family family = FamilyFixture.newFamily(familyName);
         
         FamilyJpaEntity familyEntity = FamilyJpaEntity.from(family);
         // JPA Entity의 audit 필드들은 자동으로 설정되므로 직접 설정하지 않음

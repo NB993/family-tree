@@ -45,7 +45,7 @@ class FindFamilyTreeServiceTest {
         Long centerMemberId = 1L;
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, centerMemberId, 3);
         
-        Family family = FamilyFixture.withId(familyId, "테스트가족", "설명", "프로필URL", true);
+        Family family = FamilyFixture.withId(familyId);
 
         FamilyMember centerMember = FamilyMemberFixture.withIdAndRole(centerMemberId, familyId, 1L, FamilyMemberRole.ADMIN);
         FamilyMember childMember = FamilyMemberFixture.withIdAndRole(2L, familyId, 2L, FamilyMemberRole.MEMBER);
@@ -101,7 +101,7 @@ class FindFamilyTreeServiceTest {
         Long familyId = 1L;
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, null, 3);
         
-        Family family = FamilyFixture.withId(familyId, "빈가족", "설명", "프로필URL", true);
+        Family family = FamilyFixture.withId(familyId);
         
         // Mocking: 가족 존재하지만 구성원 없음
         when(findFamilyTreePort.findFamily(familyId)).thenReturn(Optional.of(family));
@@ -124,7 +124,7 @@ class FindFamilyTreeServiceTest {
         Long invalidCenterMemberId = 999L;
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, invalidCenterMemberId, 3);
         
-        Family family = FamilyFixture.withId(familyId, "테스트가족", "설명", "프로필URL", true);
+        Family family = FamilyFixture.withId(familyId);
 
         FamilyMember member = FamilyMemberFixture.withId(1L, familyId, 1L);
         
@@ -146,7 +146,7 @@ class FindFamilyTreeServiceTest {
         Long familyId = 1L;
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, null, 3); // 중심 구성원 지정 안함
         
-        Family family = FamilyFixture.withId(familyId, "테스트가족", "설명", "프로필URL", true);
+        Family family = FamilyFixture.withId(familyId);
 
         FamilyMember firstMember = FamilyMemberFixture.withIdAndName(1L, "첫번째구성원");
         FamilyMember secondMember = FamilyMemberFixture.withIdAndName(2L, "두번째구성원");

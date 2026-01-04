@@ -46,7 +46,7 @@ class FindFamilyMemberRoleAcceptanceTest extends AcceptanceTestBase {
         Long userId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성 (withId로 필요한 필드 포함)
-        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -102,7 +102,7 @@ class FindFamilyMemberRoleAcceptanceTest extends AcceptanceTestBase {
         Long currentUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
@@ -159,7 +159,7 @@ class FindFamilyMemberRoleAcceptanceTest extends AcceptanceTestBase {
         Long userId = 1L; // WithMockOAuth2User 기본 사용자 ID
         
         // Family 생성
-        Family family = FamilyFixture.newFamily("테스트 가족", "가족 설명", "profile.jpg", true);
+        Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
         
