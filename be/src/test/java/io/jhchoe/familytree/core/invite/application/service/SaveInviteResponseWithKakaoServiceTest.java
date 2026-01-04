@@ -5,7 +5,7 @@ import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPor
 import io.jhchoe.familytree.core.family.application.port.out.SaveFamilyMemberPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
-import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import io.jhchoe.familytree.core.invite.application.port.in.SaveInviteResponseWithKakaoCommand;
 import io.jhchoe.familytree.core.invite.application.port.out.FindFamilyInvitePort;
 import io.jhchoe.familytree.core.invite.application.port.out.ModifyFamilyInvitePort;
@@ -82,23 +82,7 @@ class SaveInviteResponseWithKakaoServiceTest {
             LocalDateTime.now()
         );
 
-        requesterMember = FamilyMember.withId(
-            1L,
-            10L, // familyId
-            100L, // userId (requesterId와 동일)
-            null, // kakaoId
-            "요청자",
-            null,
-            null, // relationship
-            null,
-            null,
-            FamilyMemberStatus.ACTIVE,
-            FamilyMemberRole.MEMBER,
-            null,
-            null,
-            null,
-            null
-        );
+        requesterMember = FamilyMemberFixture.withIdAndRole(1L, 10L, 100L, FamilyMemberRole.MEMBER);
     }
 
     @Test
@@ -252,22 +236,8 @@ class SaveInviteResponseWithKakaoServiceTest {
             .thenReturn(Optional.empty());
 
         // 초대 생성자의 FamilyMember 조회 모킹 - 동일한 kakaoId
-        FamilyMember requesterMemberWithSameKakaoId = FamilyMember.withId(
-            1L,
-            10L, // familyId
-            100L, // userId (requesterId와 동일)
-            "kakao_12345", // kakaoId - command의 kakaoId와 동일
-            "소유자",
-            null,
-            null, // relationship
-            null,
-            null,
-            FamilyMemberStatus.ACTIVE,
-            FamilyMemberRole.OWNER,
-            null,
-            null,
-            null,
-            null
+        FamilyMember requesterMemberWithSameKakaoId = FamilyMemberFixture.withIdKakaoRoleAndName(
+            1L, 10L, "kakao_12345", FamilyMemberRole.OWNER, "소유자"
         );
         when(findFamilyMemberPort.findByFamilyIdAndUserId(10L, 100L))
             .thenReturn(Optional.of(requesterMemberWithSameKakaoId));
@@ -298,22 +268,8 @@ class SaveInviteResponseWithKakaoServiceTest {
             .thenReturn(Optional.of(requesterMember));
 
         // 이미 같은 kakaoId를 가진 멤버가 존재
-        FamilyMember existingKakaoMember = FamilyMember.withIdKakao(
-            2L,
-            10L,
-            null,
-            "kakao_12345",
-            "기존유저",
-            null, // relationship
-            null,
-            null,
-            null,
-            FamilyMemberStatus.ACTIVE,
-            FamilyMemberRole.MEMBER,
-            null,
-            null,
-            null,
-            null
+        FamilyMember existingKakaoMember = FamilyMemberFixture.withIdKakaoRoleAndName(
+            2L, 10L, "kakao_12345", FamilyMemberRole.MEMBER, "기존유저"
         );
 
         // 가족 구성원 조회 모킹 - 기존 구성원에 같은 kakaoId 존재

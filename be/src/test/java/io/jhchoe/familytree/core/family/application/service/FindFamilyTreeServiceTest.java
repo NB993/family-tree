@@ -8,9 +8,9 @@ import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationshipType;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
-import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.core.family.domain.FamilyTree;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -45,16 +45,9 @@ class FindFamilyTreeServiceTest {
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, centerMemberId, 3);
         
         Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
-        
-        FamilyMember centerMember = FamilyMember.withId(
-            centerMemberId, familyId, 1L, null, "중심구성원", null, "profile.jpg", LocalDateTime.now(),
-            "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
-        );
-        
-        FamilyMember childMember = FamilyMember.withId(
-            2L, familyId, 2L, null, "자녀", null, "child.jpg", LocalDateTime.now(),
-            "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
-        );
+
+        FamilyMember centerMember = FamilyMemberFixture.withIdAndRole(centerMemberId, familyId, 1L, FamilyMemberRole.ADMIN);
+        FamilyMember childMember = FamilyMemberFixture.withIdAndRole(2L, familyId, 2L, FamilyMemberRole.MEMBER);
         
         List<FamilyMember> familyMembers = List.of(centerMember, childMember);
         
@@ -131,11 +124,8 @@ class FindFamilyTreeServiceTest {
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, invalidCenterMemberId, 3);
         
         Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
-        
-        FamilyMember member = FamilyMember.withId(
-            1L, familyId, 1L, null, "구성원", null, "profile.jpg", LocalDateTime.now(),
-            "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
-        );
+
+        FamilyMember member = FamilyMemberFixture.withId(1L, familyId, 1L);
         
         // Mocking: 가족 존재하지만 지정된 중심 구성원이 없음
         when(findFamilyTreePort.findFamily(familyId)).thenReturn(Optional.of(family));
@@ -156,16 +146,9 @@ class FindFamilyTreeServiceTest {
         FindFamilyTreeQuery query = new FindFamilyTreeQuery(familyId, null, 3); // 중심 구성원 지정 안함
         
         Family family = Family.withId(familyId, "테스트가족", "설명", "프로필URL", true, 1L, LocalDateTime.now(), 1L, LocalDateTime.now());
-        
-        FamilyMember firstMember = FamilyMember.withId(
-            1L, familyId, 1L, null, "첫번째구성원", null, "profile1.jpg", LocalDateTime.now(),
-            "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
-        );
-        
-        FamilyMember secondMember = FamilyMember.withId(
-            2L, familyId, 2L, null, "두번째구성원", null, "profile2.jpg", LocalDateTime.now(),
-            "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER, 1L, LocalDateTime.now(), 1L, LocalDateTime.now()
-        );
+
+        FamilyMember firstMember = FamilyMemberFixture.withIdAndName(1L, "첫번째구성원");
+        FamilyMember secondMember = FamilyMemberFixture.withIdAndName(2L, "두번째구성원");
         
         List<FamilyMember> familyMembers = List.of(firstMember, secondMember);
         

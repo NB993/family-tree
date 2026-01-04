@@ -14,7 +14,7 @@ import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatusHistory;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
-import java.time.LocalDateTime;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,12 +53,12 @@ class ModifyFamilyMemberStatusServiceTest {
         String reason = "장기 미접속";
 
         // OWNER 권한을 가진 현재 사용자
-        FamilyMember currentMember = createFamilyMember(3L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.OWNER);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
 
         // 대상 구성원 (ACTIVE -> SUSPENDED로 변경할 대상)
-        FamilyMember targetMember = createFamilyMember(targetMemberId, familyId, 4L, FamilyMemberRole.MEMBER);
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, 4L, FamilyMemberRole.MEMBER);
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.of(targetMember));
 
@@ -94,12 +94,12 @@ class ModifyFamilyMemberStatusServiceTest {
         String reason = "장기 미접속";
 
         // ADMIN 권한을 가진 현재 사용자
-        FamilyMember currentMember = createFamilyMember(3L, familyId, currentUserId, FamilyMemberRole.ADMIN);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.ADMIN);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
 
         // 대상 구성원 (일반 구성원)
-        FamilyMember targetMember = createFamilyMember(targetMemberId, familyId, 4L, FamilyMemberRole.MEMBER);
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, 4L, FamilyMemberRole.MEMBER);
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.of(targetMember));
 
@@ -156,7 +156,7 @@ class ModifyFamilyMemberStatusServiceTest {
         String reason = "장기 미접속";
 
         // 일반 구성원 권한을 가진 현재 사용자
-        FamilyMember currentMember = createFamilyMember(3L, familyId, currentUserId, FamilyMemberRole.MEMBER);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.MEMBER);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
 
@@ -182,12 +182,12 @@ class ModifyFamilyMemberStatusServiceTest {
         String reason = "장기 미접속";
 
         // ADMIN 권한을 가진 현재 사용자
-        FamilyMember currentMember = createFamilyMember(3L, familyId, currentUserId, FamilyMemberRole.ADMIN);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.ADMIN);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
 
         // 대상 구성원 (다른 ADMIN)
-        FamilyMember targetMember = createFamilyMember(targetMemberId, familyId, 4L, FamilyMemberRole.ADMIN);
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, 4L, FamilyMemberRole.ADMIN);
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.of(targetMember));
 
@@ -213,12 +213,12 @@ class ModifyFamilyMemberStatusServiceTest {
         String reason = "장기 미접속";
 
         // OWNER 권한을 가진 현재 사용자
-        FamilyMember currentMember = createFamilyMember(3L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.OWNER);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
 
         // 대상 구성원 (다른 OWNER)
-        FamilyMember targetMember = createFamilyMember(targetMemberId, familyId, 4L, FamilyMemberRole.OWNER);
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, 4L, FamilyMemberRole.OWNER);
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.of(targetMember));
 
@@ -244,7 +244,7 @@ class ModifyFamilyMemberStatusServiceTest {
         String reason = "장기 미접속";
 
         // OWNER 권한을 가진 현재 사용자
-        FamilyMember currentMember = createFamilyMember(3L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.OWNER);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
 
@@ -275,14 +275,4 @@ class ModifyFamilyMemberStatusServiceTest {
             .hasMessage("command must not be null");
     }
 
-    /**
-     * 테스트용 FamilyMember 객체를 생성합니다.
-     */
-    private FamilyMember createFamilyMember(Long id, Long familyId, Long userId, FamilyMemberRole role) {
-        return FamilyMember.withId(
-            id, familyId, userId, null, "Test User", null, "profile.jpg",
-            LocalDateTime.now(), "KR", FamilyMemberStatus.ACTIVE, role,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
-        );
-    }
 }

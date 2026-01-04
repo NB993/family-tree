@@ -16,6 +16,7 @@ import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -55,26 +56,9 @@ class FindFamilyJoinRequestServiceTest {
         Long currentUserId = 2L;
         query = new FindFamilyJoinRequestQuery(familyId, currentUserId);
         
-        adminMember = FamilyMember.withId(
-            1L, familyId, currentUserId, null, "Admin User", null, "profile.jpg", 
-            LocalDateTime.of(1990, 1, 1, 0, 0),
-            "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
-            null, null, null, null
-        );
-        
-        ownerMember = FamilyMember.withId(
-            2L, familyId, currentUserId, null, "Owner User", null, "profile.jpg", 
-            LocalDateTime.of(1990, 1, 1, 0, 0),
-            "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
-            null, null, null, null
-        );
-        
-        regularMember = FamilyMember.withId(
-            3L, familyId, currentUserId, null, "Regular User", null, "profile.jpg", 
-            LocalDateTime.of(1990, 1, 1, 0, 0),
-            "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            null, null, null, null
-        );
+        adminMember = FamilyMemberFixture.withIdAndRole(1L, familyId, currentUserId, FamilyMemberRole.ADMIN);
+        ownerMember = FamilyMemberFixture.withIdAndRole(2L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        regularMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.MEMBER);
         
         joinRequests = List.of(
             FamilyJoinRequest.withId(1L, familyId, 3L, FamilyJoinRequestStatus.PENDING, 
@@ -190,11 +174,8 @@ class FindFamilyJoinRequestServiceTest {
     @DisplayName("비활성화된 구성원이 조회하면 MEMBER_NOT_ACTIVE 예외를 발생시킨다")
     void should_throw_member_not_active_exception_when_member_is_inactive() {
         // given
-        FamilyMember inactiveMember = FamilyMember.withId(
-            1L, query.getFamilyId(), query.getCurrentUserId(), null, "Inactive Admin", null, "profile.jpg", 
-            LocalDateTime.of(1990, 1, 1, 0, 0),
-            "KR", FamilyMemberStatus.SUSPENDED, FamilyMemberRole.ADMIN,
-            null, null, null, null
+        FamilyMember inactiveMember = FamilyMemberFixture.withIdRoleAndStatus(
+            1L, FamilyMemberRole.ADMIN, FamilyMemberStatus.SUSPENDED
         );
         
         given(findFamilyPort.existsById(query.getFamilyId())).willReturn(true);

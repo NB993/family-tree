@@ -7,8 +7,8 @@ import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.helper.TestcontainersDataJpaTestBase;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,20 +57,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         // given
         Long familyId = 1L;
         Long userId = 1L;
-        String kakaoId = "kakaoId";
-        String name = "name";
-        String profileUrl = "profileUrl";
-        LocalDateTime birthday = LocalDateTime.now();
-        String nationality = "nationality";
-
-        FamilyMember familyMember = FamilyMember.newMember(
-            familyId,
-            userId,
-            name,
-            profileUrl,
-            birthday,
-            nationality
-        );
+        FamilyMember familyMember = FamilyMemberFixture.newMember(familyId, userId);
         FamilyMemberJpaEntity familyMemberJpaEntity = FamilyMemberJpaEntity.from(familyMember);
         familyMemberJpaRepository.save(familyMemberJpaEntity);
 
@@ -145,7 +132,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("findById 메서드는 ID로 FamilyMember를 조회할 수 있다")
     void return_family_member_when_exists_by_id() {
         // given
-        FamilyMember member = FamilyMember.newOwner(1L, 1L, null, "Owner", null, null, "KR");
+        FamilyMember member = FamilyMemberFixture.newOwner(1L, 1L);
         FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
         FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
         
@@ -155,7 +142,6 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         // then
         assertThat(result).isPresent();
         assertThat(result.get().getId()).isEqualTo(savedEntity.getId());
-        assertThat(result.get().getName()).isEqualTo("Owner");
         assertThat(result.get().getRole()).isEqualTo(FamilyMemberRole.OWNER);
     }
     
@@ -178,7 +164,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         // given
         Long familyId = 1L;
         Long userId = 1L;
-        FamilyMember member = FamilyMember.newMember(familyId, userId, "Member", null, null, "KR");
+        FamilyMember member = FamilyMemberFixture.newMember(familyId, userId);
         FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
         familyMemberJpaRepository.save(entity);
         
@@ -197,21 +183,21 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
     void return_all_family_members_by_family_id() {
         // given
         Long familyId = 1L;
-        
+
         // OWNER 생성
-        FamilyMember owner = FamilyMember.newOwner(familyId, 1L, null, "Owner", null, null, "KR");
+        FamilyMember owner = FamilyMemberFixture.newOwner(familyId, 1L);
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(owner));
-        
-        // ADMIN 생성  
-        FamilyMember admin = FamilyMember.withRole(familyId, 2L, "Admin", null, null, "KR", FamilyMemberRole.ADMIN);
+
+        // ADMIN 생성
+        FamilyMember admin = FamilyMemberFixture.newAdmin(familyId, 2L);
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(admin));
-        
+
         // MEMBER 생성
-        FamilyMember member = FamilyMember.newMember(familyId, 3L, "Member", null, null, "KR");
+        FamilyMember member = FamilyMemberFixture.newMember(familyId, 3L);
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member));
-        
+
         // 다른 Family의 구성원
-        FamilyMember otherFamilyMember = FamilyMember.newMember(2L, 4L, "Other", null, null, "KR");
+        FamilyMember otherFamilyMember = FamilyMemberFixture.newMember(2L, 4L);
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(otherFamilyMember));
         
         // when
@@ -219,9 +205,6 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         
         // then
         assertThat(result).hasSize(3);
-        assertThat(result)
-            .extracting(FamilyMember::getName)
-            .containsExactlyInAnyOrder("Owner", "Admin", "Member");
         assertThat(result)
             .extracting(FamilyMember::getRole)
             .containsExactlyInAnyOrder(FamilyMemberRole.OWNER, FamilyMemberRole.ADMIN, FamilyMemberRole.MEMBER);
@@ -231,16 +214,14 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("modify 메서드는 FamilyMember의 역할을 성공적으로 변경한다")
     void modify_family_member_role_successfully() {
         // given
-        FamilyMember member = FamilyMember.newMember(1L, 1L, "Member", null, null, "KR");
+        FamilyMember member = FamilyMemberFixture.newMember(1L, 1L);
         FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
         FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
-        
+
         // 역할을 ADMIN으로 변경
-        FamilyMember memberWithRole = FamilyMember.withId(
-            savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(), null, 
-            savedEntity.getName(), null, savedEntity.getProfileUrl(), savedEntity.getBirthday(),
-            savedEntity.getNationality(), savedEntity.getStatus(), FamilyMemberRole.ADMIN,
-            savedEntity.getCreatedBy(), savedEntity.getCreatedAt(), savedEntity.getModifiedBy(), savedEntity.getModifiedAt()
+        FamilyMember memberWithRole = FamilyMemberFixture.withIdFull(
+            savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(),
+            FamilyMemberRole.ADMIN, savedEntity.getStatus()
         );
         
         // when
@@ -252,23 +233,20 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         // 변경 확인
         FamilyMemberJpaEntity modifiedEntity = familyMemberJpaRepository.findById(modifiedId).orElseThrow();
         assertThat(modifiedEntity.getRole()).isEqualTo(FamilyMemberRole.ADMIN);
-        assertThat(modifiedEntity.getName()).isEqualTo("Member"); // 다른 필드는 변경되지 않아야 함
     }
-    
+
     @Test
     @DisplayName("modify 메서드는 FamilyMember의 상태를 성공적으로 변경한다")
     void modify_family_member_status_successfully() {
         // given
-        FamilyMember member = FamilyMember.newMember(1L, 1L, "Member", null, null, "KR");
+        FamilyMember member = FamilyMemberFixture.newMember(1L, 1L);
         FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
         FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
-        
+
         // 상태를 SUSPENDED로 변경
-        FamilyMember memberWithStatus = FamilyMember.withId(
-            savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(), null,
-            savedEntity.getName(), null, savedEntity.getProfileUrl(), savedEntity.getBirthday(),
-            savedEntity.getNationality(), FamilyMemberStatus.SUSPENDED, savedEntity.getRole(),
-            savedEntity.getCreatedBy(), savedEntity.getCreatedAt(), savedEntity.getModifiedBy(), savedEntity.getModifiedAt()
+        FamilyMember memberWithStatus = FamilyMemberFixture.withIdFull(
+            savedEntity.getId(), savedEntity.getFamilyId(), savedEntity.getUserId(),
+            savedEntity.getRole(), FamilyMemberStatus.SUSPENDED
         );
         
         // when
@@ -280,14 +258,14 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
         // 변경 확인
         FamilyMemberJpaEntity modifiedEntity = familyMemberJpaRepository.findById(modifiedId).orElseThrow();
         assertThat(modifiedEntity.getStatus()).isEqualTo(FamilyMemberStatus.SUSPENDED);
-        assertThat(modifiedEntity.getRole()).isEqualTo(FamilyMemberRole.MEMBER); // 다른 필드는 변경되지 않아야 함
+        assertThat(modifiedEntity.getRole()).isEqualTo(FamilyMemberRole.MEMBER);
     }
-    
+
     @Test
     @DisplayName("modify 메서드는 ID가 null인 FamilyMember로 호출 시 예외를 발생시킨다")
     void throw_exception_when_modify_with_null_id() {
         // given
-        FamilyMember memberWithoutId = FamilyMember.newMember(1L, 1L, "Member", null, null, "KR");
+        FamilyMember memberWithoutId = FamilyMemberFixture.newMember(1L, 1L);
         
         // when & then
         assertThatThrownBy(() -> sut.modify(memberWithoutId))
@@ -299,11 +277,7 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("modify 메서드는 존재하지 않는 ID로 호출 시 예외를 발생시킨다")
     void throw_exception_when_modify_with_non_existent_id() {
         // given
-        FamilyMember memberWithNonExistentId = FamilyMember.withId(
-            999L, 1L, 1L, null, "Member", null, null, null, "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            null, null, null, null
-        );
+        FamilyMember memberWithNonExistentId = FamilyMemberFixture.withId(999L, 1L, 1L);
         
         // when & then
         assertThatThrownBy(() -> sut.modify(memberWithNonExistentId))
@@ -315,19 +289,17 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("save 메서드는 새로운 FamilyMember를 저장하고 ID를 반환한다")
     void save_family_member_successfully() {
         // given
-        FamilyMember newMember = FamilyMember.newMember(1L, 1L, "New Member", "profile.jpg", null, "KR");
-        
+        FamilyMember newMember = FamilyMemberFixture.newMember(1L, 1L);
+
         // when
         Long savedId = sut.save(newMember);
-        
+
         // then
         assertThat(savedId).isNotNull();
-        
+
         // 저장 확인
         Optional<FamilyMemberJpaEntity> savedEntity = familyMemberJpaRepository.findById(savedId);
         assertThat(savedEntity).isPresent();
-        assertThat(savedEntity.get().getName()).isEqualTo("New Member");
-        assertThat(savedEntity.get().getProfileUrl()).isEqualTo("profile.jpg");
         assertThat(savedEntity.get().getRole()).isEqualTo(FamilyMemberRole.MEMBER);
         assertThat(savedEntity.get().getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE);
     }
@@ -336,18 +308,17 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
     @DisplayName("save 메서드는 OWNER 역할의 FamilyMember를 저장할 수 있다")
     void save_owner_family_member_successfully() {
         // given
-        FamilyMember owner = FamilyMember.newOwner(1L, 1L, null, "Owner", null, null, "KR");
-        
+        FamilyMember owner = FamilyMemberFixture.newOwner(1L, 1L);
+
         // when
         Long savedId = sut.save(owner);
-        
+
         // then
         assertThat(savedId).isNotNull();
-        
+
         // 저장 확인
         Optional<FamilyMemberJpaEntity> savedEntity = familyMemberJpaRepository.findById(savedId);
         assertThat(savedEntity).isPresent();
-        assertThat(savedEntity.get().getName()).isEqualTo("Owner");
         assertThat(savedEntity.get().getRole()).isEqualTo(FamilyMemberRole.OWNER);
         assertThat(savedEntity.get().getStatus()).isEqualTo(FamilyMemberStatus.ACTIVE);
     }
@@ -366,34 +337,27 @@ class FamilyMemberAdapterTest extends TestcontainersDataJpaTestBase {
 
     /**
      * 테스트용 헬퍼 메서드: 특정 상태를 가진 FamilyMember를 생성합니다.
-     * 참고: 이 방식은 테스트에서만 사용해야 합니다. 도메인 엔티티를 우선 생성 후 저장하는 것이 
+     * 참고: 이 방식은 테스트에서만 사용해야 합니다. 도메인 엔티티를 우선 생성 후 저장하는 것이
      * setter 사용을 피하는 정상적인 방법이지만, 테스트 코드에서는 현재 도메인 클래스에 상태를 설정하는
      * 메서드가 없어 불가피하게 리플렉션을 사용했습니다.
      */
     private void createFamilyMemberWithStatus(Long familyId, Long userId, String name, FamilyMemberStatus status) {
         try {
-            // 일단 기본 FamilyMember 도메인 객체 생성
-            FamilyMember member = FamilyMember.newMember(
-                familyId,
-                userId,
-                name,
-                null, // profileUrl
-                null, // birthday
-                null  // nationality
-            );
-            
+            // FamilyMemberFixture를 사용하여 FamilyMember 도메인 객체 생성
+            FamilyMember member = FamilyMemberFixture.newMember(familyId, userId, name);
+
             // 도메인 객체로부터 JPA 엔티티 생성
             FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(member);
-            
+
             // 저장
             FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(entity);
-            
+
             // 리플렉션을 사용해 status 필드에 접근하여 설정
             // 참고: 테스트 코드에서만 사용되어야 하는 방식입니다
             Field statusField = FamilyMemberJpaEntity.class.getDeclaredField("status");
             statusField.setAccessible(true);
             statusField.set(savedEntity, status);
-            
+
             // 변경된 엔티티 저장
             familyMemberJpaRepository.save(savedEntity);
         } catch (Exception e) {

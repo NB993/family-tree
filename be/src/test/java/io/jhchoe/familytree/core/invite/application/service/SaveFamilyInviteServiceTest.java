@@ -4,8 +4,8 @@ import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
-import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.core.invite.application.port.in.SaveFamilyInviteCommand;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import io.jhchoe.familytree.core.invite.application.port.out.SaveFamilyInvitePort;
 import io.jhchoe.familytree.core.invite.domain.FamilyInvite;
 import io.jhchoe.familytree.core.invite.domain.FamilyInviteStatus;
@@ -48,11 +48,7 @@ class SaveFamilyInviteServiceTest {
         Long familyId = 10L;
         SaveFamilyInviteCommand command = new SaveFamilyInviteCommand(requesterId);
 
-        FamilyMember ownerMember = FamilyMember.withId(
-            1L, familyId, requesterId, null, "소유자", null, null, null, null,
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
-            null, null, null, null
-        );
+        FamilyMember ownerMember = FamilyMemberFixture.withIdAndRole(1L, familyId, requesterId, FamilyMemberRole.OWNER);
 
         FamilyInvite savedInvite = FamilyInvite.withId(
             1L,

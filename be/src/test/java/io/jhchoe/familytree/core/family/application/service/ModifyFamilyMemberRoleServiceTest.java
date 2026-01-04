@@ -10,9 +10,8 @@ import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPor
 import io.jhchoe.familytree.core.family.application.port.out.ModifyFamilyMemberPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
-import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
-import java.time.LocalDateTime;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,12 +45,12 @@ class ModifyFamilyMemberRoleServiceTest {
         Long targetMemberId = 20L;
         
         // 현재 사용자는 OWNER
-        FamilyMember currentMember = createFamilyMember(15L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(15L, familyId, currentUserId, FamilyMemberRole.OWNER);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
-        
+
         // 대상 구성원은 MEMBER
-        FamilyMember targetMember = createFamilyMember(targetMemberId, familyId, 30L, FamilyMemberRole.MEMBER);
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, 30L, FamilyMemberRole.MEMBER);
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.of(targetMember));
         
@@ -106,7 +105,7 @@ class ModifyFamilyMemberRoleServiceTest {
         Long targetMemberId = 20L;
         
         // 현재 사용자는 ADMIN (OWNER가 아님)
-        FamilyMember currentMember = createFamilyMember(15L, familyId, currentUserId, FamilyMemberRole.ADMIN);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(15L, familyId, currentUserId, FamilyMemberRole.ADMIN);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
         
@@ -130,10 +129,10 @@ class ModifyFamilyMemberRoleServiceTest {
         Long targetMemberId = 20L;
         
         // 현재 사용자는 OWNER
-        FamilyMember currentMember = createFamilyMember(15L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(15L, familyId, currentUserId, FamilyMemberRole.OWNER);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
-        
+
         // 대상 구성원이 존재하지 않음
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.empty());
@@ -159,12 +158,12 @@ class ModifyFamilyMemberRoleServiceTest {
         Long targetMemberId = 20L;
         
         // 현재 사용자는 OWNER
-        FamilyMember currentMember = createFamilyMember(15L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(15L, familyId, currentUserId, FamilyMemberRole.OWNER);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
-        
+
         // 대상 구성원은 다른 Family에 속함
-        FamilyMember targetMember = createFamilyMember(targetMemberId, differentFamilyId, 30L, FamilyMemberRole.MEMBER);
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, differentFamilyId, 30L, FamilyMemberRole.MEMBER);
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.of(targetMember));
         
@@ -188,12 +187,12 @@ class ModifyFamilyMemberRoleServiceTest {
         Long targetMemberId = 20L;
         
         // 현재 사용자는 OWNER
-        FamilyMember currentMember = createFamilyMember(15L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(15L, familyId, currentUserId, FamilyMemberRole.OWNER);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
-        
+
         // 대상 구성원도 OWNER (다른 OWNER의 역할 변경 시도)
-        FamilyMember targetMember = createFamilyMember(targetMemberId, familyId, 30L, FamilyMemberRole.OWNER);
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, 30L, FamilyMemberRole.OWNER);
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.of(targetMember));
         
@@ -220,14 +219,4 @@ class ModifyFamilyMemberRoleServiceTest {
             .hasMessage("command must not be null");
     }
 
-    /**
-     * 테스트용 FamilyMember 객체를 생성합니다.
-     */
-    private FamilyMember createFamilyMember(Long id, Long familyId, Long userId, FamilyMemberRole role) {
-        return FamilyMember.withId(
-            id, familyId, userId, null, "Test User", null, "profile.jpg",
-            LocalDateTime.now(), "KR", FamilyMemberStatus.ACTIVE, role,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
-        );
-    }
 }

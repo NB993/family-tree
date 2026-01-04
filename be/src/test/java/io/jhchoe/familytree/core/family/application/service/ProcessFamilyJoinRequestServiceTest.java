@@ -10,8 +10,8 @@ import io.jhchoe.familytree.core.family.domain.FamilyJoinRequest;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequestStatus;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
-import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -62,11 +62,7 @@ class ProcessFamilyJoinRequestServiceTest {
         );
 
         // 현재 사용자가 OWNER 권한을 가진 구성원
-        FamilyMember ownerMember = FamilyMember.withId(
-            1L, familyId, currentUserId, null, "소유자", null, "profile.jpg",
-            LocalDateTime.now(), "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
-            currentUserId, LocalDateTime.now(), currentUserId, LocalDateTime.now()
-        );
+        FamilyMember ownerMember = FamilyMemberFixture.withIdAndRole(1L, familyId, currentUserId, FamilyMemberRole.OWNER);
 
         // 처리할 가입 신청
         FamilyJoinRequest pendingRequest = FamilyJoinRequest.withId(
@@ -125,11 +121,7 @@ class ProcessFamilyJoinRequestServiceTest {
         );
 
         // 현재 사용자가 MEMBER 권한을 가진 구성원
-        FamilyMember memberMember = FamilyMember.withId(
-            1L, familyId, currentUserId, null, "일반 구성원", null, "profile.jpg",
-            LocalDateTime.now(), "KR", FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            currentUserId, LocalDateTime.now(), currentUserId, LocalDateTime.now()
-        );
+        FamilyMember memberMember = FamilyMemberFixture.withIdAndRole(1L, familyId, currentUserId, FamilyMemberRole.MEMBER);
 
         // Mocking: 현재 사용자가 Family 구성원인지 확인
         when(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))

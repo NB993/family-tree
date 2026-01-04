@@ -13,6 +13,7 @@ import io.jhchoe.familytree.core.family.application.validation.FamilyValidationS
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -49,40 +50,30 @@ class FindFamilyMemberServiceTest {
             new FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery(familyId, currentUserId);
 
         // 현재 사용자 (MEMBER 권한)
-        FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, null, "현재사용자", null, "profile2.jpg",
-            LocalDateTime.of(1990, 5, 15, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember currentMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            2L, familyId, currentUserId, FamilyMemberRole.MEMBER, "현재사용자",
+            LocalDateTime.of(1990, 5, 15, 0, 0)
         );
 
         // 다른 구성원들 (나이 순서: 막내 -> 둘째 -> 첫째)
-        FamilyMember youngest = FamilyMember.withId(
-            3L, familyId, 3L, null, "막내", null, "profile3.jpg",
-            LocalDateTime.of(2000, 3, 10, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember youngest = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            3L, familyId, 3L, FamilyMemberRole.MEMBER, "막내",
+            LocalDateTime.of(2000, 3, 10, 0, 0)
         );
 
-        FamilyMember middle = FamilyMember.withId(
-            4L, familyId, 4L, null, "둘째", null, "profile4.jpg",
-            LocalDateTime.of(1995, 8, 20, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember middle = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            4L, familyId, 4L, FamilyMemberRole.MEMBER, "둘째",
+            LocalDateTime.of(1995, 8, 20, 0, 0)
         );
 
-        FamilyMember oldest = FamilyMember.withId(
-            5L, familyId, 5L, null, "첫째", null, "profile5.jpg",
-            LocalDateTime.of(1985, 12, 5, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember oldest = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            5L, familyId, 5L, FamilyMemberRole.MEMBER, "첫째",
+            LocalDateTime.of(1985, 12, 5, 0, 0)
         );
 
-        FamilyMember suspended = FamilyMember.withId(
-            6L, familyId, 6L, null, "정지된사용자", null, "profile6.jpg",
-            LocalDateTime.of(1992, 1, 1, 0, 0), "KR",
-            FamilyMemberStatus.SUSPENDED, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember suspended = FamilyMemberFixture.withIdFullAndBirthday(
+            6L, familyId, 6L, FamilyMemberRole.MEMBER, FamilyMemberStatus.SUSPENDED, "정지된사용자",
+            LocalDateTime.of(1992, 1, 1, 0, 0)
         );
 
         List<FamilyMember> allMembers = List.of(oldest, middle, currentMember, youngest, suspended);
@@ -120,18 +111,14 @@ class FindFamilyMemberServiceTest {
             new FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery(familyId, currentUserId);
 
         // 현재 사용자 (ADMIN 권한)
-        FamilyMember adminMember = FamilyMember.withId(
-            2L, familyId, currentUserId, null, "관리자", null, "profile2.jpg",
-            LocalDateTime.of(1990, 5, 15, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember adminMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            2L, familyId, currentUserId, FamilyMemberRole.ADMIN, "관리자",
+            LocalDateTime.of(1990, 5, 15, 0, 0)
         );
 
-        FamilyMember suspendedMember = FamilyMember.withId(
-            3L, familyId, 3L, null, "정지된사용자", null, "profile3.jpg",
-            LocalDateTime.of(1992, 1, 1, 0, 0), "KR",
-            FamilyMemberStatus.SUSPENDED, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember suspendedMember = FamilyMemberFixture.withIdFullAndBirthday(
+            3L, familyId, 3L, FamilyMemberRole.MEMBER, FamilyMemberStatus.SUSPENDED, "정지된사용자",
+            LocalDateTime.of(1992, 1, 1, 0, 0)
         );
 
         List<FamilyMember> allMembers = List.of(adminMember, suspendedMember);
@@ -162,25 +149,18 @@ class FindFamilyMemberServiceTest {
         FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query = 
             new FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery(familyId, currentUserId);
 
-        FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, null, "현재사용자", null, "profile2.jpg",
-            LocalDateTime.of(1990, 5, 15, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember currentMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            2L, familyId, currentUserId, FamilyMemberRole.MEMBER, "현재사용자",
+            LocalDateTime.of(1990, 5, 15, 0, 0)
         );
 
-        FamilyMember memberWithoutBirthday = FamilyMember.withId(
-            3L, familyId, 3L, null, "생일없음", null, "profile3.jpg",
-            null, "KR", // 생일 정보 없음
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember memberWithoutBirthday = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            3L, familyId, 3L, FamilyMemberRole.MEMBER, "생일없음", null
         );
 
-        FamilyMember youngMember = FamilyMember.withId(
-            4L, familyId, 4L, null, "어린사용자", null, "profile4.jpg",
-            LocalDateTime.of(2000, 1, 1, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember youngMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            4L, familyId, 4L, FamilyMemberRole.MEMBER, "어린사용자",
+            LocalDateTime.of(2000, 1, 1, 0, 0)
         );
 
         List<FamilyMember> allMembers = List.of(memberWithoutBirthday, currentMember, youngMember);
@@ -239,11 +219,9 @@ class FindFamilyMemberServiceTest {
         FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query = 
             new FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery(familyId, currentUserId);
 
-        FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, null, "현재사용자", null, "profile2.jpg",
-            LocalDateTime.of(1990, 5, 15, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember currentMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            2L, familyId, currentUserId, FamilyMemberRole.MEMBER, "현재사용자",
+            LocalDateTime.of(1990, 5, 15, 0, 0)
         );
 
         // Mocking: 현재 사용자 조회
@@ -271,18 +249,14 @@ class FindFamilyMemberServiceTest {
         Long targetMemberId = 3L;
         FindFamilyMemberByIdQuery query = new FindFamilyMemberByIdQuery(familyId, currentUserId, targetMemberId);
 
-        FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, null, "현재사용자", null, "profile2.jpg",
-            LocalDateTime.of(1990, 5, 15, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember currentMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            2L, familyId, currentUserId, FamilyMemberRole.MEMBER, "현재사용자",
+            LocalDateTime.of(1990, 5, 15, 0, 0)
         );
 
-        FamilyMember targetMember = FamilyMember.withId(
-            3L, familyId, 3L, null, "대상구성원", null, "profile3.jpg",
-            LocalDateTime.of(1995, 8, 20, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember targetMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            3L, familyId, 3L, FamilyMemberRole.MEMBER, "대상구성원",
+            LocalDateTime.of(1995, 8, 20, 0, 0)
         );
 
         // Mocking: 현재 사용자 조회
@@ -310,18 +284,14 @@ class FindFamilyMemberServiceTest {
         Long targetMemberId = 3L;
         FindFamilyMemberByIdQuery query = new FindFamilyMemberByIdQuery(familyId, currentUserId, targetMemberId);
 
-        FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, null, "현재사용자", null, "profile2.jpg",
-            LocalDateTime.of(1990, 5, 15, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember currentMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            2L, familyId, currentUserId, FamilyMemberRole.MEMBER, "현재사용자",
+            LocalDateTime.of(1990, 5, 15, 0, 0)
         );
 
-        FamilyMember suspendedMember = FamilyMember.withId(
-            3L, familyId, 3L, null, "정지된구성원", null, "profile3.jpg",
-            LocalDateTime.of(1995, 8, 20, 0, 0), "KR",
-            FamilyMemberStatus.SUSPENDED, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember suspendedMember = FamilyMemberFixture.withIdFullAndBirthday(
+            3L, familyId, 3L, FamilyMemberRole.MEMBER, FamilyMemberStatus.SUSPENDED, "정지된구성원",
+            LocalDateTime.of(1995, 8, 20, 0, 0)
         );
 
         // Mocking: 현재 사용자 조회
@@ -346,18 +316,14 @@ class FindFamilyMemberServiceTest {
         Long targetMemberId = 3L;
         FindFamilyMemberByIdQuery query = new FindFamilyMemberByIdQuery(familyId, currentUserId, targetMemberId);
 
-        FamilyMember adminMember = FamilyMember.withId(
-            2L, familyId, currentUserId, null, "관리자", null, "profile2.jpg",
-            LocalDateTime.of(1990, 5, 15, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember adminMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            2L, familyId, currentUserId, FamilyMemberRole.ADMIN, "관리자",
+            LocalDateTime.of(1990, 5, 15, 0, 0)
         );
 
-        FamilyMember suspendedMember = FamilyMember.withId(
-            3L, familyId, 3L, null, "정지된구성원", null, "profile3.jpg",
-            LocalDateTime.of(1995, 8, 20, 0, 0), "KR",
-            FamilyMemberStatus.SUSPENDED, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember suspendedMember = FamilyMemberFixture.withIdFullAndBirthday(
+            3L, familyId, 3L, FamilyMemberRole.MEMBER, FamilyMemberStatus.SUSPENDED, "정지된구성원",
+            LocalDateTime.of(1995, 8, 20, 0, 0)
         );
 
         // Mocking: ADMIN 사용자 조회
@@ -385,11 +351,9 @@ class FindFamilyMemberServiceTest {
         Long targetMemberId = 999L; // 존재하지 않는 구성원
         FindFamilyMemberByIdQuery query = new FindFamilyMemberByIdQuery(familyId, currentUserId, targetMemberId);
 
-        FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, null, "현재사용자", null, "profile2.jpg",
-            LocalDateTime.of(1990, 5, 15, 0, 0), "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
+        FamilyMember currentMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+            2L, familyId, currentUserId, FamilyMemberRole.MEMBER, "현재사용자",
+            LocalDateTime.of(1990, 5, 15, 0, 0)
         );
 
         // Mocking: 현재 사용자 조회

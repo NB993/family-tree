@@ -4,6 +4,7 @@ import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaEntity;
 import io.jhchoe.familytree.core.family.adapter.out.persistence.FamilyMemberJpaRepository;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import io.jhchoe.familytree.core.invite.adapter.out.persistence.FamilyInviteJpaEntity;
 import io.jhchoe.familytree.core.invite.adapter.out.persistence.FamilyInviteJpaRepository;
 import io.jhchoe.familytree.core.invite.domain.FamilyInvite;
@@ -58,9 +59,7 @@ class FamilyInviteAcceptanceTest extends AcceptanceTestBase {
         // given - OWNER FamilyMember 생성
         Long familyId = 10L;
         Long userId = 1L;
-        FamilyMember ownerMember = FamilyMember.newOwner(
-            familyId, userId, null, "소유자", null, null, null
-        );
+        FamilyMember ownerMember = FamilyMemberFixture.newOwner(familyId, userId);
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
 
         // when & then

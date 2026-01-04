@@ -16,8 +16,7 @@ import io.jhchoe.familytree.core.family.application.validation.FamilyValidationS
 import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
-import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
-import java.time.LocalDateTime;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +44,6 @@ class ModifyFamilyServiceTest {
     @InjectMocks
     private ModifyFamilyService sut;
 
-    private static final LocalDateTime NOW = LocalDateTime.of(2025, 6, 10, 12, 0);
 
     @Test
     @DisplayName("modify 메서드는 유효한 ModifyFamilyCommand를 받고 Family를 수정한 후 ID를 반환해야 한다.")
@@ -59,11 +57,7 @@ class ModifyFamilyServiceTest {
         Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true, null,
             null, null, null);
 
-        FamilyMember ownerMember = FamilyMember.withId(
-            1L, familyId, userId, null, "소유자", null, "profile.jpg", NOW, "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
-            userId, NOW, userId, NOW
-        );
+        FamilyMember ownerMember = FamilyMemberFixture.withIdAndRole(1L, familyId, userId, FamilyMemberRole.OWNER);
 
         // Mocking: 권한 검증 관련
         doNothing().when(familyValidationService).validateFamilyExists(familyId);
@@ -101,12 +95,7 @@ class ModifyFamilyServiceTest {
         ModifyFamilyCommand command = new ModifyFamilyCommand(familyId, "Updated Name", "http://example.com/profile",
             "Updated Description", userId);
 
-        FamilyMember ownerMember = FamilyMember.withId(
-            1L, familyId, userId, null, "소유자", null, "profile.jpg", NOW, "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
-            userId, NOW, userId, NOW
-        );
-
+        FamilyMember ownerMember = FamilyMemberFixture.withIdAndRole(1L, familyId, userId, FamilyMemberRole.OWNER);
 
         // Mocking: 권한 검증은 통과하지만 Family 조회 실패
         doNothing().when(familyValidationService).validateFamilyExists(familyId);
@@ -130,11 +119,7 @@ class ModifyFamilyServiceTest {
         Family family = Family.withId(familyId, "Old Name", "Old Description", "http://example.com/old-profile", true, null,
             null, null, null);
 
-        FamilyMember ownerMember = FamilyMember.withId(
-            1L, familyId, userId, null, "소유자", null, "profile.jpg", NOW, "KR",
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
-            userId, NOW, userId, NOW
-        );
+        FamilyMember ownerMember = FamilyMemberFixture.withIdAndRole(1L, familyId, userId, FamilyMemberRole.OWNER);
 
         // Mocking: 모든 권한 검증은 통과하지만 수정 실패
         doNothing().when(familyValidationService).validateFamilyExists(familyId);

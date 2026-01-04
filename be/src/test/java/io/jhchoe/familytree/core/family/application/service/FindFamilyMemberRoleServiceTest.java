@@ -9,9 +9,8 @@ import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPor
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
-import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
-import java.time.LocalDateTime;
+import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -46,15 +45,15 @@ class FindFamilyMemberRoleServiceTest {
         Long currentUserId = 10L;
         
         // 현재 사용자는 Family 구성원
-        FamilyMember currentMember = createFamilyMember(15L, familyId, currentUserId, FamilyMemberRole.MEMBER);
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(15L, familyId, currentUserId, FamilyMemberRole.MEMBER);
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
         
         // Family의 모든 구성원 목록
         List<FamilyMember> familyMembers = Arrays.asList(
-            createFamilyMember(1L, familyId, 100L, FamilyMemberRole.OWNER),
-            createFamilyMember(2L, familyId, 200L, FamilyMemberRole.ADMIN),
-            createFamilyMember(3L, familyId, 300L, FamilyMemberRole.MEMBER)
+            FamilyMemberFixture.withIdAndRole(1L, familyId, 100L, FamilyMemberRole.OWNER),
+            FamilyMemberFixture.withIdAndRole(2L, familyId, 200L, FamilyMemberRole.ADMIN),
+            FamilyMemberFixture.withIdAndRole(3L, familyId, 300L, FamilyMemberRole.MEMBER)
         );
         given(findFamilyPort.existsById(familyId))
             .willReturn(true);
@@ -115,14 +114,4 @@ class FindFamilyMemberRoleServiceTest {
             .hasMessage("query must not be null");
     }
 
-    /**
-     * 테스트용 FamilyMember 객체를 생성합니다.
-     */
-    private FamilyMember createFamilyMember(Long id, Long familyId, Long userId, FamilyMemberRole role) {
-        return FamilyMember.withId(
-            id, familyId, userId, null, "Test User", null, "profile.jpg",
-            LocalDateTime.now(), "KR", FamilyMemberStatus.ACTIVE, role,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now()
-        );
-    }
 }
