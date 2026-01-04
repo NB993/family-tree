@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { inviteApi } from '../api/services/inviteService';
 import { Button } from '@/components/ui/button';
-import { UserCheck, Clock, AlertCircle, CheckCircle, Home } from 'lucide-react';
+import { UserCheck, Clock, AlertCircle, CheckCircle, Home, Loader2 } from 'lucide-react';
 
 export const InviteResponsePage: React.FC = () => {
   const { inviteCode } = useParams<{ inviteCode: string }>();
   const navigate = useNavigate();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const { data: inviteInfo, isLoading, error } = useQuery({
     queryKey: ['invite', inviteCode],
@@ -17,6 +18,8 @@ export const InviteResponsePage: React.FC = () => {
   });
 
   const handleKakaoLogin = () => {
+    if (isRedirecting) return;
+    setIsRedirecting(true);
     const oauthUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao?invite_code=${inviteCode}`;
     window.location.href = oauthUrl;
   };
@@ -71,12 +74,22 @@ export const InviteResponsePage: React.FC = () => {
       <div className="p-3 border-t border-border space-y-2">
         <Button
           onClick={handleKakaoLogin}
-          className="w-full bg-[#FEE500] hover:bg-[#FDD835] text-[#191919]"
+          disabled={isRedirecting}
+          className="w-full bg-[#FEE500] hover:bg-[#FDD835] text-[#191919] disabled:opacity-70"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 3C6.477 3 2 6.477 2 11c0 2.89 1.922 5.464 4.811 6.89l-.736 2.698a.3.3 0 00.437.333l3.195-2.11A9.847 9.847 0 0012 19c5.523 0 10-3.477 10-8s-4.477-8-10-8z"/>
-          </svg>
-          카카오로 정보 제공
+          {isRedirecting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              처리 중...
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3C6.477 3 2 6.477 2 11c0 2.89 1.922 5.464 4.811 6.89l-.736 2.698a.3.3 0 00.437.333l3.195-2.11A9.847 9.847 0 0012 19c5.523 0 10-3.477 10-8s-4.477-8-10-8z"/>
+              </svg>
+              카카오로 정보 제공
+            </>
+          )}
         </Button>
         <p className="text-[10px] text-center text-muted-foreground">
           정보는 연락처 관리 목적으로만 사용됩니다
