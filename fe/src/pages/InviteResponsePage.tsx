@@ -2,6 +2,8 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { inviteApi } from '../api/services/inviteService';
+import { Button } from '@/components/ui/button';
+import { UserCheck, Clock, AlertCircle, CheckCircle, Home } from 'lucide-react';
 
 export const InviteResponsePage: React.FC = () => {
   const { inviteCode } = useParams<{ inviteCode: string }>();
@@ -15,250 +17,70 @@ export const InviteResponsePage: React.FC = () => {
   });
 
   const handleKakaoLogin = () => {
-    // Vercel rewrites를 통해 Cloudflare Worker로 프록시 (Safari 서드파티 쿠키 문제 해결)
-    // invite_code를 Query Parameter로 전달
     const oauthUrl = `${process.env.REACT_APP_API_URL}/oauth2/authorization/kakao?invite_code=${inviteCode}`;
     window.location.href = oauthUrl;
   };
 
   if (isLoading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
-      }}>
-        <div>로딩 중...</div>
+      <div className="app-shell flex items-center justify-center">
+        <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent" />
       </div>
     );
   }
 
-  if (error || !inviteInfo) {
+  // Error/Expired/Completed States
+  if (error || !inviteInfo || inviteInfo.status === 'EXPIRED' || inviteInfo.status === 'COMPLETED') {
+    const isExpired = inviteInfo?.status === 'EXPIRED';
+    const isCompleted = inviteInfo?.status === 'COMPLETED';
     return (
-      <div>
-        <div style={{ 
-          padding: '16px', 
-          borderBottom: '1px solid #e0e0e0',
-          display: 'flex',
-          alignItems: 'center'
-        }}>
-          <h1 style={{ margin: 0, fontSize: '20px' }}>초대 응답</h1>
-        </div>
-        <div style={{ padding: '20px' }}>
-          <div style={{ padding: '24px', border: '1px solid #e0e0e0', borderRadius: '8px', background: '#fff' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, color: '#666' }}>
-                유효하지 않은 초대 링크입니다
-              </h2>
-              <p style={{ textAlign: 'center', color: '#666', margin: 0 }}>
-                초대 링크가 만료되었거나 존재하지 않습니다.<br />
-                초대를 보낸 사람에게 새로운 링크를 요청해주세요.
-              </p>
-              <button
-                style={{
-                  padding: '12px 24px',
-                  fontSize: '16px',
-                  backgroundColor: '#007bff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-                onClick={() => navigate('/')}
-              >
-                홈으로 이동
-              </button>
-            </div>
-          </div>
-        </div>
+      <div className="app-shell flex flex-col items-center justify-center p-4 text-center">
+        {isCompleted ? (
+          <CheckCircle className="w-8 h-8 text-green-600 mb-2" strokeWidth={1} />
+        ) : isExpired ? (
+          <Clock className="w-8 h-8 text-muted-foreground mb-2" strokeWidth={1} />
+        ) : (
+          <AlertCircle className="w-8 h-8 text-destructive mb-2" strokeWidth={1} />
+        )}
+        <h2 className="text-sm font-medium text-foreground">
+          {isCompleted ? '응답 완료' : isExpired ? '만료된 링크' : '유효하지 않은 링크'}
+        </h2>
+        <p className="text-[10px] text-muted-foreground mt-0.5 mb-4">
+          {isCompleted ? '이미 제출되었습니다' : isExpired ? '새 링크를 요청하세요' : '존재하지 않습니다'}
+        </p>
+        <Button variant="outline" size="sm" onClick={() => navigate('/')}>
+          <Home className="w-3.5 h-3.5" strokeWidth={1.5} /> 홈으로
+        </Button>
       </div>
     );
   }
 
-  if (inviteInfo.status === 'EXPIRED') {
-    return (
-      <div>
-        <div style={{ 
-          padding: '16px', 
-          borderBottom: '1px solid #e0e0e0',
-          display: 'flex',
-          alignItems: 'center'
-        }}>
-          <h1 style={{ margin: 0, fontSize: '20px' }}>초대 응답</h1>
-        </div>
-        <div style={{ padding: '20px' }}>
-          <div style={{ padding: '24px', border: '1px solid #e0e0e0', borderRadius: '8px', background: '#fff' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, color: '#666' }}>
-                만료된 초대 링크입니다
-              </h2>
-              <p style={{ textAlign: 'center', color: '#666', margin: 0 }}>
-                이 초대 링크는 만료되었습니다.<br />
-                초대를 보낸 사람에게 새로운 링크를 요청해주세요.
-              </p>
-              <button
-                style={{
-                  padding: '12px 24px',
-                  fontSize: '16px',
-                  backgroundColor: '#007bff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-                onClick={() => navigate('/')}
-              >
-                홈으로 이동
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (inviteInfo.status === 'COMPLETED') {
-    return (
-      <div>
-        <div style={{ 
-          padding: '16px', 
-          borderBottom: '1px solid #e0e0e0',
-          display: 'flex',
-          alignItems: 'center'
-        }}>
-          <h1 style={{ margin: 0, fontSize: '20px' }}>초대 응답</h1>
-        </div>
-        <div style={{ padding: '20px' }}>
-          <div style={{ padding: '24px', border: '1px solid #e0e0e0', borderRadius: '8px', background: '#fff' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, color: '#007bff' }}>
-                이미 응답 완료된 초대입니다
-              </h2>
-              <p style={{ textAlign: 'center', color: '#666', margin: 0 }}>
-                이 초대에 대한 응답이 이미 제출되었습니다.<br />
-                감사합니다!
-              </p>
-              <button
-                style={{
-                  padding: '12px 24px',
-                  fontSize: '16px',
-                  backgroundColor: '#007bff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-                onClick={() => navigate('/')}
-              >
-                홈으로 이동
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // Active State
   return (
-    <div>
-      <div style={{ 
-        padding: '16px', 
-        borderBottom: '1px solid #e0e0e0',
-        display: 'flex',
-        alignItems: 'center'
-      }}>
-        <h1 style={{ margin: 0, fontSize: '20px' }}>정보 제공</h1>
+    <div className="app-shell flex flex-col">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+        <UserCheck className="w-8 h-8 text-primary mb-2" strokeWidth={1} />
+        <h2 className="text-sm font-medium text-foreground">정보 제공 요청</h2>
+        <p className="text-[10px] text-muted-foreground mt-0.5">연락처 수집을 위한 초대입니다</p>
+        <ul className="text-[10px] text-muted-foreground mt-3 space-y-0.5">
+          <li>• 이름, 프로필 사진</li>
+          <li>• 생년월일, 연락처 (선택)</li>
+        </ul>
       </div>
 
-      <div style={{ padding: '20px' }}>
-        <div style={{ padding: '24px', border: '1px solid #e0e0e0', borderRadius: '8px', background: '#fff' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
-              <h1 style={{ margin: 0, fontSize: '28px', color: '#007bff' }}>
-                안녕하세요! 👋
-              </h1>
-              <p style={{ textAlign: 'center', color: '#333', margin: 0 }}>
-                연락처 수집을 위한 초대를 받으셨습니다.
-              </p>
-              <p style={{ textAlign: 'center', color: '#666', fontSize: '14px', margin: 0 }}>
-                아래 버튼을 눌러 간단한 정보를 제공해주세요.
-              </p>
-            </div>
-
-            <div style={{ 
-              background: '#f8f9fa', 
-              padding: '16px', 
-              borderRadius: '8px',
-              border: '1px solid #e9ecef'
-            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>
-                  📋 수집되는 정보
-                </span>
-                <span style={{ fontSize: '14px', color: '#666' }}>
-                  • 이름<br />
-                  • 프로필 사진 (카카오 프로필)<br />
-                  • 생년월일 (선택)<br />
-                  • 연락처 (선택)
-                </span>
-              </div>
-            </div>
-
-            <div style={{ 
-              background: '#fff9e6', 
-              padding: '12px', 
-              borderRadius: '8px',
-              border: '1px solid #ffe066'
-            }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>
-                  🔒 개인정보 보호
-                </span>
-                <span style={{ fontSize: '14px', color: '#666' }}>
-                  제공하신 정보는 연락처 관리 목적으로만 사용되며,<br />
-                  안전하게 보호됩니다.
-                </span>
-              </div>
-            </div>
-
-            <button
-              onClick={handleKakaoLogin}
-              style={{
-                padding: '14px 28px',
-                fontSize: '16px',
-                background: '#FEE500',
-                color: '#000000',
-                border: 'none',
-                borderRadius: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                width: '100%'
-              }}
-            >
-              카카오 로그인으로 시작하기
-            </button>
-
-            <p style={{ fontSize: '12px', color: '#999', textAlign: 'center', margin: 0 }}>
-              카카오 로그인을 통해 안전하게 정보를 제공할 수 있습니다.
-            </p>
-          </div>
-        </div>
-
-        <div style={{ marginTop: '20px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>
-              ❓ 도움이 필요하신가요?
-            </span>
-            <span style={{ fontSize: '14px', color: '#666' }}>
-              초대를 보낸 분에게 문의해주세요.
-            </span>
-          </div>
-        </div>
+      <div className="p-3 border-t border-border space-y-2">
+        <Button
+          onClick={handleKakaoLogin}
+          className="w-full bg-[#FEE500] hover:bg-[#FDD835] text-[#191919]"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 3C6.477 3 2 6.477 2 11c0 2.89 1.922 5.464 4.811 6.89l-.736 2.698a.3.3 0 00.437.333l3.195-2.11A9.847 9.847 0 0012 19c5.523 0 10-3.477 10-8s-4.477-8-10-8z"/>
+          </svg>
+          카카오로 정보 제공
+        </Button>
+        <p className="text-[10px] text-center text-muted-foreground">
+          정보는 연락처 관리 목적으로만 사용됩니다
+        </p>
       </div>
     </div>
   );

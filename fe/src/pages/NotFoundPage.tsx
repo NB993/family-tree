@@ -1,40 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardContent } from '../components/common/Card';
-import { Button } from '../components/common/Button';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Home, ArrowLeft } from 'lucide-react';
 
 const NotFoundPage: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="container">
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="text-center max-w-md">
-          <CardContent>
-            <div className="py-12">
-              <div className="text-8xl mb-6">😕</div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                페이지를 찾을 수 없습니다
-              </h1>
-              <p className="text-gray-600 mb-8">
-                요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.
-              </p>
-              <div className="space-y-3">
-                <Link to="/home">
-                  <Button variant="primary" size="lg" fullWidth>
-                    홈으로 돌아가기
-                  </Button>
-                </Link>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  fullWidth
-                  onClick={() => window.history.back()}
-                >
-                  이전 페이지로
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+    <div className="app-shell flex flex-col items-center justify-center p-4 text-center">
+      <div className="text-4xl font-bold text-primary/30 mb-2">404</div>
+      <h2 className="text-sm font-medium text-foreground">페이지를 찾을 수 없습니다</h2>
+      <p className="text-[10px] text-muted-foreground mt-0.5 mb-4">존재하지 않거나 이동되었습니다</p>
+      <div className="flex gap-2">
+        <Button size="sm" onClick={() => navigate('/')}>
+          <Home className="w-3.5 h-3.5" strokeWidth={1.5} /> 홈으로
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
+          <ArrowLeft className="w-3.5 h-3.5" strokeWidth={1.5} /> 뒤로
+        </Button>
       </div>
     </div>
   );

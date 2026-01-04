@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { inviteApi, CreateInviteResponse } from '../api/services/inviteService';
-import { Card, CardContent, CardHeader } from '../components/common/Card';
-import { Button } from '../components/common/Button';
-import { ArrowLeft, Copy, Info, Lightbulb } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ArrowLeft, Copy, Check, Link } from 'lucide-react';
 
 export const CreateInvitePage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,7 +15,6 @@ export const CreateInvitePage: React.FC = () => {
     mutationFn: () => inviteApi.createInvite(),
     onSuccess: (data) => {
       setInviteData(data);
-      // Using a more subtle notification instead of alert
     },
     onError: (error) => {
       console.error('초대 링크 생성 실패:', error);
@@ -36,99 +35,59 @@ export const CreateInvitePage: React.FC = () => {
     setCopied(false);
   };
 
-  const renderInitialState = () => (
-    <Card>
-      <CardHeader>
-        <h2 className="text-xl font-bold text-center text-gray-800">
-          멤버 정보 수집하기
-        </h2>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-6">
-        <p className="text-center text-gray-600">
-          초대 링크를 생성하여 멤버들의 연락처를 쉽게 수집할 수 있습니다.
-        </p>
-        <div className="text-left text-sm text-gray-500 bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <ul className="space-y-2">
-            <li>• 생성된 링크는 24시간 동안 유효합니다.</li>
-            <li>• 하나의 링크로 최대 5명을 초대할 수 있습니다.</li>
-            <li>• 링크를 받은 사람은 카카오 로그인을 통해 정보를 제공합니다.</li>
-            <li>• 수집된 정보는 연락처 관리에 활용됩니다.</li>
-          </ul>
-        </div>
-        <Button
-          onClick={() => createInviteMutation.mutate()}
-          loading={createInviteMutation.isPending}
-          fullWidth
-          size="lg"
-        >
-          {createInviteMutation.isPending ? '생성 중...' : '초대 링크 생성하기'}
+  return (
+    <div className="app-shell flex flex-col">
+      {/* Header */}
+      <header className="flex items-center gap-2 px-3 py-2 border-b border-border">
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+          <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} />
         </Button>
-      </CardContent>
-    </Card>
-  );
+        <h1 className="text-sm font-medium">초대 링크</h1>
+      </header>
 
-  const renderSuccessState = () => (
-    <Card>
-      <CardHeader>
-        <h2 className="text-xl font-bold text-center text-primary-500">
-          초대 링크가 생성되었습니다!
-        </h2>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <label className="text-sm font-medium text-gray-600 mb-2 block">초대 링크</label>
-          <div className="flex gap-2">
-            <input
-              value={inviteData!.inviteUrl}
-              readOnly
-              className="w-full family-input text-sm flex-1"
-            />
-            <Button onClick={handleCopyLink} variant="secondary" className="whitespace-nowrap">
-              <Copy className="w-4 h-4 mr-2" />
-              {copied ? '복사됨!' : '복사하기'}
-            </Button>
-          </div>
-        </div>
-
-        <div className="bg-amber-50 p-4 rounded-lg border border-amber-200 text-amber-800 text-sm">
-          <div className="flex flex-col items-center gap-2">
-            <div className="flex items-center gap-2">
-              <Info className="w-5 h-5 flex-shrink-0" />
-              <h3 className="font-semibold">안내사항</h3>
-            </div>
-            <ul className="space-y-1 text-center">
-              <li>이 링크는 24시간 동안 유효합니다.</li>
-              <li>하나의 링크로 최대 5명을 초대할 수 있습니다.</li>
-              <li>카카오톡, 메시지 등으로 멤버들에게 공유해주세요.</li>
-              <li>응답한 멤버는 자동으로 그룹에 추가됩니다.</li>
+      {!inviteData ? (
+        <div className="flex-1 flex flex-col p-3">
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <Link className="w-8 h-8 text-primary mb-2" strokeWidth={1} />
+            <h2 className="text-sm font-medium text-foreground">멤버 정보 수집</h2>
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              초대 링크로 멤버들의 연락처를 수집합니다
+            </p>
+            <ul className="text-[10px] text-muted-foreground mt-3 space-y-0.5">
+              <li>• 24시간 유효</li>
+              <li>• 최대 5명 초대 가능</li>
             </ul>
           </div>
-        </div>
-
-        <div className="flex flex-col gap-3 mt-4">
-          <Button onClick={() => navigate('/families')} size="lg" fullWidth>
-            사용자 목록 보기
-          </Button>
-          <Button onClick={handleCreateNew} variant="outline" size="lg" fullWidth>
-            새 초대 링크 생성하기
+          <Button
+            onClick={() => createInviteMutation.mutate()}
+            disabled={createInviteMutation.isPending}
+            className="w-full"
+          >
+            {createInviteMutation.isPending ? '생성 중...' : '링크 생성'}
           </Button>
         </div>
-      </CardContent>
-    </Card>
-  );
+      ) : (
+        <div className="flex-1 flex flex-col p-3">
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <Check className="w-8 h-8 text-green-600 mb-2" strokeWidth={1} />
+            <h2 className="text-sm font-medium text-foreground">생성 완료</h2>
+            <p className="text-[10px] text-muted-foreground mt-0.5">링크를 복사하여 공유하세요</p>
+          </div>
 
-  return (
-    <div className="py-6">
-      <div className="flex items-center mb-6">
-        <Button variant="ghost" size="sm" className="mr-2" onClick={() => navigate(-1)}>
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <h1 className="text-xl font-bold">초대 링크 생성</h1>
-      </div>
+          <div className="space-y-2">
+            <div className="flex gap-1">
+              <Input value={inviteData.inviteUrl} readOnly className="flex-1 text-xs" />
+              <Button onClick={handleCopyLink} variant={copied ? "default" : "outline"} size="icon">
+                {copied ? <Check className="h-3.5 w-3.5" strokeWidth={1.5} /> : <Copy className="h-3.5 w-3.5" strokeWidth={1.5} />}
+              </Button>
+            </div>
+            {copied && <p className="text-center text-[10px] text-green-600">복사됨</p>}
 
-      <div className="space-y-6">
-        {!inviteData ? renderInitialState() : renderSuccessState()}
-      </div>
+            <Button onClick={() => navigate('/home')} className="w-full">홈으로</Button>
+            <Button onClick={handleCreateNew} variant="outline" className="w-full">새 링크</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

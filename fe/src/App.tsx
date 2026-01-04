@@ -42,7 +42,7 @@ function App() {
       <Router>
         <AuthProvider>
           <div className="App">
-            <AppLayout maxWidth="mobile" padding>
+            <AppLayout maxWidth="mobile" padding={false}>
               <Routes>
                 <Route path="/" element={<RootRedirect />} />
                 <Route path="/login" element={<LoginPage />} />

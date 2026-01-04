@@ -70,6 +70,8 @@ module.exports = {
       colors: {
         // Family Tree Brand Colors
         primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
           50: "#fff7ed",
           100: "#ffedd5",
           200: "#fed7aa",
@@ -83,6 +85,8 @@ module.exports = {
           950: "#431407",
         },
         secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
           50: "#fffbeb",
           100: "#fef3c7",
           200: "#fde68a",

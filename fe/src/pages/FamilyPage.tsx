@@ -1,16 +1,17 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader } from '../components/common/Card';
-import { Button } from '../components/common/Button';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useFamilyDetail, useFamilyMembers, useFamilyAnnouncements } from '../hooks/queries/useFamilyQueries';
 import { useAuth } from '../contexts/AuthContext';
+import { ArrowLeft, Users, ChevronRight, Settings } from 'lucide-react';
 
 const FamilyPage: React.FC = () => {
   const { familyId } = useParams<{ familyId: string }>();
   const familyIdNumber = familyId ? parseInt(familyId, 10) : undefined;
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  
+
   const { data: familyData, isLoading: familyLoading } = useFamilyDetail(familyIdNumber!);
   const { data: membersData, isLoading: membersLoading } = useFamilyMembers(familyIdNumber!);
   const { data: announcements, isLoading: announcementsLoading } = useFamilyAnnouncements(familyIdNumber!);
@@ -20,183 +21,113 @@ const FamilyPage: React.FC = () => {
 
   if (!familyId) {
     return (
-      <div className="container">
-        <div className="text-center py-20">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">그룹 ID가 없습니다</h2>
-          <p className="text-gray-600">올바른 그룹 페이지로 이동해주세요.</p>
-        </div>
+      <div className="app-shell flex flex-col items-center justify-center p-4 text-center">
+        <h2 className="text-sm font-medium text-foreground">그룹 ID가 없습니다</h2>
       </div>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="container">
-        <div className="text-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">그룹 정보를 불러오는 중...</p>
-        </div>
+      <div className="app-shell flex items-center justify-center">
+        <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="container">
-      <div className="py-6">
-        {/* 가족 정보 헤더 */}
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                  {familyData?.name || '우리 그룹'}
-                </h1>
-                <p className="text-gray-600">
-                  {familyData?.description || '그룹에 대한 설명이 없습니다'}
-                </p>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-sm text-gray-500">멤버 {members.length}명</span>
-                  {familyData?.isPublic ? (
-                    <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">
-                      공개
-                    </span>
-                  ) : (
-                    <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">
-                      비공개
-                    </span>
-                  )}
-                </div>
-              </div>
-              {isAuthenticated ? (
-                <Button variant="outline">
-                  설정
-                </Button>
+    <div className="app-shell flex flex-col">
+      {/* Header */}
+      <header className="flex items-center justify-between px-3 py-2 border-b border-border">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+            <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} />
+          </Button>
+          <div>
+            <h1 className="text-sm font-medium text-foreground">{familyData?.name || '그룹'}</h1>
+            <div className="flex items-center gap-1">
+              <span className="text-[10px] text-muted-foreground">{members.length}명</span>
+              {familyData?.isPublic ? (
+                <Badge variant="success" className="text-[9px] px-1 py-0">공개</Badge>
               ) : (
-                <Button 
-                  variant="outline"
-                  onClick={() => navigate('/login')}
-                >
-                  로그인하여 참여
-                </Button>
+                <Badge variant="secondary" className="text-[9px] px-1 py-0">비공개</Badge>
               )}
             </div>
-          </CardHeader>
-        </Card>
-
-        {/* 메뉴 카드들 */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <Link to={`/families/${familyId}/members`}>
-            <Card clickable>
-              <CardContent>
-                <div className="text-center py-6">
-                  <div className="text-3xl mb-2">👥</div>
-                  <h3 className="font-semibold text-gray-900 mb-1">멤버</h3>
-                  <p className="text-sm text-gray-600">{members.length}명</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Card clickable>
-            <CardContent>
-              <div className="text-center py-6">
-                <div className="text-3xl mb-2">📞</div>
-                <h3 className="font-semibold text-gray-900 mb-1">연락처</h3>
-                <p className="text-sm text-gray-600">전화번호 관리</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card clickable>
-            <CardContent>
-              <div className="text-center py-6">
-                <div className="text-3xl mb-2">📅</div>
-                <h3 className="font-semibold text-gray-900 mb-1">일정</h3>
-                <p className="text-sm text-gray-600">그룹 일정</p>
-              </div>
-            </CardContent>
-          </Card>
+          </div>
         </div>
+        {isAuthenticated ? (
+          <Button variant="ghost" size="icon">
+            <Settings className="h-3.5 w-3.5" strokeWidth={1.5} />
+          </Button>
+        ) : (
+          <Button variant="outline" size="sm" onClick={() => navigate('/login')}>로그인</Button>
+        )}
+      </header>
 
-        {/* 최근 멤버 */}
-        {members.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">최근 멤버</h3>
-                <Link to={`/families/${familyId}/members`}>
-                  <Button variant="ghost" size="sm">
-                    전체 보기
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {members.slice(0, 3).map((memberWithRelationship) => (
-                  <div key={memberWithRelationship.memberId} className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                      <span className="text-lg">
-                        {memberWithRelationship.memberName.charAt(0)}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900">{memberWithRelationship.memberName}</div>
-                      <div className="text-sm text-gray-600">
-                        {memberWithRelationship.relationshipGuideMessage} · {memberWithRelationship.member.role}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+      {/* Content */}
+      <div className="flex-1 overflow-auto">
+        {/* Description */}
+        {familyData?.description && (
+          <div className="px-3 py-2 border-b border-border">
+            <p className="text-xs text-muted-foreground">{familyData.description}</p>
+          </div>
         )}
 
-        {/* 공지사항 */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">공지사항</h3>
-              <Button variant="ghost" size="sm">
-                더보기
+        {/* Members Section */}
+        <div className="border-b border-border">
+          <div className="flex items-center justify-between px-3 py-2 bg-secondary/30">
+            <span className="text-xs font-medium text-foreground">멤버</span>
+            <Link to={`/families/${familyId}/members`}>
+              <Button variant="ghost" size="sm" className="h-6 text-[10px]">
+                전체 <ChevronRight className="w-3 h-3" strokeWidth={1.5} />
               </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {announcements && announcements.length > 0 ? (
-              <div className="space-y-3">
-                {announcements.slice(0, 3).map((announcement) => (
-                  <div key={announcement.id} className="border-l-4 border-orange-200 pl-3">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-medium text-gray-900 mb-1">
-                          {announcement.title}
-                        </h4>
-                        <p className="text-sm text-gray-600 line-clamp-2">
-                          {announcement.content}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(announcement.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      {announcement.isImportant && (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">
-                          중요
-                        </span>
-                      )}
-                    </div>
+            </Link>
+          </div>
+          {members.length > 0 ? (
+            <div className="divide-y divide-border">
+              {members.slice(0, 3).map((m) => (
+                <div key={m.memberId} className="flex items-center gap-2 px-3 py-2">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-[9px] font-medium text-primary">{m.memberName.charAt(0)}</span>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-2">📢</div>
-                <p className="text-gray-600">아직 공지사항이 없습니다</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-foreground truncate">{m.memberName}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">{m.relationshipGuideMessage}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="px-3 py-4 text-center">
+              <Users className="w-6 h-6 text-muted-foreground/50 mx-auto mb-1" strokeWidth={1} />
+              <p className="text-[10px] text-muted-foreground">멤버가 없습니다</p>
+            </div>
+          )}
+        </div>
+
+        {/* Announcements Section */}
+        <div>
+          <div className="flex items-center justify-between px-3 py-2 bg-secondary/30">
+            <span className="text-xs font-medium text-foreground">공지사항</span>
+          </div>
+          {announcements && announcements.length > 0 ? (
+            <div className="divide-y divide-border">
+              {announcements.slice(0, 3).map((a) => (
+                <div key={a.id} className="px-3 py-2">
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <span className="text-xs font-medium text-foreground truncate">{a.title}</span>
+                    {a.isImportant && <Badge variant="destructive" className="text-[9px] px-1 py-0">중요</Badge>}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground line-clamp-1">{a.content}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="px-3 py-4 text-center">
+              <p className="text-[10px] text-muted-foreground">공지사항이 없습니다</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

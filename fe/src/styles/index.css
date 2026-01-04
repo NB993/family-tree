@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -7,84 +6,67 @@
 
 @layer base {
   :root {
-    /* Family Tree Orange Theme */
-    --background: 28 100% 97%; /* Warm background #fff7ed */
-    --foreground: 20 14.3% 4.1%; /* Dark gray for text */
+    /* SAP UI5 inspired - Clean, Compact, Business */
+    --background: 0 0% 97%;
+    --foreground: 210 10% 23%;
 
-    --card: 0 0% 100%; /* Pure white cards */
-    --card-foreground: 20 14.3% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 10% 23%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 20 14.3% 4.1%;
+    --popover-foreground: 210 10% 23%;
 
-    --primary: 20.5 90.2% 48.2%; /* Orange-500 #f97316 */
+    /* SAP Blue-ish Primary with Orange accent */
+    --primary: 25 90% 48%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 32 95% 44%; /* Amber-500 #f59e0b */
-    --secondary-foreground: 20 14.3% 4.1%;
+    --secondary: 210 10% 96%;
+    --secondary-foreground: 210 10% 23%;
 
-    --muted: 28 76% 88%; /* Light orange for muted areas */
-    --muted-foreground: 25 5.3% 44.7%;
+    --muted: 210 10% 96%;
+    --muted-foreground: 210 10% 50%;
 
-    --accent: 32 100% 92%; /* Very light amber for accents */
-    --accent-foreground: 20 14.3% 4.1%;
+    --accent: 25 90% 96%;
+    --accent-foreground: 25 90% 35%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 28 50% 90%; /* Subtle orange border */
-    --input: 28 50% 94%; /* Light input background */
-    --ring: 20.5 90.2% 48.2%; /* Orange ring */
+    --border: 210 10% 88%;
+    --input: 210 10% 88%;
+    --ring: 25 90% 48%;
 
-    --radius: 12px; /* More rounded for friendly feel */
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    /* Family Tree Dark Orange Theme */
-    --background: 20 14.3% 4.1%; /* Dark background */
-    --foreground: 28 100% 97%;
+    --background: 210 10% 10%;
+    --foreground: 0 0% 95%;
 
-    --card: 20 10% 7%; /* Dark cards */
-    --card-foreground: 28 100% 97%;
+    --card: 210 10% 14%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 20 10% 7%;
-    --popover-foreground: 28 100% 97%;
+    --popover: 210 10% 14%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 20.5 90.2% 48.2%; /* Same orange */
+    --primary: 25 90% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 32 95% 44%; /* Same amber */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 210 10% 20%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 20 10% 15%;
-    --muted-foreground: 28 30% 70%;
+    --muted: 210 10% 20%;
+    --muted-foreground: 210 10% 60%;
 
-    --accent: 20 10% 15%;
-    --accent-foreground: 28 100% 97%;
+    --accent: 25 50% 20%;
+    --accent-foreground: 25 90% 70%;
 
-    --destructive: 0 62.8% 50.6%;
+    --destructive: 0 62% 40%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 20 10% 18%;
-    --input: 20 10% 18%;
-    --ring: 20.5 90.2% 48.2%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 210 10% 25%;
+    --input: 210 10% 25%;
+    --ring: 25 90% 55%;
   }
 }
 
@@ -93,35 +75,25 @@
     @apply border-border;
   }
 
+  html,
+  body,
+  #root {
+    @apply m-0 p-0;
+    height: 100%;
+  }
+
+  html {
+    font-size: 14px;
+  }
+
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "cv01", "cv02", "cv03", "cv04";
+    @apply bg-background text-foreground antialiased;
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
 
 @layer components {
-  /* Family Tree specific components */
-  .family-container {
-    @apply w-full mx-auto px-4 sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl;
-  }
-
-  .family-card {
-    @apply bg-white rounded-xl shadow-family border border-orange-100 hover:shadow-family-md transition-all duration-300 hover:-translate-y-1;
-  }
-
-  .family-button-primary {
-    @apply bg-family-gradient text-white font-medium rounded-lg px-6 py-3 min-h-[44px] hover:shadow-family-md transition-all duration-200 active:scale-95;
-  }
-
-  .family-button-secondary {
-    @apply bg-orange-50 text-orange-600 border border-orange-200 font-medium rounded-lg px-4 py-2 min-h-[44px] hover:bg-orange-100 transition-all duration-200 active:scale-95;
-  }
-
-  .family-input {
-    @apply bg-orange-50/50 border border-orange-200 rounded-lg px-4 py-3 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200;
-  }
-
-  .family-gradient-text {
-    @apply bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent;
+  .app-shell {
+    @apply w-full max-w-[400px] mx-auto bg-card overflow-hidden h-full;
   }
 }
