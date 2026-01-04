@@ -1,21 +1,17 @@
 package io.jhchoe.familytree.core.user.application.service;
 
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
-import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
-import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.user.application.port.in.FindUserByNameQuery;
 import io.jhchoe.familytree.core.user.application.port.out.FindUserPort;
 import io.jhchoe.familytree.core.user.domain.User;
+import io.jhchoe.familytree.test.fixture.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,8 +40,7 @@ class FindUserServiceTest {
         int size = 10;
         FindUserByNameQuery query = new FindUserByNameQuery(name, page, size);
         
-        User user = User.withId(1L, "test@example.com", "홍길동", "profile.jpg", null,
-                AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, 2L, LocalDateTime.now(), 2L, LocalDateTime.now(), null);
+        User user = UserFixture.withId(1L);
         List<User> users = List.of(user);
         
         when(findUserPort.findByNameContaining(eq(name), any())).thenReturn(users);

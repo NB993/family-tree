@@ -1,14 +1,12 @@
 package io.jhchoe.familytree.core.user.adapter.in;
 
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
-import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
-import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.core.user.application.port.in.FindUserByNameQuery;
 import io.jhchoe.familytree.core.user.application.port.in.FindUserUseCase;
 import io.jhchoe.familytree.core.user.domain.User;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
+import io.jhchoe.familytree.test.fixture.UserFixture;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,22 +35,7 @@ class FindUserControllerTest extends AcceptanceTestBase {
         String name = "홍길동";
         List<User> mockUsers = new ArrayList<>();
         
-        User user = User.withId(
-            1L,
-            "test@example.com",
-            "홍길동",
-            "profile.jpg",
-            null, // kakaoId
-            AuthenticationType.OAUTH2,
-            OAuth2Provider.GOOGLE,
-            UserRole.USER,
-            false,
-            1L,
-            LocalDateTime.now(),
-            1L,
-            LocalDateTime.now(),
-            null // birthday
-        );
+        User user = UserFixture.withId(1L);
         mockUsers.add(user);
         
         when(findUserUseCase.findByName(any(FindUserByNameQuery.class)))

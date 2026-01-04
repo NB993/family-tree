@@ -2,15 +2,13 @@ package io.jhchoe.familytree.common.auth.controller;
 
 import io.jhchoe.familytree.common.auth.adapter.out.persistence.RefreshTokenJpaEntity;
 import io.jhchoe.familytree.common.auth.adapter.out.persistence.RefreshTokenJpaRepository;
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
-import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.RefreshToken;
-import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.auth.UserJpaEntity;
 import io.jhchoe.familytree.common.auth.UserJpaRepository;
 import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
 import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.core.user.domain.User;
+import io.jhchoe.familytree.test.fixture.UserFixture;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import org.junit.jupiter.api.DisplayName;
@@ -45,17 +43,7 @@ class TokenControllerTest extends AcceptanceTestBase {
     @DisplayName("쿠키의 유효한 Refresh Token으로 토큰 갱신 시 200 OK와 새로운 토큰을 반환합니다")
     void modify_returns_200_and_new_tokens_when_valid_refresh_token_in_cookie() throws InterruptedException {
         // given
-        User user = User.newUser(
-            "test@example.com",
-            "테스트사용자",
-            "profile.jpg",
-            null, // kakaoId
-            AuthenticationType.OAUTH2,
-            OAuth2Provider.GOOGLE,
-            UserRole.USER,
-            false,
-            null // birthday
-        );
+        User user = UserFixture.newOAuth2User();
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
 
         // 실제 유효한 Refresh Token 생성
@@ -129,17 +117,7 @@ class TokenControllerTest extends AcceptanceTestBase {
     @DisplayName("인증된 사용자의 로그아웃 시 200 OK와 성공 메시지를 반환하고 RT를 삭제합니다")
     void delete_returns_200_and_success_message_when_authenticated_user() {
         // given
-        User user = User.newUser(
-            "test@example.com",
-            "테스트사용자",
-            "profile.jpg",
-            null, // kakaoId
-            AuthenticationType.OAUTH2,
-            OAuth2Provider.GOOGLE,
-            UserRole.USER,
-            false,
-            null // birthday
-        );
+        User user = UserFixture.newOAuth2User();
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
 
         RefreshToken refreshToken = RefreshToken.newRefreshToken(

@@ -4,12 +4,10 @@ import static org.hamcrest.Matchers.*;
 
 import io.jhchoe.familytree.common.auth.UserJpaEntity;
 import io.jhchoe.familytree.common.auth.UserJpaRepository;
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
-import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
-import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
 import io.jhchoe.familytree.core.user.domain.User;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
+import io.jhchoe.familytree.test.fixture.UserFixture;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -96,25 +94,11 @@ class SaveFamilyControllerTest extends AcceptanceTestBase {
      * 테스트용 User를 생성하고 생성된 User의 ID를 반환합니다.
      */
     private Long createTestUserAndGetId() {
-        LocalDateTime now = LocalDateTime.now();
-        
-        // 신규 사용자로 생성 (ID 자동 생성)
-        User testUser = User.newUser(
-            "test@example.com",
-            "테스트사용자",
-            "https://example.com/test-profile.jpg",
-            null, // kakaoId
-            AuthenticationType.OAUTH2,
-            OAuth2Provider.GOOGLE,
-            UserRole.USER,
-            false,
-            null // birthday
-        );
-        
+        User testUser = UserFixture.newOAuth2User();
+
         UserJpaEntity userEntity = UserJpaEntity.ofOAuth2User(testUser);
         UserJpaEntity savedUser = userJpaRepository.saveAndFlush(userEntity);
-        
-        System.out.println("Created test user with auto-generated ID: " + savedUser.getId());
+
         return savedUser.getId();
     }
 

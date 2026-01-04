@@ -5,10 +5,7 @@ import io.jhchoe.familytree.common.auth.application.port.in.ModifyJwtTokenComman
 import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenCommand;
 import io.jhchoe.familytree.common.auth.application.port.in.SaveRefreshTokenUseCase;
 import io.jhchoe.familytree.common.auth.config.JwtProperties;
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
-import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.auth.dto.JwtTokenResponse;
 import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.common.auth.exception.InvalidTokenException;
@@ -16,6 +13,7 @@ import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.user.application.port.out.FindUserPort;
 import io.jhchoe.familytree.core.user.domain.User;
+import io.jhchoe.familytree.test.fixture.UserFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,7 +71,7 @@ class ModifyJwtTokenServiceTest {
         Long accessTokenExpiration = 3600L;
         Long refreshTokenExpiration = 604800L;
 
-        User user = User.withId(1L, email, name, profileUrl, null, AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false, null, null, null, null, null);
+        User user = UserFixture.withId(1L);
 
         // Mocking: Refresh Token이 유효한 토큰임을 모킹
         when(jwtTokenUtil.validateToken(validRefreshToken)).thenReturn(true);

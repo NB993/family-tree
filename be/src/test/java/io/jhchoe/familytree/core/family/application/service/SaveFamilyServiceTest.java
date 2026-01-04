@@ -16,10 +16,7 @@ import io.jhchoe.familytree.core.family.domain.Family;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.user.application.port.out.FindUserPort;
 import io.jhchoe.familytree.core.user.domain.User;
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
-import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
-import io.jhchoe.familytree.common.auth.domain.UserRole;
-import java.time.LocalDateTime;
+import io.jhchoe.familytree.test.fixture.UserFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,12 +53,7 @@ class SaveFamilyServiceTest {
             userId, "테스트 가족", "http://example.com/profile", "가족 설명", true
         );
         
-        User user = User.withId(
-            userId, "test@example.com", "홍길동", "http://example.com/user-profile",
-            null, // kakaoId
-            AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false,
-            userId, LocalDateTime.now(), userId, LocalDateTime.now(), null // birthday
-        );
+        User user = UserFixture.withId(userId);
 
         // Mocking: 사용자 조회 성공
         when(findUserPort.findById(userId)).thenReturn(Optional.of(user));
