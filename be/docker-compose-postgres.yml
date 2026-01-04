@@ -11,7 +11,7 @@ services:
       # PostgreSQL 한글 설정
       POSTGRES_INITDB_ARGS: --encoding=UTF-8
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       # 데이터 영속성
       - postgres_data:/var/lib/postgresql/data
