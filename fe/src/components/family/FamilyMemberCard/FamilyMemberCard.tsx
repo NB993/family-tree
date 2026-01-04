@@ -1,8 +1,8 @@
 import React from 'react';
 import { Phone, Heart } from 'lucide-react';
-import { Button } from '../../common/Button';
-import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar';
-import { cn } from '../../../design-system/utils';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 import { FamilyMemberWithRelationship } from '../../../api/services/familyService';
 import { FamilyMemberRelationshipType } from '../../../types/family';
 

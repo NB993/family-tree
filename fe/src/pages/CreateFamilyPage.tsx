@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader } from '../components/common/Card';
-import { Button } from '../components/common/Button';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FamilyService, SaveFamilyRequest } from '../api/services/familyService';
 import { familyQueryKeys } from '../hooks/queries/useFamilyQueries';
+import { ArrowLeft, Users } from 'lucide-react';
 
 const CreateFamilyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,28 +26,24 @@ const CreateFamilyPage: React.FC = () => {
 
   const createFamilyMutation = useMutation({
     mutationFn: (request: SaveFamilyRequest) => familyService.createFamily(request),
-    onSuccess: (data) => {
-      // 내 가족 목록 무효화
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: familyQueryKeys.list({ type: 'my' }),
       });
-      
-      // 성공 메시지와 함께 홈으로 이동
-      alert('그룹이 성공적으로 생성되었습니다!');
+      alert('그룹이 생성되었습니다!');
       navigate('/home');
     },
     onError: (error: any) => {
       console.error('그룹 생성 실패:', error);
-      alert('그룹 생성에 실패했습니다. 다시 시도해주세요.');
+      alert('그룹 생성에 실패했습니다.');
     },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // 간단한 유효성 검사
+
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = '그룹명을 입력해주세요.';
     } else if (formData.name.length < 2) {
@@ -59,140 +59,113 @@ const CreateFamilyPage: React.FC = () => {
     createFamilyMutation.mutate(formData);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-    
-    // 입력 시 해당 필드 에러 제거
+    setFormData(prev => ({ ...prev, [name]: value }));
+
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: '',
-      }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
   return (
-    <div className="container">
-      <div className="py-8">
-        <div className="max-w-md mx-auto">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">
-                  새 그룹 만들기
-                </h1>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate('/home')}
-                >
-                  취소
-                </Button>
-              </div>
-              <p className="text-gray-600 mt-2">
-                새로운 그룹을 만들어 멤버들과 연결하세요
-              </p>
-            </CardHeader>
-            
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* 그룹명 */}
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    그룹명 *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      errors.name ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="그룹명 입력"
-                  />
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                  )}
-                </div>
+    <div className="app-shell flex flex-col">
+      {/* Header */}
+      <header className="flex items-center gap-2 px-3 py-2 border-b border-border">
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+          <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} />
+        </Button>
+        <h1 className="text-sm font-medium">새 그룹 만들기</h1>
+      </header>
 
-                {/* 공개 설정 */}
-                <div>
-                  <label htmlFor="visibility" className="block text-sm font-medium text-gray-700 mb-2">
-                    공개 설정
-                  </label>
-                  <select
-                    id="visibility"
-                    name="visibility"
-                    value={formData.visibility}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  >
-                    <option value="PRIVATE">비공개 - 초대받은 사람만 참여</option>
-                    <option value="PUBLIC">공개 - 누구나 참여 요청 가능</option>
-                  </select>
-                </div>
+      {/* Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="p-3">
+          <div className="flex flex-col items-center text-center py-3 mb-3">
+            <Users className="w-8 h-8 text-primary mb-2" strokeWidth={1} />
+            <p className="text-[10px] text-muted-foreground">
+              새로운 그룹을 만들어 멤버들과 연결하세요
+            </p>
+          </div>
 
-                {/* 그룹 소개 */}
-                <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                    그룹 소개
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="그룹을 소개해주세요 (선택사항)"
-                  />
-                </div>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="space-y-1">
+              <Label htmlFor="name" className="text-xs">그룹명 *</Label>
+              <Input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className={errors.name ? 'border-destructive' : ''}
+                placeholder="그룹명 입력"
+              />
+              {errors.name && (
+                <p className="text-[10px] text-destructive">{errors.name}</p>
+              )}
+            </div>
 
-                {/* 프로필 이미지 URL */}
-                <div>
-                  <label htmlFor="profileUrl" className="block text-sm font-medium text-gray-700 mb-2">
-                    프로필 이미지 URL
-                  </label>
-                  <input
-                    type="url"
-                    id="profileUrl"
-                    name="profileUrl"
-                    value={formData.profileUrl}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="https://example.com/family-photo.jpg (선택사항)"
-                  />
-                </div>
+            <div className="space-y-1">
+              <Label htmlFor="visibility" className="text-xs">공개 설정</Label>
+              <Select
+                value={formData.visibility}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, visibility: value as 'PUBLIC' | 'PRIVATE' }))}
+              >
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue placeholder="공개 설정 선택" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PRIVATE" className="text-xs">비공개</SelectItem>
+                  <SelectItem value="PUBLIC" className="text-xs">공개</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-                {/* 버튼 */}
-                <div className="flex gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    fullWidth
-                    onClick={() => navigate('/home')}
-                  >
-                    취소
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    fullWidth
-                    loading={createFamilyMutation.isPending}
-                  >
-                    그룹 만들기
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+            <div className="space-y-1">
+              <Label htmlFor="description" className="text-xs">그룹 소개</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows={2}
+                placeholder="그룹 소개 (선택)"
+                className="text-xs resize-none"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="profileUrl" className="text-xs">프로필 이미지 URL</Label>
+              <Input
+                type="url"
+                id="profileUrl"
+                name="profileUrl"
+                value={formData.profileUrl}
+                onChange={handleChange}
+                placeholder="https://... (선택)"
+              />
+            </div>
+          </form>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="p-3 border-t border-border space-y-2">
+        <Button
+          onClick={handleSubmit}
+          className="w-full"
+          disabled={createFamilyMutation.isPending}
+        >
+          {createFamilyMutation.isPending ? '생성 중...' : '그룹 만들기'}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={() => navigate('/home')}
+        >
+          취소
+        </Button>
       </div>
     </div>
   );
