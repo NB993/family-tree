@@ -6,6 +6,7 @@ import { Search, Plus, UserPlus, LogOut, ChevronRight, Phone } from 'lucide-reac
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import CreateFamilyMemberModal from '@/components/family/CreateFamilyMemberModal';
 
 const HomePage: React.FC = () => {
   const { data: familiesData } = useMyFamilies();
@@ -14,6 +15,7 @@ const HomePage: React.FC = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFamilyId, setSelectedFamilyId] = useState<number | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { data: membersData } = useFamilyMembers(selectedFamilyId || 0);
 
@@ -123,11 +125,19 @@ const HomePage: React.FC = () => {
           <Plus className="h-3 w-3" strokeWidth={1.5} />
           초대 링크
         </Button>
-        <Button variant="outline" onClick={() => navigate('/families')} className="flex-1">
+        <Button variant="outline" onClick={() => setIsCreateModalOpen(true)} className="flex-1">
           <UserPlus className="h-3 w-3" strokeWidth={1.5} />
           등록
         </Button>
       </div>
+
+      {selectedFamilyId && (
+        <CreateFamilyMemberModal
+          open={isCreateModalOpen}
+          onOpenChange={setIsCreateModalOpen}
+          familyId={selectedFamilyId}
+        />
+      )}
     </div>
   );
 };
