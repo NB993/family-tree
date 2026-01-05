@@ -50,15 +50,13 @@ public class SaveFamilyService implements SaveFamilyUseCase {
         );
         Long familyId = saveFamilyPort.save(family);
 
-        // 3. Family 생성자에게 OWNER 권한 자동 부여
+        // 3. Family 생성자에게 OWNER 권한 자동 부여 (User 정보를 FamilyMember에 복사)
         FamilyMember owner = FamilyMember.newOwner(
             familyId,
             command.getUserId(),
-            user.getKakaoId(),     // 사용자의 카카오 ID 사용
-            user.getName(),        // 사용자의 실제 이름 사용
-            user.getProfileUrl(),  // 사용자의 프로필 URL 사용
-            null,                  // 생일은 선택사항 (추후 확장 가능)
-            null                   // 국적은 선택사항 (추후 확장 가능)
+            user.getName(),        // User에서 복사
+            user.getProfileUrl(),  // User에서 복사
+            user.getBirthday()     // User에서 복사
         );
         saveFamilyMemberPort.save(owner);
 

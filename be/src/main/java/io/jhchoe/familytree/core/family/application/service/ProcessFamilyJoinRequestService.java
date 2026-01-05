@@ -13,6 +13,8 @@ import io.jhchoe.familytree.core.family.domain.FamilyJoinRequestStatus;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
+import io.jhchoe.familytree.core.user.application.port.out.FindUserPort;
+import io.jhchoe.familytree.core.user.domain.User;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ public class ProcessFamilyJoinRequestService implements ProcessFamilyJoinRequest
     private final FindFamilyJoinRequestPort findFamilyJoinRequestPort;
     private final ModifyFamilyJoinRequestPort modifyFamilyJoinRequestPort;
     private final SaveFamilyMemberPort saveFamilyMemberPort;
+    private final FindUserPort findUserPort;
 
     /**
      * {@inheritDoc}
@@ -78,13 +81,17 @@ public class ProcessFamilyJoinRequestService implements ProcessFamilyJoinRequest
     }
 
     private void createAndSaveNewFamilyMember(Long familyId, Long requesterId) {
+        // User 정보 조회
+        User user = findUserPort.findById(requesterId)
+            .orElseThrow(() -> new FTException(FamilyExceptionCode.USER_NOT_FOUND));
+
+        // FamilyMember 생성 (User 정보를 복사)
         FamilyMember newMember = FamilyMember.newMember(
             familyId,
             requesterId,
-            "신규 구성원", // TODO: 실제 사용자 정보에서 가져와야 함
-            null, // TODO: 실제 사용자 정보에서 가져와야 함
-            null, // TODO: 실제 사용자 정보에서 가져와야 함
-            "KR" // TODO: 실제 사용자 정보에서 가져와야 함
+            user.getName(),        // User에서 복사
+            user.getProfileUrl(),  // User에서 복사
+            user.getBirthday()     // User에서 복사
         );
         saveFamilyMemberPort.save(newMember);
     }
