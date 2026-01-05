@@ -12,7 +12,6 @@ public record FamilyTreeNode(
     Long memberId,
     String name,
     Integer age,
-    String nationality,
     String profileUrl,
     Long userId,
     FamilyMemberRole role,
@@ -27,7 +26,6 @@ public record FamilyTreeNode(
      * @param memberId 가족 구성원 ID
      * @param name 이름
      * @param age 나이 (생일 기준 계산된 값)
-     * @param nationality 국적
      * @param profileUrl 프로필 이미지 URL
      * @param userId 연결된 사용자 ID
      * @param role 가족 내 역할
@@ -39,11 +37,10 @@ public record FamilyTreeNode(
     public FamilyTreeNode {
         Objects.requireNonNull(memberId, "memberId must not be null");
         Objects.requireNonNull(name, "name must not be null");
-        Objects.requireNonNull(nationality, "nationality must not be null");
         Objects.requireNonNull(role, "role must not be null");
         Objects.requireNonNull(status, "status must not be null");
         Objects.requireNonNull(relations, "relations must not be null");
-        
+
         if (generation < 0) {
             throw new IllegalArgumentException("generation must not be negative");
         }
@@ -74,7 +71,6 @@ public record FamilyTreeNode(
             member.getId(),
             member.getName(),
             age,
-            member.getNationality(),
             member.getProfileUrl(),
             member.getUserId(),
             member.getRole(),

@@ -72,12 +72,12 @@ public class FindFamilyTreeService implements FindFamilyTreeUseCase {
     private FamilyTree createEmptyFamilyTree(Long familyId) {
         // 임시 중심 구성원 생성 (빈 트리용)
         FamilyTreeNode emptyCenterMember = new FamilyTreeNode(
-            -1L, "빈 가족", null, "KR", null, null,
+            -1L, "빈 가족", null, null, null,
             FamilyMemberRole.MEMBER,
             FamilyMemberStatus.ACTIVE,
             false, 1, List.of()
         );
-        
+
         return FamilyTree.create(familyId, emptyCenterMember, List.of());
     }
 
