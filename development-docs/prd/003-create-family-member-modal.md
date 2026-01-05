@@ -8,7 +8,8 @@
 ### 진행 상황
 | 단계 | 내용 | 상태 |
 |------|------|------|
-| 1단계 | 프론트엔드 모달 컴포넌트 구현 | ✅ 완료 (미커밋) |
+| 1단계 | 프론트엔드 모달 컴포넌트 구현 | ✅ 완료 (`53b55f5`) |
+| 1-1 | 프론트엔드 테스트 구현 | ✅ 완료 (`4a481b6`) |
 | 2단계 | 백엔드 API 구현 | ⏳ 미진행 |
 
 ---
@@ -76,6 +77,8 @@ interface CreateFamilyMemberModalProps {
 ## 변경 대상 파일
 1. `fe/src/components/family/CreateFamilyMemberModal.tsx` (신규)
 2. `fe/src/pages/HomePage.tsx` (수정)
+3. `fe/src/components/family/__tests__/CreateFamilyMemberModal.test.tsx` (신규, 테스트 11개)
+4. `fe/craco.config.js` (수정, jest path alias 설정 추가)
 
 ---
 
