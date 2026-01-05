@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthService } from '../api/services/authService';
+import { useAuth } from '../contexts/AuthContext';
 import { logger } from '../utils/logger';
 
 const OAuth2CallbackPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { confirmAuthentication } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasProcessed, setHasProcessed] = useState(false);
 
@@ -49,6 +51,8 @@ const OAuth2CallbackPage: React.FC = () => {
 
       logger.info('Authentication verified successfully:', { userId: userInfo.id, email: userInfo.email });
 
+      // 인증 상태를 AuthContext에 확정한 후 홈으로 이동
+      confirmAuthentication(userInfo);
       navigate('/home');
     } catch (error) {
       logger.error('Authentication verification failed:', error);
