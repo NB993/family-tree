@@ -2,14 +2,14 @@
 
 ## 문서 정보
 - **작성일**: 2025-01-02
-- **상태**: 🔄 진행 중 (1/2 단계 완료)
+- **상태**: ✅ 완료
 - **우선순위**: 높음
 
 ### 진행 상황
 | 단계 | 내용 | 상태 |
 |------|------|------|
 | 1단계 | User 도메인 확장 (birthday, email nullable, AuthenticationType NONE) | ✅ 완료 (`30035a4`) |
-| 2단계 | FamilyMember 테이블 정리 (kakaoId, nationality 제거) | ⏳ 미진행 |
+| 2단계 | FamilyMember 테이블 정리 (kakaoId, nationality 제거) | ✅ 완료 (`5792ee8`~`5044f30`) |
 
 ### 관련 작업
 - PRD-002에서 AuthenticationType 필드 제거됨 (원래 NONE 추가 계획이었으나 전체 필드 제거로 변경)
@@ -209,10 +209,10 @@ CREATE TABLE family_member (
 2. User 도메인 확장 (birthday, email nullable) ✅
 3. 수동 사용자 구분: `User.isLoginable()` 메서드 (oAuth2Provider != null) ✅
 
-### 2단계: FamilyMember 테이블 정리 ⏳ 미진행 (수정됨)
-4. FamilyMember 도메인 정리 (**kakao_id, nationality만 제거**, name/profileUrl/birthday 유지)
-5. ~~FamilyMember.user_id NOT NULL 변경~~ → **nullable 유지** (수동 등록 지원)
-6. 서비스 로직 변경 (SaveInviteResponseWithKakaoService: User 조회/생성 후 FamilyMember 생성)
-7. DB 마이그레이션 (kakao_id, nationality 컬럼 제거, 체크 제약조건 제거)
-8. 테스트 변경
-9. 프론트엔드 변경 (필요시)
+### 2단계: FamilyMember 테이블 정리 ✅ 완료
+4. FamilyMember 도메인 정리 (**kakao_id, nationality만 제거**, name/profileUrl/birthday 유지) ✅
+5. ~~FamilyMember.user_id NOT NULL 변경~~ → **nullable 유지** (수동 등록 지원) ✅
+6. 서비스 로직 변경 (SaveInviteResponseWithKakaoService: User 조회/생성 후 FamilyMember 생성) ✅
+7. DB 마이그레이션 (kakao_id, nationality 컬럼 제거, 체크 제약조건 제거) ✅
+8. 테스트 변경 ✅
+9. 프론트엔드 변경 (필요시) - 해당 없음
