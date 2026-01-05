@@ -2,7 +2,6 @@ package io.jhchoe.familytree.config;
 
 import io.jhchoe.familytree.common.auth.UserJpaEntity;
 import io.jhchoe.familytree.common.auth.UserJpaRepository;
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyCommand;
@@ -72,13 +71,12 @@ public class LocalDataInitializer implements ApplicationRunner {
             name,
             "https://ui-avatars.com/api/?name=" + name + "&background=random",
             null, // kakaoId (테스트 데이터)
-            AuthenticationType.OAUTH2,
             provider, // OAuth2Provider 명시적 설정
             UserRole.USER,
             false, // deleted
             null // birthday
         );
-        
+
         UserJpaEntity userEntity = UserJpaEntity.ofOAuth2User(user);
         UserJpaEntity savedUser = userRepository.save(userEntity);
         log.info("사용자 생성: {} ({}) [Provider: {}]", savedUser.getName(), savedUser.getEmail(), provider);

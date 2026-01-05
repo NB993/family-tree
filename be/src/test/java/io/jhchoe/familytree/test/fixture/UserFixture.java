@@ -1,6 +1,5 @@
 package io.jhchoe.familytree.test.fixture;
 
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.core.user.domain.User;
@@ -46,7 +45,7 @@ public final class UserFixture {
     public static User newOAuth2User(String email, String name, OAuth2Provider provider) {
         String kakaoId = provider == OAuth2Provider.KAKAO ? DEFAULT_KAKAO_ID : null;
         return User.newUser(email, name, DEFAULT_PROFILE_URL, kakaoId,
-            AuthenticationType.OAUTH2, provider, UserRole.USER, false, DEFAULT_BIRTHDAY);
+            provider, UserRole.USER, false, DEFAULT_BIRTHDAY);
     }
 
     /**
@@ -85,7 +84,7 @@ public final class UserFixture {
     public static User withId(Long id, String email, String name, OAuth2Provider provider, UserRole role, boolean deleted) {
         String kakaoId = provider == OAuth2Provider.KAKAO ? DEFAULT_KAKAO_ID : null;
         return User.withId(id, email, name, DEFAULT_PROFILE_URL, kakaoId,
-            AuthenticationType.OAUTH2, provider, role, deleted,
+            provider, role, deleted,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now(), DEFAULT_BIRTHDAY);
     }
 
@@ -115,7 +114,7 @@ public final class UserFixture {
      */
     public static User withIdManual(Long id, String name) {
         return User.withId(id, null, name, DEFAULT_PROFILE_URL, null,
-            AuthenticationType.NONE, null, UserRole.USER, false,
+            null, UserRole.USER, false,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now(), DEFAULT_BIRTHDAY);
     }
 
@@ -124,7 +123,7 @@ public final class UserFixture {
      */
     public static User withIdAndBirthday(Long id, LocalDateTime birthday) {
         return User.withId(id, DEFAULT_EMAIL, DEFAULT_NAME, DEFAULT_PROFILE_URL, null,
-            AuthenticationType.OAUTH2, OAuth2Provider.GOOGLE, UserRole.USER, false,
+            OAuth2Provider.GOOGLE, UserRole.USER, false,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now(), birthday);
     }
 }

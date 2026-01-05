@@ -17,13 +17,12 @@ public class FTUser extends User implements OAuth2User {
     private final Long id;
     private final String name;
     private final String email;
-    private final AuthenticationType authType;
     private final Map<String, Object> attributes;
     private final OAuth2Provider oAuth2Provider;
 
     /**
      * OAuth2UserInfo를 사용하여 FTUser 객체 생성
-     * 
+     *
      * @param id 사용자 ID
      * @param userInfo OAuth2 사용자 정보
      * @param oAuth2Provider OAuth2 제공자
@@ -42,7 +41,6 @@ public class FTUser extends User implements OAuth2User {
             userInfo.getEmail(),
             "",
             userInfo.getEmail(),
-            AuthenticationType.OAUTH2,
             oAuth2Provider,
             List.of(new SimpleGrantedAuthority(UserRole.USER.getValue())),
             attributes
@@ -90,7 +88,6 @@ public class FTUser extends User implements OAuth2User {
             username,
             password,
             email,
-            AuthenticationType.FORM_LOGIN,
             null,
             List.of(new SimpleGrantedAuthority(UserRole.USER.getValue())),
             Collections.emptyMap() // 빈 attributes
@@ -99,7 +96,7 @@ public class FTUser extends User implements OAuth2User {
 
     /**
      * JWT 토큰 기반 인증용 FTUser 객체 생성
-     * 
+     *
      * @param id 사용자 ID
      * @param name 사용자 이름
      * @param email 이메일
@@ -115,14 +112,13 @@ public class FTUser extends User implements OAuth2User {
         Collection<GrantedAuthority> authorities = List.of(
             new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
         );
-        
+
         return new FTUser(
             id,
             name != null ? name : "JWT User",
             email, // username
             "", // password (JWT에서는 불필요)
             email,
-            AuthenticationType.JWT,
             null, // OAuth2Provider (JWT에서는 알 수 없음)
             authorities,
             Collections.emptyMap() // attributes (JWT에서는 불필요)
@@ -131,7 +127,7 @@ public class FTUser extends User implements OAuth2User {
 
     /**
      * JWT 토큰 갱신용 간단한 FTUser 객체 생성
-     * 
+     *
      * @param id 사용자 ID
      * @param email 이메일
      * @param name 사용자 이름
@@ -148,7 +144,6 @@ public class FTUser extends User implements OAuth2User {
             email, // username
             "", // password (JWT에서는 불필요)
             email,
-            AuthenticationType.JWT,
             null, // OAuth2Provider
             List.of(new SimpleGrantedAuthority(UserRole.USER.getValue())),
             Collections.emptyMap() // attributes
@@ -161,7 +156,6 @@ public class FTUser extends User implements OAuth2User {
         final String username,
         final String password,
         final String email,
-        final AuthenticationType authType,
         final OAuth2Provider oAuth2Provider,
         final Collection<? extends GrantedAuthority> authorities,
         final Map<String, Object> attributes
@@ -170,7 +164,6 @@ public class FTUser extends User implements OAuth2User {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.authType = authType;
         this.oAuth2Provider = oAuth2Provider;
         this.attributes = attributes;
     }
@@ -196,10 +189,6 @@ public class FTUser extends User implements OAuth2User {
 
     public String getEmail() {
         return this.email;
-    }
-
-    public AuthenticationType getAuthType() {
-        return this.authType;
     }
 
     public OAuth2Provider getOAuth2Provider() {

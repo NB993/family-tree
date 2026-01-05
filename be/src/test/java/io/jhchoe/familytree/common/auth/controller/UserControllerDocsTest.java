@@ -54,7 +54,6 @@ public class UserControllerDocsTest extends ApiDocsTestBase {
                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("사용자 ID"),
                     fieldWithPath("name").type(JsonFieldType.STRING).optional().description("사용자 이름"),
                     fieldWithPath("email").type(JsonFieldType.STRING).description("사용자 이메일"),
-                    fieldWithPath("authType").type(JsonFieldType.STRING).description("인증 유형 (FORM_LOGIN, OAUTH2)"),
                     fieldWithPath("provider").type(JsonFieldType.STRING).optional().description("OAuth2 공급자 (GOOGLE, KAKAO 등)")
                 )
             ));

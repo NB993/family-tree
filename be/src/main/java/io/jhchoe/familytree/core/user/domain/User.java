@@ -2,7 +2,6 @@ package io.jhchoe.familytree.core.user.domain;
 
 import java.time.LocalDateTime;
 
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
 import lombok.Getter;
@@ -18,7 +17,6 @@ public class User {
     private final String name;
     private final String profileUrl;
     private final String kakaoId;
-    private final AuthenticationType authenticationType;
     private final OAuth2Provider oAuth2Provider;
     private final UserRole role;
     private final boolean deleted;
@@ -34,7 +32,6 @@ public class User {
         String name,
         String profileUrl,
         String kakaoId,
-        AuthenticationType authenticationType,
         OAuth2Provider oAuth2Provider,
         UserRole role,
         boolean deleted,
@@ -49,7 +46,6 @@ public class User {
         this.name = name;
         this.profileUrl = profileUrl;
         this.kakaoId = kakaoId;
-        this.authenticationType = authenticationType;
         this.oAuth2Provider = oAuth2Provider;
         this.role = role;
         this.deleted = deleted;
@@ -68,8 +64,7 @@ public class User {
      * @param name 이름
      * @param profileUrl 프로필 URL
      * @param kakaoId 카카오 ID
-     * @param authenticationType 인증 유형
-     * @param oAuth2Provider OAuth2 제공자 (nullable - NONE 타입 사용자)
+     * @param oAuth2Provider OAuth2 제공자 (nullable - 수동 등록 사용자)
      * @param role 사용자 역할
      * @param deleted 삭제 여부
      * @param createdBy 생성한 사용자 ID
@@ -85,7 +80,6 @@ public class User {
         String name,
         String profileUrl,
         String kakaoId,
-        AuthenticationType authenticationType,
         OAuth2Provider oAuth2Provider,
         UserRole role,
         boolean deleted,
@@ -96,10 +90,9 @@ public class User {
         LocalDateTime birthday
     ) {
         Objects.requireNonNull(id, "id는 null일 수 없습니다");
-        Objects.requireNonNull(authenticationType, "authenticationType은 null일 수 없습니다");
         Objects.requireNonNull(role, "role은 null일 수 없습니다");
 
-        return new User(id, email, name, profileUrl, kakaoId, authenticationType, oAuth2Provider, role, deleted,
+        return new User(id, email, name, profileUrl, kakaoId, oAuth2Provider, role, deleted,
                 createdBy, createdAt, modifiedBy, modifiedAt, birthday);
     }
 
@@ -110,7 +103,6 @@ public class User {
      * @param name 이름
      * @param profileUrl 프로필 URL
      * @param kakaoId 카카오 ID
-     * @param authenticationType 인증유형
      * @param oAuth2Provider OAuth2 제공자
      * @param role 사용자 역할
      * @param deleted 삭제 여부
@@ -122,13 +114,12 @@ public class User {
         String name,
         String profileUrl,
         String kakaoId,
-        AuthenticationType authenticationType,
         OAuth2Provider oAuth2Provider,
         UserRole role,
         boolean deleted,
         LocalDateTime birthday
     ) {
-        return new User(null, email, name, profileUrl, kakaoId, authenticationType, oAuth2Provider, role, deleted,
+        return new User(null, email, name, profileUrl, kakaoId, oAuth2Provider, role, deleted,
                 null, null, null, null, birthday);
     }
 
@@ -146,8 +137,18 @@ public class User {
         String profileUrl,
         LocalDateTime birthday
     ) {
-        return new User(null, null, name, profileUrl, null, AuthenticationType.NONE, null, UserRole.USER, false,
+        return new User(null, null, name, profileUrl, null, null, UserRole.USER, false,
                 null, null, null, null, birthday);
+    }
+
+    /**
+     * 사용자가 로그인 가능한지 확인합니다.
+     * OAuth2 제공자가 설정된 사용자만 로그인할 수 있습니다.
+     *
+     * @return 로그인 가능 여부
+     */
+    public boolean isLoginable() {
+        return oAuth2Provider != null;
     }
 
     /**

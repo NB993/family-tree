@@ -3,7 +3,6 @@ package io.jhchoe.familytree.core.user.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
 import java.time.LocalDateTime;
@@ -21,7 +20,6 @@ class UserTest {
         String email = "test@example.com";
         String name = "Test User";
         String profileUrl = "http://example.com/profile.jpg";
-        AuthenticationType authenticationType = AuthenticationType.OAUTH2;
         OAuth2Provider oAuth2Provider = OAuth2Provider.GOOGLE;
         UserRole role = UserRole.USER;
         boolean deleted = false;
@@ -38,7 +36,6 @@ class UserTest {
             name,
             profileUrl,
             null, // kakaoId
-            authenticationType,
             oAuth2Provider,
             role,
             deleted,
@@ -55,7 +52,6 @@ class UserTest {
         assertThat(user.getEmail()).isEqualTo(email);
         assertThat(user.getName()).isEqualTo(name);
         assertThat(user.getProfileUrl()).isEqualTo(profileUrl);
-        assertThat(user.getAuthenticationType()).isEqualTo(authenticationType);
         assertThat(user.getOAuth2Provider()).isEqualTo(oAuth2Provider);
         assertThat(user.getRole()).isEqualTo(role);
         assertThat(user.isDeleted()).isEqualTo(deleted);
@@ -73,7 +69,6 @@ class UserTest {
         Long id = null;
         String email = "test@example.com";
         String name = "Test User";
-        AuthenticationType authenticationType = AuthenticationType.OAUTH2;
         OAuth2Provider oAuth2Provider = OAuth2Provider.GOOGLE;
         UserRole role = UserRole.USER;
 
@@ -84,7 +79,6 @@ class UserTest {
             name,
             null,
             null, // kakaoId
-            authenticationType,
             oAuth2Provider,
             role,
             false,
@@ -99,45 +93,12 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("withId 메서드는 authenticationType이 null일 경우 예외를 발생시켜야 한다")
-    void given_null_authentication_type_when_create_user_with_id_then_throw_exception() {
-        // given
-        Long id = 1L;
-        String email = "test@example.com";
-        String name = "Test User";
-        AuthenticationType authenticationType = null;
-        OAuth2Provider oAuth2Provider = OAuth2Provider.GOOGLE;
-        UserRole role = UserRole.USER;
-
-        // when & then
-        assertThatThrownBy(() -> User.withId(
-            id,
-            email,
-            name,
-            null,
-            null, // kakaoId
-            authenticationType,
-            oAuth2Provider,
-            role,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null
-        ))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessage("authenticationType은 null일 수 없습니다");
-    }
-
-    @Test
     @DisplayName("withId 메서드는 role이 null일 경우 예외를 발생시켜야 한다")
     void given_null_role_when_create_user_with_id_then_throw_exception() {
         // given
         Long id = 1L;
         String email = "test@example.com";
         String name = "Test User";
-        AuthenticationType authenticationType = AuthenticationType.OAUTH2;
         OAuth2Provider oAuth2Provider = OAuth2Provider.GOOGLE;
         UserRole role = null;
 
@@ -148,7 +109,6 @@ class UserTest {
             name,
             null,
             null, // kakaoId
-            authenticationType,
             oAuth2Provider,
             role,
             false,
@@ -172,7 +132,6 @@ class UserTest {
             "Test User",
             null,
             null, // kakaoId
-            AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
             false,
@@ -201,7 +160,6 @@ class UserTest {
             "Test User",
             null,
             null, // kakaoId
-            AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
             false,
@@ -227,7 +185,6 @@ class UserTest {
         String email = "test@example.com";
         String name = "Test User";
         String profileUrl = "http://example.com/profile.jpg";
-        AuthenticationType authenticationType = AuthenticationType.OAUTH2;
         OAuth2Provider oAuth2Provider = OAuth2Provider.GOOGLE;
         UserRole role = UserRole.USER;
         LocalDateTime birthday = LocalDateTime.of(1990, 5, 15, 0, 0);
@@ -238,7 +195,6 @@ class UserTest {
             name,
             profileUrl,
             null, // kakaoId
-            authenticationType,
             oAuth2Provider,
             role,
             false,
@@ -251,7 +207,6 @@ class UserTest {
         assertThat(user.getEmail()).isEqualTo(email);
         assertThat(user.getName()).isEqualTo(name);
         assertThat(user.getProfileUrl()).isEqualTo(profileUrl);
-        assertThat(user.getAuthenticationType()).isEqualTo(authenticationType);
         assertThat(user.getOAuth2Provider()).isEqualTo(oAuth2Provider);
         assertThat(user.getRole()).isEqualTo(UserRole.USER);
         assertThat(user.isDeleted()).isFalse();
@@ -272,7 +227,6 @@ class UserTest {
             null,
             null,
             null, // kakaoId
-            AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
             false,
@@ -301,7 +255,6 @@ class UserTest {
             null,
             null,
             null, // kakaoId
-            AuthenticationType.OAUTH2,
             OAuth2Provider.GOOGLE,
             UserRole.USER,
             false,
@@ -338,7 +291,6 @@ class UserTest {
             name,
             null,
             null,
-            AuthenticationType.OAUTH2,
             OAuth2Provider.KAKAO,
             UserRole.USER,
             false,
@@ -367,8 +319,7 @@ class UserTest {
             name,
             null,
             null,
-            AuthenticationType.NONE,
-            null, // NONE 타입은 OAuth2Provider도 nullable
+            null, // 수동 등록 사용자는 OAuth2Provider도 nullable
             UserRole.USER,
             false,
             null,
@@ -384,8 +335,8 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("NONE 인증 타입으로 User를 생성할 수 있다 - 수동 등록 사용자용")
-    void create_user_with_none_authentication_type() {
+    @DisplayName("newManualUser로 생성된 사용자는 로그인 불가능하다 - isLoginable() false 검증")
+    void create_user_with_manual_user_is_not_loginable() {
         // given
         String name = "수동 등록 사용자";
 
@@ -394,21 +345,35 @@ class UserTest {
 
         // then
         assertThat(user.getId()).isNull();
-        assertThat(user.getAuthenticationType()).isEqualTo(AuthenticationType.NONE);
+        assertThat(user.isLoginable()).isFalse();
         assertThat(user.getName()).isEqualTo(name);
         assertThat(user.getEmail()).isNull();
     }
 
     @Test
-    @DisplayName("newManualUser로 생성된 사용자는 로그인 불가능하다")
-    void manual_user_is_not_loginable() {
+    @DisplayName("OAuth2 사용자는 로그인 가능하다 - isLoginable() true 검증")
+    void oauth2_user_is_loginable() {
         // given
-        User user = User.newManualUser("수동 사용자", null, LocalDateTime.of(2000, 5, 1, 0, 0));
+        User user = User.withId(
+            1L,
+            "test@example.com",
+            "Test User",
+            null,
+            null,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
 
         // when
-        boolean loginable = user.getAuthenticationType().isLoginable();
+        boolean loginable = user.isLoginable();
 
         // then
-        assertThat(loginable).isFalse();
+        assertThat(loginable).isTrue();
     }
 }

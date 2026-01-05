@@ -9,7 +9,6 @@ public record UserResponse(
     Long id,
     String name,
     String email,
-    String authType,
     String provider
 ) {
     /**
@@ -23,7 +22,6 @@ public record UserResponse(
             user.getId(),
             user.getName(),
             user.getEmail(),
-            user.getAuthType().name(),
             user.getOAuth2Provider() != null ? user.getOAuth2Provider().name() : null
         );
     }

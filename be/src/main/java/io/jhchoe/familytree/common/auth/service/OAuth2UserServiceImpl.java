@@ -2,7 +2,12 @@ package io.jhchoe.familytree.common.auth.service;
 
 import io.jhchoe.familytree.common.auth.UserJpaEntity;
 import io.jhchoe.familytree.common.auth.UserJpaRepository;
-import io.jhchoe.familytree.common.auth.domain.*;
+import io.jhchoe.familytree.common.auth.domain.FTUser;
+import io.jhchoe.familytree.common.auth.domain.GoogleUserInfo;
+import io.jhchoe.familytree.common.auth.domain.KakaoUserInfo;
+import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
+import io.jhchoe.familytree.common.auth.domain.OAuth2UserInfo;
+import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.common.util.MaskingUtils;
 import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyCommand;
@@ -103,7 +108,6 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
             userInfo.getName(),
             userInfo.getImageUrl(),
             kakaoId,
-            AuthenticationType.OAUTH2,
             provider,
             UserRole.USER,
             false,

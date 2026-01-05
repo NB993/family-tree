@@ -1,6 +1,5 @@
 package io.jhchoe.familytree.common.auth.filter;
 
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.exception.AuthExceptionCode;
 import io.jhchoe.familytree.common.auth.util.JwtTokenUtil;
@@ -84,7 +83,6 @@ class JwtAuthenticationFilterTest {
         assertThat(ftUser.getId()).isEqualTo(userId);
         assertThat(ftUser.getEmail()).isEqualTo(email);
         assertThat(ftUser.getName()).isEqualTo(name);
-        assertThat(ftUser.getAuthType()).isEqualTo(AuthenticationType.JWT);
         assertThat(ftUser.getAuthorities())
             .extracting(GrantedAuthority::getAuthority)
             .contains("ROLE_USER");
@@ -269,7 +267,6 @@ class JwtAuthenticationFilterTest {
         assertThat(ftUser.getAuthorities())
             .extracting(GrantedAuthority::getAuthority)
             .contains("ROLE_ADMIN");
-        assertThat(ftUser.getAuthType()).isEqualTo(AuthenticationType.JWT);
 
         verify(filterChain).doFilter(request, response);
     }

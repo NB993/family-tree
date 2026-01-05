@@ -1,6 +1,5 @@
 package io.jhchoe.familytree.common.auth;
 
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.config.WithMockOAuth2User;
@@ -52,7 +51,6 @@ class OAuth2Test extends AcceptanceTestBase {
             assertThat(user.getId()).isEqualTo(999L);
             assertThat(user.getName()).isEqualTo("구글테스트");
             assertThat(user.getEmail()).isEqualTo("google@example.com");
-            assertThat(user.getAuthType()).isEqualTo(AuthenticationType.OAUTH2);
             assertThat(user.getOAuth2Provider()).isEqualTo(OAuth2Provider.GOOGLE);
 
             // 인증이 필요한 엔드포인트에 접근 시도

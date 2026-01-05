@@ -1,6 +1,5 @@
 package io.jhchoe.familytree.common.auth;
 
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.exception.CommonExceptionCode;
@@ -40,10 +39,6 @@ public class UserJpaEntity extends ModifierBaseEntity {
     private String profileUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "authentication_type", nullable = false, length = 255)
-    private AuthenticationType authenticationType;
-
-    @Enumerated(EnumType.STRING)
     @Column(name = "oauth2_provider", length = 255)
     private OAuth2Provider oAuth2Provider;
     
@@ -75,7 +70,6 @@ public class UserJpaEntity extends ModifierBaseEntity {
                 user.getName(),
                 user.getProfileUrl(),
                 user.getKakaoId(),
-                user.getAuthenticationType(),
                 user.getOAuth2Provider(),
                 user.getRole(),
                 user.isDeleted(),
@@ -95,8 +89,7 @@ public class UserJpaEntity extends ModifierBaseEntity {
      * @param name 이름
      * @param profileUrl 프로필 URL
      * @param kakaoId 카카오 ID
-     * @param authenticationType 인증 유형
-     * @param oAuth2Provider OAuth2 제공자 (nullable - NONE 타입 사용자)
+     * @param oAuth2Provider OAuth2 제공자 (nullable - 수동 등록 사용자)
      * @param role 사용자 역할
      * @param deleted 삭제 여부
      * @param createdBy 생성자
@@ -111,7 +104,6 @@ public class UserJpaEntity extends ModifierBaseEntity {
         final String name,
         final String profileUrl,
         final String kakaoId,
-        final AuthenticationType authenticationType,
         final OAuth2Provider oAuth2Provider,
         final UserRole role,
         final boolean deleted,
@@ -127,7 +119,6 @@ public class UserJpaEntity extends ModifierBaseEntity {
         this.name = name;
         this.profileUrl = profileUrl;
         this.kakaoId = kakaoId;
-        this.authenticationType = authenticationType;
         this.oAuth2Provider = oAuth2Provider;
         this.role = role;
         this.deleted = deleted;
@@ -146,7 +137,6 @@ public class UserJpaEntity extends ModifierBaseEntity {
                 name,
                 profileUrl,
                 kakaoId,
-                authenticationType,
                 oAuth2Provider,
                 role,
                 deleted,
