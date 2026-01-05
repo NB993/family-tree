@@ -11,7 +11,10 @@ import io.jhchoe.familytree.core.family.domain.FamilyJoinRequestStatus;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
+import io.jhchoe.familytree.core.user.application.port.out.FindUserPort;
+import io.jhchoe.familytree.core.user.domain.User;
 import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
+import io.jhchoe.familytree.test.fixture.UserFixture;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -48,6 +51,9 @@ class ProcessFamilyJoinRequestServiceTest {
     @Mock
     private SaveFamilyMemberPort saveFamilyMemberPort;
 
+    @Mock
+    private FindUserPort findUserPort;
+
     @Test
     @DisplayName("OWNER 권한으로 가입 신청을 승인할 때 성공합니다")
     void process_success_when_owner_approves_request() {
@@ -80,6 +86,11 @@ class ProcessFamilyJoinRequestServiceTest {
         // Mocking: 가입 신청 조회
         when(findFamilyJoinRequestPort.findById(requestId))
             .thenReturn(Optional.of(pendingRequest));
+
+        // Mocking: User 조회 (가입 신청자 정보)
+        User requesterUser = UserFixture.withId(requesterId);
+        when(findUserPort.findById(requesterId))
+            .thenReturn(Optional.of(requesterUser));
 
         // Mocking: FamilyMember 저장
         when(saveFamilyMemberPort.save(any(FamilyMember.class)))
