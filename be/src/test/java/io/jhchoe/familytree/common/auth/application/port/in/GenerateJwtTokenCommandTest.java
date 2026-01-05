@@ -1,6 +1,5 @@
 package io.jhchoe.familytree.common.auth.application.port.in;
 
-import io.jhchoe.familytree.common.auth.domain.AuthenticationType;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import org.junit.jupiter.api.DisplayName;
