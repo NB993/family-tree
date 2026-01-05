@@ -77,6 +77,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUserInfo(userData);
     setIsAuthenticated(true);
     setIsLoading(false);
+    // ref를 동기적으로 업데이트하여 navigate 직후 checkAuthStatus에서 스킵되도록 함
+    isAuthenticatedRef.current = true;
   }, []);
 
   useEffect(() => {

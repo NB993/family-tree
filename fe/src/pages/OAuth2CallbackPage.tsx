@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthService } from '../api/services/authService';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,6 +10,32 @@ const OAuth2CallbackPage: React.FC = () => {
   const { confirmAuthentication } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasProcessed, setHasProcessed] = useState(false);
+
+  const handleOAuth2Success = useCallback(async () => {
+    if (isProcessing || hasProcessed) return;
+
+    setIsProcessing(true);
+    setHasProcessed(true);
+
+    logger.info('OAuth2 login successful, verifying authentication...');
+
+    try {
+      const authService = AuthService.getInstance();
+      const userInfo = await authService.getCurrentUser();
+
+      logger.info('Authentication verified successfully:', { userId: userInfo.id, email: userInfo.email });
+
+      // 인증 상태를 AuthContext에 확정한 후 홈으로 이동
+      confirmAuthentication(userInfo);
+      navigate('/home');
+    } catch (error) {
+      logger.error('Authentication verification failed:', error);
+      alert('인증 확인에 실패했습니다. 다시 로그인해주세요.');
+      navigate('/login');
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [isProcessing, hasProcessed, confirmAuthentication, navigate]);
 
   useEffect(() => {
     if (hasProcessed) return;
@@ -35,33 +61,7 @@ const OAuth2CallbackPage: React.FC = () => {
       setHasProcessed(true);
       navigate('/login');
     }
-  }, [location, navigate, hasProcessed]);
-
-  const handleOAuth2Success = async () => {
-    if (isProcessing || hasProcessed) return;
-
-    setIsProcessing(true);
-    setHasProcessed(true);
-
-    logger.info('OAuth2 login successful, verifying authentication...');
-
-    try {
-      const authService = AuthService.getInstance();
-      const userInfo = await authService.getCurrentUser();
-
-      logger.info('Authentication verified successfully:', { userId: userInfo.id, email: userInfo.email });
-
-      // 인증 상태를 AuthContext에 확정한 후 홈으로 이동
-      confirmAuthentication(userInfo);
-      navigate('/home');
-    } catch (error) {
-      logger.error('Authentication verification failed:', error);
-      alert('인증 확인에 실패했습니다. 다시 로그인해주세요.');
-      navigate('/login');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  }, [location, navigate, hasProcessed, handleOAuth2Success]);
 
   return (
     <div className="app-shell flex items-center justify-center">
