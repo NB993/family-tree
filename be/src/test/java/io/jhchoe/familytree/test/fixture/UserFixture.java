@@ -126,4 +126,13 @@ public final class UserFixture {
             OAuth2Provider.GOOGLE, UserRole.USER, false,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now(), birthday);
     }
+
+    /**
+     * 지정된 ID와 kakaoId로 카카오 사용자를 생성합니다.
+     */
+    public static User withIdAndKakaoId(Long id, String kakaoId) {
+        return User.withId(id, DEFAULT_EMAIL, DEFAULT_NAME, DEFAULT_PROFILE_URL, kakaoId,
+            OAuth2Provider.KAKAO, UserRole.USER, false,
+            1L, LocalDateTime.now(), 1L, LocalDateTime.now(), DEFAULT_BIRTHDAY);
+    }
 }

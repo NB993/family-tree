@@ -114,35 +114,6 @@ class FamilyMemberFixtureTest {
     }
 
     @Nested
-    @DisplayName("newKakaoMember 메서드")
-    class NewKakaoMemberMethod {
-
-        @Test
-        @DisplayName("카카오 인증 비회원으로 생성된다")
-        void creates_kakao_member_with_default_values() {
-            // when
-            FamilyMember kakaoMember = FamilyMemberFixture.newKakaoMember();
-
-            // then
-            assertThat(kakaoMember.getId()).isNull();
-            assertThat(kakaoMember.getKakaoId()).isEqualTo("kakao_test_id");
-            assertThat(kakaoMember.getUserId()).isNull();
-            assertThat(kakaoMember.getRole()).isEqualTo(FamilyMemberRole.MEMBER);
-        }
-
-        @Test
-        @DisplayName("지정된 familyId와 kakaoId로 생성된다")
-        void creates_kakao_member_with_specified_ids() {
-            // when
-            FamilyMember kakaoMember = FamilyMemberFixture.newKakaoMember(10L, "kakao_custom_id");
-
-            // then
-            assertThat(kakaoMember.getFamilyId()).isEqualTo(10L);
-            assertThat(kakaoMember.getKakaoId()).isEqualTo("kakao_custom_id");
-        }
-    }
-
-    @Nested
     @DisplayName("withId 메서드")
     class WithIdMethod {
 
@@ -246,23 +217,6 @@ class FamilyMemberFixtureTest {
             // then
             assertThat(member.getId()).isEqualTo(100L);
             assertThat(member.getName()).isEqualTo("커스텀이름");
-        }
-    }
-
-    @Nested
-    @DisplayName("withIdKakao 메서드")
-    class WithIdKakaoMethod {
-
-        @Test
-        @DisplayName("카카오 ID를 포함한 FamilyMember를 생성한다")
-        void creates_kakao_member_with_id() {
-            // when
-            FamilyMember kakaoMember = FamilyMemberFixture.withIdKakao(100L, 10L, "kakao_custom_id");
-
-            // then
-            assertThat(kakaoMember.getId()).isEqualTo(100L);
-            assertThat(kakaoMember.getFamilyId()).isEqualTo(10L);
-            assertThat(kakaoMember.getKakaoId()).isEqualTo("kakao_custom_id");
         }
     }
 }

@@ -19,8 +19,6 @@ public final class FamilyMemberFixture {
     private static final String DEFAULT_NAME = "테스트멤버";
     private static final String DEFAULT_PROFILE_URL = "http://example.com/profile.jpg";
     private static final LocalDateTime DEFAULT_BIRTHDAY = LocalDateTime.of(1990, 1, 1, 0, 0);
-    private static final String DEFAULT_NATIONALITY = "KR";
-    private static final String DEFAULT_KAKAO_ID = "kakao_test_id";
 
     private FamilyMemberFixture() {
     }
@@ -32,7 +30,7 @@ public final class FamilyMemberFixture {
      */
     public static FamilyMember newMember() {
         return FamilyMember.newMember(DEFAULT_FAMILY_ID, DEFAULT_USER_ID, DEFAULT_NAME,
-            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY);
+            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY);
     }
 
     /**
@@ -40,7 +38,7 @@ public final class FamilyMemberFixture {
      */
     public static FamilyMember newMember(Long familyId, Long userId) {
         return FamilyMember.newMember(familyId, userId, DEFAULT_NAME,
-            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY);
+            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY);
     }
 
     /**
@@ -48,23 +46,23 @@ public final class FamilyMemberFixture {
      */
     public static FamilyMember newMember(Long familyId, Long userId, String name) {
         return FamilyMember.newMember(familyId, userId, name,
-            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY);
+            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY);
     }
 
     /**
      * 기본 OWNER 역할의 FamilyMember를 생성합니다.
      */
     public static FamilyMember newOwner() {
-        return FamilyMember.newOwner(DEFAULT_FAMILY_ID, DEFAULT_USER_ID, null, "테스트오너",
-            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY);
+        return FamilyMember.newOwner(DEFAULT_FAMILY_ID, DEFAULT_USER_ID, "테스트오너",
+            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY);
     }
 
     /**
      * 지정된 familyId와 userId로 OWNER 역할의 FamilyMember를 생성합니다.
      */
     public static FamilyMember newOwner(Long familyId, Long userId) {
-        return FamilyMember.newOwner(familyId, userId, null, "테스트오너",
-            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY);
+        return FamilyMember.newOwner(familyId, userId, "테스트오너",
+            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY);
     }
 
     /**
@@ -72,7 +70,7 @@ public final class FamilyMemberFixture {
      */
     public static FamilyMember newAdmin() {
         return FamilyMember.withRole(DEFAULT_FAMILY_ID, DEFAULT_USER_ID, "테스트어드민",
-            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY, FamilyMemberRole.ADMIN);
+            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY, FamilyMemberRole.ADMIN);
     }
 
     /**
@@ -80,23 +78,7 @@ public final class FamilyMemberFixture {
      */
     public static FamilyMember newAdmin(Long familyId, Long userId) {
         return FamilyMember.withRole(familyId, userId, "테스트어드민",
-            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY, FamilyMemberRole.ADMIN);
-    }
-
-    /**
-     * 카카오 인증 비회원 FamilyMember를 생성합니다.
-     */
-    public static FamilyMember newKakaoMember() {
-        return FamilyMember.newKakaoMember(DEFAULT_FAMILY_ID, null, DEFAULT_KAKAO_ID, "카카오멤버",
-            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY);
-    }
-
-    /**
-     * 지정된 familyId와 kakaoId로 카카오 인증 비회원 FamilyMember를 생성합니다.
-     */
-    public static FamilyMember newKakaoMember(Long familyId, String kakaoId) {
-        return FamilyMember.newKakaoMember(familyId, null, kakaoId, "카카오멤버",
-            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY);
+            DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY, FamilyMemberRole.ADMIN);
     }
 
     // ==================== ID 포함 (기존 엔티티 복원) ====================
@@ -126,8 +108,8 @@ public final class FamilyMemberFixture {
      * 지정된 ID, familyId, userId, 역할로 FamilyMember를 생성합니다.
      */
     public static FamilyMember withIdAndRole(Long id, Long familyId, Long userId, FamilyMemberRole role) {
-        return FamilyMember.withId(id, familyId, userId, null, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
-            DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY,
+        return FamilyMember.withId(id, familyId, userId, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
+            DEFAULT_BIRTHDAY,
             FamilyMemberStatus.ACTIVE, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
     }
@@ -136,8 +118,8 @@ public final class FamilyMemberFixture {
      * 지정된 ID와 상태로 FamilyMember를 생성합니다.
      */
     public static FamilyMember withIdAndStatus(Long id, FamilyMemberStatus status) {
-        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, null, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
-            DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY,
+        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
+            DEFAULT_BIRTHDAY,
             status, FamilyMemberRole.MEMBER,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
     }
@@ -146,8 +128,8 @@ public final class FamilyMemberFixture {
      * 지정된 ID, 역할, 상태로 FamilyMember를 생성합니다.
      */
     public static FamilyMember withIdRoleAndStatus(Long id, FamilyMemberRole role, FamilyMemberStatus status) {
-        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, null, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
-            DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY,
+        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
+            DEFAULT_BIRTHDAY,
             status, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
     }
@@ -156,8 +138,8 @@ public final class FamilyMemberFixture {
      * 지정된 ID, familyId, userId, 역할, 상태로 FamilyMember를 생성합니다.
      */
     public static FamilyMember withIdFull(Long id, Long familyId, Long userId, FamilyMemberRole role, FamilyMemberStatus status) {
-        return FamilyMember.withId(id, familyId, userId, null, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
-            DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY,
+        return FamilyMember.withId(id, familyId, userId, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
+            DEFAULT_BIRTHDAY,
             status, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
     }
@@ -166,39 +148,9 @@ public final class FamilyMemberFixture {
      * 지정된 ID와 이름으로 MEMBER 역할의 FamilyMember를 생성합니다.
      */
     public static FamilyMember withIdAndName(Long id, String name) {
-        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, null, name, null, DEFAULT_PROFILE_URL,
-            DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY,
+        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, name, null, DEFAULT_PROFILE_URL,
+            DEFAULT_BIRTHDAY,
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now());
-    }
-
-    /**
-     * 카카오 ID를 포함한 FamilyMember를 생성합니다 (ID 포함).
-     */
-    public static FamilyMember withIdKakao(Long id, Long familyId, String kakaoId) {
-        return FamilyMember.withIdKakao(id, familyId, null, kakaoId, "카카오멤버", null, DEFAULT_PROFILE_URL,
-            DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY,
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now());
-    }
-
-    /**
-     * 카카오 ID와 역할을 포함한 FamilyMember를 생성합니다 (ID 포함).
-     */
-    public static FamilyMember withIdKakaoAndRole(Long id, Long familyId, String kakaoId, FamilyMemberRole role) {
-        return FamilyMember.withIdKakao(id, familyId, null, kakaoId, "카카오멤버", null, DEFAULT_PROFILE_URL,
-            DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY,
-            FamilyMemberStatus.ACTIVE, role,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now());
-    }
-
-    /**
-     * 카카오 ID, 역할, 이름을 포함한 FamilyMember를 생성합니다 (ID 포함).
-     */
-    public static FamilyMember withIdKakaoRoleAndName(Long id, Long familyId, String kakaoId, FamilyMemberRole role, String name) {
-        return FamilyMember.withIdKakao(id, familyId, null, kakaoId, name, null, DEFAULT_PROFILE_URL,
-            DEFAULT_BIRTHDAY, DEFAULT_NATIONALITY,
-            FamilyMemberStatus.ACTIVE, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
     }
 
@@ -207,8 +159,8 @@ public final class FamilyMemberFixture {
      * 생일 기반 정렬 테스트에 유용합니다.
      */
     public static FamilyMember withIdRoleNameAndBirthday(Long id, Long familyId, Long userId, FamilyMemberRole role, String name, LocalDateTime birthday) {
-        return FamilyMember.withId(id, familyId, userId, null, name, null, DEFAULT_PROFILE_URL,
-            birthday, DEFAULT_NATIONALITY,
+        return FamilyMember.withId(id, familyId, userId, name, null, DEFAULT_PROFILE_URL,
+            birthday,
             FamilyMemberStatus.ACTIVE, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
     }
@@ -218,8 +170,8 @@ public final class FamilyMemberFixture {
      * 상태와 생일을 함께 지정해야 하는 테스트에 유용합니다.
      */
     public static FamilyMember withIdFullAndBirthday(Long id, Long familyId, Long userId, FamilyMemberRole role, FamilyMemberStatus status, String name, LocalDateTime birthday) {
-        return FamilyMember.withId(id, familyId, userId, null, name, null, DEFAULT_PROFILE_URL,
-            birthday, DEFAULT_NATIONALITY,
+        return FamilyMember.withId(id, familyId, userId, name, null, DEFAULT_PROFILE_URL,
+            birthday,
             status, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
     }

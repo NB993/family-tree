@@ -20,11 +20,9 @@ class FamilyMemberEntityTest {
         Long id = 1L;
         Long familyId = 101L;
         Long userId = 202L;
-        String kakaoId = "kakao";
         String name = "Test Name";
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.now();
-        String nationality = "Korean";
         FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
         Long createdBy = 1001L;
         LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
@@ -32,8 +30,8 @@ class FamilyMemberEntityTest {
         LocalDateTime modifiedAt = LocalDateTime.now();
 
         FamilyMember familyMember = FamilyMember.withId(
-            id, familyId, userId, kakaoId, name, null, profileUrl, birthday,
-            nationality, status, FamilyMemberRole.MEMBER, createdBy, createdAt, modifiedBy, modifiedAt
+            id, familyId, userId, name, null, profileUrl, birthday,
+            status, FamilyMemberRole.MEMBER, createdBy, createdAt, modifiedBy, modifiedAt
         );
 
         // when
@@ -47,7 +45,6 @@ class FamilyMemberEntityTest {
         assertThat(result.getName()).isEqualTo(name);
         assertThat(result.getProfileUrl()).isEqualTo(profileUrl);
         assertThat(result.getBirthday()).isEqualTo(birthday);
-        assertThat(result.getNationality()).isEqualTo(nationality);
         assertThat(result.getStatus()).isEqualTo(status);
         assertThat(result.getRole()).isEqualTo(FamilyMemberRole.MEMBER); // existingMember는 기본적으로 MEMBER 역할
         assertThat(result.getCreatedBy()).isEqualTo(createdBy);
@@ -75,11 +72,9 @@ class FamilyMemberEntityTest {
         Long id = 1L;
         Long familyId = 101L;
         Long userId = 202L;
-        String kakaoId = "kakao";
         String name = "Admin User";
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.now();
-        String nationality = "Korean";
         FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
         FamilyMemberRole role = FamilyMemberRole.ADMIN;
         Long createdBy = 1001L;
@@ -88,8 +83,8 @@ class FamilyMemberEntityTest {
         LocalDateTime modifiedAt = LocalDateTime.now();
 
         FamilyMember familyMember = FamilyMember.withId(
-            id, familyId, userId, kakaoId, name, null, profileUrl, birthday,
-            nationality, status, role, createdBy, createdAt, modifiedBy, modifiedAt
+            id, familyId, userId, name, null, profileUrl, birthday,
+            status, role, createdBy, createdAt, modifiedBy, modifiedAt
         );
 
         // when
@@ -103,7 +98,6 @@ class FamilyMemberEntityTest {
         assertThat(result.getName()).isEqualTo(name);
         assertThat(result.getProfileUrl()).isEqualTo(profileUrl);
         assertThat(result.getBirthday()).isEqualTo(birthday);
-        assertThat(result.getNationality()).isEqualTo(nationality);
         assertThat(result.getStatus()).isEqualTo(status);
         assertThat(result.getRole()).isEqualTo(role);
         assertThat(result.getCreatedBy()).isEqualTo(createdBy);
@@ -119,11 +113,9 @@ class FamilyMemberEntityTest {
         Long id = 1L;
         Long familyId = 101L;
         Long userId = 202L;
-        String kakaoId = "kakao";
         String name = "Test User";
         String profileUrl = "http://example.com/profile";
         LocalDateTime birthday = LocalDateTime.now();
-        String nationality = "Korean";
         FamilyMemberStatus status = FamilyMemberStatus.ACTIVE;
         FamilyMemberRole role = FamilyMemberRole.OWNER;
         Long createdBy = 1001L;
@@ -131,7 +123,7 @@ class FamilyMemberEntityTest {
         Long modifiedBy = 1002L;
         LocalDateTime modifiedAt = LocalDateTime.now();
 
-        FamilyMember familyMember = FamilyMember.withId(id, familyId, userId, kakaoId, name, null, profileUrl, birthday, nationality,
+        FamilyMember familyMember = FamilyMember.withId(id, familyId, userId, name, null, profileUrl, birthday,
             status, role, createdBy, createdAt, modifiedBy, modifiedAt);
         FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
 
@@ -146,7 +138,6 @@ class FamilyMemberEntityTest {
         assertThat(result.getName()).isEqualTo(name);
         assertThat(result.getProfileUrl()).isEqualTo(profileUrl);
         assertThat(result.getBirthday()).isEqualTo(birthday);
-        assertThat(result.getNationality()).isEqualTo(nationality);
         assertThat(result.getStatus()).isEqualTo(status);
         assertThat(result.getRole()).isEqualTo(role);
         assertThat(result.getCreatedBy()).isEqualTo(createdBy);
@@ -164,12 +155,10 @@ class FamilyMemberEntityTest {
             1L,  // id
             101L,  // familyId
             202L,  // userId
-            null,  // kakaoId
             "Test User",  // name
-            "Relationsship", // relationship
+            "Relationship", // relationship
             "http://example.com/profile",  // profileUrl
             LocalDateTime.now(),  // birthday
-            "Korean",  // nationality
             FamilyMemberStatus.ACTIVE,  // status
             null,  // role이 null
             1001L,  // createdBy
