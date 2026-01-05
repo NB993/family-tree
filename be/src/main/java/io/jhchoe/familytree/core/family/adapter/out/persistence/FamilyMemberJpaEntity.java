@@ -14,6 +14,9 @@ import org.hibernate.annotations.SQLRestriction;
 
 /**
  * FamilyMemberEntity 클래스는 FamilyMember 도메인 객체를 데이터베이스에 저장하기 위한 엔티티입니다.
+ * <p>
+ * name, profileUrl, birthday는 Family별로 독립적으로 관리됩니다.
+ * 초대 수락 시 User 정보를 복사하며, 이후 Family 주인이 수정할 수 있습니다.
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,10 +31,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
     private Long familyId;
 
     @Column(name = "user_id")
-    private Long userId; // nullable - 비회원도 가능
-
-    @Column(name = "kakao_id")
-    private String kakaoId; // 카카오 ID
+    private Long userId; // nullable - 수동 등록(애완동물, 아이 등)인 경우 null
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -45,13 +45,10 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
     @Column(name = "relationship")
     private String relationship;
 
-    @Column(name = "nationality")
-    private String nationality;
-
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private FamilyMemberStatus status;
-    
+
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private FamilyMemberRole role;
@@ -61,12 +58,11 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
      *
      * @param id          고유 ID
      * @param familyId    Family ID
-     * @param userId      사용자 ID (nullable - 비회원인 경우 null)
-     * @param kakaoId     카카오 ID (nullable)
+     * @param userId      사용자 ID (nullable - 수동 등록인 경우 null)
      * @param name        구성원 이름
+     * @param relationship 나와의 관계
      * @param profileUrl  프로필 URL
      * @param birthday    생일
-     * @param nationality 국적
      * @param status      멤버 상태
      * @param role        멤버 역할
      * @param createdBy   생성한 사용자 ID
@@ -78,12 +74,10 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         Long id,
         Long familyId,
         Long userId,
-        String kakaoId,
         String name,
         String relationship,
         String profileUrl,
         LocalDateTime birthday,
-        String nationality,
         FamilyMemberStatus status,
         FamilyMemberRole role,
         Long createdBy,
@@ -95,12 +89,10 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         this.id = id;
         this.familyId = familyId;
         this.userId = userId;
-        this.kakaoId = kakaoId;
         this.name = name;
         this.relationship = relationship;
         this.profileUrl = profileUrl;
         this.birthday = birthday;
-        this.nationality = nationality;
         this.status = status;
         this.role = role;
     }
@@ -118,12 +110,10 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
             familyMember.getId(),
             familyMember.getFamilyId(),
             familyMember.getUserId(),
-            familyMember.getKakaoId(),
             familyMember.getName(),
             familyMember.getRelationship(),
             familyMember.getProfileUrl(),
             familyMember.getBirthday(),
-            familyMember.getNationality(),
             familyMember.getStatus(),
             familyMember.getRole(),
             familyMember.getCreatedBy(),
@@ -143,12 +133,10 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
             id,
             familyId,
             userId,
-            kakaoId,
             name,
             relationship,
             profileUrl,
             birthday,
-            nationality,
             status,
             role != null ? role : FamilyMemberRole.MEMBER, // 기본 역할은 MEMBER
             getCreatedBy(),

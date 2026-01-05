@@ -109,12 +109,10 @@ public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMe
                 entity.getId(),
                 entity.getFamilyId(),
                 entity.getUserId(),
-                entity.getKakaoId(), // kakaoId 추가
                 entity.getName(),
                 entity.getRelationship(),
                 entity.getProfileUrl(),
                 entity.getBirthday(),
-                entity.getNationality(),
                 familyMember.getStatus(),
                 familyMember.getRole(),
                 entity.getCreatedBy(),

@@ -14,12 +14,11 @@ public record FamilyMemberResponse(
     String name,
     String profileUrl,
     LocalDateTime birthday,
-    String nationality,
     FamilyMemberStatus status,
     FamilyMemberRole role,
     LocalDateTime createdAt
 ) {
-    
+
     /**
      * 도메인 객체로부터 응답 DTO를 생성합니다.
      *
@@ -33,7 +32,6 @@ public record FamilyMemberResponse(
             member.getName(),
             member.getProfileUrl(),
             member.getBirthday(),
-            member.getNationality(),
             member.getStatus(),
             member.getRole(),
             member.getCreatedAt()
