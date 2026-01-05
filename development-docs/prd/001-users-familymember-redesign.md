@@ -9,7 +9,7 @@
 | 단계 | 내용 | 상태 |
 |------|------|------|
 | 1단계 | User 도메인 확장 (birthday, email nullable, AuthenticationType NONE) | ✅ 완료 (`30035a4`) |
-| 2단계 | FamilyMember 테이블 정리 (컬럼 제거, user_id NOT NULL) | ⏳ 미진행 |
+| 2단계 | FamilyMember 테이블 정리 (kakaoId, nationality 제거) | ⏳ 미진행 |
 
 ### 관련 작업
 - PRD-002에서 AuthenticationType 필드 제거됨 (원래 NONE 추가 계획이었으나 전체 필드 제거로 변경)
@@ -31,19 +31,20 @@
 | **정체성 혼란** | 카카오 로그인했는데 "회원"이 아닌 상태 존재 |
 | **수동 등록 불가** | DB 제약조건으로 user_id/kakao_id 중 하나는 필수 → 애완동물 등록 불가 |
 
-### 1.3 논의 결과
+### 1.3 논의 결과 (수정됨)
 - 카카오 동의 시점에 이미 서비스 연동이 되므로, 초대링크 응답자도 회원가입 처리
-- 수동 등록(애완동물, 아이 등)도 `users` 테이블에 저장
 - `email` 대신 `kakaoId`로만 사용자 식별 (현재 카카오만 사용 중)
+- **수동 등록(애완동물, 아이 등)은 `family_member`에만 저장** (user_id = NULL)
+- **name, profileUrl, birthday는 FamilyMember에 유지** (Family별로 다르게 표시 가능, 일방향 복사)
 
 ---
 
-## 2. 목표
+## 2. 목표 (수정됨)
 
-1. **단일 진실 원천**: 사람 고유 속성(`birthday`)은 `users`에만 저장
-2. **데이터 정합성**: 중복 컬럼 제거로 동기화 문제 해결
-3. **수동 등록 지원**: 애완동물, 아이 등 로그인 불가능한 구성원 등록 가능
-4. **단순한 관계**: `family_member.user_id`가 항상 존재
+1. **kakaoId 중복 제거**: `family_member`에서 `kakao_id` 제거, `users`에만 존재
+2. **수동 등록 지원**: 애완동물, 아이 등 로그인 불가능한 구성원을 FamilyMember로 등록 가능
+3. **Family별 표시명 지원**: name, profileUrl은 FamilyMember에 유지 (Family 주인이 수정 가능)
+4. **초대 흐름 개선**: 초대 수락 시 User 조회/생성 후 FamilyMember 생성
 
 ---
 
@@ -59,16 +60,18 @@
 
 > **Note**: 수동 등록 사용자는 `oauth2_provider IS NULL`로 구분 (`User.isLoginable()` 메서드)
 
-### 3.2 family_member 테이블
+### 3.2 family_member 테이블 (수정됨)
 
 | 컬럼 | 현재 | 변경 |
 |------|------|------|
-| user_id | nullable | **NOT NULL** |
-| name | NOT NULL | **제거** (users.name 사용) |
-| profile_url | nullable | **제거** (users.profile_url 사용) |
+| user_id | nullable | **유지** (수동 등록 시 NULL) |
+| name | NOT NULL | **유지** (Family별 표시명) |
+| profile_url | nullable | **유지** (Family별 프로필) |
+| birthday | nullable | **유지** (Family별 생일 정보) |
 | kakao_id | nullable | **제거** (users에만 존재) |
-| birthday | nullable | **제거** (users로 이동) |
 | nationality | nullable | **제거** |
+
+> **Note**: 초대 수락 시 User의 name, profileUrl, birthday를 FamilyMember에 복사 (일방향). 이후 FamilyMember는 독립적으로 관리.
 
 ---
 
@@ -91,18 +94,23 @@ CREATE TABLE users (
 );
 ```
 
-### 4.2 family_member (변경 후)
+### 4.2 family_member (변경 후 - 수정됨)
 ```sql
 CREATE TABLE family_member (
     id BIGINT PRIMARY KEY,
     family_id BIGINT NOT NULL,
-    user_id BIGINT NOT NULL,         -- NOT NULL로 변경
+    user_id BIGINT,                  -- nullable 유지 (수동 등록 시 NULL)
+    name VARCHAR(255) NOT NULL,      -- 유지 (Family별 표시명)
+    profile_url VARCHAR(255),        -- 유지 (Family별 프로필)
+    birthday TIMESTAMP(6),           -- 유지 (Family별 생일)
     relationship VARCHAR(255),
     role VARCHAR(255),               -- OWNER, ADMIN, MEMBER
     status VARCHAR(255),             -- ACTIVE, SUSPENDED, BANNED
+    -- kakao_id 제거
+    -- nationality 제거
     -- audit fields
 
-    UNIQUE (family_id, user_id)      -- 복합 유니크
+    UNIQUE (family_id, user_id)      -- 복합 유니크 (user_id가 NOT NULL인 경우)
 );
 ```
 
@@ -123,11 +131,11 @@ CREATE TABLE family_member (
 4. family_member 생성 시 user_id 필수
 ```
 
-### 5.2 수동 등록 (신규 - 별도 PRD)
+### 5.2 수동 등록 (신규 - 별도 PRD, 수정됨)
 ```
 1. 관리자가 이름, 프로필, 생일 입력
-2. users에 authentication_type=NONE으로 저장
-3. family_member 생성 시 user_id 연결
+2. family_member만 생성 (user_id = NULL)
+3. User 테이블에는 저장하지 않음 (애완동물, 아이 등)
 ```
 
 ### 5.3 가입 신청 승인 (변경)
@@ -201,11 +209,10 @@ CREATE TABLE family_member (
 2. User 도메인 확장 (birthday, email nullable) ✅
 3. 수동 사용자 구분: `User.isLoginable()` 메서드 (oAuth2Provider != null) ✅
 
-### 2단계: FamilyMember 테이블 정리 ⏳ 미진행
-4. FamilyMember 도메인 정리 (name, profile_url, kakao_id, birthday, nationality 제거)
-5. FamilyMember.user_id NOT NULL 변경
-6. 서비스 로직 변경 (SaveInviteResponseWithKakaoService 등)
-7. Repository/Port 변경
-8. DB 마이그레이션
-9. 테스트 변경
-10. 프론트엔드 변경
+### 2단계: FamilyMember 테이블 정리 ⏳ 미진행 (수정됨)
+4. FamilyMember 도메인 정리 (**kakao_id, nationality만 제거**, name/profileUrl/birthday 유지)
+5. ~~FamilyMember.user_id NOT NULL 변경~~ → **nullable 유지** (수동 등록 지원)
+6. 서비스 로직 변경 (SaveInviteResponseWithKakaoService: User 조회/생성 후 FamilyMember 생성)
+7. DB 마이그레이션 (kakao_id, nationality 컬럼 제거, 체크 제약조건 제거)
+8. 테스트 변경
+9. 프론트엔드 변경 (필요시)
