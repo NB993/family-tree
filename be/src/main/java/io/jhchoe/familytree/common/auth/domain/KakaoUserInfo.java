@@ -1,5 +1,6 @@
 package io.jhchoe.familytree.common.auth.domain;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -72,7 +73,7 @@ public class KakaoUserInfo implements OAuth2UserInfo {
      * 카카오 계정의 생년월일 정보를 LocalDate로 반환합니다.
      * kakao_account.birthday (MMDD 형식)와 kakao_account.birthyear (YYYY 형식)를 조합합니다.
      *
-     * @return 생년월일 (birthday 또는 birthyear가 없으면 null)
+     * @return 생년월일 (birthday 또는 birthyear가 없거나 파싱 실패 시 null)
      */
     public LocalDate getBirthDate() {
         if (account == null) {
@@ -90,10 +91,14 @@ public class KakaoUserInfo implements OAuth2UserInfo {
             return null;
         }
 
-        int year = Integer.parseInt(birthyear);
-        int month = Integer.parseInt(birthday.substring(0, 2));
-        int day = Integer.parseInt(birthday.substring(2, 4));
+        try {
+            int year = Integer.parseInt(birthyear);
+            int month = Integer.parseInt(birthday.substring(0, 2));
+            int day = Integer.parseInt(birthday.substring(2, 4));
 
-        return LocalDate.of(year, month, day);
+            return LocalDate.of(year, month, day);
+        } catch (NumberFormatException | DateTimeException e) {
+            return null;
+        }
     }
 }

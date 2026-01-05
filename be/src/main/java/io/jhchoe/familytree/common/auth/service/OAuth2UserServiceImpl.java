@@ -172,7 +172,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
      * @param provider OAuth2 제공자
      * @return 생년월일 (LocalDateTime) 또는 null
      */
-    private LocalDateTime extractBirthday(OAuth2UserInfo userInfo, OAuth2Provider provider) {
+    private LocalDateTime extractBirthday(final OAuth2UserInfo userInfo, final OAuth2Provider provider) {
         if (provider == OAuth2Provider.KAKAO && userInfo instanceof KakaoUserInfo kakaoUserInfo) {
             LocalDate birthDate = kakaoUserInfo.getBirthDate();
             if (birthDate != null) {

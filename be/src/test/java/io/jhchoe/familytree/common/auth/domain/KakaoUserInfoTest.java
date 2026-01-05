@@ -18,7 +18,7 @@ class KakaoUserInfoTest {
     class GetBirthDateTest {
 
         @Test
-        @DisplayName("birthday와 birthyear가 모두 있으면 LocalDate를 반환합니다")
+        @DisplayName("birthday와 birthyear가 모두 존재하면 LocalDate를 반환합니다")
         void return_local_date_when_birthday_and_birthyear_exist() {
             // given
             Map<String, Object> account = new HashMap<>();
@@ -111,6 +111,46 @@ class KakaoUserInfoTest {
 
             // then
             assertThat(birthDate).isEqualTo(LocalDate.of(2000, 12, 25));
+        }
+
+        @Test
+        @DisplayName("birthday가 숫자가 아닌 경우 null을 반환합니다")
+        void return_null_when_birthday_is_not_numeric() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            account.put("birthday", "abcd");
+            account.put("birthyear", "1990");
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            LocalDate birthDate = kakaoUserInfo.getBirthDate();
+
+            // then
+            assertThat(birthDate).isNull();
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 날짜인 경우 null을 반환합니다")
+        void return_null_when_date_is_invalid() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            account.put("birthday", "1332");  // 13월 32일은 유효하지 않음
+            account.put("birthyear", "1990");
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            LocalDate birthDate = kakaoUserInfo.getBirthDate();
+
+            // then
+            assertThat(birthDate).isNull();
         }
     }
 }
