@@ -34,4 +34,12 @@ public interface FindUserPort {
      * @return 조회된 사용자 정보
      */
     Optional<User> findByEmail(String email);
+
+    /**
+     * 카카오 ID로 사용자를 조회합니다.
+     *
+     * @param kakaoId 검색할 카카오 ID
+     * @return 조회된 사용자 정보
+     */
+    Optional<User> findByKakaoId(String kakaoId);
 }

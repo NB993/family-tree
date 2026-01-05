@@ -17,4 +17,12 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, Long> {
      * @return 조회된 사용자 목록
      */
     List<UserJpaEntity> findByNameContaining(String name, Pageable pageable);
+
+    /**
+     * 카카오 ID로 사용자를 조회합니다.
+     *
+     * @param kakaoId 검색할 카카오 ID
+     * @return 조회된 사용자 정보
+     */
+    Optional<UserJpaEntity> findByKakaoId(String kakaoId);
 }
