@@ -58,11 +58,11 @@ class FindFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
-        
+
         // 가입 신청 2개 생성
         FamilyJoinRequest joinRequest1 = FamilyJoinRequest.newRequest(familyId, 101L);
         FamilyJoinRequest joinRequest2 = FamilyJoinRequest.newRequest(familyId, 102L);
@@ -105,18 +105,18 @@ class FindFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
-        
+
         // ADMIN 구성원 생성 (현재 인증된 사용자)
         FamilyMember adminMember = FamilyMember.withRole(
-            familyId, adminUserId, "김관리자", "admin.jpg", 
-            now.minusYears(25), "한국", FamilyMemberRole.ADMIN
+            familyId, adminUserId, "김관리자", "admin.jpg",
+            now.minusYears(25), FamilyMemberRole.ADMIN
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(adminMember));
-        
+
         // 가입 신청 1개 생성
         FamilyJoinRequest joinRequest = FamilyJoinRequest.newRequest(familyId, 101L);
         FamilyJoinRequestJpaEntity savedRequest = familyJoinRequestJpaRepository.save(
@@ -151,15 +151,15 @@ class FindFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
-        
+
         // MEMBER 구성원 생성 (현재 인증된 사용자)
         FamilyMember normalMember = FamilyMember.newMember(
             familyId, memberUserId, "김일반", "member.jpg",
-            now.minusYears(20), "한국"
+            now.minusYears(20)
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(normalMember));
 
@@ -187,8 +187,8 @@ class FindFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         
         // 다른 사용자의 OWNER 구성원 생성 (현재 인증된 사용자 ID=1과 다름)
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
 
@@ -244,8 +244,8 @@ class FindFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
 

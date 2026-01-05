@@ -48,7 +48,7 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
 
         // OWNER 권한 구성원 생성
         FamilyMember ownerMember = FamilyMember.newOwner(
-            familyId, userId, null, "소유자", "profile.jpg", LocalDateTime.now(), "KR"
+            familyId, userId, "소유자", "profile.jpg", LocalDateTime.now()
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
 
@@ -83,13 +83,13 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
 
         // OWNER 권한 구성원 생성 (다른 사용자)
         FamilyMember ownerMember = FamilyMember.newOwner(
-            familyId, ownerId, null, "소유자", "profile.jpg", LocalDateTime.now(), "KR"
+            familyId, ownerId, "소유자", "profile.jpg", LocalDateTime.now()
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
 
         // ADMIN 권한 구성원 생성 (현재 사용자)
         FamilyMember adminMember = FamilyMember.withRole(
-            familyId, adminId, "관리자", "profile.jpg", LocalDateTime.now(), "KR", FamilyMemberRole.ADMIN
+            familyId, adminId, "관리자", "profile.jpg", LocalDateTime.now(), FamilyMemberRole.ADMIN
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(adminMember));
 
@@ -125,13 +125,13 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
 
         // OWNER 권한 구성원 생성 (다른 사용자)
         FamilyMember ownerMember = FamilyMember.newOwner(
-            familyId, ownerId, null, "소유자", "profile.jpg", LocalDateTime.now(), "KR"
+            familyId, ownerId, "소유자", "profile.jpg", LocalDateTime.now()
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
 
         // MEMBER 권한 구성원 생성 (현재 사용자)
         FamilyMember member = FamilyMember.withRole(
-            familyId, memberId, "일반구성원", "profile.jpg", LocalDateTime.now(), "KR", FamilyMemberRole.MEMBER
+            familyId, memberId, "일반구성원", "profile.jpg", LocalDateTime.now(), FamilyMemberRole.MEMBER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member));
 
@@ -166,7 +166,7 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
 
         // 구성원 생성
         FamilyMember member = FamilyMember.withRole(
-            familyId, userId, "구성원", "profile.jpg", LocalDateTime.now(), "KR", FamilyMemberRole.MEMBER
+            familyId, userId, "구성원", "profile.jpg", LocalDateTime.now(), FamilyMemberRole.MEMBER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member));
 
@@ -193,7 +193,7 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
 
         // 다른 사용자를 구성원으로 생성
         FamilyMember member = FamilyMember.withRole(
-            familyId, ownerId, "구성원", "profile.jpg", LocalDateTime.now(), "KR", FamilyMemberRole.MEMBER
+            familyId, ownerId, "구성원", "profile.jpg", LocalDateTime.now(), FamilyMemberRole.MEMBER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member));
 
@@ -219,7 +219,7 @@ class FamilyPermissionControlTest extends AcceptanceTestBase {
 
         // 다른 사용자를 구성원으로 생성
         FamilyMember member = FamilyMember.withRole(
-            familyId, ownerId, "구성원", "profile.jpg", LocalDateTime.now(), "KR", FamilyMemberRole.MEMBER
+            familyId, ownerId, "구성원", "profile.jpg", LocalDateTime.now(), FamilyMemberRole.MEMBER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member));
 

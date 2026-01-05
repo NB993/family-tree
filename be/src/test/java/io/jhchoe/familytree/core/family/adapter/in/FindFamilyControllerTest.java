@@ -153,13 +153,13 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
         
         // 현재 사용자를 family1, family2의 구성원으로 추가
         FamilyMember member1 = FamilyMember.withRole(
-            savedFamily1.getId(), currentUserId, "홍길동", "profile.jpg", 
-            LocalDate.of(1990, 1, 1).atStartOfDay(), "Korean", 
+            savedFamily1.getId(), currentUserId, "홍길동", "profile.jpg",
+            LocalDate.of(1990, 1, 1).atStartOfDay(),
             FamilyMemberRole.OWNER
         );
         FamilyMember member2 = FamilyMember.withRole(
             savedFamily2.getId(), currentUserId, "홍길동", "profile.jpg",
-            LocalDate.of(1990, 1, 1).atStartOfDay(), "Korean",
+            LocalDate.of(1990, 1, 1).atStartOfDay(),
             FamilyMemberRole.MEMBER
         );
         
@@ -189,7 +189,7 @@ class FindFamilyControllerTest extends AcceptanceTestBase {
         
         FamilyMember member = FamilyMember.withRole(
             savedFamily.getId(), 999L, "다른사람", "other.jpg",
-            LocalDate.of(1990, 1, 1).atStartOfDay(), "Korean",
+            LocalDate.of(1990, 1, 1).atStartOfDay(),
             FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member));

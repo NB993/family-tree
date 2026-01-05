@@ -52,22 +52,22 @@ class FindFamilyMemberRoleAcceptanceTest extends AcceptanceTestBase {
         
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, userId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, userId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
-        
+
         // ADMIN 구성원 생성
         FamilyMember adminMember = FamilyMember.withRole(
             familyId, 101L, "김관리자", "admin.jpg",
-            now.minusYears(25), "한국", FamilyMemberRole.ADMIN
+            now.minusYears(25), FamilyMemberRole.ADMIN
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(adminMember));
-        
+
         // MEMBER 구성원 생성
         FamilyMember normalMember = FamilyMember.newMember(
             familyId, 102L, "김일반", "member.jpg",
-            now.minusYears(20), "한국"
+            now.minusYears(20)
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(normalMember));
 
@@ -108,8 +108,8 @@ class FindFamilyMemberRoleAcceptanceTest extends AcceptanceTestBase {
         
         // 다른 사용자의 OWNER 구성원 생성 (현재 인증된 사용자 ID=1과 다름)
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
 
@@ -165,15 +165,15 @@ class FindFamilyMemberRoleAcceptanceTest extends AcceptanceTestBase {
         
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, userId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, userId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
-        
+
         // SUSPENDED 상태의 구성원을 withRole로 MEMBER로 생성 후 상태만 변경
         FamilyMember memberForSuspension = FamilyMember.withRole(
             familyId, 101L, "김정지", "suspended.jpg",
-            now.minusYears(25), "한국", FamilyMemberRole.MEMBER
+            now.minusYears(25), FamilyMemberRole.MEMBER
         );
         FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(memberForSuspension));
         

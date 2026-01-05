@@ -17,6 +17,10 @@ import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.jhchoe.familytree.core.family.domain.FamilyJoinRequestStatus;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
+import io.jhchoe.familytree.common.auth.UserJpaEntity;
+import io.jhchoe.familytree.common.auth.UserJpaRepository;
+import io.jhchoe.familytree.core.user.domain.User;
+import io.jhchoe.familytree.test.fixture.UserFixture;
 import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -40,11 +44,15 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
     @Autowired
     private FamilyJoinRequestJpaRepository familyJoinRequestJpaRepository;
 
+    @Autowired
+    private UserJpaRepository userJpaRepository;
+
     @AfterEach
     void tearDown() {
         familyJoinRequestJpaRepository.deleteAll();
         familyMemberJpaRepository.deleteAll();
         familyJpaRepository.deleteAll();
+        userJpaRepository.deleteAll();
     }
 
     @Test
@@ -54,21 +62,26 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
-        
+
+        // 가입 신청자의 User 생성 (ID는 DB에서 생성)
+        User requesterUser = UserFixture.newOAuth2User();
+        UserJpaEntity savedRequesterUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(requesterUser));
+        Long requesterId = savedRequesterUser.getId();
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
-        
+
         // 대기 중인 가입 신청 생성
-        FamilyJoinRequest joinRequest = FamilyJoinRequest.newRequest(familyId, 101L);
+        FamilyJoinRequest joinRequest = FamilyJoinRequest.newRequest(familyId, requesterId);
         FamilyJoinRequestJpaEntity savedRequest = familyJoinRequestJpaRepository.save(
             FamilyJoinRequestJpaEntity.from(joinRequest)
         );
@@ -100,23 +113,23 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         LocalDateTime now = LocalDateTime.now();
         Long adminUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         Long ownerUserId = 100L;
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
-        
+
         // ADMIN 구성원 생성 (현재 인증된 사용자)
         FamilyMember adminMember = FamilyMember.withRole(
-            familyId, adminUserId, "김관리자", "admin.jpg", 
-            now.minusYears(25), "한국", FamilyMemberRole.ADMIN
+            familyId, adminUserId, "김관리자", "admin.jpg",
+            now.minusYears(25), FamilyMemberRole.ADMIN
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(adminMember));
         
@@ -153,23 +166,23 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         LocalDateTime now = LocalDateTime.now();
         Long adminUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         Long ownerUserId = 100L;
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
-        
+
         // ADMIN 구성원 생성 (현재 인증된 사용자)
         FamilyMember adminMember = FamilyMember.withRole(
-            familyId, adminUserId, "김관리자", "admin.jpg", 
-            now.minusYears(25), "한국", FamilyMemberRole.ADMIN
+            familyId, adminUserId, "김관리자", "admin.jpg",
+            now.minusYears(25), FamilyMemberRole.ADMIN
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(adminMember));
         
@@ -215,16 +228,16 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
         
@@ -270,16 +283,16 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
         
@@ -316,23 +329,23 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         LocalDateTime now = LocalDateTime.now();
         Long adminUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         Long ownerUserId = 100L;
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
-        
+
         // ADMIN 구성원 생성 (현재 인증된 사용자)
         FamilyMember adminMember = FamilyMember.withRole(
-            familyId, adminUserId, "김관리자", "admin.jpg", 
-            now.minusYears(25), "한국", FamilyMemberRole.ADMIN
+            familyId, adminUserId, "김관리자", "admin.jpg",
+            now.minusYears(25), FamilyMemberRole.ADMIN
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(adminMember));
         
@@ -370,23 +383,23 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         LocalDateTime now = LocalDateTime.now();
         Long memberUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
         Long ownerUserId = 100L;
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
-        
+
         // MEMBER 구성원 생성 (현재 인증된 사용자)
         FamilyMember normalMember = FamilyMember.newMember(
             familyId, memberUserId, "김일반", "member.jpg",
-            now.minusYears(20), "한국"
+            now.minusYears(20)
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(normalMember));
         
@@ -423,16 +436,16 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         LocalDateTime now = LocalDateTime.now();
         Long ownerUserId = 100L;
         Long currentUserId = 1L; // WithMockOAuth2User 기본 사용자 ID (Family 구성원 아님)
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // 다른 사용자의 OWNER 구성원 생성 (현재 인증된 사용자 ID=1과 다름)
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
         
@@ -493,16 +506,16 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
         
@@ -548,16 +561,16 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
         
@@ -615,16 +628,16 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
         
@@ -660,16 +673,16 @@ class ProcessFamilyJoinRequestAcceptanceTest extends AcceptanceTestBase {
         // given
         LocalDateTime now = LocalDateTime.now();
         Long ownerUserId = 1L; // WithMockOAuth2User 기본 사용자 ID
-        
+
         // Family 생성
         Family family = FamilyFixture.newFamily();
         FamilyJpaEntity savedFamily = familyJpaRepository.save(FamilyJpaEntity.from(family));
         Long familyId = savedFamily.getId();
-        
+
         // OWNER 구성원 생성
         FamilyMember ownerMember = FamilyMember.withRole(
-            familyId, ownerUserId, "김소유자", "owner.jpg", 
-            now.minusYears(30), "한국", FamilyMemberRole.OWNER
+            familyId, ownerUserId, "김소유자", "owner.jpg",
+            now.minusYears(30), FamilyMemberRole.OWNER
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
         
