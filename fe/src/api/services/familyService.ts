@@ -73,9 +73,8 @@ export interface FamilyMemberWithRelationship {
   memberName: string;
   memberAge?: number;
   memberBirthday?: string;
-  memberPhoneNumber?: string;
   memberProfileImageUrl?: string;
-  
+
   // 관계 정보
   relationshipDisplayName?: string;
   relationshipType?: FamilyMemberRelationshipType;
@@ -83,8 +82,7 @@ export interface FamilyMemberWithRelationship {
   hasRelationship: boolean;
   relationshipSetupRequired: boolean;
   relationshipGuideMessage: string;
-  phoneNumberDisplay: string;
-  
+
   // 편의 접근자 (백엔드 응답에서 flatten된 형태)
   member: FamilyMember;
 }
@@ -96,10 +94,8 @@ export interface UIFamilyMember {
   profileImage?: string;
   age?: number;
   birthDate?: string;
-  phoneNumber?: string;
   relationship?: string;
   customRelationship?: string;
-  isKakaoSynced?: boolean;
   role: "ADMIN" | "MEMBER" | "SUSPENDED";
 }
 

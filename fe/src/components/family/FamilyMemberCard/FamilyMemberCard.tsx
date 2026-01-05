@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Heart } from 'lucide-react';
+import { Heart, Cake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -25,25 +25,6 @@ export function FamilyMemberCard({
       return memberWithRelationship.customRelationshipName;
     }
     return memberWithRelationship.relationshipDisplayName || "관계 정보 없음";
-  };
-
-  const getContactDisplay = () => {
-    if (!memberWithRelationship.memberPhoneNumber) {
-      return "연락처 없음";
-    }
-    // TODO: 카카오톡 동기화 상태는 백엔드에서 제공될 예정
-    return formatPhoneNumber(memberWithRelationship.memberPhoneNumber);
-  };
-
-  const formatPhoneNumber = (phone: string): string => {
-    const cleaned = phone.replace(/\D/g, '');
-    if (cleaned.length === 11) {
-      return cleaned.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-    }
-    if (cleaned.length === 10) {
-      return cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-    }
-    return phone;
   };
 
   const formatBirthDate = (dateString?: string): string => {
@@ -112,26 +93,17 @@ export function FamilyMemberCard({
               </span>
             </div>
 
-            {memberWithRelationship.memberAge && (
-              <div className="text-body2 text-gray-600 mb-2 flex items-center gap-2">
-                <span className="font-medium">{memberWithRelationship.memberAge}세</span>
-                <span className="text-gray-400">•</span>
-                <span>{formatBirthDate(memberWithRelationship.memberBirthday)}</span>
-              </div>
-            )}
-
-            <div className="flex items-center gap-2 text-body2 mb-4">
-              <Phone className="w-4 h-4 text-gray-400" />
-              <span
-                className={cn(
-                  "font-medium",
-                  !memberWithRelationship.memberPhoneNumber
-                    ? "text-gray-400"
-                    : "text-gray-600",
-                )}
-              >
-                {getContactDisplay()}
-              </span>
+            <div className="flex items-center gap-2 text-body2 text-gray-600 mb-4">
+              <Cake className="w-4 h-4 text-gray-400" />
+              {memberWithRelationship.memberAge ? (
+                <>
+                  <span className="font-medium">{memberWithRelationship.memberAge}세</span>
+                  <span className="text-gray-400">•</span>
+                  <span>{formatBirthDate(memberWithRelationship.memberBirthday)}</span>
+                </>
+              ) : (
+                <span className="text-gray-400">{formatBirthDate(memberWithRelationship.memberBirthday)}</span>
+              )}
             </div>
           </div>
 

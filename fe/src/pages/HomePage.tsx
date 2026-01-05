@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMyFamilies, useFamilyMembers } from '../hooks/queries/useFamilyQueries';
 import { FamilyMemberWithRelationship } from '../api/services/familyService';
-import { Search, Plus, UserPlus, LogOut, ChevronRight, Phone } from 'lucide-react';
+import { Search, Plus, UserPlus, LogOut, ChevronRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,13 +23,19 @@ const HomePage: React.FC = () => {
     }
   }, [familiesData, selectedFamilyId]);
 
+  const formatBirthDate = (dateString?: string): string => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${month}.${day}`;
+  };
+
   const filteredMembers = useMemo(() => {
     if (!membersData || !searchTerm) return membersData || [];
 
     return membersData.filter((member: FamilyMemberWithRelationship) =>
-      member.memberName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.memberPhoneNumber?.includes(searchTerm) ||
-      member.phoneNumberDisplay?.includes(searchTerm)
+      member.memberName.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [membersData, searchTerm]);
 
@@ -98,18 +104,9 @@ const HomePage: React.FC = () => {
                     {member.memberName}
                   </p>
                   <p className="text-[10px] text-muted-foreground truncate">
-                    {member.phoneNumberDisplay || '-'}
+                    {member.memberAge ? `${member.memberAge}세` : ''} {formatBirthDate(member.memberBirthday)}
                   </p>
                 </div>
-                {member.memberPhoneNumber && (
-                  <a
-                    href={`tel:${member.memberPhoneNumber}`}
-                    className="w-5 h-5 rounded-md bg-green-50 flex items-center justify-center flex-shrink-0"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Phone className="w-2.5 h-2.5 text-green-600" strokeWidth={1.5} />
-                  </a>
-                )}
                 <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" strokeWidth={1.5} />
               </div>
             ))}

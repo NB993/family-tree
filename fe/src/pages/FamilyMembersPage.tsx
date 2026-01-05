@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useFamilyMembers, useFamilyDetail } from '../hooks/queries/useFamilyQueries';
 import { FamilyMemberWithRelationship } from '../api/services/familyService';
-import { ArrowLeft, Users, Plus, Phone, ChevronRight, Settings } from 'lucide-react';
+import { ArrowLeft, Users, Plus, ChevronRight, Settings } from 'lucide-react';
 
 const FamilyMembersPage: React.FC = () => {
   const { familyId } = useParams<{ familyId: string }>();
@@ -97,15 +97,6 @@ const FamilyMembersPage: React.FC = () => {
                     {member.relationshipGuideMessage || '-'}
                   </p>
                 </div>
-                {member.memberPhoneNumber && (
-                  <a
-                    href={`tel:${member.memberPhoneNumber}`}
-                    className="w-6 h-6 rounded bg-green-50 flex items-center justify-center flex-shrink-0"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Phone className="w-3 h-3 text-green-600" strokeWidth={1.5} />
-                  </a>
-                )}
                 <ChevronRight className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" strokeWidth={1.5} />
               </div>
             ))}

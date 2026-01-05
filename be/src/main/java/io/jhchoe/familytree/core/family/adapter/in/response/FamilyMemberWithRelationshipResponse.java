@@ -10,10 +10,10 @@ import java.util.Optional;
 /**
  * Family 홈 API용 구성원과 관계 정보를 담는 응답 DTO입니다.
  * 구성원의 기본 정보와 현재 사용자와의 관계 정보를 포함합니다.
- * 
+ *
  * <p>포함 정보:</p>
  * <ul>
- *   <li>구성원 기본 정보 (이름, 나이, 생년월일, 연락처 등)</li>
+ *   <li>구성원 기본 정보 (이름, 나이, 생년월일 등)</li>
  *   <li>현재 사용자와의 관계 정보 (있는 경우)</li>
  *   <li>관계 표시명 (설정된 관계가 있는 경우)</li>
  * </ul>
@@ -133,17 +133,6 @@ public class FamilyMemberWithRelationshipResponse {
     }
     
     /**
-     * 구성원 연락처를 반환합니다.
-     * 
-     * @return 구성원 연락처
-     */
-    public String getMemberPhoneNumber() {
-        // FamilyMember에 phoneNumber 필드가 없으므로 일단 null 반환
-        // 향후 도메인 확장 시 추가 예정
-        return null;
-    }
-    
-    /**
      * 구성원 프로필 이미지 URL을 반환합니다.
      * 
      * @return 프로필 이미지 URL
@@ -194,18 +183,6 @@ public class FamilyMemberWithRelationshipResponse {
         } else {
             return "관계를 설정해주세요";
         }
-    }
-    
-    /**
-     * 연락처 표시 정보를 반환합니다.
-     * 연락처가 없는 경우 적절한 안내 메시지를 반환합니다.
-     * 
-     * @return 연락처 표시 정보
-     */
-    public String getPhoneNumberDisplay() {
-        // FamilyMember에 phoneNumber 필드가 없으므로 일단 "연락처 없음" 반환
-        // 향후 도메인 확장 시 수정 예정
-        return "연락처 없음";
     }
     
     /**
