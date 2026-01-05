@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -93,8 +94,10 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
      * 새로운 OAuth2 사용자를 생성하고 자동으로 Family를 생성합니다.
      */
     private UserJpaEntity createUser(OAuth2UserInfo userInfo, OAuth2Provider provider) {
-        // 1. User 생성 및 저장 (kakaoId 포함)
+        // 1. User 생성 및 저장 (kakaoId, birthday 포함)
         String kakaoId = userInfo.getId();
+        LocalDateTime birthday = extractBirthday(userInfo, provider);
+
         User user = User.newUser(
             userInfo.getEmail(),
             userInfo.getName(),
@@ -104,7 +107,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
             provider,
             UserRole.USER,
             false,
-            null // birthday - OAuth2 로그인 시 생일 정보 없음
+            birthday
         );
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
 
@@ -159,6 +162,24 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
                 throw new IllegalArgumentException("지원하지 않는 OAuth2 제공자입니다: " + registrationId);
             }
         };
+    }
+
+    /**
+     * OAuth2 제공자별로 생년월일 정보를 추출합니다.
+     * 카카오 로그인의 경우 생년월일을 반환하고, 그 외에는 null을 반환합니다.
+     *
+     * @param userInfo OAuth2 사용자 정보
+     * @param provider OAuth2 제공자
+     * @return 생년월일 (LocalDateTime) 또는 null
+     */
+    private LocalDateTime extractBirthday(final OAuth2UserInfo userInfo, final OAuth2Provider provider) {
+        if (provider == OAuth2Provider.KAKAO && userInfo instanceof KakaoUserInfo kakaoUserInfo) {
+            LocalDate birthDate = kakaoUserInfo.getBirthDate();
+            if (birthDate != null) {
+                return birthDate.atStartOfDay();
+            }
+        }
+        return null;
     }
 }
 

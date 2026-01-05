@@ -1,5 +1,7 @@
 package io.jhchoe.familytree.common.auth.domain;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.util.Map;
 
 /**
@@ -15,7 +17,7 @@ import java.util.Map;
  * kakao_account.birthday	카카오계정의 생일 소유 여부, 생일 값
  * kakao_account.gender	카카오계정의 성별 소유 여부, 성별 값
  */
-public class KakaoUserInfo implements OAuth2UserInfo {
+public final class KakaoUserInfo implements OAuth2UserInfo {
     private final Map<String, Object> attributes;
     private final Map<String, Object> account;
     private final Map<String, Object> profile;
@@ -68,14 +70,35 @@ public class KakaoUserInfo implements OAuth2UserInfo {
     }
 
     /**
-     * 카카오 계정의 생일 정보를 반환합니다.
-     * 현재는 account_birthday scope가 준비 단계이므로 항상 null을 반환합니다.
+     * 카카오 계정의 생년월일 정보를 LocalDate로 반환합니다.
+     * kakao_account.birthday (MMDD 형식)와 kakao_account.birthyear (YYYY 형식)를 조합합니다.
      *
-     * @return 생일 정보 (현재는 항상 null)
+     * @return 생년월일 (birthday 또는 birthyear가 없거나 파싱 실패 시 null)
      */
-    public String getBirthday() {
-        // account_birthday scope는 준비만 하고 실제로 사용하지 않음
-        // 향후 필요 시 구현: return account != null ? (String) account.get("birthday") : null;
-        return null;
+    public LocalDate getBirthDate() {
+        if (account == null) {
+            return null;
+        }
+
+        String birthday = (String) account.get("birthday");
+        String birthyear = (String) account.get("birthyear");
+
+        if (birthday == null || birthyear == null) {
+            return null;
+        }
+
+        if (birthday.length() != 4 || birthyear.length() != 4) {
+            return null;
+        }
+
+        try {
+            int year = Integer.parseInt(birthyear);
+            int month = Integer.parseInt(birthday.substring(0, 2));
+            int day = Integer.parseInt(birthday.substring(2, 4));
+
+            return LocalDate.of(year, month, day);
+        } catch (NumberFormatException | DateTimeException e) {
+            return null;
+        }
     }
 }
