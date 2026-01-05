@@ -17,7 +17,7 @@ import java.util.Map;
  * kakao_account.birthday	카카오계정의 생일 소유 여부, 생일 값
  * kakao_account.gender	카카오계정의 성별 소유 여부, 성별 값
  */
-public class KakaoUserInfo implements OAuth2UserInfo {
+public final class KakaoUserInfo implements OAuth2UserInfo {
     private final Map<String, Object> attributes;
     private final Map<String, Object> account;
     private final Map<String, Object> profile;

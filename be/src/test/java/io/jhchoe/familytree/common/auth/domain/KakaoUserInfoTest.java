@@ -152,5 +152,105 @@ class KakaoUserInfoTest {
             // then
             assertThat(birthDate).isNull();
         }
+
+        @Test
+        @DisplayName("birthyear가 숫자가 아닌 경우 null을 반환합니다")
+        void return_null_when_birthyear_is_not_numeric() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            account.put("birthday", "0115");
+            account.put("birthyear", "abcd");
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            LocalDate birthDate = kakaoUserInfo.getBirthDate();
+
+            // then
+            assertThat(birthDate).isNull();
+        }
+
+        @Test
+        @DisplayName("birthday 길이가 4자리가 아닌 경우 null을 반환합니다")
+        void return_null_when_birthday_length_is_invalid() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            account.put("birthday", "115");  // 3자리
+            account.put("birthyear", "1990");
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            LocalDate birthDate = kakaoUserInfo.getBirthDate();
+
+            // then
+            assertThat(birthDate).isNull();
+        }
+
+        @Test
+        @DisplayName("birthyear 길이가 4자리가 아닌 경우 null을 반환합니다")
+        void return_null_when_birthyear_length_is_invalid() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            account.put("birthday", "0115");
+            account.put("birthyear", "90");  // 2자리
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            LocalDate birthDate = kakaoUserInfo.getBirthDate();
+
+            // then
+            assertThat(birthDate).isNull();
+        }
+
+        @Test
+        @DisplayName("birthday가 빈 문자열인 경우 null을 반환합니다")
+        void return_null_when_birthday_is_empty() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            account.put("birthday", "");
+            account.put("birthyear", "1990");
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            LocalDate birthDate = kakaoUserInfo.getBirthDate();
+
+            // then
+            assertThat(birthDate).isNull();
+        }
+
+        @Test
+        @DisplayName("birthyear가 빈 문자열인 경우 null을 반환합니다")
+        void return_null_when_birthyear_is_empty() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            account.put("birthday", "0115");
+            account.put("birthyear", "");
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            LocalDate birthDate = kakaoUserInfo.getBirthDate();
+
+            // then
+            assertThat(birthDate).isNull();
+        }
     }
 }
