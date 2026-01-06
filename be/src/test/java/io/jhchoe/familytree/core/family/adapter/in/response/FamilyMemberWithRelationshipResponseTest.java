@@ -173,7 +173,7 @@ class FamilyMemberWithRelationshipResponseTest {
     
     private FamilyMember createFamilyMember() {
         return FamilyMember.withId(
-            1L, 1L, 1L, "김아버지", null, "https://example.com/profile.jpg",
+            1L, 1L, 1L, "김아버지", null, null, "https://example.com/profile.jpg",
             LocalDateTime.of(1970, 1, 1, 0, 0),
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now()

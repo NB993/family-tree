@@ -64,17 +64,14 @@ const CreateFamilyMemberModal: React.FC<CreateFamilyMemberModalProps> = ({
 
     if (!name.trim()) return;
 
-    // TODO: 백엔드 API 개발 필요 - POST /api/families/{familyId}/members
-    // 현재는 API가 없어서 실패할 예정
     try {
       await createMemberMutation.mutateAsync({
         familyId,
         form: {
           name: name.trim(),
-          birthday: birthday || undefined,
-          // TODO: 백엔드에서 relationship 필드 지원 시 추가
-          // relationship: relationship || undefined,
-          // customRelationship: isCustomRelationship ? customRelationship : undefined,
+          birthday: birthday ? `${birthday}T00:00:00` : undefined,
+          relationshipType: relationship || undefined,
+          customRelationship: isCustomRelationship ? customRelationship : undefined,
         },
       });
 
@@ -83,7 +80,7 @@ const CreateFamilyMemberModal: React.FC<CreateFamilyMemberModalProps> = ({
       onSuccess?.();
     } catch {
       // API 에러는 useCreateFamilyMember에서 처리
-      console.error('FamilyMember 생성 실패 - 백엔드 API 개발 필요');
+      console.error('FamilyMember 생성 실패');
     }
   };
 
