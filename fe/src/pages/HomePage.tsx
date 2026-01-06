@@ -2,21 +2,24 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMyFamilies, useFamilyMembers } from '../hooks/queries/useFamilyQueries';
 import { FamilyMemberWithRelationship } from '../api/services/familyService';
-import { Search, Plus, UserPlus, LogOut, ChevronRight, Phone } from 'lucide-react';
+import { Search, Plus, UserPlus, LogOut, ChevronRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreateFamilyMemberModal from '@/components/family/CreateFamilyMemberModal';
+import { getKoreanAge, getWesternAge } from '../utils/age';
+import { formatBirthday } from '../utils/lunar';
 
-// 멤버 카드 스켈레톤 컴포넌트
+// 멤버 카드 스켈레톤 컴포넌트 (1줄 레이아웃으로 수정)
 const MemberCardSkeleton: React.FC = () => (
   <div className="flex items-center gap-2 px-3 py-1.5">
     <Skeleton className="w-6 h-6 rounded-full flex-shrink-0" />
-    <div className="flex-1 min-w-0">
-      <Skeleton className="h-3 w-20 mb-1" />
-      <Skeleton className="h-2.5 w-16" />
+    <div className="flex items-center gap-1 flex-1 min-w-0">
+      <Skeleton className="h-3 w-16" />
+      <Skeleton className="h-3 w-8" />
     </div>
+    <Skeleton className="h-3 w-20 flex-shrink-0" />
     <Skeleton className="w-3 h-3 flex-shrink-0" />
   </div>
 );
@@ -29,6 +32,12 @@ const HomePage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFamilyId, setSelectedFamilyId] = useState<number | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // 나이 표시 모드: 'korean' (한국나이) 또는 'western' (만나이)
+  const [ageDisplayMode, setAgeDisplayMode] = useState<'korean' | 'western'>('korean');
+
+  // 생일 토글 상태: 멤버별로 관리 (true면 변환된 날짜 표시)
+  const [birthdayToggledMembers, setBirthdayToggledMembers] = useState<Set<number>>(new Set());
 
   const { data: membersData, isLoading: membersLoading } = useFamilyMembers(selectedFamilyId || 0);
 
@@ -47,14 +56,40 @@ const HomePage: React.FC = () => {
     if (!membersData || !searchTerm) return membersData || [];
 
     return membersData.filter((member: FamilyMemberWithRelationship) =>
-      member.memberName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.memberPhoneNumber?.includes(searchTerm) ||
-      member.phoneNumberDisplay?.includes(searchTerm)
+      member.memberName.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [membersData, searchTerm]);
 
   const families = familiesData || [];
   const hasData = families.length > 0 && membersData && membersData.length > 0;
+
+  // 나이 토글 핸들러
+  const handleAgeToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAgeDisplayMode(prev => prev === 'korean' ? 'western' : 'korean');
+  };
+
+  // 생일 토글 핸들러
+  const handleBirthdayToggle = (e: React.MouseEvent, memberId: number) => {
+    e.stopPropagation();
+    setBirthdayToggledMembers(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(memberId)) {
+        newSet.delete(memberId);
+      } else {
+        newSet.add(memberId);
+      }
+      return newSet;
+    });
+  };
+
+  // 나이 표시 문자열 생성
+  const getAgeDisplay = (birthday: string): string => {
+    if (ageDisplayMode === 'korean') {
+      return `(${getKoreanAge(birthday)})`;
+    }
+    return `(만 ${getWesternAge(birthday)})`;
+  };
 
   return (
     <div className="app-shell h-screen flex flex-col overflow-hidden">
@@ -114,28 +149,42 @@ const HomePage: React.FC = () => {
                 className="flex items-center gap-2 px-3 py-1.5 hover:bg-secondary/50 cursor-pointer"
                 onClick={() => navigate(`/families/${selectedFamilyId}/members/${member.memberId}`)}
               >
+                {/* 아바타 */}
                 <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <span className="text-[9px] font-medium text-primary">
                     {member.memberName.charAt(0)}
                   </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-foreground truncate">
+
+                {/* 이름 + 나이 */}
+                <div className="flex items-center gap-1 min-w-0 flex-1">
+                  <span className="text-xs font-medium text-foreground truncate">
                     {member.memberName}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground truncate">
-                    {member.phoneNumberDisplay || '-'}
-                  </p>
+                  </span>
+                  {member.memberBirthday && (
+                    <span
+                      className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+                      onClick={handleAgeToggle}
+                    >
+                      {getAgeDisplay(member.memberBirthday)}
+                    </span>
+                  )}
                 </div>
-                {member.memberPhoneNumber && (
-                  <a
-                    href={`tel:${member.memberPhoneNumber}`}
-                    className="w-5 h-5 rounded-md bg-green-50 flex items-center justify-center flex-shrink-0"
-                    onClick={(e) => e.stopPropagation()}
+
+                {/* 생일 */}
+                {member.memberBirthday && (
+                  <span
+                    className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground transition-colors flex-shrink-0"
+                    onClick={(e) => handleBirthdayToggle(e, member.memberId)}
                   >
-                    <Phone className="w-2.5 h-2.5 text-green-600" strokeWidth={1.5} />
-                  </a>
+                    {formatBirthday(
+                      member.memberBirthday,
+                      member.memberBirthdayType ?? null,
+                      birthdayToggledMembers.has(member.memberId)
+                    )}
+                  </span>
                 )}
+
                 <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" strokeWidth={1.5} />
               </div>
             ))}

@@ -413,63 +413,63 @@ COMMENT ON COLUMN family_member.birthday_type IS '생일 유형 (SOLAR: 양력, 
 
 ### Phase 6: 프론트엔드 - 라이브러리 및 유틸리티
 
-- [ ] **6.1 음력 변환 라이브러리 설치**
-  - [ ] `npm install korean-lunar-calendar` 또는 `lunar-javascript`
-  - [ ] 라이브러리 동작 확인
+- [x] **6.1 음력 변환 라이브러리 설치**
+  - [x] `npm install korean-lunar-calendar` 또는 `lunar-javascript`
+  - [x] 라이브러리 동작 확인
 
-- [ ] **6.2 나이 계산 유틸리티 작성**
-  - [ ] `fe/src/utils/age.ts` 생성
-  - [ ] `getKoreanAge()` 함수 구현 (한국 나이)
-  - [ ] `getWesternAge()` 함수 구현 (만 나이)
-  - [ ] 단위 테스트 작성
+- [x] **6.2 나이 계산 유틸리티 작성**
+  - [x] `fe/src/utils/age.ts` 생성
+  - [x] `getKoreanAge()` 함수 구현 (한국 나이)
+  - [x] `getWesternAge()` 함수 구현 (만 나이)
+  - [x] 단위 테스트 작성 (`fe/src/utils/__tests__/age.test.ts`)
 
-- [ ] **6.3 음력 변환 유틸리티 작성**
-  - [ ] `fe/src/utils/lunar.ts` 생성
-  - [ ] `solarToLunar()` 함수 구현 (양력→음력)
-  - [ ] `lunarToSolar()` 함수 구현 (음력→양력)
-  - [ ] `formatBirthday()` 함수 구현 (YYYY.MM.DD 포맷)
-  - [ ] 단위 테스트 작성
+- [x] **6.3 음력 변환 유틸리티 작성**
+  - [x] `fe/src/utils/lunar.ts` 생성
+  - [x] `solarToLunar()` 함수 구현 (양력→음력)
+  - [x] `lunarToSolar()` 함수 구현 (음력→양력)
+  - [x] `formatBirthday()` 함수 구현 (YYYY.MM.DD 포맷)
+  - [x] 단위 테스트 작성 (`fe/src/utils/__tests__/lunar.test.ts`)
 
 ### Phase 7: 프론트엔드 - 타입 정의
 
-- [ ] **7.1 API 타입 수정**
-  - [ ] `api/services/familyService.ts`의 `FamilyMemberWithRelationship` 타입에 `memberBirthdayType` 추가
-  - [ ] `BirthdayType` 타입 정의 (`'SOLAR' | 'LUNAR' | null`)
+- [x] **7.1 API 타입 수정**
+  - [x] `api/services/familyService.ts`의 `FamilyMemberWithRelationship` 타입에 `memberBirthdayType` 추가
+  - [x] `BirthdayType` 타입 정의 (`'SOLAR' | 'LUNAR' | null`)
 
-- [ ] **7.2 types 파일 수정**
-  - [ ] `types/family.ts`에 BirthdayType 추가 (필요시)
+- [x] **7.2 types 파일 수정**
+  - [x] `types/korean-lunar-calendar.d.ts` 타입 정의 파일 추가
 
 ### Phase 8: 프론트엔드 - UI 구현
 
-- [ ] **8.1 HomePage.tsx 멤버 카드 변경**
-  - [ ] 연락처 표시 영역 제거 (`phoneNumberDisplay` 제거)
-  - [ ] 레이아웃 변경 (2줄 → 1줄)
-  - [ ] 이름 옆에 나이 표시 영역 추가
-  - [ ] 우측에 생일 표시 영역 추가
+- [x] **8.1 HomePage.tsx 멤버 카드 변경**
+  - [x] 연락처 표시 영역 제거 (`phoneNumberDisplay` 제거)
+  - [x] 레이아웃 변경 (2줄 → 1줄)
+  - [x] 이름 옆에 나이 표시 영역 추가
+  - [x] 우측에 생일 표시 영역 추가
 
-- [ ] **8.2 나이 토글 기능 구현**
-  - [ ] `ageDisplayMode` 상태 추가 (`'korean' | 'western'`)
-  - [ ] 나이 클릭 시 토글 핸들러 구현
-  - [ ] 한국 나이: `(35)` 형식
-  - [ ] 만 나이: `(만 34)` 형식
+- [x] **8.2 나이 토글 기능 구현**
+  - [x] `ageDisplayMode` 상태 추가 (`'korean' | 'western'`)
+  - [x] 나이 클릭 시 토글 핸들러 구현
+  - [x] 한국 나이: `(35)` 형식
+  - [x] 만 나이: `(만 34)` 형식
 
-- [ ] **8.3 생일 토글 기능 구현**
-  - [ ] `birthdayDisplayMode` 상태 추가 (멤버별 관리)
-  - [ ] 생일 클릭 시 토글 핸들러 구현
-  - [ ] 양력: `1990.12.25` 형식
-  - [ ] 음력: `(음) 1990.11.15` 형식
-  - [ ] `memberBirthdayType`에 따른 기본값 처리
+- [x] **8.3 생일 토글 기능 구현**
+  - [x] `birthdayToggledMembers` 상태 추가 (멤버별 관리)
+  - [x] 생일 클릭 시 토글 핸들러 구현
+  - [x] 양력: `1990.12.25` 형식
+  - [x] 음력: `(음) 1990.11.15` 형식
+  - [x] `memberBirthdayType`에 따른 기본값 처리
 
-- [ ] **8.4 생일 없는 경우 처리**
-  - [ ] `memberBirthday`가 null인 경우 나이/생일 영역 숨김
-  - [ ] 이름만 표시되도록 처리
+- [x] **8.4 생일 없는 경우 처리**
+  - [x] `memberBirthday`가 null인 경우 나이/생일 영역 숨김
+  - [x] 이름만 표시되도록 처리
 
 ### Phase 9: 프론트엔드 - 스켈레톤 UI
 
-- [ ] **9.1 스켈레톤 UI 정렬 수정**
-  - [ ] 로딩 시 스켈레톤 좌측 정렬
-  - [ ] 실제 콘텐츠 위치와 일치하도록 조정
-  - [ ] 스켈레톤 요소 크기 조정 (이름, 나이, 생일)
+- [x] **9.1 스켈레톤 UI 정렬 수정**
+  - [x] 로딩 시 스켈레톤 좌측 정렬
+  - [x] 실제 콘텐츠 위치와 일치하도록 조정
+  - [x] 스켈레톤 요소 크기 조정 (이름, 나이, 생일)
 
 ### Phase 10: 테스트 및 검증
 

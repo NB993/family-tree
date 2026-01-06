@@ -66,6 +66,9 @@ export interface FindFamilyMemberResponse {
   members: FamilyMember[];
 }
 
+// BirthdayType enum (백엔드와 동일)
+export type BirthdayType = 'SOLAR' | 'LUNAR' | null;
+
 // 가족 홈 구성원 응답 (관계 정보 포함)
 export interface FamilyMemberWithRelationship {
   // 구성원 기본 정보
@@ -73,9 +76,10 @@ export interface FamilyMemberWithRelationship {
   memberName: string;
   memberAge?: number;
   memberBirthday?: string;
+  memberBirthdayType?: BirthdayType;  // 양력/음력 구분
   memberPhoneNumber?: string;
   memberProfileImageUrl?: string;
-  
+
   // 관계 정보
   relationshipDisplayName?: string;
   relationshipType?: FamilyMemberRelationshipType;
@@ -84,7 +88,7 @@ export interface FamilyMemberWithRelationship {
   relationshipSetupRequired: boolean;
   relationshipGuideMessage: string;
   phoneNumberDisplay: string;
-  
+
   // 편의 접근자 (백엔드 응답에서 flatten된 형태)
   member: FamilyMember;
 }
