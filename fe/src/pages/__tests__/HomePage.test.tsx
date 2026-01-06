@@ -174,28 +174,26 @@ describe('HomePage', () => {
   });
 
   describe('깜빡임 방지', () => {
-    it('가족 데이터는 있지만 selectedFamilyId가 설정되기 전에는 스켈레톤이 표시된다', () => {
-      // 이 테스트는 useEffect로 selectedFamilyId가 설정되기 전 상태를 시뮬레이션
+    it('가족 데이터 로드 후 멤버 로딩 중일 때 스켈레톤이 표시된다 (빈 화면 아님)', () => {
+      // selectedFamilyId가 useEffect로 설정된 후 멤버 데이터 로딩 중인 상태
       mockUseMyFamilies.mockReturnValue({
         data: [{ id: 1, name: '테스트가족' }],
         isLoading: false,
       });
-      // selectedFamilyId가 0으로 호출되면 enabled: false로 쿼리가 실행되지 않음
+      // 멤버 데이터 로딩 중 (깜빡임이 발생하던 시점)
       mockUseFamilyMembers.mockReturnValue({
         data: undefined,
-        isLoading: false,
+        isLoading: true,
       });
 
       render(<HomePage />, { wrapper: createWrapper() });
 
-      // 초기 렌더링에서 스켈레톤이 표시되거나
-      // useEffect 후 정상 데이터가 표시되어야 함 (빈 화면이 아님)
-      const emptyMessage = screen.queryByText('등록된 멤버가 없습니다');
-      const skeletons = document.querySelectorAll('.animate-pulse');
+      // 빈 메시지가 표시되지 않아야 함 (깜빡임 방지)
+      expect(screen.queryByText('등록된 멤버가 없습니다')).not.toBeInTheDocument();
 
-      // 스켈레톤이 있거나, 빈 메시지가 없어야 함 (깜빡임 방지)
-      // useEffect로 selectedFamilyId 설정 후 membersLoading이 true가 되면 스켈레톤 표시
-      expect(skeletons.length > 0 || emptyMessage === null || emptyMessage !== null).toBeTruthy();
+      // 스켈레톤이 표시되어야 함
+      const skeletons = document.querySelectorAll('.animate-pulse');
+      expect(skeletons.length).toBeGreaterThan(0);
     });
   });
 });
