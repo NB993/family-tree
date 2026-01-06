@@ -108,7 +108,7 @@ public final class FamilyMemberFixture {
      * 지정된 ID, familyId, userId, 역할로 FamilyMember를 생성합니다.
      */
     public static FamilyMember withIdAndRole(Long id, Long familyId, Long userId, FamilyMemberRole role) {
-        return FamilyMember.withId(id, familyId, userId, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
+        return FamilyMember.withId(id, familyId, userId, DEFAULT_NAME, null, null, DEFAULT_PROFILE_URL,
             DEFAULT_BIRTHDAY,
             FamilyMemberStatus.ACTIVE, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
@@ -118,7 +118,7 @@ public final class FamilyMemberFixture {
      * 지정된 ID와 상태로 FamilyMember를 생성합니다.
      */
     public static FamilyMember withIdAndStatus(Long id, FamilyMemberStatus status) {
-        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
+        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, DEFAULT_NAME, null, null, DEFAULT_PROFILE_URL,
             DEFAULT_BIRTHDAY,
             status, FamilyMemberRole.MEMBER,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
@@ -128,7 +128,7 @@ public final class FamilyMemberFixture {
      * 지정된 ID, 역할, 상태로 FamilyMember를 생성합니다.
      */
     public static FamilyMember withIdRoleAndStatus(Long id, FamilyMemberRole role, FamilyMemberStatus status) {
-        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
+        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, DEFAULT_NAME, null, null, DEFAULT_PROFILE_URL,
             DEFAULT_BIRTHDAY,
             status, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
@@ -138,7 +138,7 @@ public final class FamilyMemberFixture {
      * 지정된 ID, familyId, userId, 역할, 상태로 FamilyMember를 생성합니다.
      */
     public static FamilyMember withIdFull(Long id, Long familyId, Long userId, FamilyMemberRole role, FamilyMemberStatus status) {
-        return FamilyMember.withId(id, familyId, userId, DEFAULT_NAME, null, DEFAULT_PROFILE_URL,
+        return FamilyMember.withId(id, familyId, userId, DEFAULT_NAME, null, null, DEFAULT_PROFILE_URL,
             DEFAULT_BIRTHDAY,
             status, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
@@ -148,7 +148,7 @@ public final class FamilyMemberFixture {
      * 지정된 ID와 이름으로 MEMBER 역할의 FamilyMember를 생성합니다.
      */
     public static FamilyMember withIdAndName(Long id, String name) {
-        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, name, null, DEFAULT_PROFILE_URL,
+        return FamilyMember.withId(id, DEFAULT_FAMILY_ID, DEFAULT_USER_ID, name, null, null, DEFAULT_PROFILE_URL,
             DEFAULT_BIRTHDAY,
             FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
@@ -159,7 +159,7 @@ public final class FamilyMemberFixture {
      * 생일 기반 정렬 테스트에 유용합니다.
      */
     public static FamilyMember withIdRoleNameAndBirthday(Long id, Long familyId, Long userId, FamilyMemberRole role, String name, LocalDateTime birthday) {
-        return FamilyMember.withId(id, familyId, userId, name, null, DEFAULT_PROFILE_URL,
+        return FamilyMember.withId(id, familyId, userId, name, null, null, DEFAULT_PROFILE_URL,
             birthday,
             FamilyMemberStatus.ACTIVE, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
@@ -170,7 +170,7 @@ public final class FamilyMemberFixture {
      * 상태와 생일을 함께 지정해야 하는 테스트에 유용합니다.
      */
     public static FamilyMember withIdFullAndBirthday(Long id, Long familyId, Long userId, FamilyMemberRole role, FamilyMemberStatus status, String name, LocalDateTime birthday) {
-        return FamilyMember.withId(id, familyId, userId, name, null, DEFAULT_PROFILE_URL,
+        return FamilyMember.withId(id, familyId, userId, name, null, null, DEFAULT_PROFILE_URL,
             birthday,
             status, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());

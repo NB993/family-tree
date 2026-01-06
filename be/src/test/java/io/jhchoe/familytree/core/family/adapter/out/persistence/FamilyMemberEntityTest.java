@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationshipType;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ class FamilyMemberEntityTest {
         LocalDateTime modifiedAt = LocalDateTime.now();
 
         FamilyMember familyMember = FamilyMember.withId(
-            id, familyId, userId, name, null, profileUrl, birthday,
+            id, familyId, userId, name, null, null, profileUrl, birthday,
             status, FamilyMemberRole.MEMBER, createdBy, createdAt, modifiedBy, modifiedAt
         );
 
@@ -46,7 +47,7 @@ class FamilyMemberEntityTest {
         assertThat(result.getProfileUrl()).isEqualTo(profileUrl);
         assertThat(result.getBirthday()).isEqualTo(birthday);
         assertThat(result.getStatus()).isEqualTo(status);
-        assertThat(result.getRole()).isEqualTo(FamilyMemberRole.MEMBER); // existingMember는 기본적으로 MEMBER 역할
+        assertThat(result.getRole()).isEqualTo(FamilyMemberRole.MEMBER);
         assertThat(result.getCreatedBy()).isEqualTo(createdBy);
         assertThat(result.getCreatedAt()).isEqualTo(createdAt);
         assertThat(result.getModifiedBy()).isEqualTo(modifiedBy);
@@ -83,7 +84,7 @@ class FamilyMemberEntityTest {
         LocalDateTime modifiedAt = LocalDateTime.now();
 
         FamilyMember familyMember = FamilyMember.withId(
-            id, familyId, userId, name, null, profileUrl, birthday,
+            id, familyId, userId, name, null, null, profileUrl, birthday,
             status, role, createdBy, createdAt, modifiedBy, modifiedAt
         );
 
@@ -123,7 +124,7 @@ class FamilyMemberEntityTest {
         Long modifiedBy = 1002L;
         LocalDateTime modifiedAt = LocalDateTime.now();
 
-        FamilyMember familyMember = FamilyMember.withId(id, familyId, userId, name, null, profileUrl, birthday,
+        FamilyMember familyMember = FamilyMember.withId(id, familyId, userId, name, null, null, profileUrl, birthday,
             status, role, createdBy, createdAt, modifiedBy, modifiedAt);
         FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
 
@@ -156,7 +157,8 @@ class FamilyMemberEntityTest {
             101L,  // familyId
             202L,  // userId
             "Test User",  // name
-            "Relationship", // relationship
+            FamilyMemberRelationshipType.FATHER, // relationshipType
+            null, // customRelationship
             "http://example.com/profile",  // profileUrl
             LocalDateTime.now(),  // birthday
             FamilyMemberStatus.ACTIVE,  // status

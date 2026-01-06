@@ -105,9 +105,9 @@ export interface UIFamilyMember {
 
 export interface CreateFamilyMemberForm {
   name: string;
-  profileUrl?: string;
   birthday?: string;
-  nationality?: string;
+  relationshipType?: string;
+  customRelationship?: string;
 }
 
 export interface UpdateFamilyMemberForm {
@@ -268,8 +268,8 @@ export class FamilyService {
   /**
    * 새로운 가족 구성원을 추가합니다.
    */
-  public async createFamilyMember(familyId: number | string, form: CreateFamilyMemberForm): Promise<FamilyMember> {
-    return this.apiClient.post<FamilyMember>(`/api/families/${familyId}/members`, form);
+  public async createFamilyMember(familyId: number | string, form: CreateFamilyMemberForm): Promise<{ id: number }> {
+    return this.apiClient.post<{ id: number }>(`/api/families/${familyId}/members`, form);
   }
 
   /**
