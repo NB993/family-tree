@@ -324,25 +324,167 @@ COMMENT ON COLUMN family_member.birthday_type IS '생일 유형 (SOLAR: 양력, 
 
 ---
 
-## 9. 구현 순서
+## 9. 구현 체크리스트
 
-### Phase 1: 백엔드 (birthday_type 저장)
-1. BirthdayType Enum 생성
-2. KakaoUserInfo에 getBirthdayType() 추가
-3. User, UserJpaEntity에 birthdayType 필드 추가
-4. FamilyMember, FamilyMemberJpaEntity에 birthdayType 필드 추가
-5. DB 마이그레이션 스크립트 작성
-6. API 응답에 birthdayType 포함
-7. 테스트 작성
+### Phase 1: 백엔드 - 도메인 및 Enum
 
-### Phase 2: 프론트엔드 (UI 변경)
-1. 음력 변환 라이브러리 설치 (`lunar-javascript` 또는 `korean-lunar-calendar`)
-2. 나이 계산 유틸리티 작성
-3. 음력 변환 유틸리티 작성
-4. HomePage 멤버 카드 UI 변경
-5. 토글 기능 구현
-6. 스켈레톤 UI 정렬 수정
-7. 테스트 및 검증
+- [ ] **1.1 BirthdayType Enum 생성**
+  - [ ] `be/src/main/java/io/jhchoe/familytree/core/family/domain/BirthdayType.java` 생성
+  - [ ] SOLAR, LUNAR 값 정의
+  - [ ] 단위 테스트 작성
+
+- [ ] **1.2 KakaoUserInfo 수정**
+  - [ ] `getBirthdayType()` 메서드 추가
+  - [ ] `kakao_account.birthday_type` 파싱 로직 구현
+  - [ ] null 처리 (기본값 SOLAR)
+  - [ ] 단위 테스트 작성 (`KakaoUserInfoTest.java`)
+
+### Phase 2: 백엔드 - User 엔티티
+
+- [ ] **2.1 User 도메인 수정**
+  - [ ] `core/user/domain/User.java`에 `birthdayType` 필드 추가
+  - [ ] `newUser()` 팩토리 메서드에 birthdayType 파라미터 추가
+  - [ ] `withId()` 팩토리 메서드에 birthdayType 파라미터 추가
+  - [ ] 단위 테스트 수정 (`UserTest.java`)
+
+- [ ] **2.2 UserJpaEntity 수정**
+  - [ ] `common/auth/UserJpaEntity.java`에 `birthday_type` 컬럼 매핑
+  - [ ] `@Enumerated(EnumType.STRING)` 설정
+  - [ ] `ofOAuth2User()` 메서드 수정
+  - [ ] `toDomain()` 메서드 수정
+
+- [ ] **2.3 OAuth2UserServiceImpl 수정**
+  - [ ] `extractBirthday()` → `extractBirthdayInfo()` 로 변경 (birthday + type 반환)
+  - [ ] `createUser()` 메서드에서 birthdayType 저장
+  - [ ] 통합 테스트 작성
+
+### Phase 3: 백엔드 - FamilyMember 엔티티
+
+- [ ] **3.1 FamilyMember 도메인 수정**
+  - [ ] `core/family/domain/FamilyMember.java`에 `birthdayType` 필드 추가
+  - [ ] `newMember()` 팩토리 메서드 수정
+  - [ ] `newOwner()` 팩토리 메서드 수정
+  - [ ] `withId()` 팩토리 메서드 수정
+  - [ ] `newManualMember()` 팩토리 메서드 수정
+  - [ ] 단위 테스트 수정 (`FamilyMemberTest.java`)
+
+- [ ] **3.2 FamilyMemberJpaEntity 수정**
+  - [ ] `birthday_type` 컬럼 매핑 추가
+  - [ ] `from()` 메서드 수정
+  - [ ] `toDomain()` 메서드 수정
+  - [ ] 단위 테스트 수정 (`FamilyMemberEntityTest.java`)
+
+- [ ] **3.3 초대 수락 서비스 수정**
+  - [ ] `SaveInviteResponseWithKakaoService.java` 수정
+  - [ ] FamilyMember 생성 시 User의 birthdayType 복사
+  - [ ] 통합 테스트 수정
+
+### Phase 4: 백엔드 - DB 마이그레이션
+
+- [ ] **4.1 마이그레이션 스크립트 작성**
+  - [ ] `V{N}__add_birthday_type.sql` 생성
+  - [ ] `ft_user` 테이블에 `birthday_type` 컬럼 추가
+  - [ ] `family_member` 테이블에 `birthday_type` 컬럼 추가
+  - [ ] 컬럼 코멘트 추가
+  - [ ] 로컬 환경에서 마이그레이션 테스트
+
+### Phase 5: 백엔드 - API 응답 수정
+
+- [ ] **5.1 Response DTO 수정**
+  - [ ] `FamilyMemberResponse.java`에 `birthdayType` 필드 추가
+  - [ ] `FamilyMemberWithRelationshipResponse.java`에 `memberBirthdayType` 필드 추가
+  - [ ] `FamilyMembersWithRelationshipsResponse.java` 수정
+
+- [ ] **5.2 API 문서 업데이트**
+  - [ ] REST Docs 테스트 수정
+  - [ ] API 문서 빌드 확인
+
+- [ ] **5.3 전체 테스트 실행**
+  - [ ] `./gradlew test` 통과 확인
+  - [ ] `./gradlew build` 통과 확인
+
+### Phase 6: 프론트엔드 - 라이브러리 및 유틸리티
+
+- [ ] **6.1 음력 변환 라이브러리 설치**
+  - [ ] `npm install korean-lunar-calendar` 또는 `lunar-javascript`
+  - [ ] 라이브러리 동작 확인
+
+- [ ] **6.2 나이 계산 유틸리티 작성**
+  - [ ] `fe/src/utils/age.ts` 생성
+  - [ ] `getKoreanAge()` 함수 구현 (한국 나이)
+  - [ ] `getWesternAge()` 함수 구현 (만 나이)
+  - [ ] 단위 테스트 작성
+
+- [ ] **6.3 음력 변환 유틸리티 작성**
+  - [ ] `fe/src/utils/lunar.ts` 생성
+  - [ ] `solarToLunar()` 함수 구현 (양력→음력)
+  - [ ] `lunarToSolar()` 함수 구현 (음력→양력)
+  - [ ] `formatBirthday()` 함수 구현 (YYYY.MM.DD 포맷)
+  - [ ] 단위 테스트 작성
+
+### Phase 7: 프론트엔드 - 타입 정의
+
+- [ ] **7.1 API 타입 수정**
+  - [ ] `api/services/familyService.ts`의 `FamilyMemberWithRelationship` 타입에 `memberBirthdayType` 추가
+  - [ ] `BirthdayType` 타입 정의 (`'SOLAR' | 'LUNAR' | null`)
+
+- [ ] **7.2 types 파일 수정**
+  - [ ] `types/family.ts`에 BirthdayType 추가 (필요시)
+
+### Phase 8: 프론트엔드 - UI 구현
+
+- [ ] **8.1 HomePage.tsx 멤버 카드 변경**
+  - [ ] 연락처 표시 영역 제거 (`phoneNumberDisplay` 제거)
+  - [ ] 레이아웃 변경 (2줄 → 1줄)
+  - [ ] 이름 옆에 나이 표시 영역 추가
+  - [ ] 우측에 생일 표시 영역 추가
+
+- [ ] **8.2 나이 토글 기능 구현**
+  - [ ] `ageDisplayMode` 상태 추가 (`'korean' | 'western'`)
+  - [ ] 나이 클릭 시 토글 핸들러 구현
+  - [ ] 한국 나이: `(35)` 형식
+  - [ ] 만 나이: `(만 34)` 형식
+
+- [ ] **8.3 생일 토글 기능 구현**
+  - [ ] `birthdayDisplayMode` 상태 추가 (멤버별 관리)
+  - [ ] 생일 클릭 시 토글 핸들러 구현
+  - [ ] 양력: `1990.12.25` 형식
+  - [ ] 음력: `(음) 1990.11.15` 형식
+  - [ ] `memberBirthdayType`에 따른 기본값 처리
+
+- [ ] **8.4 생일 없는 경우 처리**
+  - [ ] `memberBirthday`가 null인 경우 나이/생일 영역 숨김
+  - [ ] 이름만 표시되도록 처리
+
+### Phase 9: 프론트엔드 - 스켈레톤 UI
+
+- [ ] **9.1 스켈레톤 UI 정렬 수정**
+  - [ ] 로딩 시 스켈레톤 좌측 정렬
+  - [ ] 실제 콘텐츠 위치와 일치하도록 조정
+  - [ ] 스켈레톤 요소 크기 조정 (이름, 나이, 생일)
+
+### Phase 10: 테스트 및 검증
+
+- [ ] **10.1 백엔드 테스트**
+  - [ ] 전체 단위 테스트 통과
+  - [ ] 전체 통합 테스트 통과
+  - [ ] API 문서 빌드 확인
+
+- [ ] **10.2 프론트엔드 테스트**
+  - [ ] 컴포넌트 렌더링 테스트
+  - [ ] 토글 기능 동작 확인
+  - [ ] 음력 변환 정확성 확인
+
+- [ ] **10.3 E2E 테스트**
+  - [ ] 카카오 로그인 → 초대 수락 → birthdayType 저장 확인
+  - [ ] 멤버 목록에서 생일/나이 표시 확인
+  - [ ] 토글 기능 정상 동작 확인
+
+- [ ] **10.4 엣지 케이스 확인**
+  - [ ] 생일 정보 없는 멤버 표시
+  - [ ] birthday_type이 null인 경우 (기존 데이터)
+  - [ ] birthday_type이 LUNAR인 경우 기본 표시
+  - [ ] 윤달 생일 변환
 
 ---
 
