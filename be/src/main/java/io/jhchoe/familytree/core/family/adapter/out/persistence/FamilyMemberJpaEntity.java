@@ -76,7 +76,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
      * @param modifiedBy   수정한 사용자 ID
      * @param modifiedAt   수정 일시
      */
-    public FamilyMemberJpaEntity(
+    private FamilyMemberJpaEntity(
         Long id,
         Long familyId,
         Long userId,

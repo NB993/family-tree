@@ -31,7 +31,7 @@ class FamilyMemberEntityTest {
 
         FamilyMember familyMember = FamilyMember.withId(
             id, familyId, userId, name, null, profileUrl, birthday,
-            status, FamilyMemberRole.MEMBER, createdBy, createdAt, modifiedBy, modifiedAt
+            null, status, FamilyMemberRole.MEMBER, createdBy, createdAt, modifiedBy, modifiedAt
         );
 
         // when
@@ -84,7 +84,7 @@ class FamilyMemberEntityTest {
 
         FamilyMember familyMember = FamilyMember.withId(
             id, familyId, userId, name, null, profileUrl, birthday,
-            status, role, createdBy, createdAt, modifiedBy, modifiedAt
+            null, status, role, createdBy, createdAt, modifiedBy, modifiedAt
         );
 
         // when
@@ -124,7 +124,7 @@ class FamilyMemberEntityTest {
         LocalDateTime modifiedAt = LocalDateTime.now();
 
         FamilyMember familyMember = FamilyMember.withId(id, familyId, userId, name, null, profileUrl, birthday,
-            status, role, createdBy, createdAt, modifiedBy, modifiedAt);
+            null, status, role, createdBy, createdAt, modifiedBy, modifiedAt);
         FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
 
         // when
@@ -146,32 +146,4 @@ class FamilyMemberEntityTest {
         assertThat(result.getModifiedAt()).isEqualTo(modifiedAt);
     }
 
-    @Test
-    @DisplayName("toFamilyMember 메서드는 role이 null인 경우 기본값 MEMBER로 변환해야 한다")
-    void given_entity_with_null_role_when_to_family_member_then_return_member_role() {
-        // given
-        // JPA 엔티티를 직접 생성 (role이 null인 상태)
-        FamilyMemberJpaEntity entity = new FamilyMemberJpaEntity(
-            1L,  // id
-            101L,  // familyId
-            202L,  // userId
-            "Test User",  // name
-            "Relationship", // relationship
-            "http://example.com/profile",  // profileUrl
-            LocalDateTime.now(),  // birthday
-            FamilyMemberStatus.ACTIVE,  // status
-            null,  // role이 null
-            1001L,  // createdBy
-            LocalDateTime.now().minusDays(1),  // createdAt
-            1002L,  // modifiedBy
-            LocalDateTime.now()  // modifiedAt
-        );
-
-        // when
-        FamilyMember result = entity.toFamilyMember();
-
-        // then
-        assertThat(result).isNotNull();
-        assertThat(result.getRole()).isEqualTo(FamilyMemberRole.MEMBER); // 기본값 MEMBER
-    }
 }

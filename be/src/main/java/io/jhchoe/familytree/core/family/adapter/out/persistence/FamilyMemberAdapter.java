@@ -99,30 +99,16 @@ public class FamilyMemberAdapter implements FindFamilyMemberPort, ModifyFamilyMe
     public Long modify(FamilyMember familyMember) {
         Objects.requireNonNull(familyMember, "familyMember must not be null");
         Objects.requireNonNull(familyMember.getId(), "familyMember.id must not be null");
-        
-        // 기존 엔티티를 조회
-        FamilyMemberJpaEntity entity = familyMemberJpaRepository.findById(familyMember.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Member not found: " + familyMember.getId()));
-        
-        // 업데이트할 엔티티 생성
-        FamilyMemberJpaEntity updatedEntity = new FamilyMemberJpaEntity(
-                entity.getId(),
-                entity.getFamilyId(),
-                entity.getUserId(),
-                entity.getName(),
-                entity.getRelationship(),
-                entity.getProfileUrl(),
-                entity.getBirthday(),
-                familyMember.getStatus(),
-                familyMember.getRole(),
-                entity.getCreatedBy(),
-                entity.getCreatedAt(),
-                entity.getModifiedBy(),
-                entity.getModifiedAt()
-        );
-        
-        // 저장 및 ID 반환
-        return familyMemberJpaRepository.save(updatedEntity).getId();
+
+        // 존재 여부 확인
+        if (!familyMemberJpaRepository.existsById(familyMember.getId())) {
+            throw new IllegalArgumentException("Member not found: " + familyMember.getId());
+        }
+
+        // 도메인 객체를 JPA 엔티티로 변환하여 저장
+        FamilyMemberJpaEntity entity = FamilyMemberJpaEntity.from(familyMember);
+
+        return familyMemberJpaRepository.save(entity).getId();
     }
 
     /**

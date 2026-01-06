@@ -57,7 +57,7 @@ class ModifyFamilyControllerTest extends AcceptanceTestBase {
         // OWNER 권한 구성원 생성 (권한 검증을 위해 필요)
         FamilyMember ownerMember = FamilyMember.newOwner(
             familyId, userId, "테스트소유자", "profile.jpg",
-            LocalDateTime.now()
+            LocalDateTime.now(), null
         );
         familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(ownerMember));
 

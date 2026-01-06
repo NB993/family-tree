@@ -230,7 +230,7 @@ class SaveFamilyJoinRequestControllerTest extends AcceptanceTestBase {
     private void createFamilyMember(Long familyId, Long userId, String name, FamilyMemberStatus status) {
         // 도메인 객체를 먼저 생성한 후 JpaEntity로 변환
         // 테스트용으로는 newMember 메서드 사용 후 별도로 상태 설정
-        FamilyMember familyMember = FamilyMember.newMember(familyId, userId, name, null, null);
+        FamilyMember familyMember = FamilyMember.newMember(familyId, userId, name, null, null, null);
         
         // status가 ACTIVE가 아닐 경우 처리 필요
         if (status != FamilyMemberStatus.ACTIVE) {
