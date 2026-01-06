@@ -99,7 +99,7 @@ be/src/test/java/.../core/family/
 
 ---
 
-## 3단계: relationship 필드 분리 리팩토링 (미진행)
+## 3단계: relationship 필드 분리 리팩토링 (완료)
 
 ### 배경
 현재 `FamilyMember.relationship` 필드가 String 타입으로 선언되어 있어 enum(`FamilyMemberRelationshipType`)을 사용한 의미가 퇴색됨. CUSTOM 관계와 기본 관계를 구분하여 저장하는 구조로 리팩토링 필요.
