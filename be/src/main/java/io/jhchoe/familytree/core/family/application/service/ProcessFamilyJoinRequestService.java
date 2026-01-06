@@ -89,9 +89,10 @@ public class ProcessFamilyJoinRequestService implements ProcessFamilyJoinRequest
         FamilyMember newMember = FamilyMember.newMember(
             familyId,
             requesterId,
-            user.getName(),        // User에서 복사
-            user.getProfileUrl(),  // User에서 복사
-            user.getBirthday()     // User에서 복사
+            user.getName(),          // User에서 복사
+            user.getProfileUrl(),    // User에서 복사
+            user.getBirthday(),      // User에서 복사
+            user.getBirthdayType()   // User에서 복사
         );
         saveFamilyMemberPort.save(newMember);
     }

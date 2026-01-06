@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.adapter.out.persistence;
 
 import io.jhchoe.familytree.common.support.ModifierBaseEntity;
+import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
@@ -42,6 +43,10 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
     @Column(name = "birthday")
     private LocalDateTime birthday;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "birthday_type", length = 10)
+    private BirthdayType birthdayType;
+
     @Column(name = "relationship")
     private String relationship;
 
@@ -56,19 +61,20 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
     /**
      * FamilyMemberEntity 전체 필드를 초기화하는 생성자.
      *
-     * @param id          고유 ID
-     * @param familyId    Family ID
-     * @param userId      사용자 ID (nullable - 수동 등록인 경우 null)
-     * @param name        구성원 이름
+     * @param id           고유 ID
+     * @param familyId     Family ID
+     * @param userId       사용자 ID (nullable - 수동 등록인 경우 null)
+     * @param name         구성원 이름
      * @param relationship 나와의 관계
-     * @param profileUrl  프로필 URL
-     * @param birthday    생일
-     * @param status      멤버 상태
-     * @param role        멤버 역할
-     * @param createdBy   생성한 사용자 ID
-     * @param createdAt   생성 일시
-     * @param modifiedBy  수정한 사용자 ID
-     * @param modifiedAt  수정 일시
+     * @param profileUrl   프로필 URL
+     * @param birthday     생일
+     * @param birthdayType 생일 유형 (양력/음력)
+     * @param status       멤버 상태
+     * @param role         멤버 역할
+     * @param createdBy    생성한 사용자 ID
+     * @param createdAt    생성 일시
+     * @param modifiedBy   수정한 사용자 ID
+     * @param modifiedAt   수정 일시
      */
     public FamilyMemberJpaEntity(
         Long id,
@@ -78,6 +84,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         String relationship,
         String profileUrl,
         LocalDateTime birthday,
+        BirthdayType birthdayType,
         FamilyMemberStatus status,
         FamilyMemberRole role,
         Long createdBy,
@@ -93,6 +100,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         this.relationship = relationship;
         this.profileUrl = profileUrl;
         this.birthday = birthday;
+        this.birthdayType = birthdayType;
         this.status = status;
         this.role = role;
     }
@@ -114,6 +122,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
             familyMember.getRelationship(),
             familyMember.getProfileUrl(),
             familyMember.getBirthday(),
+            familyMember.getBirthdayType(),
             familyMember.getStatus(),
             familyMember.getRole(),
             familyMember.getCreatedBy(),
@@ -137,6 +146,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
             relationship,
             profileUrl,
             birthday,
+            birthdayType,
             status,
             role != null ? role : FamilyMemberRole.MEMBER, // 기본 역할은 MEMBER
             getCreatedBy(),

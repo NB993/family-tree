@@ -54,9 +54,10 @@ public class SaveFamilyService implements SaveFamilyUseCase {
         FamilyMember owner = FamilyMember.newOwner(
             familyId,
             command.getUserId(),
-            user.getName(),        // User에서 복사
-            user.getProfileUrl(),  // User에서 복사
-            user.getBirthday()     // User에서 복사
+            user.getName(),          // User에서 복사
+            user.getProfileUrl(),    // User에서 복사
+            user.getBirthday(),      // User에서 복사
+            user.getBirthdayType()   // User에서 복사
         );
         saveFamilyMemberPort.save(owner);
 

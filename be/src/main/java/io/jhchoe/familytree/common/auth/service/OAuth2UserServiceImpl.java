@@ -13,6 +13,7 @@ import io.jhchoe.familytree.common.util.MaskingUtils;
 import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyCommand;
 import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyUseCase;
 import io.jhchoe.familytree.core.family.exception.FamilyExceptionCode;
+import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import io.jhchoe.familytree.core.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -99,9 +100,10 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
      * 새로운 OAuth2 사용자를 생성하고 자동으로 Family를 생성합니다.
      */
     private UserJpaEntity createUser(OAuth2UserInfo userInfo, OAuth2Provider provider) {
-        // 1. User 생성 및 저장 (kakaoId, birthday 포함)
+        // 1. User 생성 및 저장 (kakaoId, birthday, birthdayType 포함)
         String kakaoId = userInfo.getId();
         LocalDateTime birthday = extractBirthday(userInfo, provider);
+        BirthdayType birthdayType = extractBirthdayType(userInfo, provider);
 
         User user = User.newUser(
             userInfo.getEmail(),
@@ -111,7 +113,8 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
             provider,
             UserRole.USER,
             false,
-            birthday
+            birthday,
+            birthdayType
         );
         UserJpaEntity savedUser = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
 
@@ -182,6 +185,21 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
             if (birthDate != null) {
                 return birthDate.atStartOfDay();
             }
+        }
+        return null;
+    }
+
+    /**
+     * OAuth2 제공자별로 생년월일 유형 정보를 추출합니다.
+     * 카카오 로그인의 경우 생년월일 유형(양력/음력)을 반환하고, 그 외에는 null을 반환합니다.
+     *
+     * @param userInfo OAuth2 사용자 정보
+     * @param provider OAuth2 제공자
+     * @return 생년월일 유형 (BirthdayType) 또는 null
+     */
+    private BirthdayType extractBirthdayType(final OAuth2UserInfo userInfo, final OAuth2Provider provider) {
+        if (provider == OAuth2Provider.KAKAO && userInfo instanceof KakaoUserInfo kakaoUserInfo) {
+            return kakaoUserInfo.getBirthdayType();
         }
         return null;
     }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
+import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import lombok.Getter;
 import java.util.Objects;
 
@@ -25,6 +26,7 @@ public class User {
     private final Long modifiedBy;
     private final LocalDateTime modifiedAt;
     private final LocalDateTime birthday;
+    private final BirthdayType birthdayType;
 
     private User(
         Long id,
@@ -39,7 +41,8 @@ public class User {
         LocalDateTime createdAt,
         Long modifiedBy,
         LocalDateTime modifiedAt,
-        LocalDateTime birthday
+        LocalDateTime birthday,
+        BirthdayType birthdayType
     ) {
         this.id = id;
         this.email = email;
@@ -54,6 +57,7 @@ public class User {
         this.modifiedBy = modifiedBy;
         this.modifiedAt = modifiedAt;
         this.birthday = birthday;
+        this.birthdayType = birthdayType;
     }
 
     /**
@@ -72,6 +76,7 @@ public class User {
      * @param modifiedBy 수정한 사용자 ID
      * @param modifiedAt 수정일시
      * @param birthday 생년월일
+     * @param birthdayType 생년월일 유형 (양력/음력)
      * @return 생성된 User 객체
      */
     public static User withId(
@@ -87,13 +92,14 @@ public class User {
         LocalDateTime createdAt,
         Long modifiedBy,
         LocalDateTime modifiedAt,
-        LocalDateTime birthday
+        LocalDateTime birthday,
+        BirthdayType birthdayType
     ) {
         Objects.requireNonNull(id, "id는 null일 수 없습니다");
         Objects.requireNonNull(role, "role은 null일 수 없습니다");
 
         return new User(id, email, name, profileUrl, kakaoId, oAuth2Provider, role, deleted,
-                createdBy, createdAt, modifiedBy, modifiedAt, birthday);
+                createdBy, createdAt, modifiedBy, modifiedAt, birthday, birthdayType);
     }
 
     /**
@@ -107,6 +113,7 @@ public class User {
      * @param role 사용자 역할
      * @param deleted 삭제 여부
      * @param birthday 생년월일
+     * @param birthdayType 생년월일 유형 (양력/음력)
      * @return 생성된 User 객체
      */
     public static User newUser(
@@ -117,10 +124,11 @@ public class User {
         OAuth2Provider oAuth2Provider,
         UserRole role,
         boolean deleted,
-        LocalDateTime birthday
+        LocalDateTime birthday,
+        BirthdayType birthdayType
     ) {
         return new User(null, email, name, profileUrl, kakaoId, oAuth2Provider, role, deleted,
-                null, null, null, null, birthday);
+                null, null, null, null, birthday, birthdayType);
     }
 
     /**
@@ -130,15 +138,17 @@ public class User {
      * @param name 이름
      * @param profileUrl 프로필 URL
      * @param birthday 생년월일
+     * @param birthdayType 생년월일 유형 (양력/음력)
      * @return 생성된 User 객체
      */
     public static User newManualUser(
         String name,
         String profileUrl,
-        LocalDateTime birthday
+        LocalDateTime birthday,
+        BirthdayType birthdayType
     ) {
         return new User(null, null, name, profileUrl, null, null, UserRole.USER, false,
-                null, null, null, null, birthday);
+                null, null, null, null, birthday, birthdayType);
     }
 
     /**

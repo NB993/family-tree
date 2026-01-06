@@ -5,6 +5,7 @@ import io.jhchoe.familytree.common.auth.domain.UserRole;
 import io.jhchoe.familytree.common.exception.CommonExceptionCode;
 import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.common.support.ModifierBaseEntity;
+import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import io.jhchoe.familytree.core.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,6 +56,10 @@ public class UserJpaEntity extends ModifierBaseEntity {
     @Column(name = "birthday")
     private LocalDateTime birthday;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "birthday_type", length = 10)
+    private BirthdayType birthdayType;
+
     /**
      * OAuth2 로그인 기반의 회원 가입용 팩토리 메서드
      *
@@ -77,7 +82,8 @@ public class UserJpaEntity extends ModifierBaseEntity {
                 user.getCreatedAt(),
                 user.getModifiedBy(),
                 user.getModifiedAt(),
-                user.getBirthday()
+                user.getBirthday(),
+                user.getBirthdayType()
         );
     }
 
@@ -97,6 +103,7 @@ public class UserJpaEntity extends ModifierBaseEntity {
      * @param modifiedBy 수정자
      * @param modifiedAt 수정일시
      * @param birthday 생년월일
+     * @param birthdayType 생년월일 유형 (양력/음력)
      */
     private UserJpaEntity(
         final Long id,
@@ -111,7 +118,8 @@ public class UserJpaEntity extends ModifierBaseEntity {
         final LocalDateTime createdAt,
         final Long modifiedBy,
         final LocalDateTime modifiedAt,
-        final LocalDateTime birthday
+        final LocalDateTime birthday,
+        final BirthdayType birthdayType
     ) {
         super(createdBy, createdAt, modifiedBy, modifiedAt);
         this.id = id;
@@ -123,6 +131,7 @@ public class UserJpaEntity extends ModifierBaseEntity {
         this.role = role;
         this.deleted = deleted;
         this.birthday = birthday;
+        this.birthdayType = birthdayType;
     }
 
     /**
@@ -144,7 +153,8 @@ public class UserJpaEntity extends ModifierBaseEntity {
                 getCreatedAt(),
                 getModifiedBy(),
                 getModifiedAt(),
-                birthday
+                birthday,
+                birthdayType
         );
     }
 }

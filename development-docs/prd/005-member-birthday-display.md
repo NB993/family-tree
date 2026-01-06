@@ -328,72 +328,80 @@ COMMENT ON COLUMN family_member.birthday_type IS '생일 유형 (SOLAR: 양력, 
 
 ### Phase 1: 백엔드 - 도메인 및 Enum
 
-- [ ] **1.1 BirthdayType Enum 생성**
-  - [ ] `be/src/main/java/io/jhchoe/familytree/core/family/domain/BirthdayType.java` 생성
-  - [ ] SOLAR, LUNAR 값 정의
-  - [ ] 단위 테스트 작성
+- [x] **1.1 BirthdayType Enum 생성**
+  - [x] `be/src/main/java/io/jhchoe/familytree/core/family/domain/BirthdayType.java` 생성
+  - [x] SOLAR, LUNAR 값 정의
+  - [x] 단위 테스트 작성
 
-- [ ] **1.2 KakaoUserInfo 수정**
-  - [ ] `getBirthdayType()` 메서드 추가
-  - [ ] `kakao_account.birthday_type` 파싱 로직 구현
-  - [ ] null 처리 (기본값 SOLAR)
-  - [ ] 단위 테스트 작성 (`KakaoUserInfoTest.java`)
+- [x] **1.2 KakaoUserInfo 수정**
+  - [x] `getBirthdayType()` 메서드 추가
+  - [x] `kakao_account.birthday_type` 파싱 로직 구현
+  - [x] null 처리 (알 수 없는 값은 null 반환)
+  - [x] 단위 테스트 작성 (`KakaoUserInfoTest.java`)
 
 ### Phase 2: 백엔드 - User 엔티티
 
-- [ ] **2.1 User 도메인 수정**
-  - [ ] `core/user/domain/User.java`에 `birthdayType` 필드 추가
-  - [ ] `newUser()` 팩토리 메서드에 birthdayType 파라미터 추가
-  - [ ] `withId()` 팩토리 메서드에 birthdayType 파라미터 추가
-  - [ ] 단위 테스트 수정 (`UserTest.java`)
+- [x] **2.1 User 도메인 수정**
+  - [x] `core/user/domain/User.java`에 `birthdayType` 필드 추가
+  - [x] `newUser()` 팩토리 메서드에 birthdayType 파라미터 추가
+  - [x] `withId()` 팩토리 메서드에 birthdayType 파라미터 추가
+  - [x] `newManualUser()` 팩토리 메서드에 birthdayType 파라미터 추가
+  - [x] 단위 테스트 수정 (`UserTest.java`)
 
-- [ ] **2.2 UserJpaEntity 수정**
-  - [ ] `common/auth/UserJpaEntity.java`에 `birthday_type` 컬럼 매핑
-  - [ ] `@Enumerated(EnumType.STRING)` 설정
-  - [ ] `ofOAuth2User()` 메서드 수정
-  - [ ] `toDomain()` 메서드 수정
+- [x] **2.2 UserJpaEntity 수정**
+  - [x] `common/auth/UserJpaEntity.java`에 `birthday_type` 컬럼 매핑
+  - [x] `@Enumerated(EnumType.STRING)` 설정
+  - [x] `ofOAuth2User()` 메서드 수정
+  - [x] `toUser()` 메서드 수정
 
-- [ ] **2.3 OAuth2UserServiceImpl 수정**
-  - [ ] `extractBirthday()` → `extractBirthdayInfo()` 로 변경 (birthday + type 반환)
-  - [ ] `createUser()` 메서드에서 birthdayType 저장
-  - [ ] 통합 테스트 작성
+- [x] **2.3 OAuth2UserServiceImpl 수정**
+  - [x] `extractBirthdayType()` 메서드 추가
+  - [x] `createUser()` 메서드에서 birthdayType 저장
+
+- [x] **2.4 관련 파일 수정**
+  - [x] `UserFixture.java` - 테스트 픽스처 birthdayType 추가
+  - [x] `LocalDataInitializer.java` - 로컬 개발용 초기 데이터 birthdayType 추가
 
 ### Phase 3: 백엔드 - FamilyMember 엔티티
 
-- [ ] **3.1 FamilyMember 도메인 수정**
-  - [ ] `core/family/domain/FamilyMember.java`에 `birthdayType` 필드 추가
-  - [ ] `newMember()` 팩토리 메서드 수정
-  - [ ] `newOwner()` 팩토리 메서드 수정
-  - [ ] `withId()` 팩토리 메서드 수정
-  - [ ] `newManualMember()` 팩토리 메서드 수정
-  - [ ] 단위 테스트 수정 (`FamilyMemberTest.java`)
+- [x] **3.1 FamilyMember 도메인 수정**
+  - [x] `core/family/domain/FamilyMember.java`에 `birthdayType` 필드 추가
+  - [x] `newMember()` 팩토리 메서드 수정
+  - [x] `newOwner()` 팩토리 메서드 수정
+  - [x] `withId()` 팩토리 메서드 수정
+  - [x] `withRole()` 팩토리 메서드 수정
+  - [x] `newManualMember()` 팩토리 메서드 수정
+  - [x] `updateRole()`, `updateStatus()` 메서드 수정
 
-- [ ] **3.2 FamilyMemberJpaEntity 수정**
-  - [ ] `birthday_type` 컬럼 매핑 추가
-  - [ ] `from()` 메서드 수정
-  - [ ] `toDomain()` 메서드 수정
-  - [ ] 단위 테스트 수정 (`FamilyMemberEntityTest.java`)
+- [x] **3.2 FamilyMemberJpaEntity 수정**
+  - [x] `birthday_type` 컬럼 매핑 추가
+  - [x] `from()` 메서드 수정
+  - [x] `toFamilyMember()` 메서드 수정
 
-- [ ] **3.3 초대 수락 서비스 수정**
-  - [ ] `SaveInviteResponseWithKakaoService.java` 수정
-  - [ ] FamilyMember 생성 시 User의 birthdayType 복사
-  - [ ] 통합 테스트 수정
+- [x] **3.3 서비스 수정**
+  - [x] `SaveInviteResponseWithKakaoService.java` 수정
+  - [x] `SaveFamilyService.java` 수정
+  - [x] `ProcessFamilyJoinRequestService.java` 수정
+  - [x] FamilyMember 생성 시 User의 birthdayType 복사
+
+- [x] **3.4 테스트 픽스처 수정**
+  - [x] `FamilyMemberFixture.java` - birthdayType 추가
 
 ### Phase 4: 백엔드 - DB 마이그레이션
 
-- [ ] **4.1 마이그레이션 스크립트 작성**
-  - [ ] `V{N}__add_birthday_type.sql` 생성
-  - [ ] `ft_user` 테이블에 `birthday_type` 컬럼 추가
-  - [ ] `family_member` 테이블에 `birthday_type` 컬럼 추가
-  - [ ] 컬럼 코멘트 추가
+- [x] **4.1 마이그레이션 스크립트 작성**
+  - [x] `V4__add_birthday_type_columns.sql` 생성
+  - [x] `users` 테이블에 `birthday_type` 컬럼 추가
+  - [x] `family_member` 테이블에 `birthday_type` 컬럼 추가
+  - [x] 변경 사항 요약 코멘트 추가
   - [ ] 로컬 환경에서 마이그레이션 테스트
 
 ### Phase 5: 백엔드 - API 응답 수정
 
-- [ ] **5.1 Response DTO 수정**
-  - [ ] `FamilyMemberResponse.java`에 `birthdayType` 필드 추가
-  - [ ] `FamilyMemberWithRelationshipResponse.java`에 `memberBirthdayType` 필드 추가
-  - [ ] `FamilyMembersWithRelationshipsResponse.java` 수정
+- [x] **5.1 Response DTO 수정**
+  - [x] `FamilyMemberResponse.java`에 `birthdayType` 필드 추가
+  - [x] `FamilyMemberWithRelationshipResponse.java`에 `memberBirthdayType` 필드 추가
+  - [x] `FamilyMembersWithRelationshipsResponse.java` - 추가 수정 불필요 (내부에서 FamilyMemberWithRelationshipResponse 사용)
 
 - [ ] **5.2 API 문서 업데이트**
   - [ ] REST Docs 테스트 수정
