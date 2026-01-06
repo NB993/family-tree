@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useMemo, useContext, ReactNode, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useMemo, useContext, ReactNode, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthService } from '../api/services/authService';
 import { AuthState, UserInfo } from '../types/auth';
@@ -49,6 +49,7 @@ const authErrorHandlers: ErrorHandlers = {
 
 interface AuthContextType extends AuthState {
   logout: () => Promise<void>;
+  confirmAuthentication: (userData: UserInfo) => void;
 }
 
 // Context 생성
@@ -59,9 +60,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isAuthenticatedRef = useRef<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { handleError } = useApiError(authErrorHandlers);
+
+  // isAuthenticated 상태가 변경될 때 ref도 업데이트
+  useEffect(() => {
+    isAuthenticatedRef.current = isAuthenticated;
+  }, [isAuthenticated]);
+
+  // 인증 완료를 명시적으로 확정하는 메서드
+  const confirmAuthentication = useCallback((userData: UserInfo) => {
+    const authService = AuthService.getInstance();
+    authService.saveUserInfo(userData);
+    setUserInfo(userData);
+    setIsAuthenticated(true);
+    setIsLoading(false);
+    // ref를 동기적으로 업데이트하여 navigate 직후 checkAuthStatus에서 스킵되도록 함
+    isAuthenticatedRef.current = true;
+  }, []);
 
   useEffect(() => {
     // API 클라이언트에 에러 핸들러를 설정합니다.
@@ -71,6 +89,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const checkAuthStatus = async () => {
       // 공개 페이지에서는 인증 체크를 건너뜁니다.
       if (isPublicPath(location.pathname)) {
+        setIsLoading(false);
+        return;
+      }
+
+      // 이미 인증된 상태면 스킵
+      if (isAuthenticatedRef.current) {
         setIsLoading(false);
         return;
       }
@@ -114,7 +138,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isLoading,
     userInfo,
     logout,
-  }), [isAuthenticated, isLoading, userInfo, logout]);
+    confirmAuthentication,
+  }), [isAuthenticated, isLoading, userInfo, logout, confirmAuthentication]);
 
   return (
     <AuthContext.Provider value={authState}>
