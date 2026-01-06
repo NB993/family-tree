@@ -29,7 +29,7 @@ cd be && ./gradlew build     # 빌드 (API 문서 포함)
 2. 스킬을 사용한다면 **스킬 지침을 먼저 읽고** 작업 진행
 3. CLAUDE.md의 규칙은 **요약**이며, 상세 규칙은 각 스킬 지침에 정의됨
 
-### 사용 가능한 스킬 (7개)
+### 사용 가능한 스킬 (8개)
 
 | 스킬 | 용도 |
 |------|------|
@@ -40,15 +40,16 @@ cd be && ./gradlew build     # 빌드 (API 문서 포함)
 | `presentation-tdd` | Controller, Request/Response DTO TDD 개발 |
 | `refactor` | 리팩토링 전용 |
 | `commit` | 커밋 메시지 작성 |
+| `create-pr` | CodeRabbit 최적화 PR 생성 |
 
 ## TDD 워크플로우
 
 ```
-write-prd → [/clear] → 코드베이스 탐색 → prd-to-test → core-tdd → infra-tdd → presentation-tdd → commit
-    │                        │                │             │           │              │
-    ▼                        ▼                ▼             ▼           ▼              ▼
-PRD 작성               PRD 기반으로      테스트 케이스   Red→Green   Red→Green    Red→Green
-(전문가검토)           관련 코드 파악       도출        →Refactor   →Refactor    →Refactor
+write-prd → [/clear] → 코드베이스 탐색 → prd-to-test → core-tdd → infra-tdd → presentation-tdd → commit → create-pr
+    │                        │                │             │           │              │            │           │
+    ▼                        ▼                ▼             ▼           ▼              ▼            ▼           ▼
+PRD 작성               PRD 기반으로      테스트 케이스   Red→Green   Red→Green    Red→Green    커밋 작성    PR 생성
+(전문가검토)           관련 코드 파악       도출        →Refactor   →Refactor    →Refactor               (CodeRabbit)
 ```
 
 ### TDD 순서
@@ -60,6 +61,7 @@ PRD 작성               PRD 기반으로      테스트 케이스   Red→Green
 5. **인프라 계층** (infra-tdd): 테스트 → Adapter 구현
 6. **프레젠테이션 계층** (presentation-tdd): 테스트 → Controller 구현
 7. **커밋** (commit): 커밋 메시지 작성
+8. **PR 생성** (create-pr): CodeRabbit 최적화 PR 생성
 
 > **Note**: `/clear` 실행 후에는 PRD 문서 경로를 알려주고, 관련 코드베이스를 먼저 탐색하도록 요청하세요.
 
