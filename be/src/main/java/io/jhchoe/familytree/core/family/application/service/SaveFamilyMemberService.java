@@ -25,18 +25,6 @@ public class SaveFamilyMemberService implements SaveFamilyMemberUseCase {
      */
     @Override
     @Transactional
-    public Long save(SaveFamilyMemberCommand command) {
-        throw new UnsupportedOperationException("Use save(command, currentUserId) instead");
-    }
-
-    /**
-     * 가족 구성원을 수동으로 등록합니다.
-     *
-     * @param command       구성원 등록에 필요한 정보를 담은 커맨드 객체
-     * @param currentUserId 현재 사용자 ID
-     * @return 저장된 구성원의 ID
-     */
-    @Transactional
     public Long save(SaveFamilyMemberCommand command, Long currentUserId) {
         Objects.requireNonNull(command, "command must not be null");
         Objects.requireNonNull(currentUserId, "currentUserId must not be null");

@@ -5,7 +5,7 @@ import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.core.family.adapter.in.request.SaveFamilyMemberRequest;
 import io.jhchoe.familytree.core.family.adapter.in.response.SaveFamilyMemberResponse;
 import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyMemberCommand;
-import io.jhchoe.familytree.core.family.application.service.SaveFamilyMemberService;
+import io.jhchoe.familytree.core.family.application.port.in.SaveFamilyMemberUseCase;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SaveFamilyMemberController {
 
-    private final SaveFamilyMemberService saveFamilyMemberService;
+    private final SaveFamilyMemberUseCase saveFamilyMemberUseCase;
 
     /**
      * 가족 구성원을 수동으로 등록합니다.
@@ -50,7 +50,7 @@ public class SaveFamilyMemberController {
         );
 
         // 2. 유스케이스 실행
-        Long savedId = saveFamilyMemberService.save(command, ftUser.getId());
+        Long savedId = saveFamilyMemberUseCase.save(command, ftUser.getId());
 
         // 3. 응답 반환
         String createdUri = String.format("/api/families/%d/members/%d", familyId, savedId);
