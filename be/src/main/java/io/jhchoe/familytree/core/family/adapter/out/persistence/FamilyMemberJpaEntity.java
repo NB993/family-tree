@@ -45,7 +45,7 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
     private LocalDateTime birthday;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "birthday_type", length = 10)
+    @Column(name = "birthday_type", length = 10, nullable = true)
     private BirthdayType birthdayType;
 
     @Column(name = "relationship_type", nullable = true, length = 50)
