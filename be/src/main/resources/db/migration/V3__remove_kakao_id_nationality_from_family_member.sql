@@ -13,8 +13,8 @@ DROP CONSTRAINT IF EXISTS chk_family_member_user_or_kakao;
 ALTER TABLE family_member
 DROP CONSTRAINT IF EXISTS uk_family_member_family_kakao;
 
--- 3. kakao_id 인덱스 제거
-DROP INDEX IF EXISTS idx_family_member_kakao_id ON family_member;
+-- 3. kakao_id 인덱스 제거 (PostgreSQL 문법)
+DROP INDEX IF EXISTS idx_family_member_kakao_id;
 
 -- 4. kakao_id 컬럼 제거
 ALTER TABLE family_member

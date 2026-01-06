@@ -3,6 +3,7 @@ package io.jhchoe.familytree.core.family.adapter.out.persistence;
 import io.jhchoe.familytree.common.support.ModifierBaseEntity;
 import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationshipType;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
 import jakarta.persistence.*;
@@ -47,8 +48,12 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
     @Column(name = "birthday_type", length = 10)
     private BirthdayType birthdayType;
 
-    @Column(name = "relationship")
-    private String relationship;
+    @Column(name = "relationship_type", nullable = true, length = 50)
+    @Enumerated(EnumType.STRING)
+    private FamilyMemberRelationshipType relationshipType;
+
+    @Column(name = "custom_relationship", nullable = true, length = 50)
+    private String customRelationship;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -61,27 +66,29 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
     /**
      * FamilyMemberEntity 전체 필드를 초기화하는 생성자.
      *
-     * @param id           고유 ID
-     * @param familyId     Family ID
-     * @param userId       사용자 ID (nullable - 수동 등록인 경우 null)
-     * @param name         구성원 이름
-     * @param relationship 나와의 관계
-     * @param profileUrl   프로필 URL
-     * @param birthday     생일
-     * @param birthdayType 생일 유형 (양력/음력)
-     * @param status       멤버 상태
-     * @param role         멤버 역할
-     * @param createdBy    생성한 사용자 ID
-     * @param createdAt    생성 일시
-     * @param modifiedBy   수정한 사용자 ID
-     * @param modifiedAt   수정 일시
+     * @param id                 고유 ID
+     * @param familyId           Family ID
+     * @param userId             사용자 ID (nullable - 수동 등록인 경우 null)
+     * @param name               구성원 이름
+     * @param relationshipType   관계 타입 (nullable)
+     * @param customRelationship CUSTOM일 때 사용자 입력값 (nullable)
+     * @param profileUrl         프로필 URL
+     * @param birthday           생일
+     * @param birthdayType       생일 유형 (양력/음력)
+     * @param status             멤버 상태
+     * @param role               멤버 역할
+     * @param createdBy          생성한 사용자 ID
+     * @param createdAt          생성 일시
+     * @param modifiedBy         수정한 사용자 ID
+     * @param modifiedAt         수정 일시
      */
     private FamilyMemberJpaEntity(
         Long id,
         Long familyId,
         Long userId,
         String name,
-        String relationship,
+        FamilyMemberRelationshipType relationshipType,
+        String customRelationship,
         String profileUrl,
         LocalDateTime birthday,
         BirthdayType birthdayType,
@@ -97,7 +104,8 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
         this.familyId = familyId;
         this.userId = userId;
         this.name = name;
-        this.relationship = relationship;
+        this.relationshipType = relationshipType;
+        this.customRelationship = customRelationship;
         this.profileUrl = profileUrl;
         this.birthday = birthday;
         this.birthdayType = birthdayType;
@@ -119,7 +127,8 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
             familyMember.getFamilyId(),
             familyMember.getUserId(),
             familyMember.getName(),
-            familyMember.getRelationship(),
+            familyMember.getRelationshipType(),
+            familyMember.getCustomRelationship(),
             familyMember.getProfileUrl(),
             familyMember.getBirthday(),
             familyMember.getBirthdayType(),
@@ -143,7 +152,8 @@ public class FamilyMemberJpaEntity extends ModifierBaseEntity {
             familyId,
             userId,
             name,
-            relationship,
+            relationshipType,
+            customRelationship,
             profileUrl,
             birthday,
             birthdayType,
