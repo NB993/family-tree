@@ -6,10 +6,23 @@ import { Search, Plus, UserPlus, LogOut, ChevronRight, Phone } from 'lucide-reac
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import CreateFamilyMemberModal from '@/components/family/CreateFamilyMemberModal';
 
+// 멤버 카드 스켈레톤 컴포넌트
+const MemberCardSkeleton: React.FC = () => (
+  <div className="flex items-center gap-2 px-3 py-1.5">
+    <Skeleton className="w-6 h-6 rounded-full flex-shrink-0" />
+    <div className="flex-1 min-w-0">
+      <Skeleton className="h-3 w-20 mb-1" />
+      <Skeleton className="h-2.5 w-16" />
+    </div>
+    <Skeleton className="w-3 h-3 flex-shrink-0" />
+  </div>
+);
+
 const HomePage: React.FC = () => {
-  const { data: familiesData } = useMyFamilies();
+  const { data: familiesData, isLoading: familiesLoading } = useMyFamilies();
   const navigate = useNavigate();
   const { userInfo, logout } = useAuth();
 
@@ -17,13 +30,18 @@ const HomePage: React.FC = () => {
   const [selectedFamilyId, setSelectedFamilyId] = useState<number | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const { data: membersData } = useFamilyMembers(selectedFamilyId || 0);
+  const { data: membersData, isLoading: membersLoading } = useFamilyMembers(selectedFamilyId || 0);
 
   useEffect(() => {
     if (familiesData && familiesData.length > 0 && !selectedFamilyId) {
       setSelectedFamilyId(familiesData[0].id);
     }
   }, [familiesData, selectedFamilyId]);
+
+  // 초기 로딩 상태: 가족 정보 로딩 중이거나, 가족이 있는데 selectedFamilyId가 아직 설정되지 않았거나, 멤버 로딩 중
+  const isInitialLoading = familiesLoading ||
+    (familiesData && familiesData.length > 0 && !selectedFamilyId) ||
+    (selectedFamilyId && membersLoading);
 
   const filteredMembers = useMemo(() => {
     if (!membersData || !searchTerm) return membersData || [];
@@ -76,7 +94,13 @@ const HomePage: React.FC = () => {
 
       {/* Member List */}
       <div className="flex-1 overflow-auto">
-        {!hasData ? (
+        {isInitialLoading ? (
+          <div className="divide-y divide-border">
+            {[...Array(5)].map((_, i) => (
+              <MemberCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : !hasData ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
             <UserPlus className="h-8 w-8 text-muted-foreground/50 mb-2" strokeWidth={1} />
             <p className="text-xs text-muted-foreground">등록된 멤버가 없습니다</p>
