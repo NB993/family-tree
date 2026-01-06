@@ -8,7 +8,7 @@ declare module 'korean-lunar-calendar' {
     year: number;
     month: number;
     day: number;
-    isLeapMonth: boolean;
+    intercalation: boolean;  // 윤달 여부
   }
 
   interface SolarCalendar {
@@ -33,9 +33,9 @@ declare module 'korean-lunar-calendar' {
      * @param year 연도
      * @param month 월 (1-12)
      * @param day 일
-     * @param isLeapMonth 윤달 여부
+     * @param intercalation 윤달 여부
      */
-    setLunarDate(year: number, month: number, day: number, isLeapMonth?: boolean): boolean;
+    setLunarDate(year: number, month: number, day: number, intercalation?: boolean): boolean;
 
     /**
      * 음력 달력 정보 반환
@@ -48,14 +48,19 @@ declare module 'korean-lunar-calendar' {
     getSolarCalendar(): SolarCalendar;
 
     /**
-     * 간지 (천간지지) 반환
+     * 간지 반환 (연월일)
      */
-    getGapJa(): string;
+    getGapja(): string;
+
+    /**
+     * 한국식 간지 반환
+     */
+    getKoreanGapja(): string;
 
     /**
      * 중국식 간지 반환
      */
-    getChineseGapJa(): string;
+    getChineseGapja(): string;
   }
 
   export = KoreanLunarCalendar;

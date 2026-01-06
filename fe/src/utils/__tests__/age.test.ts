@@ -6,30 +6,14 @@
 import { getKoreanAge, getWesternAge, formatAge } from '../age';
 
 describe('age utilities', () => {
-  // 테스트용 고정 날짜 설정
-  const realDate = Date;
-
   beforeAll(() => {
     // 2026년 1월 6일로 고정
-    const mockDate = new Date('2026-01-06T12:00:00Z');
-    global.Date = class extends realDate {
-      constructor(...args: any[]) {
-        if (args.length === 0) {
-          super(mockDate.getTime());
-          return this;
-        }
-        // @ts-ignore
-        super(...args);
-      }
-
-      static now() {
-        return mockDate.getTime();
-      }
-    } as any;
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-01-06T12:00:00Z'));
   });
 
   afterAll(() => {
-    global.Date = realDate;
+    jest.useRealTimers();
   });
 
   describe('getKoreanAge', () => {

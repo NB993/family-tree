@@ -40,14 +40,14 @@ export const formatMonthDay = (date: Date | string): string => {
  * @param date 양력 날짜
  * @returns 음력 날짜 정보
  */
-export const solarToLunar = (date: Date): { year: number; month: number; day: number; isLeapMonth: boolean } => {
+export const solarToLunar = (date: Date): { year: number; month: number; day: number; intercalation: boolean } => {
   calendar.setSolarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
   const lunar = calendar.getLunarCalendar();
   return {
     year: lunar.year,
     month: lunar.month,
     day: lunar.day,
-    isLeapMonth: lunar.isLeapMonth
+    intercalation: lunar.intercalation
   };
 };
 
@@ -56,11 +56,11 @@ export const solarToLunar = (date: Date): { year: number; month: number; day: nu
  * @param year 음력 연도
  * @param month 음력 월
  * @param day 음력 일
- * @param isLeapMonth 윤달 여부
+ * @param intercalation 윤달 여부
  * @returns 양력 Date 객체
  */
-export const lunarToSolar = (year: number, month: number, day: number, isLeapMonth: boolean = false): Date => {
-  calendar.setLunarDate(year, month, day, isLeapMonth);
+export const lunarToSolar = (year: number, month: number, day: number, intercalation: boolean = false): Date => {
+  calendar.setLunarDate(year, month, day, intercalation);
   const solar = calendar.getSolarCalendar();
   return new Date(solar.year, solar.month - 1, solar.day);
 };
