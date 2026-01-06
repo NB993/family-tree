@@ -52,6 +52,17 @@ export const solarToLunar = (date: Date): { year: number; month: number; day: nu
 };
 
 /**
+ * 음력 날짜를 YYYY.MM.DD 형식으로 포맷
+ * @param lunar 음력 날짜 정보
+ * @returns 포맷된 날짜 문자열
+ */
+export const formatLunarDate = (lunar: { year: number; month: number; day: number }): string => {
+  const month = String(lunar.month).padStart(2, '0');
+  const day = String(lunar.day).padStart(2, '0');
+  return `${lunar.year}.${month}.${day}`;
+};
+
+/**
  * 음력 → 양력 변환
  * @param year 음력 연도
  * @param month 음력 월
@@ -98,8 +109,7 @@ export const formatBirthday = (
 
   // 원본이 양력 -> 음력으로 변환
   const lunar = solarToLunar(date);
-  const lunarStr = `${lunar.year}.${String(lunar.month).padStart(2, '0')}.${String(lunar.day).padStart(2, '0')}`;
-  return `(음) ${lunarStr}`;
+  return `(음) ${formatLunarDate(lunar)}`;
 };
 
 /**
