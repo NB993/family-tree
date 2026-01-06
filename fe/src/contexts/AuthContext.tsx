@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const isAuthenticatedRef = useRef(isAuthenticated);
+  const isAuthenticatedRef = useRef<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { handleError } = useApiError(authErrorHandlers);
