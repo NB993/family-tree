@@ -421,14 +421,14 @@ COMMENT ON COLUMN family_member.birthday_type IS '생일 유형 (SOLAR: 양력, 
   - [x] `fe/src/utils/age.ts` 생성
   - [x] `getKoreanAge()` 함수 구현 (한국 나이)
   - [x] `getWesternAge()` 함수 구현 (만 나이)
-  - [ ] 단위 테스트 작성
+  - [x] 단위 테스트 작성 (`fe/src/utils/__tests__/age.test.ts`)
 
 - [x] **6.3 음력 변환 유틸리티 작성**
   - [x] `fe/src/utils/lunar.ts` 생성
   - [x] `solarToLunar()` 함수 구현 (양력→음력)
   - [x] `lunarToSolar()` 함수 구현 (음력→양력)
   - [x] `formatBirthday()` 함수 구현 (YYYY.MM.DD 포맷)
-  - [ ] 단위 테스트 작성
+  - [x] 단위 테스트 작성 (`fe/src/utils/__tests__/lunar.test.ts`)
 
 ### Phase 7: 프론트엔드 - 타입 정의
 
