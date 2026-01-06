@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
+import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ class UserTest {
         Long modifiedBy = 2L;
         LocalDateTime modifiedAt = LocalDateTime.now();
         LocalDateTime birthday = LocalDateTime.of(1990, 5, 15, 0, 0);
+        BirthdayType birthdayType = BirthdayType.SOLAR;
 
         // when
         User user = User.withId(
@@ -43,7 +45,8 @@ class UserTest {
             createdAt,
             modifiedBy,
             modifiedAt,
-            birthday
+            birthday,
+            birthdayType
         );
 
         // then
@@ -60,6 +63,7 @@ class UserTest {
         assertThat(user.getModifiedBy()).isEqualTo(modifiedBy);
         assertThat(user.getModifiedAt()).isEqualTo(modifiedAt);
         assertThat(user.getBirthday()).isEqualTo(birthday);
+        assertThat(user.getBirthdayType()).isEqualTo(birthdayType);
     }
 
     @Test
@@ -82,6 +86,7 @@ class UserTest {
             oAuth2Provider,
             role,
             false,
+            null,
             null,
             null,
             null,
@@ -116,6 +121,7 @@ class UserTest {
             null,
             null,
             null,
+            null,
             null
         ))
             .isInstanceOf(NullPointerException.class)
@@ -135,6 +141,7 @@ class UserTest {
             OAuth2Provider.GOOGLE,
             UserRole.USER,
             false,
+            null,
             null,
             null,
             null,
@@ -167,6 +174,7 @@ class UserTest {
             null,
             null,
             null,
+            null,
             null
         );
         String nameToCompare = "Different Name";
@@ -188,6 +196,7 @@ class UserTest {
         OAuth2Provider oAuth2Provider = OAuth2Provider.GOOGLE;
         UserRole role = UserRole.USER;
         LocalDateTime birthday = LocalDateTime.of(1990, 5, 15, 0, 0);
+        BirthdayType birthdayType = BirthdayType.SOLAR;
 
         // when
         User user = User.newUser(
@@ -198,7 +207,8 @@ class UserTest {
             oAuth2Provider,
             role,
             false,
-            birthday
+            birthday,
+            birthdayType
         );
 
         // then
@@ -211,6 +221,7 @@ class UserTest {
         assertThat(user.getRole()).isEqualTo(UserRole.USER);
         assertThat(user.isDeleted()).isFalse();
         assertThat(user.getBirthday()).isEqualTo(birthday);
+        assertThat(user.getBirthdayType()).isEqualTo(birthdayType);
         assertThat(user.getCreatedBy()).isNull();
         assertThat(user.getCreatedAt()).isNull();
         assertThat(user.getModifiedBy()).isNull();
@@ -230,6 +241,7 @@ class UserTest {
             OAuth2Provider.GOOGLE,
             UserRole.USER,
             false,
+            null,
             null,
             null,
             null,
@@ -262,6 +274,7 @@ class UserTest {
             null,
             null,
             null,
+            null,
             null
         );
         String nameToCompare = "Test User";
@@ -283,6 +296,7 @@ class UserTest {
         String email = "test@example.com";
         String name = "Test User";
         LocalDateTime birthday = LocalDateTime.of(1990, 1, 15, 0, 0);
+        BirthdayType birthdayType = BirthdayType.SOLAR;
 
         // when
         User user = User.withId(
@@ -298,11 +312,13 @@ class UserTest {
             null,
             null,
             null,
-            birthday
+            birthday,
+            birthdayType
         );
 
         // then
         assertThat(user.getBirthday()).isEqualTo(birthday);
+        assertThat(user.getBirthdayType()).isEqualTo(birthdayType);
     }
 
     @Test
@@ -326,6 +342,7 @@ class UserTest {
             null,
             null,
             null,
+            null,
             null
         );
 
@@ -341,7 +358,7 @@ class UserTest {
         String name = "수동 등록 사용자";
 
         // when
-        User user = User.newManualUser(name, null, null);
+        User user = User.newManualUser(name, null, null, null);
 
         // then
         assertThat(user.getId()).isNull();
@@ -367,6 +384,7 @@ class UserTest {
             null,
             null,
             null,
+            null,
             null
         );
 
@@ -375,5 +393,132 @@ class UserTest {
 
         // then
         assertThat(loginable).isTrue();
+    }
+
+    // ===== PRD-005: birthdayType 필드 추가 테스트 =====
+
+    @Test
+    @DisplayName("birthdayType을 SOLAR로 설정하여 User를 생성할 수 있다")
+    void create_user_with_solar_birthday_type() {
+        // given
+        Long id = 1L;
+        String email = "test@example.com";
+        String name = "Test User";
+        LocalDateTime birthday = LocalDateTime.of(1990, 1, 15, 0, 0);
+        BirthdayType birthdayType = BirthdayType.SOLAR;
+
+        // when
+        User user = User.withId(
+            id,
+            email,
+            name,
+            null,
+            null,
+            OAuth2Provider.KAKAO,
+            UserRole.USER,
+            false,
+            null,
+            null,
+            null,
+            null,
+            birthday,
+            birthdayType
+        );
+
+        // then
+        assertThat(user.getBirthday()).isEqualTo(birthday);
+        assertThat(user.getBirthdayType()).isEqualTo(BirthdayType.SOLAR);
+    }
+
+    @Test
+    @DisplayName("birthdayType을 LUNAR로 설정하여 User를 생성할 수 있다")
+    void create_user_with_lunar_birthday_type() {
+        // given
+        Long id = 1L;
+        String email = "test@example.com";
+        String name = "Test User";
+        LocalDateTime birthday = LocalDateTime.of(1990, 1, 15, 0, 0);
+        BirthdayType birthdayType = BirthdayType.LUNAR;
+
+        // when
+        User user = User.withId(
+            id,
+            email,
+            name,
+            null,
+            null,
+            OAuth2Provider.KAKAO,
+            UserRole.USER,
+            false,
+            null,
+            null,
+            null,
+            null,
+            birthday,
+            birthdayType
+        );
+
+        // then
+        assertThat(user.getBirthday()).isEqualTo(birthday);
+        assertThat(user.getBirthdayType()).isEqualTo(BirthdayType.LUNAR);
+    }
+
+    @Test
+    @DisplayName("birthdayType이 null인 User를 생성할 수 있다")
+    void create_user_with_null_birthday_type() {
+        // given
+        Long id = 1L;
+        String email = "test@example.com";
+        String name = "Test User";
+        LocalDateTime birthday = LocalDateTime.of(1990, 1, 15, 0, 0);
+
+        // when
+        User user = User.withId(
+            id,
+            email,
+            name,
+            null,
+            null,
+            OAuth2Provider.KAKAO,
+            UserRole.USER,
+            false,
+            null,
+            null,
+            null,
+            null,
+            birthday,
+            null
+        );
+
+        // then
+        assertThat(user.getBirthday()).isEqualTo(birthday);
+        assertThat(user.getBirthdayType()).isNull();
+    }
+
+    @Test
+    @DisplayName("newUser로 birthdayType을 포함하여 User를 생성할 수 있다")
+    void create_new_user_with_birthday_type() {
+        // given
+        String email = "test@example.com";
+        String name = "Test User";
+        LocalDateTime birthday = LocalDateTime.of(1990, 5, 15, 0, 0);
+        BirthdayType birthdayType = BirthdayType.LUNAR;
+
+        // when
+        User user = User.newUser(
+            email,
+            name,
+            null,
+            null,
+            OAuth2Provider.KAKAO,
+            UserRole.USER,
+            false,
+            birthday,
+            birthdayType
+        );
+
+        // then
+        assertThat(user.getBirthday()).isEqualTo(birthday);
+        assertThat(user.getBirthdayType()).isEqualTo(BirthdayType.LUNAR);
     }
 }

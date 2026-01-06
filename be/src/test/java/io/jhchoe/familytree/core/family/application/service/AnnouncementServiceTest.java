@@ -42,7 +42,7 @@ class AnnouncementServiceTest {
     private FindAnnouncementPort findAnnouncementPort;
 
     @InjectMocks
-    private AnnouncementService announcementService;
+    private AnnouncementService sut;
 
     @Test
     @DisplayName("OWNER가 공지사항을 저장할 수 있다")
@@ -55,8 +55,8 @@ class AnnouncementServiceTest {
 
         // OWNER 권한을 가진 현재 사용자
         FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, "소유자", null, null, "profile.jpg", LocalDateTime.now(),
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
+            2L, familyId, currentUserId, "소유자", null, "profile.jpg", LocalDateTime.now(),
+            null, FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             null, null, null, null
         );
 
@@ -70,7 +70,7 @@ class AnnouncementServiceTest {
         SaveAnnouncementCommand command = new SaveAnnouncementCommand(
             familyId, currentUserId, title, content
         );
-        Long savedId = announcementService.save(command);
+        Long savedId = sut.save(command);
 
         // then
         assertThat(savedId).isEqualTo(1L);
@@ -88,8 +88,8 @@ class AnnouncementServiceTest {
 
         // ADMIN 권한을 가진 현재 사용자
         FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, "관리자", null, null, "profile.jpg", LocalDateTime.now(),
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
+            2L, familyId, currentUserId, "관리자", null, "profile.jpg", LocalDateTime.now(),
+            null, FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             null, null, null, null
         );
 
@@ -103,7 +103,7 @@ class AnnouncementServiceTest {
         SaveAnnouncementCommand command = new SaveAnnouncementCommand(
             familyId, currentUserId, title, content
         );
-        Long savedId = announcementService.save(command);
+        Long savedId = sut.save(command);
 
         // then
         assertThat(savedId).isEqualTo(1L);
@@ -121,8 +121,8 @@ class AnnouncementServiceTest {
 
         // 일반 구성원 권한을 가진 현재 사용자
         FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, "일반 구성원", null, null, "profile.jpg", LocalDateTime.now(),
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+            2L, familyId, currentUserId, "일반 구성원", null, "profile.jpg", LocalDateTime.now(),
+            null, FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
         );
 
@@ -135,7 +135,7 @@ class AnnouncementServiceTest {
             familyId, currentUserId, title, content
         );
         
-        assertThatThrownBy(() -> announcementService.save(command))
+        assertThatThrownBy(() -> sut.save(command))
             .isInstanceOf(FTException.class)
             .hasFieldOrPropertyWithValue("exceptionCodeType", FamilyExceptionCode.NOT_AUTHORIZED);
         
@@ -153,8 +153,8 @@ class AnnouncementServiceTest {
 
         // 일반 구성원
         FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, "일반 구성원", null, null, "profile.jpg", LocalDateTime.now(),
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+            2L, familyId, currentUserId, "일반 구성원", null, "profile.jpg", LocalDateTime.now(),
+            null, FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
         );
 
@@ -176,7 +176,7 @@ class AnnouncementServiceTest {
 
         // when
         FindAnnouncementQuery query = new FindAnnouncementQuery(familyId, currentUserId, page, size);
-        List<Announcement> result = announcementService.findAll(query);
+        List<Announcement> result = sut.findAll(query);
 
         // then
         assertThat(result).isNotNull();
@@ -201,7 +201,7 @@ class AnnouncementServiceTest {
         // when & then
         FindAnnouncementQuery query = new FindAnnouncementQuery(familyId, currentUserId, page, size);
         
-        assertThatThrownBy(() -> announcementService.findAll(query))
+        assertThatThrownBy(() -> sut.findAll(query))
             .isInstanceOf(FTException.class)
             .hasFieldOrPropertyWithValue("exceptionCodeType", FamilyExceptionCode.NOT_FAMILY_MEMBER);
     }
@@ -216,8 +216,8 @@ class AnnouncementServiceTest {
 
         // OWNER 권한을 가진 현재 사용자
         FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, "소유자", null, null, "profile.jpg", LocalDateTime.now(),
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
+            2L, familyId, currentUserId, "소유자", null, "profile.jpg", LocalDateTime.now(),
+            null, FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             null, null, null, null
         );
 
@@ -237,7 +237,7 @@ class AnnouncementServiceTest {
         DeleteAnnouncementCommand command = new DeleteAnnouncementCommand(
             announcementId, familyId, currentUserId
         );
-        announcementService.delete(command);
+        sut.delete(command);
 
         // then
         verify(saveAnnouncementPort, times(1)).deleteById(announcementId);
@@ -253,8 +253,8 @@ class AnnouncementServiceTest {
 
         // ADMIN 권한을 가진 현재 사용자
         FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, "관리자", null, null, "profile.jpg", LocalDateTime.now(),
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
+            2L, familyId, currentUserId, "관리자", null, "profile.jpg", LocalDateTime.now(),
+            null, FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             null, null, null, null
         );
 
@@ -274,7 +274,7 @@ class AnnouncementServiceTest {
         DeleteAnnouncementCommand command = new DeleteAnnouncementCommand(
             announcementId, familyId, currentUserId
         );
-        announcementService.delete(command);
+        sut.delete(command);
 
         // then
         verify(saveAnnouncementPort, times(1)).deleteById(announcementId);
@@ -290,8 +290,8 @@ class AnnouncementServiceTest {
 
         // ADMIN 권한을 가진 현재 사용자
         FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, "관리자", null, null, "profile.jpg", LocalDateTime.now(),
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
+            2L, familyId, currentUserId, "관리자", null, "profile.jpg", LocalDateTime.now(),
+            null, FamilyMemberStatus.ACTIVE, FamilyMemberRole.ADMIN,
             null, null, null, null
         );
 
@@ -311,7 +311,7 @@ class AnnouncementServiceTest {
             announcementId, familyId, currentUserId
         );
 
-        assertThatThrownBy(() -> announcementService.delete(command))
+        assertThatThrownBy(() -> sut.delete(command))
             .isInstanceOf(FTException.class)
             .hasFieldOrPropertyWithValue("exceptionCodeType", FamilyExceptionCode.NOT_AUTHORIZED);
 
@@ -328,8 +328,8 @@ class AnnouncementServiceTest {
 
         // 일반 구성원 권한을 가진 현재 사용자
         FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, "일반 구성원", null, null, "profile.jpg", LocalDateTime.now(),
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+            2L, familyId, currentUserId, "일반 구성원", null, "profile.jpg", LocalDateTime.now(),
+            null, FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
         );
 
@@ -342,7 +342,7 @@ class AnnouncementServiceTest {
             announcementId, familyId, currentUserId
         );
         
-        assertThatThrownBy(() -> announcementService.delete(command))
+        assertThatThrownBy(() -> sut.delete(command))
             .isInstanceOf(FTException.class)
             .hasFieldOrPropertyWithValue("exceptionCodeType", FamilyExceptionCode.NOT_AUTHORIZED);
         
@@ -359,8 +359,8 @@ class AnnouncementServiceTest {
 
         // OWNER 권한을 가진 현재 사용자
         FamilyMember currentMember = FamilyMember.withId(
-            2L, familyId, currentUserId, "소유자", null, null, "profile.jpg", LocalDateTime.now(),
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
+            2L, familyId, currentUserId, "소유자", null, "profile.jpg", LocalDateTime.now(),
+            null, FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             null, null, null, null
         );
 
@@ -375,7 +375,7 @@ class AnnouncementServiceTest {
             announcementId, familyId, currentUserId
         );
         
-        assertThatThrownBy(() -> announcementService.delete(command))
+        assertThatThrownBy(() -> sut.delete(command))
             .isInstanceOf(FTException.class)
             .hasFieldOrPropertyWithValue("exceptionCodeType", FamilyExceptionCode.ANNOUNCEMENT_NOT_FOUND);
         

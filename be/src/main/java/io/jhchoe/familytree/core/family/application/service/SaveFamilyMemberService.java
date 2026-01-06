@@ -37,7 +37,8 @@ public class SaveFamilyMemberService implements SaveFamilyMemberUseCase {
             command.getName(),
             command.getRelationshipType(),
             command.getCustomRelationship(),
-            command.getBirthday()
+            command.getBirthday(),
+            null // birthdayType - Command에 추가 필요
         );
 
         return saveFamilyMemberPort.save(familyMember);

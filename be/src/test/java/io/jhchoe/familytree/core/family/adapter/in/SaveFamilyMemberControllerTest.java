@@ -50,7 +50,7 @@ class SaveFamilyMemberControllerTest extends AcceptanceTestBase {
             Long familyId = savedFamily.getId();
 
             // 현재 사용자를 가족 구성원으로 등록
-            FamilyMember currentUserMember = FamilyMember.newMember(familyId, 1L, "현재 사용자", null, null);
+            FamilyMember currentUserMember = FamilyMember.newMember(familyId, 1L, "현재 사용자", null, null, null);
             familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(currentUserMember));
 
             Map<String, Object> request = Map.of(
@@ -81,7 +81,7 @@ class SaveFamilyMemberControllerTest extends AcceptanceTestBase {
             Long familyId = savedFamily.getId();
 
             // 현재 사용자를 가족 구성원으로 등록
-            FamilyMember currentUserMember = FamilyMember.newMember(familyId, 1L, "현재 사용자", null, null);
+            FamilyMember currentUserMember = FamilyMember.newMember(familyId, 1L, "현재 사용자", null, null, null);
             familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(currentUserMember));
 
             Map<String, Object> request = Map.of(
@@ -113,7 +113,7 @@ class SaveFamilyMemberControllerTest extends AcceptanceTestBase {
             Long familyId = savedFamily.getId();
 
             // 현재 사용자를 가족 구성원으로 등록
-            FamilyMember currentUserMember = FamilyMember.newMember(familyId, 1L, "현재 사용자", null, null);
+            FamilyMember currentUserMember = FamilyMember.newMember(familyId, 1L, "현재 사용자", null, null, null);
             familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(currentUserMember));
 
             Map<String, Object> request = Map.of(

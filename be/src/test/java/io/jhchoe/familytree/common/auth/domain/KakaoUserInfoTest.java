@@ -1,5 +1,6 @@
 package io.jhchoe.familytree.common.auth.domain;
 
+import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -251,6 +252,102 @@ class KakaoUserInfoTest {
 
             // then
             assertThat(birthDate).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("getBirthdayType 메서드")
+    class GetBirthdayTypeTest {
+
+        @Test
+        @DisplayName("birthday_type이 SOLAR인 경우 BirthdayType.SOLAR를 반환합니다")
+        void return_solar_when_birthday_type_is_solar() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            account.put("birthday_type", "SOLAR");
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            BirthdayType birthdayType = kakaoUserInfo.getBirthdayType();
+
+            // then
+            assertThat(birthdayType).isEqualTo(BirthdayType.SOLAR);
+        }
+
+        @Test
+        @DisplayName("birthday_type이 LUNAR인 경우 BirthdayType.LUNAR를 반환합니다")
+        void return_lunar_when_birthday_type_is_lunar() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            account.put("birthday_type", "LUNAR");
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            BirthdayType birthdayType = kakaoUserInfo.getBirthdayType();
+
+            // then
+            assertThat(birthdayType).isEqualTo(BirthdayType.LUNAR);
+        }
+
+        @Test
+        @DisplayName("birthday_type이 없으면 null을 반환합니다")
+        void return_null_when_birthday_type_is_missing() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            // birthday_type 없음
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            BirthdayType birthdayType = kakaoUserInfo.getBirthdayType();
+
+            // then
+            assertThat(birthdayType).isNull();
+        }
+
+        @Test
+        @DisplayName("kakao_account가 없으면 null을 반환합니다")
+        void return_null_when_kakao_account_is_missing() {
+            // given
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            BirthdayType birthdayType = kakaoUserInfo.getBirthdayType();
+
+            // then
+            assertThat(birthdayType).isNull();
+        }
+
+        @Test
+        @DisplayName("birthday_type이 알 수 없는 값인 경우 null을 반환합니다")
+        void return_null_when_birthday_type_is_unknown() {
+            // given
+            Map<String, Object> account = new HashMap<>();
+            account.put("birthday_type", "UNKNOWN");
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("id", "12345");
+            attributes.put("kakao_account", account);
+
+            // when
+            KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
+            BirthdayType birthdayType = kakaoUserInfo.getBirthdayType();
+
+            // then
+            assertThat(birthdayType).isNull();
         }
     }
 }

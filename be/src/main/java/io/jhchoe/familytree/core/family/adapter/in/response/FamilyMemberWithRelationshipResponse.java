@@ -1,5 +1,6 @@
 package io.jhchoe.familytree.core.family.adapter.in.response;
 
+import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationshipType;
@@ -125,13 +126,22 @@ public class FamilyMemberWithRelationshipResponse {
     
     /**
      * 구성원 생년월일을 반환합니다.
-     * 
+     *
      * @return 구성원 생년월일
      */
     public LocalDateTime getMemberBirthday() {
         return member.getBirthday();
     }
-    
+
+    /**
+     * 구성원 생년월일 유형(양력/음력)을 반환합니다.
+     *
+     * @return 구성원 생년월일 유형 (SOLAR: 양력, LUNAR: 음력)
+     */
+    public BirthdayType getMemberBirthdayType() {
+        return member.getBirthdayType();
+    }
+
     /**
      * 구성원 연락처를 반환합니다.
      * 

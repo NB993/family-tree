@@ -1,5 +1,7 @@
 package io.jhchoe.familytree.common.auth.domain;
 
+import io.jhchoe.familytree.core.family.domain.BirthdayType;
+
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.Map;
@@ -100,5 +102,28 @@ public final class KakaoUserInfo implements OAuth2UserInfo {
         } catch (NumberFormatException | DateTimeException e) {
             return null;
         }
+    }
+
+    /**
+     * 카카오 계정의 생일 유형(양력/음력) 정보를 반환합니다.
+     * kakao_account.birthday_type 값을 파싱합니다.
+     *
+     * @return 생일 유형 (SOLAR: 양력, LUNAR: 음력, 값이 없거나 알 수 없는 경우 null)
+     */
+    public BirthdayType getBirthdayType() {
+        if (account == null) {
+            return null;
+        }
+
+        String type = (String) account.get("birthday_type");
+        if (type == null) {
+            return null;
+        }
+
+        return switch (type) {
+            case "SOLAR" -> BirthdayType.SOLAR;
+            case "LUNAR" -> BirthdayType.LUNAR;
+            default -> null;
+        };
     }
 }

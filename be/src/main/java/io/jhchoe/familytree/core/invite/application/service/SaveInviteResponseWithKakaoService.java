@@ -89,9 +89,10 @@ public class SaveInviteResponseWithKakaoService implements SaveInviteResponseWit
         FamilyMember newMember = FamilyMember.newMember(
             familyId,
             userId,
-            user.getName(),        // User에서 복사
-            user.getProfileUrl(),  // User에서 복사
-            user.getBirthday()     // User에서 복사
+            user.getName(),          // User에서 복사
+            user.getProfileUrl(),    // User에서 복사
+            user.getBirthday(),      // User에서 복사
+            user.getBirthdayType()   // User에서 복사
         );
 
         // 10. FamilyMember 저장

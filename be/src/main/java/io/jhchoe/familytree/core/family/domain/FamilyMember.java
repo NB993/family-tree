@@ -25,6 +25,7 @@ public class FamilyMember {
     private final String customRelationship;
     private final String profileUrl;
     private final LocalDateTime birthday;
+    private final BirthdayType birthdayType;
     private final FamilyMemberStatus status;
     private final FamilyMemberRole role;
     private final Long createdBy;
@@ -43,6 +44,7 @@ public class FamilyMember {
      * @param customRelationship CUSTOM일 때 사용자 입력값 (nullable)
      * @param profileUrl         프로필 URL
      * @param birthday           생일
+     * @param birthdayType       생일 유형 (양력/음력)
      * @param status             멤버 상태
      * @param role               멤버 역할
      * @param createdBy          생성한 사용자 ID
@@ -59,6 +61,7 @@ public class FamilyMember {
         String customRelationship,
         String profileUrl,
         LocalDateTime birthday,
+        BirthdayType birthdayType,
         FamilyMemberStatus status,
         FamilyMemberRole role,
         Long createdBy,
@@ -74,6 +77,7 @@ public class FamilyMember {
         this.customRelationship = customRelationship;
         this.profileUrl = profileUrl;
         this.birthday = birthday;
+        this.birthdayType = birthdayType;
         this.status = status;
         this.role = role;
         this.createdBy = createdBy;
@@ -82,16 +86,17 @@ public class FamilyMember {
         this.modifiedAt = modifiedAt;
     }
 
-    
+
     /**
      * Family에 가입할 FamilyMember 객체를 생성합니다.
      * 회원 가입 시 사용합니다. User의 정보를 복사하여 FamilyMember에 저장합니다.
      *
-     * @param familyId    가족 ID
-     * @param userId      사용자 ID
-     * @param name        이름 (User에서 복사)
-     * @param profileUrl  프로필 URL (User에서 복사)
-     * @param birthday    생일 (User에서 복사)
+     * @param familyId     가족 ID
+     * @param userId       사용자 ID
+     * @param name         이름 (User에서 복사)
+     * @param profileUrl   프로필 URL (User에서 복사)
+     * @param birthday     생일 (User에서 복사)
+     * @param birthdayType 생일 유형 (User에서 복사)
      * @return 새로운 FamilyMember 인스턴스 (ID 및 audit 필드 없음)
      */
     public static FamilyMember newMember(
@@ -99,14 +104,15 @@ public class FamilyMember {
         Long userId,
         String name,
         String profileUrl,
-        LocalDateTime birthday
+        LocalDateTime birthday,
+        BirthdayType birthdayType
     ) {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
         Objects.requireNonNull(name, "name must not be null");
 
         return new FamilyMember(null, familyId, userId, name, null, null, profileUrl, birthday,
-                              FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                              birthdayType, FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
                               null, null, null, null);
     }
 
@@ -122,6 +128,7 @@ public class FamilyMember {
      * @param customRelationship CUSTOM일 때 사용자 입력값 (nullable)
      * @param profileUrl         프로필 URL
      * @param birthday           생일
+     * @param birthdayType       생일 유형 (양력/음력)
      * @param status             멤버 상태
      * @param role               멤버 역할
      * @param createdBy          생성한 사용자 ID
@@ -139,6 +146,7 @@ public class FamilyMember {
         String customRelationship,
         String profileUrl,
         LocalDateTime birthday,
+        BirthdayType birthdayType,
         FamilyMemberStatus status,
         FamilyMemberRole role,
         Long createdBy,
@@ -152,17 +160,18 @@ public class FamilyMember {
         Objects.requireNonNull(role, "role must not be null");
 
         return new FamilyMember(id, familyId, userId, name, relationshipType, customRelationship,
-                              profileUrl, birthday, status, role, createdBy, createdAt, modifiedBy, modifiedAt);
+                              profileUrl, birthday, birthdayType, status, role, createdBy, createdAt, modifiedBy, modifiedAt);
     }
 
     /**
      * Family 생성자(OWNER)를 생성합니다.
      *
-     * @param familyId    가족 ID
-     * @param userId      사용자 ID
-     * @param name        이름 (User에서 복사)
-     * @param profileUrl  프로필 URL (User에서 복사)
-     * @param birthday    생일 (User에서 복사)
+     * @param familyId     가족 ID
+     * @param userId       사용자 ID
+     * @param name         이름 (User에서 복사)
+     * @param profileUrl   프로필 URL (User에서 복사)
+     * @param birthday     생일 (User에서 복사)
+     * @param birthdayType 생일 유형 (User에서 복사)
      * @return 새로운 FamilyMember 인스턴스 (OWNER 역할, ACTIVE 상태)
      */
     public static FamilyMember newOwner(
@@ -170,7 +179,8 @@ public class FamilyMember {
         Long userId,
         String name,
         String profileUrl,
-        LocalDateTime birthday
+        LocalDateTime birthday,
+        BirthdayType birthdayType
     ) {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
@@ -178,7 +188,7 @@ public class FamilyMember {
 
         return new FamilyMember(
             null, familyId, userId, name, null, null, profileUrl, birthday,
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
+            birthdayType, FamilyMemberStatus.ACTIVE, FamilyMemberRole.OWNER,
             null, null, null, null
         );
     }
@@ -186,12 +196,13 @@ public class FamilyMember {
     /**
      * 역할을 지정하여 신규 Family 구성원을 생성합니다.
      *
-     * @param familyId    Family ID
-     * @param userId      사용자 ID
-     * @param name        이름 (User에서 복사)
-     * @param profileUrl  프로필 URL (User에서 복사)
-     * @param birthday    생일 (User에서 복사)
-     * @param role        멤버 역할
+     * @param familyId     Family ID
+     * @param userId       사용자 ID
+     * @param name         이름 (User에서 복사)
+     * @param profileUrl   프로필 URL (User에서 복사)
+     * @param birthday     생일 (User에서 복사)
+     * @param birthdayType 생일 유형 (User에서 복사)
+     * @param role         멤버 역할
      * @return 새로운 FamilyMember 인스턴스 (ID 및 audit 필드 없음)
      */
     public static FamilyMember withRole(
@@ -200,6 +211,7 @@ public class FamilyMember {
         String name,
         String profileUrl,
         LocalDateTime birthday,
+        BirthdayType birthdayType,
         FamilyMemberRole role
     ) {
         Objects.requireNonNull(familyId, "familyId must not be null");
@@ -209,10 +221,10 @@ public class FamilyMember {
 
         return new FamilyMember(
             null, familyId, userId, name, null, null, profileUrl, birthday,
-            FamilyMemberStatus.ACTIVE, role, null, null, null, null
+            birthdayType, FamilyMemberStatus.ACTIVE, role, null, null, null, null
         );
     }
-    
+
     /**
      * FamilyMember의 역할을 변경합니다.
      *
@@ -230,11 +242,11 @@ public class FamilyMember {
 
         return new FamilyMember(
             this.id, this.familyId, this.userId, this.name, this.relationshipType, this.customRelationship,
-            this.profileUrl, this.birthday, this.status, newRole,
+            this.profileUrl, this.birthday, this.birthdayType, this.status, newRole,
             this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
         );
     }
-    
+
     /**
      * FamilyMember의 상태를 변경합니다.
      *
@@ -252,11 +264,11 @@ public class FamilyMember {
 
         return new FamilyMember(
             this.id, this.familyId, this.userId, this.name, this.relationshipType, this.customRelationship,
-            this.profileUrl, this.birthday, newStatus, this.role,
+            this.profileUrl, this.birthday, this.birthdayType, newStatus, this.role,
             this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
         );
     }
-    
+
     /**
      * 해당 역할 이상의 권한을 가지고 있는지 확인합니다.
      *
@@ -266,7 +278,7 @@ public class FamilyMember {
     public boolean hasRoleAtLeast(FamilyMemberRole requiredRole) {
         return this.role.isAtLeast(requiredRole);
     }
-    
+
     /**
      * 구성원이 활성 상태인지 확인합니다.
      *
@@ -275,7 +287,7 @@ public class FamilyMember {
     public boolean isActive() {
         return this.status == FamilyMemberStatus.ACTIVE;
     }
-    
+
     /**
      * 구성원이 회원인지 확인합니다.
      *
@@ -294,6 +306,7 @@ public class FamilyMember {
      * @param relationshipType   관계 타입 (선택)
      * @param customRelationship CUSTOM일 때 사용자 입력값 (선택)
      * @param birthday           생년월일 (선택)
+     * @param birthdayType       생일 유형 (선택)
      * @return 새로운 FamilyMember 인스턴스 (userId 없음, ACTIVE 상태, MEMBER 역할)
      */
     public static FamilyMember newManualMember(
@@ -301,7 +314,8 @@ public class FamilyMember {
         String name,
         FamilyMemberRelationshipType relationshipType,
         String customRelationship,
-        LocalDateTime birthday
+        LocalDateTime birthday,
+        BirthdayType birthdayType
     ) {
         Objects.requireNonNull(familyId, "familyId must not be null");
         Objects.requireNonNull(name, "name must not be null");
@@ -311,7 +325,7 @@ public class FamilyMember {
 
         return new FamilyMember(
             null, familyId, null, name, relationshipType, customRelationship, null, birthday,
-            FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+            birthdayType, FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
             null, null, null, null
         );
     }

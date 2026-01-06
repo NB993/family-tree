@@ -2,6 +2,7 @@ package io.jhchoe.familytree.test.fixture;
 
 import io.jhchoe.familytree.common.auth.domain.OAuth2Provider;
 import io.jhchoe.familytree.common.auth.domain.UserRole;
+import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import io.jhchoe.familytree.core.user.domain.User;
 import java.time.LocalDateTime;
 
@@ -19,6 +20,7 @@ public final class UserFixture {
     private static final String DEFAULT_PROFILE_URL = "https://example.com/profile.jpg";
     private static final String DEFAULT_KAKAO_ID = "kakao_test_id";
     private static final LocalDateTime DEFAULT_BIRTHDAY = LocalDateTime.of(1990, 1, 1, 0, 0);
+    private static final BirthdayType DEFAULT_BIRTHDAY_TYPE = BirthdayType.SOLAR;
 
     private UserFixture() {
     }
@@ -45,7 +47,7 @@ public final class UserFixture {
     public static User newOAuth2User(String email, String name, OAuth2Provider provider) {
         String kakaoId = provider == OAuth2Provider.KAKAO ? DEFAULT_KAKAO_ID : null;
         return User.newUser(email, name, DEFAULT_PROFILE_URL, kakaoId,
-            provider, UserRole.USER, false, DEFAULT_BIRTHDAY);
+            provider, UserRole.USER, false, DEFAULT_BIRTHDAY, DEFAULT_BIRTHDAY_TYPE);
     }
 
     /**
@@ -59,7 +61,7 @@ public final class UserFixture {
      * 지정된 이름으로 수동 등록 사용자를 생성합니다.
      */
     public static User newManualUser(String name) {
-        return User.newManualUser(name, DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY);
+        return User.newManualUser(name, DEFAULT_PROFILE_URL, DEFAULT_BIRTHDAY, DEFAULT_BIRTHDAY_TYPE);
     }
 
     // ==================== ID 포함 (기존 엔티티 복원) ====================
@@ -85,7 +87,7 @@ public final class UserFixture {
         String kakaoId = provider == OAuth2Provider.KAKAO ? DEFAULT_KAKAO_ID : null;
         return User.withId(id, email, name, DEFAULT_PROFILE_URL, kakaoId,
             provider, role, deleted,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now(), DEFAULT_BIRTHDAY);
+            1L, LocalDateTime.now(), 1L, LocalDateTime.now(), DEFAULT_BIRTHDAY, DEFAULT_BIRTHDAY_TYPE);
     }
 
     /**
@@ -115,7 +117,7 @@ public final class UserFixture {
     public static User withIdManual(Long id, String name) {
         return User.withId(id, null, name, DEFAULT_PROFILE_URL, null,
             null, UserRole.USER, false,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now(), DEFAULT_BIRTHDAY);
+            1L, LocalDateTime.now(), 1L, LocalDateTime.now(), DEFAULT_BIRTHDAY, DEFAULT_BIRTHDAY_TYPE);
     }
 
     /**
@@ -124,7 +126,7 @@ public final class UserFixture {
     public static User withIdAndBirthday(Long id, LocalDateTime birthday) {
         return User.withId(id, DEFAULT_EMAIL, DEFAULT_NAME, DEFAULT_PROFILE_URL, null,
             OAuth2Provider.GOOGLE, UserRole.USER, false,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now(), birthday);
+            1L, LocalDateTime.now(), 1L, LocalDateTime.now(), birthday, DEFAULT_BIRTHDAY_TYPE);
     }
 
     /**
@@ -133,6 +135,6 @@ public final class UserFixture {
     public static User withIdAndKakaoId(Long id, String kakaoId) {
         return User.withId(id, DEFAULT_EMAIL, DEFAULT_NAME, DEFAULT_PROFILE_URL, kakaoId,
             OAuth2Provider.KAKAO, UserRole.USER, false,
-            1L, LocalDateTime.now(), 1L, LocalDateTime.now(), DEFAULT_BIRTHDAY);
+            1L, LocalDateTime.now(), 1L, LocalDateTime.now(), DEFAULT_BIRTHDAY, DEFAULT_BIRTHDAY_TYPE);
     }
 }

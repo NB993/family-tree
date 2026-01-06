@@ -1,5 +1,6 @@
 package io.jhchoe.familytree.core.family.adapter.in.response;
 
+import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
@@ -14,6 +15,7 @@ public record FamilyMemberResponse(
     String name,
     String profileUrl,
     LocalDateTime birthday,
+    BirthdayType birthdayType,
     FamilyMemberStatus status,
     FamilyMemberRole role,
     LocalDateTime createdAt
@@ -32,6 +34,7 @@ public record FamilyMemberResponse(
             member.getName(),
             member.getProfileUrl(),
             member.getBirthday(),
+            member.getBirthdayType(),
             member.getStatus(),
             member.getRole(),
             member.getCreatedAt()
