@@ -1135,12 +1135,12 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 | 9 | DB 마이그레이션 (family_member_tag) | 수동 |
 
 **체크리스트**:
-- [ ] 도메인 테스트 통과
-- [ ] 서비스 테스트 통과
-- [ ] 컨트롤러 테스트 통과 (REST Docs)
-- [ ] `./gradlew test` 전체 통과
-- [ ] `./gradlew build` 성공
-- [ ] PR 생성 (`create-pr` 스킬)
+- [x] 도메인 테스트 통과
+- [x] 서비스 테스트 통과
+- [x] 컨트롤러 테스트 통과 (REST Docs)
+- [x] `./gradlew test` 전체 통과
+- [x] `./gradlew build` 성공
+- [x] PR 생성 (`create-pr` 스킬) - PR #27
 
 ---
 
@@ -1265,14 +1265,14 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/domain/FamilyMemberTag.java`
 
-- [ ] 필드 정의 (id, familyId, name, **color**, createdBy, createdAt, modifiedBy, modifiedAt)
-- [ ] COLOR_PALETTE 상수 정의 (9개 색상)
-- [ ] `newTag(familyId, name, createdBy)` 팩토리 메서드 (색상 랜덤 배정)
-- [ ] `withId(...)` 팩토리 메서드
-- [ ] `rename(newName, modifiedBy)` 비즈니스 메서드
-- [ ] `changeColor(newColor, modifiedBy)` 비즈니스 메서드
-- [ ] 색상 유효성 검증 (COLOR_PALETTE에 있는지)
-- [ ] 단위 테스트: `FamilyMemberTagTest.java`
+- [x] 필드 정의 (id, familyId, name, **color**, createdBy, createdAt, modifiedBy, modifiedAt)
+- [x] COLOR_PALETTE 상수 정의 (9개 색상)
+- [x] `newTag(familyId, name, createdBy)` 팩토리 메서드 (색상 랜덤 배정)
+- [x] `withId(...)` 팩토리 메서드
+- [x] `rename(newName, modifiedBy)` 비즈니스 메서드
+- [x] `changeColor(newColor, modifiedBy)` 비즈니스 메서드
+- [x] 색상 유효성 검증 (COLOR_PALETTE에 있는지)
+- [x] 단위 테스트: `FamilyMemberTagTest.java`
 
 #### 1.2 FamilyMemberTagMapping 도메인
 
@@ -1293,12 +1293,12 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/out/persistence/FamilyMemberTagJpaEntity.java`
 
-- [ ] `@Entity`, `@Table(name = "family_member_tag")` 설정
-- [ ] 컬럼 매핑 (id, family_id, name, **color**, created_by, created_at, modified_by, modified_at)
-- [ ] `@SQLRestriction` 없음 (soft delete 미적용)
-- [ ] `from(FamilyMemberTag)` 변환 메서드
-- [ ] `toFamilyMemberTag()` 변환 메서드
-- [ ] 통합 테스트
+- [x] `@Entity`, `@Table(name = "family_member_tag")` 설정
+- [x] 컬럼 매핑 (id, family_id, name, **color**, created_by, created_at, modified_by, modified_at)
+- [x] `@SQLRestriction` 없음 (soft delete 미적용)
+- [x] `from(FamilyMemberTag)` 변환 메서드
+- [x] `toFamilyMemberTag()` 변환 메서드
+- [x] 통합 테스트
 
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/out/persistence/FamilyMemberTagMappingJpaEntity.java`
 
@@ -1311,10 +1311,10 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/out/persistence/FamilyMemberTagJpaRepository.java`
 
-- [ ] `findAllByFamilyId(Long familyId)` - 태그 목록 조회
-- [ ] `findByFamilyIdAndName(Long familyId, String name)` - 이름 중복 체크
-- [ ] `countByFamilyId(Long familyId)` - 태그 수 카운트
-- [ ] `findByIdAndFamilyId(Long id, Long familyId)` - 태그 단건 조회
+- [x] `findAllByFamilyId(Long familyId)` - 태그 목록 조회
+- [x] `findByFamilyIdAndName(Long familyId, String name)` - 이름 중복 체크
+- [x] `countByFamilyId(Long familyId)` - 태그 수 카운트
+- [x] `findByIdAndFamilyId(Long id, Long familyId)` - 태그 단건 조회
 
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/out/persistence/FamilyMemberTagMappingJpaRepository.java`
 
@@ -1329,28 +1329,28 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/out/persistence/FamilyMemberTagAdapter.java`
 
 **Out Port 구현**:
-- [ ] `SaveFamilyMemberTagPort.save(FamilyMemberTag)` → 저장/수정
-- [ ] `FindFamilyMemberTagPort.findById(Long)` → 단건 조회
-- [ ] `FindFamilyMemberTagPort.findAllByFamilyId(Long)` → 목록 조회
-- [ ] `FindFamilyMemberTagPort.findByFamilyIdAndName(Long, String)` → 이름 중복 체크
-- [ ] `FindFamilyMemberTagPort.countByFamilyId(Long)` → 태그 수 카운트
-- [ ] `DeleteFamilyMemberTagPort.deleteById(Long)` → 삭제
+- [x] `SaveFamilyMemberTagPort.save(FamilyMemberTag)` → 저장/수정
+- [x] `FindFamilyMemberTagPort.findById(Long)` → 단건 조회
+- [x] `FindFamilyMemberTagPort.findAllByFamilyId(Long)` → 목록 조회
+- [x] `FindFamilyMemberTagPort.findByFamilyIdAndName(Long, String)` → 이름 중복 체크
+- [x] `FindFamilyMemberTagPort.countByFamilyId(Long)` → 태그 수 카운트
+- [x] `DeleteFamilyMemberTagPort.deleteById(Long)` → 삭제
 - [ ] `SaveFamilyMemberTagMappingPort.saveAll(List<FamilyMemberTagMapping>)` → 매핑 저장
 - [ ] `DeleteFamilyMemberTagMappingPort.deleteAllByMemberId(Long)` → 멤버 매핑 삭제
 - [ ] `FindFamilyMemberTagMappingPort.findAllByMemberId(Long)` → 멤버별 태그 조회
 - [ ] `FindFamilyMemberTagMappingPort.countByTagId(Long)` → 태그별 멤버 수
 
-- [ ] 통합 테스트: `FamilyMemberTagAdapterTest.java`
+- [x] 통합 테스트: `FamilyMemberTagAdapterTest.java`
 
 #### 2.4 DB 마이그레이션
 
 **파일**: `be/src/main/resources/db/migration/V{N}__add_family_member_tag.sql`
 
-- [ ] `family_member_tag` 테이블 생성
+- [x] `family_member_tag` 테이블 생성
 - [ ] `family_member_tag_mapping` 테이블 생성
-- [ ] 인덱스 생성
-- [ ] FK 제약조건 (CASCADE DELETE)
-- [ ] UNIQUE 제약조건
+- [x] 인덱스 생성
+- [x] FK 제약조건 (CASCADE DELETE)
+- [x] UNIQUE 제약조건
 
 ---
 
@@ -1361,64 +1361,64 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 #### 3.1 태그 생성
 
 **Command**: `SaveFamilyMemberTagCommand.java`
-- [ ] familyId, name 필드
-- [ ] `@NotNull`, `@Size(min=1, max=10)`, `@Pattern` 검증
+- [x] familyId, name 필드
+- [x] `@NotNull`, `@Size(min=1, max=10)`, `@Pattern` 검증
 
 **UseCase**: `SaveFamilyMemberTagUseCase.java`
-- [ ] `Long save(Long currentUserId, SaveFamilyMemberTagCommand command)`
+- [x] `Long save(Long currentUserId, SaveFamilyMemberTagCommand command)`
 
 **Service**: `SaveFamilyMemberTagService.java`
-- [ ] OWNER 권한 검증
-- [ ] 태그 수 제한 검증 (10개)
-- [ ] 이름 중복 검증
-- [ ] 태그 생성 및 저장
-- [ ] 단위 테스트: `SaveFamilyMemberTagServiceTest.java`
+- [x] OWNER 권한 검증
+- [x] 태그 수 제한 검증 (10개)
+- [x] 이름 중복 검증
+- [x] 태그 생성 및 저장
+- [x] 단위 테스트: `SaveFamilyMemberTagServiceTest.java`
 
 #### 3.2 태그 목록 조회
 
 **Query**: `FindFamilyMemberTagsQuery.java`
-- [ ] familyId 필드
+- [x] familyId 필드
 
 **UseCase**: `FindFamilyMemberTagUseCase.java`
-- [ ] `List<FamilyMemberTagInfo> findAll(Long currentUserId, FindFamilyMemberTagsQuery query)`
+- [x] `List<FamilyMemberTagInfo> findAll(Long currentUserId, FindFamilyMemberTagsQuery query)`
 
 **Service**: `FindFamilyMemberTagService.java`
-- [ ] Family 접근 권한 검증
-- [ ] 태그 목록 조회 + 각 태그별 멤버 수
-- [ ] 단위 테스트: `FindFamilyMemberTagServiceTest.java`
+- [x] Family 접근 권한 검증
+- [x] 태그 목록 조회 + 각 태그별 멤버 수
+- [x] 단위 테스트: `FindFamilyMemberTagServiceTest.java`
 
 **DTO**: `FamilyMemberTagInfo.java`
-- [ ] id, name, memberCount, createdAt
+- [x] id, name, memberCount, createdAt
 
 #### 3.3 태그 수정
 
 **Command**: `ModifyFamilyMemberTagCommand.java`
-- [ ] familyId, tagId, name 필드
-- [ ] 검증 어노테이션
+- [x] familyId, tagId, name 필드
+- [x] 검증 어노테이션
 
 **UseCase**: `ModifyFamilyMemberTagUseCase.java`
-- [ ] `void modify(Long currentUserId, ModifyFamilyMemberTagCommand command)`
+- [x] `void modify(Long currentUserId, ModifyFamilyMemberTagCommand command)`
 
 **Service**: `ModifyFamilyMemberTagService.java`
-- [ ] OWNER 권한 검증
-- [ ] 태그 존재 및 Family 일치 검증
-- [ ] 이름 중복 검증 (본인 제외)
-- [ ] 태그 이름 수정
-- [ ] 단위 테스트: `ModifyFamilyMemberTagServiceTest.java`
+- [x] OWNER 권한 검증
+- [x] 태그 존재 및 Family 일치 검증
+- [x] 이름 중복 검증 (본인 제외)
+- [x] 태그 이름 수정
+- [x] 단위 테스트: `ModifyFamilyMemberTagServiceTest.java`
 
 #### 3.4 태그 삭제
 
 **Command**: `DeleteFamilyMemberTagCommand.java`
-- [ ] familyId, tagId 필드
+- [x] familyId, tagId 필드
 
 **UseCase**: `DeleteFamilyMemberTagUseCase.java`
-- [ ] `void delete(Long currentUserId, DeleteFamilyMemberTagCommand command)`
+- [x] `void delete(Long currentUserId, DeleteFamilyMemberTagCommand command)`
 
 **Service**: `DeleteFamilyMemberTagService.java`
-- [ ] OWNER 권한 검증
-- [ ] 태그 존재 및 Family 일치 검증
-- [ ] 태그 삭제 (CASCADE로 매핑 자동 삭제)
-- [ ] 단위 테스트: `DeleteFamilyMemberTagServiceTest.java`
+- [x] OWNER 권한 검증
+- [x] 태그 존재 및 Family 일치 검증
+- [x] 태그 삭제 (CASCADE로 매핑 자동 삭제)
+- [x] 단위 테스트: `DeleteFamilyMemberTagServiceTest.java`
 
 #### 3.5 멤버 태그 할당
 
@@ -1446,32 +1446,36 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 
 #### 4.1 태그 Controller
 
-**파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/in/web/FamilyMemberTagController.java`
+**파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/in/web/`
+- [x] `SaveFamilyMemberTagController.java`
+- [x] `FindFamilyMemberTagController.java`
+- [x] `ModifyFamilyMemberTagController.java`
+- [x] `DeleteFamilyMemberTagController.java`
 
 **API 엔드포인트**:
 
-| HTTP | Path | 메서드 |
-|------|------|--------|
-| GET | `/api/families/{familyId}/tags` | `findTags()` |
-| POST | `/api/families/{familyId}/tags` | `saveTag()` |
-| PUT | `/api/families/{familyId}/tags/{tagId}` | `modifyTag()` |
-| DELETE | `/api/families/{familyId}/tags/{tagId}` | `deleteTag()` |
-| PUT | `/api/families/{familyId}/members/{memberId}/tags` | `modifyMemberTags()` |
+| HTTP | Path | Controller | 상태 |
+|------|------|--------|------|
+| GET | `/api/families/{familyId}/tags` | `FindFamilyMemberTagController` | ✅ |
+| POST | `/api/families/{familyId}/tags` | `SaveFamilyMemberTagController` | ✅ |
+| PUT | `/api/families/{familyId}/tags/{tagId}` | `ModifyFamilyMemberTagController` | ✅ |
+| DELETE | `/api/families/{familyId}/tags/{tagId}` | `DeleteFamilyMemberTagController` | ✅ |
+| PUT | `/api/families/{familyId}/members/{memberId}/tags` | (Sprint 2) | ⏳ |
 
 #### 4.2 Request DTO
 
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/in/web/request/`
 
-- [ ] `SaveFamilyMemberTagRequest.java` - name (color는 서버에서 랜덤 배정)
-- [ ] `ModifyFamilyMemberTagRequest.java` - name, **color** (선택)
+- [x] `SaveFamilyMemberTagRequest.java` - name (color는 서버에서 랜덤 배정)
+- [x] `ModifyFamilyMemberTagRequest.java` - name, **color** (선택)
 - [ ] `ModifyMemberTagsRequest.java` - tagIds
 
 #### 4.3 Response DTO
 
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/in/web/response/`
 
-- [ ] `FamilyMemberTagResponse.java` - id, name, **color**, memberCount, createdAt
-- [ ] `FamilyMemberTagListResponse.java` - tags, totalCount, maxCount
+- [x] `FamilyMemberTagResponse.java` - id, name, **color**, memberCount, createdAt
+- [x] `FamilyMemberTagListResponse.java` - tags, totalCount, maxCount
 - [ ] `MemberTagsResponse.java` - memberId, memberName, tags (id, name, **color**)
 - [ ] `TagSimpleResponse.java` - id, name, **color** (멤버 조회 시 태그 정보용)
 
@@ -1485,14 +1489,18 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 
 #### 4.5 REST Docs 테스트
 
-**파일**: `be/src/test/java/io/jhchoe/familytree/core/family/adapter/in/web/FamilyMemberTagControllerTest.java`
+**파일**: `be/src/test/java/io/jhchoe/familytree/core/family/adapter/in/web/`
+- `SaveFamilyMemberTagControllerTest.java`
+- `FindFamilyMemberTagControllerTest.java`
+- `ModifyFamilyMemberTagControllerTest.java`
+- `DeleteFamilyMemberTagControllerTest.java`
 
-- [ ] 태그 목록 조회 API 문서
-- [ ] 태그 생성 API 문서
-- [ ] 태그 수정 API 문서
-- [ ] 태그 삭제 API 문서
+- [x] 태그 목록 조회 API 문서
+- [x] 태그 생성 API 문서
+- [x] 태그 수정 API 문서
+- [x] 태그 삭제 API 문서
 - [ ] 멤버 태그 할당 API 문서
-- [ ] 에러 케이스 문서
+- [x] 에러 케이스 문서
 
 ---
 
