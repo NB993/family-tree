@@ -12,7 +12,8 @@ public interface ModifyFamilyMemberTagUseCase {
      *
      * @param command       태그 수정에 필요한 정보를 담은 커맨드 객체
      * @param currentUserId 현재 사용자 ID
+     * @return 수정된 태그 정보
      * @throws FTException 가족이 존재하지 않거나, OWNER 권한이 없거나, 태그가 존재하지 않는 경우
      */
-    void modify(ModifyFamilyMemberTagCommand command, Long currentUserId);
+    FamilyMemberTagInfo modify(ModifyFamilyMemberTagCommand command, Long currentUserId);
 }

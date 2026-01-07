@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.family.application.service;
 
 import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagInfo;
 import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberTagCommand;
 import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberTagUseCase;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
@@ -33,7 +34,7 @@ public class ModifyFamilyMemberTagService implements ModifyFamilyMemberTagUseCas
      */
     @Override
     @Transactional
-    public void modify(ModifyFamilyMemberTagCommand command, Long currentUserId) {
+    public FamilyMemberTagInfo modify(ModifyFamilyMemberTagCommand command, Long currentUserId) {
         Objects.requireNonNull(command, "command는 null일 수 없습니다");
         Objects.requireNonNull(currentUserId, "currentUserId는 null일 수 없습니다");
 
@@ -61,14 +62,19 @@ public class ModifyFamilyMemberTagService implements ModifyFamilyMemberTagUseCas
 
         // 5. 이름 변경 시 중복 검증 (본인 제외)
         String newName = command.name();
-        findFamilyMemberTagPort.findByFamilyIdAndName(familyId, newName)
-            .filter(existing -> !existing.getId().equals(tagId))
-            .ifPresent(existing -> {
-                throw new FTException(FamilyExceptionCode.TAG_NAME_DUPLICATED);
-            });
+        if (newName != null) {
+            findFamilyMemberTagPort.findByFamilyIdAndName(familyId, newName)
+                .filter(existing -> !existing.getId().equals(tagId))
+                .ifPresent(existing -> {
+                    throw new FTException(FamilyExceptionCode.TAG_NAME_DUPLICATED);
+                });
+        }
 
         // 6. 태그 수정
-        FamilyMemberTag modifiedTag = tag.rename(newName, currentUserId);
+        FamilyMemberTag modifiedTag = tag;
+        if (newName != null) {
+            modifiedTag = modifiedTag.rename(newName, currentUserId);
+        }
 
         // 색상도 변경하는 경우
         if (command.color() != null) {
@@ -76,6 +82,12 @@ public class ModifyFamilyMemberTagService implements ModifyFamilyMemberTagUseCas
         }
 
         saveFamilyMemberTagPort.save(modifiedTag);
+
+        // 수정된 태그 조회하여 반환 (memberCount는 0으로 - Sprint 2에서 구현)
+        FamilyMemberTag saved = findFamilyMemberTagPort.findById(tagId)
+            .orElseThrow(() -> new FTException(FamilyExceptionCode.TAG_NOT_FOUND));
+
+        return FamilyMemberTagInfo.from(saved, 0);
     }
 
     private void validateFamilyExists(Long familyId) {
