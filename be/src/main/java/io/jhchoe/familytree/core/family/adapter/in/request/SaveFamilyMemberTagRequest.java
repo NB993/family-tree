@@ -21,7 +21,7 @@ public class SaveFamilyMemberTagRequest {
      *
      * @param name 태그 이름
      */
-    public SaveFamilyMemberTagRequest(String name) {
+    public SaveFamilyMemberTagRequest(final String name) {
         this.name = name;
     }
 }

@@ -22,7 +22,7 @@ public class ModifyFamilyMemberTagRequest {
      * @param name  태그 이름 (수정할 경우)
      * @param color 태그 색상 (수정할 경우)
      */
-    public ModifyFamilyMemberTagRequest(String name, String color) {
+    public ModifyFamilyMemberTagRequest(final String name, final String color) {
         this.name = name;
         this.color = color;
     }

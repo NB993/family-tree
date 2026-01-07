@@ -14,7 +14,7 @@ import lombok.Getter;
  * 태그는 Family 단위로 관리되며, 한 멤버에 여러 태그, 한 태그에 여러 멤버가 연결될 수 있습니다.
  */
 @Getter
-public class FamilyMemberTag {
+public final class FamilyMemberTag {
 
     /**
      * 태그 색상 팔레트 (노션 스타일, 9가지 색상).
@@ -95,7 +95,7 @@ public class FamilyMemberTag {
      * @throws NullPointerException     familyId 또는 name이 null인 경우
      * @throws IllegalArgumentException name이 유효하지 않은 경우
      */
-    public static FamilyMemberTag newTag(Long familyId, String name, Long createdBy) {
+    public static FamilyMemberTag newTag(final Long familyId, final String name, final Long createdBy) {
         Objects.requireNonNull(familyId, "familyId는 null일 수 없습니다");
         Objects.requireNonNull(name, "name은 null일 수 없습니다");
         Objects.requireNonNull(createdBy, "createdBy는 null일 수 없습니다");
@@ -126,14 +126,14 @@ public class FamilyMemberTag {
      * @throws NullPointerException id가 null인 경우
      */
     public static FamilyMemberTag withId(
-        Long id,
-        Long familyId,
-        String name,
-        String color,
-        Long createdBy,
-        LocalDateTime createdAt,
-        Long modifiedBy,
-        LocalDateTime modifiedAt
+        final Long id,
+        final Long familyId,
+        final String name,
+        final String color,
+        final Long createdBy,
+        final LocalDateTime createdAt,
+        final Long modifiedBy,
+        final LocalDateTime modifiedAt
     ) {
         Objects.requireNonNull(id, "id는 null일 수 없습니다");
         Objects.requireNonNull(familyId, "familyId는 null일 수 없습니다");
@@ -154,7 +154,7 @@ public class FamilyMemberTag {
      * @throws NullPointerException     newName이 null인 경우
      * @throws IllegalArgumentException newName이 유효하지 않은 경우
      */
-    public FamilyMemberTag rename(String newName, Long modifiedBy) {
+    public FamilyMemberTag rename(final String newName, final Long modifiedBy) {
         Objects.requireNonNull(newName, "newName은 null일 수 없습니다");
         Objects.requireNonNull(modifiedBy, "modifiedBy는 null일 수 없습니다");
 
@@ -175,7 +175,7 @@ public class FamilyMemberTag {
      * @throws NullPointerException     newColor가 null인 경우
      * @throws IllegalArgumentException newColor가 COLOR_PALETTE에 없는 경우
      */
-    public FamilyMemberTag changeColor(String newColor, Long modifiedBy) {
+    public FamilyMemberTag changeColor(final String newColor, final Long modifiedBy) {
         Objects.requireNonNull(newColor, "newColor는 null일 수 없습니다");
         Objects.requireNonNull(modifiedBy, "modifiedBy는 null일 수 없습니다");
 
@@ -193,7 +193,7 @@ public class FamilyMemberTag {
      * @param name 검증할 태그 이름
      * @throws IllegalArgumentException 유효하지 않은 경우
      */
-    private static void validateName(String name) {
+    private static void validateName(final String name) {
         String trimmedName = name.trim();
 
         if (trimmedName.isEmpty() || trimmedName.length() < MIN_NAME_LENGTH) {
@@ -221,7 +221,7 @@ public class FamilyMemberTag {
      * @param color 검증할 색상 코드
      * @throws IllegalArgumentException COLOR_PALETTE에 없는 경우
      */
-    private static void validateColor(String color) {
+    private static void validateColor(final String color) {
         if (!COLOR_PALETTE.contains(color)) {
             throw new IllegalArgumentException("허용되지 않는 색상입니다: " + color);
         }
