@@ -17,6 +17,30 @@
 - **보안**: `@WithMockOAuth2User` 필수
 - **CSRF**: POST/PUT/DELETE에 `.postProcessors(csrf())` 필수
 
+## Fixture 사용 규칙
+
+### 테스트 Fixture 헬퍼 클래스 우선 사용
+
+테스트 데이터 생성 시 **반드시 기존 Fixture 헬퍼 클래스를 먼저 확인**하고 사용합니다.
+
+**Fixture 클래스 위치:**
+- `be/src/test/java/io/jhchoe/familytree/test/fixture/`
+
+**사용 순서:**
+1. 해당 도메인의 Fixture 클래스가 있는지 확인 (예: `FamilyFixture`, `UserFixture`, `FamilyMemberFixture`)
+2. 필요한 메서드가 있으면 해당 메서드 사용
+3. 메서드가 없으면 사용자에게 기존 Fixture 클래스에 새 메서드 추가 문의
+4. Fixture 클래스 자체가 없으면 사용자에게 새로 생성 문의
+
+```java
+// ✅ 올바른 방식: Fixture 클래스의 메서드 사용
+Family family = FamilyFixture.createFamily();
+FamilyJpaEntity savedEntity = familyJpaRepository.save(FamilyJpaEntity.from(family));
+
+// ❌ 잘못된 방식: Fixture 메서드 있는데 직접 생성
+Family family = Family.newFamily("가족이름", "설명", "프로필URL", 1L);
+```
+
 ## 인수 테스트 TDD
 
 ### Red (테스트 먼저)
