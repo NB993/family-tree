@@ -139,7 +139,7 @@ class ModifyFamilyMemberTagServiceTest {
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
-                    assertThat(ftEx.getExceptionCode()).isEqualTo(FamilyExceptionCode.NOT_AUTHORIZED);
+                    assertThat(ftEx.getCode()).isEqualTo(FamilyExceptionCode.NOT_AUTHORIZED.getCode());
                 });
         }
 
@@ -167,7 +167,7 @@ class ModifyFamilyMemberTagServiceTest {
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
-                    assertThat(ftEx.getExceptionCode()).isEqualTo(FamilyExceptionCode.TAG_NOT_FOUND);
+                    assertThat(ftEx.getCode()).isEqualTo(FamilyExceptionCode.TAG_NOT_FOUND.getCode());
                 });
         }
 
@@ -199,7 +199,7 @@ class ModifyFamilyMemberTagServiceTest {
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
-                    assertThat(ftEx.getExceptionCode()).isEqualTo(FamilyExceptionCode.TAG_NOT_IN_FAMILY);
+                    assertThat(ftEx.getCode()).isEqualTo(FamilyExceptionCode.TAG_NOT_IN_FAMILY.getCode());
                 });
         }
 
@@ -235,7 +235,7 @@ class ModifyFamilyMemberTagServiceTest {
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
-                    assertThat(ftEx.getExceptionCode()).isEqualTo(FamilyExceptionCode.TAG_NAME_DUPLICATED);
+                    assertThat(ftEx.getCode()).isEqualTo(FamilyExceptionCode.TAG_NAME_DUPLICATED.getCode());
                 });
         }
     }

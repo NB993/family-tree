@@ -172,7 +172,7 @@ class FindFamilyMemberTagServiceTest {
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
-                    assertThat(ftEx.getExceptionCode()).isEqualTo(FamilyExceptionCode.NOT_FAMILY_MEMBER);
+                    assertThat(ftEx.getCode()).isEqualTo(FamilyExceptionCode.NOT_FAMILY_MEMBER.getCode());
                 });
         }
     }
