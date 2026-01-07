@@ -95,17 +95,22 @@ describe('lunar utilities', () => {
   });
 
   describe('formatThisYearSolarBirthday', () => {
-    it('음력 1월 1일 생일의 2025년 양력 날짜를 M.DD 형식으로 반환', () => {
+    it('음력 1월 1일 생일의 2025년 양력 날짜를 반환', () => {
       // 2025년 설날은 양력 1월 29일
-      // 테스트 시점의 올해가 아닌 고정된 연도로 테스트하기 어려우므로
-      // 간단히 형식만 확인
-      const result = formatThisYearSolarBirthday('1990-01-01');
-      expect(result).toMatch(/^\d{1,2}\.\d{1,2}$/); // M.DD 또는 MM.DD 형식
+      const result = formatThisYearSolarBirthday('1990-01-01', 2025);
+      expect(result).toBe('01.29');
     });
 
-    it('음력 12월 25일 생일의 올해 양력 날짜를 반환', () => {
-      const result = formatThisYearSolarBirthday('1990-12-25');
-      expect(result).toMatch(/^\d{1,2}\.\d{1,2}$/);
+    it('음력 1월 1일 생일의 2024년 양력 날짜를 반환', () => {
+      // 2024년 설날은 양력 2월 10일
+      const result = formatThisYearSolarBirthday('1990-01-01', 2024);
+      expect(result).toBe('02.10');
+    });
+
+    it('같은 음력 생일도 매년 양력 날짜가 다름', () => {
+      const result2024 = formatThisYearSolarBirthday('1990-01-01', 2024);
+      const result2025 = formatThisYearSolarBirthday('1990-01-01', 2025);
+      expect(result2024).not.toBe(result2025);
     });
   });
 

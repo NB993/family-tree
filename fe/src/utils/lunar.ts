@@ -93,17 +93,15 @@ export const formatBirthday = (
  * @returns 올해 양력 날짜 (M.DD 형식) 또는 null
  */
 export const formatThisYearSolarBirthday = (
-  birthday: string
+  birthday: string,
+  targetYear: number = new Date().getFullYear()
 ): string => {
   const date = new Date(birthday);
   const lunarMonth = date.getMonth() + 1;
   const lunarDay = date.getDate();
 
-  const thisYearSolar = getThisYearSolarDate(lunarMonth, lunarDay);
-  const month = thisYearSolar.getMonth() + 1;
-  const day = thisYearSolar.getDate();
-
-  return `${month}.${day}`;
+  const thisYearSolar = getThisYearSolarDate(lunarMonth, lunarDay, targetYear);
+  return formatMonthDay(thisYearSolar);
 };
 
 /**
