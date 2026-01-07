@@ -55,7 +55,7 @@
 | P0 | `save_throws_F003_when_not_owner` | OWNER 아닐 때 F003 예외 |
 | P1 | `save_throws_T001_when_tag_count_exceeds_10` | 10개 초과 시 T001 예외 |
 | P1 | `save_throws_T002_when_name_duplicated` | 이름 중복 시 T002 예외 |
-| P1 | `save_throws_F002_when_not_family_member` | Family 구성원 아닐 때 F002 예외 |
+| P1 | `save_throws_F001_when_not_family_member` | Family 구성원 아닐 때 F001 예외 |
 
 #### 5. FindFamilyMemberTagService 테스트
 
@@ -64,7 +64,7 @@
 | P0 | `findAll_returns_tags_with_member_count` | 태그 목록 + 멤버 수 반환 |
 | P0 | `findAll_returns_empty_list_when_no_tags` | 태그 없으면 빈 목록 반환 |
 | P0 | `findAll_returns_tags_sorted_by_name` | 가나다순 정렬 |
-| P1 | `findAll_throws_F002_when_not_family_member` | Family 구성원 아닐 때 F002 예외 |
+| P1 | `findAll_throws_F001_when_not_family_member` | Family 구성원 아닐 때 F001 예외 |
 
 #### 6. ModifyFamilyMemberTagService 테스트
 
