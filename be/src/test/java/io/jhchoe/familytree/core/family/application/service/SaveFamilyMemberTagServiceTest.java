@@ -34,7 +34,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class SaveFamilyMemberTagServiceTest {
 
     @InjectMocks
-    private SaveFamilyMemberTagService saveFamilyMemberTagService;
+    private SaveFamilyMemberTagService sut;
 
     @Mock
     private SaveFamilyMemberTagPort saveFamilyMemberTagPort;
@@ -76,7 +76,7 @@ class SaveFamilyMemberTagServiceTest {
             when(saveFamilyMemberTagPort.save(any(FamilyMemberTag.class))).thenReturn(1L);
 
             // when
-            Long savedId = saveFamilyMemberTagService.save(command, currentUserId);
+            Long savedId = sut.save(command, currentUserId);
 
             // then
             assertThat(savedId).isEqualTo(1L);
@@ -99,7 +99,7 @@ class SaveFamilyMemberTagServiceTest {
                 .thenReturn(Optional.of(memberOnly));
 
             // when & then
-            assertThatThrownBy(() -> saveFamilyMemberTagService.save(command, currentUserId))
+            assertThatThrownBy(() -> sut.save(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
@@ -126,7 +126,7 @@ class SaveFamilyMemberTagServiceTest {
             when(findFamilyMemberTagPort.countByFamilyId(familyId)).thenReturn(10);
 
             // when & then
-            assertThatThrownBy(() -> saveFamilyMemberTagService.save(command, currentUserId))
+            assertThatThrownBy(() -> sut.save(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
@@ -159,7 +159,7 @@ class SaveFamilyMemberTagServiceTest {
                 .thenReturn(Optional.of(existingTag));
 
             // when & then
-            assertThatThrownBy(() -> saveFamilyMemberTagService.save(command, currentUserId))
+            assertThatThrownBy(() -> sut.save(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
@@ -182,7 +182,7 @@ class SaveFamilyMemberTagServiceTest {
                 .thenReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> saveFamilyMemberTagService.save(command, currentUserId))
+            assertThatThrownBy(() -> sut.save(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;

@@ -36,7 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ModifyFamilyMemberTagServiceTest {
 
     @InjectMocks
-    private ModifyFamilyMemberTagService modifyFamilyMemberTagService;
+    private ModifyFamilyMemberTagService sut;
 
     @Mock
     private SaveFamilyMemberTagPort saveFamilyMemberTagPort;
@@ -80,7 +80,7 @@ class ModifyFamilyMemberTagServiceTest {
             when(saveFamilyMemberTagPort.save(any(FamilyMemberTag.class))).thenReturn(tagId);
 
             // when & then
-            assertThatCode(() -> modifyFamilyMemberTagService.modify(command, currentUserId))
+            assertThatCode(() -> sut.modify(command, currentUserId))
                 .doesNotThrowAnyException();
 
             verify(saveFamilyMemberTagPort).save(any(FamilyMemberTag.class));
@@ -112,7 +112,7 @@ class ModifyFamilyMemberTagServiceTest {
             when(saveFamilyMemberTagPort.save(any(FamilyMemberTag.class))).thenReturn(tagId);
 
             // when & then
-            assertThatCode(() -> modifyFamilyMemberTagService.modify(command, currentUserId))
+            assertThatCode(() -> sut.modify(command, currentUserId))
                 .doesNotThrowAnyException();
         }
 
@@ -135,7 +135,7 @@ class ModifyFamilyMemberTagServiceTest {
                 .thenReturn(Optional.of(memberOnly));
 
             // when & then
-            assertThatThrownBy(() -> modifyFamilyMemberTagService.modify(command, currentUserId))
+            assertThatThrownBy(() -> sut.modify(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
@@ -163,7 +163,7 @@ class ModifyFamilyMemberTagServiceTest {
             when(findFamilyMemberTagPort.findById(tagId)).thenReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> modifyFamilyMemberTagService.modify(command, currentUserId))
+            assertThatThrownBy(() -> sut.modify(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
@@ -195,7 +195,7 @@ class ModifyFamilyMemberTagServiceTest {
             when(findFamilyMemberTagPort.findById(tagId)).thenReturn(Optional.of(tagFromOtherFamily));
 
             // when & then
-            assertThatThrownBy(() -> modifyFamilyMemberTagService.modify(command, currentUserId))
+            assertThatThrownBy(() -> sut.modify(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
@@ -231,7 +231,7 @@ class ModifyFamilyMemberTagServiceTest {
                 .thenReturn(Optional.of(duplicateTag)); // 다른 태그가 이미 "외가" 사용 중
 
             // when & then
-            assertThatThrownBy(() -> modifyFamilyMemberTagService.modify(command, currentUserId))
+            assertThatThrownBy(() -> sut.modify(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;

@@ -40,15 +40,4 @@ public record FamilyMemberTagInfo(
         );
     }
 
-    /**
-     * 도메인 객체와 멤버 수로부터 FamilyMemberTagInfo를 생성합니다.
-     * fromDomain의 별칭입니다.
-     *
-     * @param tag         태그 도메인 객체
-     * @param memberCount 해당 태그가 할당된 멤버 수
-     * @return FamilyMemberTagInfo 인스턴스
-     */
-    public static FamilyMemberTagInfo from(FamilyMemberTag tag, int memberCount) {
-        return fromDomain(tag, memberCount);
-    }
 }

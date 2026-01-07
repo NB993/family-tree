@@ -35,7 +35,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class DeleteFamilyMemberTagServiceTest {
 
     @InjectMocks
-    private DeleteFamilyMemberTagService deleteFamilyMemberTagService;
+    private DeleteFamilyMemberTagService sut;
 
     @Mock
     private DeleteFamilyMemberTagPort deleteFamilyMemberTagPort;
@@ -74,7 +74,7 @@ class DeleteFamilyMemberTagServiceTest {
             when(findFamilyMemberTagPort.findById(tagId)).thenReturn(Optional.of(existingTag));
 
             // when & then
-            assertThatCode(() -> deleteFamilyMemberTagService.delete(command, currentUserId))
+            assertThatCode(() -> sut.delete(command, currentUserId))
                 .doesNotThrowAnyException();
 
             verify(deleteFamilyMemberTagPort).deleteById(tagId);
@@ -97,7 +97,7 @@ class DeleteFamilyMemberTagServiceTest {
                 .thenReturn(Optional.of(memberOnly));
 
             // when & then
-            assertThatThrownBy(() -> deleteFamilyMemberTagService.delete(command, currentUserId))
+            assertThatThrownBy(() -> sut.delete(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
@@ -123,7 +123,7 @@ class DeleteFamilyMemberTagServiceTest {
             when(findFamilyMemberTagPort.findById(tagId)).thenReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> deleteFamilyMemberTagService.delete(command, currentUserId))
+            assertThatThrownBy(() -> sut.delete(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;
@@ -153,7 +153,7 @@ class DeleteFamilyMemberTagServiceTest {
             when(findFamilyMemberTagPort.findById(tagId)).thenReturn(Optional.of(tagFromOtherFamily));
 
             // when & then
-            assertThatThrownBy(() -> deleteFamilyMemberTagService.delete(command, currentUserId))
+            assertThatThrownBy(() -> sut.delete(command, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;

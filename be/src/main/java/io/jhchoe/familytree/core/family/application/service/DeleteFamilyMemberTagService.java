@@ -33,7 +33,7 @@ public class DeleteFamilyMemberTagService implements DeleteFamilyMemberTagUseCas
      */
     @Override
     @Transactional
-    public void delete(DeleteFamilyMemberTagCommand command, Long currentUserId) {
+    public void delete(final DeleteFamilyMemberTagCommand command, final Long currentUserId) {
         Objects.requireNonNull(command, "command는 null일 수 없습니다");
         Objects.requireNonNull(currentUserId, "currentUserId는 null일 수 없습니다");
 
@@ -63,13 +63,13 @@ public class DeleteFamilyMemberTagService implements DeleteFamilyMemberTagUseCas
         deleteFamilyMemberTagPort.deleteById(tagId);
     }
 
-    private void validateFamilyExists(Long familyId) {
+    private void validateFamilyExists(final Long familyId) {
         if (!findFamilyPort.existsById(familyId)) {
             throw new FTException(FamilyExceptionCode.FAMILY_NOT_FOUND);
         }
     }
 
-    private void validateOwnerRole(FamilyMember member) {
+    private void validateOwnerRole(final FamilyMember member) {
         if (!member.hasRoleAtLeast(FamilyMemberRole.OWNER)) {
             throw new FTException(FamilyExceptionCode.NOT_AUTHORIZED);
         }

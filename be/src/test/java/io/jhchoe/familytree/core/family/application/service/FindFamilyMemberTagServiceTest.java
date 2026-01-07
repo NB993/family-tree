@@ -35,7 +35,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class FindFamilyMemberTagServiceTest {
 
     @InjectMocks
-    private FindFamilyMemberTagService findFamilyMemberTagService;
+    private FindFamilyMemberTagService sut;
 
     @Mock
     private FindFamilyMemberTagPort findFamilyMemberTagPort;
@@ -74,7 +74,7 @@ class FindFamilyMemberTagServiceTest {
                 .thenReturn(List.of(tag1, tag2));
 
             // when
-            List<FamilyMemberTagInfo> result = findFamilyMemberTagService.findAll(query, currentUserId);
+            List<FamilyMemberTagInfo> result = sut.findAll(query, currentUserId);
 
             // then
             assertThat(result).hasSize(2);
@@ -103,7 +103,7 @@ class FindFamilyMemberTagServiceTest {
                 .thenReturn(Collections.emptyList());
 
             // when
-            List<FamilyMemberTagInfo> result = findFamilyMemberTagService.findAll(query, currentUserId);
+            List<FamilyMemberTagInfo> result = sut.findAll(query, currentUserId);
 
             // then
             assertThat(result).isEmpty();
@@ -136,7 +136,7 @@ class FindFamilyMemberTagServiceTest {
                 .thenReturn(List.of(tagA, tagB, tagC)); // 정렬 안 된 상태
 
             // when
-            List<FamilyMemberTagInfo> result = findFamilyMemberTagService.findAll(query, currentUserId);
+            List<FamilyMemberTagInfo> result = sut.findAll(query, currentUserId);
 
             // then
             assertThat(result).hasSize(3);
@@ -159,7 +159,7 @@ class FindFamilyMemberTagServiceTest {
                 .thenReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> findFamilyMemberTagService.findAll(query, currentUserId))
+            assertThatThrownBy(() -> sut.findAll(query, currentUserId))
                 .isInstanceOf(FTException.class)
                 .satisfies(ex -> {
                     FTException ftEx = (FTException) ex;

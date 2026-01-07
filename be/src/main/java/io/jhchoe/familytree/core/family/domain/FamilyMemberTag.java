@@ -3,7 +3,7 @@ package io.jhchoe.familytree.core.family.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import lombok.Getter;
 
@@ -233,7 +233,6 @@ public class FamilyMemberTag {
      * @return 랜덤 선택된 색상 코드
      */
     private static String selectRandomColor() {
-        Random random = new Random();
-        return COLOR_PALETTE.get(random.nextInt(COLOR_PALETTE.size()));
+        return COLOR_PALETTE.get(ThreadLocalRandom.current().nextInt(COLOR_PALETTE.size()));
     }
 }

@@ -34,7 +34,7 @@ public class ModifyFamilyMemberTagService implements ModifyFamilyMemberTagUseCas
      */
     @Override
     @Transactional
-    public FamilyMemberTagInfo modify(ModifyFamilyMemberTagCommand command, Long currentUserId) {
+    public FamilyMemberTagInfo modify(final ModifyFamilyMemberTagCommand command, final Long currentUserId) {
         Objects.requireNonNull(command, "command는 null일 수 없습니다");
         Objects.requireNonNull(currentUserId, "currentUserId는 null일 수 없습니다");
 
@@ -83,20 +83,17 @@ public class ModifyFamilyMemberTagService implements ModifyFamilyMemberTagUseCas
 
         saveFamilyMemberTagPort.save(modifiedTag);
 
-        // 수정된 태그 조회하여 반환 (memberCount는 0으로 - Sprint 2에서 구현)
-        FamilyMemberTag saved = findFamilyMemberTagPort.findById(tagId)
-            .orElseThrow(() -> new FTException(FamilyExceptionCode.TAG_NOT_FOUND));
-
-        return FamilyMemberTagInfo.from(saved, 0);
+        // memberCount는 Sprint 2에서 구현
+        return FamilyMemberTagInfo.fromDomain(modifiedTag, 0);
     }
 
-    private void validateFamilyExists(Long familyId) {
+    private void validateFamilyExists(final Long familyId) {
         if (!findFamilyPort.existsById(familyId)) {
             throw new FTException(FamilyExceptionCode.FAMILY_NOT_FOUND);
         }
     }
 
-    private void validateOwnerRole(FamilyMember member) {
+    private void validateOwnerRole(final FamilyMember member) {
         if (!member.hasRoleAtLeast(FamilyMemberRole.OWNER)) {
             throw new FTException(FamilyExceptionCode.NOT_AUTHORIZED);
         }

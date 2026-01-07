@@ -35,7 +35,7 @@ public class SaveFamilyMemberTagService implements SaveFamilyMemberTagUseCase {
      */
     @Override
     @Transactional
-    public Long save(SaveFamilyMemberTagCommand command, Long currentUserId) {
+    public Long save(final SaveFamilyMemberTagCommand command, final Long currentUserId) {
         Objects.requireNonNull(command, "command는 null일 수 없습니다");
         Objects.requireNonNull(currentUserId, "currentUserId는 null일 수 없습니다");
 
@@ -68,13 +68,13 @@ public class SaveFamilyMemberTagService implements SaveFamilyMemberTagUseCase {
         return saveFamilyMemberTagPort.save(tag);
     }
 
-    private void validateFamilyExists(Long familyId) {
+    private void validateFamilyExists(final Long familyId) {
         if (!findFamilyPort.existsById(familyId)) {
             throw new FTException(FamilyExceptionCode.FAMILY_NOT_FOUND);
         }
     }
 
-    private void validateOwnerRole(FamilyMember member) {
+    private void validateOwnerRole(final FamilyMember member) {
         if (!member.hasRoleAtLeast(FamilyMemberRole.OWNER)) {
             throw new FTException(FamilyExceptionCode.NOT_AUTHORIZED);
         }

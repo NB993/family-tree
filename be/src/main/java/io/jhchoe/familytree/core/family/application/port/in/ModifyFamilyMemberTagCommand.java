@@ -31,11 +31,12 @@ public record ModifyFamilyMemberTagCommand(
     public ModifyFamilyMemberTagCommand {
         validateFamilyId(familyId);
         validateTagId(tagId);
+        name = name != null ? name.trim() : null;
         validateName(name);
         validateColor(color);
     }
 
-    private static void validateFamilyId(Long familyId) {
+    private static void validateFamilyId(final Long familyId) {
         if (familyId == null) {
             throw new IllegalArgumentException("가족 ID는 필수입니다.");
         }
@@ -44,7 +45,7 @@ public record ModifyFamilyMemberTagCommand(
         }
     }
 
-    private static void validateTagId(Long tagId) {
+    private static void validateTagId(final Long tagId) {
         if (tagId == null) {
             throw new IllegalArgumentException("태그 ID는 필수입니다.");
         }
@@ -53,7 +54,7 @@ public record ModifyFamilyMemberTagCommand(
         }
     }
 
-    private static void validateName(String name) {
+    private static void validateName(final String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("태그 이름은 필수입니다.");
         }
@@ -68,7 +69,7 @@ public record ModifyFamilyMemberTagCommand(
         }
     }
 
-    private static void validateColor(String color) {
+    private static void validateColor(final String color) {
         if (color != null && !FamilyMemberTag.COLOR_PALETTE.contains(color)) {
             throw new IllegalArgumentException("허용되지 않는 색상입니다: " + color);
         }

@@ -27,7 +27,7 @@ public record SaveFamilyMemberTagCommand(Long familyId, String name) {
         validateName(name);
     }
 
-    private static void validateFamilyId(Long familyId) {
+    private static void validateFamilyId(final Long familyId) {
         if (familyId == null) {
             throw new IllegalArgumentException("가족 ID는 필수입니다.");
         }
@@ -36,7 +36,7 @@ public record SaveFamilyMemberTagCommand(Long familyId, String name) {
         }
     }
 
-    private static void validateName(String name) {
+    private static void validateName(final String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("태그 이름은 필수입니다.");
         }

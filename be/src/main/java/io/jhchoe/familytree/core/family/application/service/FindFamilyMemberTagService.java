@@ -32,7 +32,7 @@ public class FindFamilyMemberTagService implements FindFamilyMemberTagUseCase {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<FamilyMemberTagInfo> findAll(FindFamilyMemberTagsQuery query, Long currentUserId) {
+    public List<FamilyMemberTagInfo> findAll(final FindFamilyMemberTagsQuery query, final Long currentUserId) {
         Objects.requireNonNull(query, "query는 null일 수 없습니다");
         Objects.requireNonNull(currentUserId, "currentUserId는 null일 수 없습니다");
 
@@ -54,13 +54,13 @@ public class FindFamilyMemberTagService implements FindFamilyMemberTagUseCase {
             .toList();
     }
 
-    private void validateFamilyExists(Long familyId) {
+    private void validateFamilyExists(final Long familyId) {
         if (!findFamilyPort.existsById(familyId)) {
             throw new FTException(FamilyExceptionCode.FAMILY_NOT_FOUND);
         }
     }
 
-    private void validateFamilyMember(Long familyId, Long userId) {
+    private void validateFamilyMember(final Long familyId, final Long userId) {
         findFamilyMemberPort.findByFamilyIdAndUserId(familyId, userId)
             .orElseThrow(() -> new FTException(FamilyExceptionCode.NOT_FAMILY_MEMBER));
     }

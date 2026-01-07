@@ -7,7 +7,6 @@ import io.jhchoe.familytree.core.family.domain.FamilyMemberTag;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -53,7 +52,7 @@ public class FamilyMemberTagAdapter implements SaveFamilyMemberTagPort, FindFami
 
         return familyMemberTagJpaRepository.findAllByFamilyId(familyId).stream()
             .map(FamilyMemberTagJpaEntity::toFamilyMemberTag)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     /**
