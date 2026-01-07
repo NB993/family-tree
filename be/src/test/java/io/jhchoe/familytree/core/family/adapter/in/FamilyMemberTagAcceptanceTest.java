@@ -334,6 +334,7 @@ class FamilyMemberTagAcceptanceTest extends AcceptanceTestBase {
 
             String requestBody = """
                 {
+                    "name": "친가",
                     "color": "#D3E5EF"
                 }
                 """;
@@ -347,6 +348,7 @@ class FamilyMemberTagAcceptanceTest extends AcceptanceTestBase {
                 .put("/api/families/{familyId}/tags/{tagId}", familyId, tagId)
             .then()
                 .statusCode(HttpStatus.OK.value())
+                .body("name", equalTo("친가"))
                 .body("color", equalTo("#D3E5EF"));
         }
 

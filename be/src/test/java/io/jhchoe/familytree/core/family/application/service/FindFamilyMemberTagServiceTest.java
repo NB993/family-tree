@@ -8,7 +8,6 @@ import io.jhchoe.familytree.common.exception.FTException;
 import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagInfo;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberTagsQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
-import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberTagMappingPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberTagPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
@@ -42,9 +41,6 @@ class FindFamilyMemberTagServiceTest {
     private FindFamilyMemberTagPort findFamilyMemberTagPort;
 
     @Mock
-    private FindFamilyMemberTagMappingPort findFamilyMemberTagMappingPort;
-
-    @Mock
     private FindFamilyPort findFamilyPort;
 
     @Mock
@@ -76,8 +72,6 @@ class FindFamilyMemberTagServiceTest {
                 .thenReturn(Optional.of(member));
             when(findFamilyMemberTagPort.findAllByFamilyId(familyId))
                 .thenReturn(List.of(tag1, tag2));
-            when(findFamilyMemberTagMappingPort.countByTagId(1L)).thenReturn(3);
-            when(findFamilyMemberTagMappingPort.countByTagId(2L)).thenReturn(5);
 
             // when
             List<FamilyMemberTagInfo> result = findFamilyMemberTagService.findAll(query, currentUserId);
@@ -86,9 +80,9 @@ class FindFamilyMemberTagServiceTest {
             assertThat(result).hasSize(2);
             // 가나다순 정렬 확인: 외가 > 친가
             assertThat(result.get(0).name()).isEqualTo("외가");
-            assertThat(result.get(0).memberCount()).isEqualTo(3);
+            assertThat(result.get(0).memberCount()).isEqualTo(0); // Sprint 2-BE까지 0
             assertThat(result.get(1).name()).isEqualTo("친가");
-            assertThat(result.get(1).memberCount()).isEqualTo(5);
+            assertThat(result.get(1).memberCount()).isEqualTo(0); // Sprint 2-BE까지 0
         }
 
         @Test
@@ -140,9 +134,6 @@ class FindFamilyMemberTagServiceTest {
                 .thenReturn(Optional.of(member));
             when(findFamilyMemberTagPort.findAllByFamilyId(familyId))
                 .thenReturn(List.of(tagA, tagB, tagC)); // 정렬 안 된 상태
-            when(findFamilyMemberTagMappingPort.countByTagId(1L)).thenReturn(0);
-            when(findFamilyMemberTagMappingPort.countByTagId(2L)).thenReturn(0);
-            when(findFamilyMemberTagMappingPort.countByTagId(3L)).thenReturn(0);
 
             // when
             List<FamilyMemberTagInfo> result = findFamilyMemberTagService.findAll(query, currentUserId);

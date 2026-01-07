@@ -19,9 +19,8 @@ public record ModifyFamilyMemberTagCommand(
 ) {
 
     private static final int MAX_NAME_LENGTH = 10;
-    private static final Pattern NAME_PATTERN = Pattern.compile(
-        "^[\\p{L}\\p{N}\\p{Emoji}\\p{Emoji_Component}\\s]+$",
-        Pattern.UNICODE_CHARACTER_CLASS
+    private static final Pattern INVALID_CHAR_PATTERN = Pattern.compile(
+        "[!@#$%^&*()\\-_=+\\[\\]{}|\\\\:;\"'<>,.\\/\\?~`]"
     );
 
     /**
@@ -64,7 +63,7 @@ public record ModifyFamilyMemberTagCommand(
             throw new IllegalArgumentException("태그 이름은 10자 이하여야 합니다.");
         }
 
-        if (!NAME_PATTERN.matcher(trimmedName).matches()) {
+        if (INVALID_CHAR_PATTERN.matcher(trimmedName).find()) {
             throw new IllegalArgumentException("태그 이름에 허용되지 않는 문자가 포함되어 있습니다.");
         }
     }

@@ -5,7 +5,6 @@ import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagInfo;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberTagsQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberTagUseCase;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
-import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberTagMappingPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberTagPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyPort;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberTag;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class FindFamilyMemberTagService implements FindFamilyMemberTagUseCase {
 
     private final FindFamilyMemberTagPort findFamilyMemberTagPort;
-    private final FindFamilyMemberTagMappingPort findFamilyMemberTagMappingPort;
     private final FindFamilyPort findFamilyPort;
     private final FindFamilyMemberPort findFamilyMemberPort;
 
@@ -49,12 +47,9 @@ public class FindFamilyMemberTagService implements FindFamilyMemberTagUseCase {
         // 3. 태그 목록 조회
         List<FamilyMemberTag> tags = findFamilyMemberTagPort.findAllByFamilyId(familyId);
 
-        // 4. 각 태그별 멤버 수 조회 및 가나다순 정렬
+        // 4. 가나다순 정렬하여 반환 (memberCount는 Sprint 2-BE에서 Mapping 구현 후 추가)
         return tags.stream()
-            .map(tag -> FamilyMemberTagInfo.fromDomain(
-                tag,
-                findFamilyMemberTagMappingPort.countByTagId(tag.getId())
-            ))
+            .map(tag -> FamilyMemberTagInfo.fromDomain(tag, 0))
             .sorted(Comparator.comparing(FamilyMemberTagInfo::name))
             .toList();
     }
