@@ -27,7 +27,18 @@ public enum FamilyExceptionCode implements ExceptionCodeType {
     INVALID_ANNOUNCEMENT_REQUEST("F017", "잘못된 공지사항 요청입니다.", HttpStatus.BAD_REQUEST),
     ACCESS_DENIED("F018", "접근이 거부되었습니다.", HttpStatus.FORBIDDEN),
     FAMILY_AUTO_CREATION_FAILED("F019", "회원가입 시 Family 자동 생성에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    USER_NOT_FOUND("F020", "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+    USER_NOT_FOUND("F020", "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
+    // 태그 관련 에러 코드
+    TAG_LIMIT_EXCEEDED("T001", "태그는 최대 10개까지 생성할 수 있습니다.", HttpStatus.BAD_REQUEST),
+    TAG_NAME_DUPLICATED("T002", "이미 존재하는 태그 이름입니다.", HttpStatus.BAD_REQUEST),
+    TAG_NAME_LENGTH_INVALID("T003", "태그 이름은 1~10자여야 합니다.", HttpStatus.BAD_REQUEST),
+    TAG_NAME_INVALID_CHARS("T004", "태그 이름에 허용되지 않는 문자가 포함되어 있습니다.", HttpStatus.BAD_REQUEST),
+    TAG_NOT_FOUND("T005", "존재하지 않는 태그입니다.", HttpStatus.NOT_FOUND),
+    TAG_NOT_IN_FAMILY("T006", "해당 Family의 태그가 아닙니다.", HttpStatus.BAD_REQUEST),
+    MEMBER_NOT_IN_FAMILY("T007", "해당 Family의 멤버가 아닙니다.", HttpStatus.BAD_REQUEST),
+    MEMBER_TAG_LIMIT_EXCEEDED("T008", "한 멤버에 최대 10개의 태그만 할당할 수 있습니다.", HttpStatus.BAD_REQUEST),
+    TAG_COLOR_INVALID("T009", "허용되지 않는 색상입니다.", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;
