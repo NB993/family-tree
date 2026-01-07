@@ -86,4 +86,20 @@ public class FamilyMemberTagAdapter implements SaveFamilyMemberTagPort, FindFami
 
         familyMemberTagJpaRepository.deleteById(id);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FamilyMemberTag> findAllByIds(List<Long> ids) {
+        Objects.requireNonNull(ids, "ids must not be null");
+
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+
+        return familyMemberTagJpaRepository.findAllById(ids).stream()
+            .map(FamilyMemberTagJpaEntity::toFamilyMemberTag)
+            .toList();
+    }
 }

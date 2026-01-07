@@ -1,0 +1,47 @@
+package io.jhchoe.familytree.core.family.adapter.in;
+
+import io.jhchoe.familytree.core.family.application.port.in.MemberTagsInfo;
+import java.util.List;
+
+/**
+ * 멤버 태그 할당 응답 DTO입니다.
+ *
+ * @param memberId   멤버 ID
+ * @param memberName 멤버 이름
+ * @param tags       할당된 태그 목록
+ */
+public record ModifyMemberTagsResponse(
+    Long memberId,
+    String memberName,
+    List<TagResponse> tags
+) {
+    /**
+     * 태그 정보 응답 DTO입니다.
+     *
+     * @param id    태그 ID
+     * @param name  태그 이름
+     * @param color 태그 색상
+     */
+    public record TagResponse(
+        Long id,
+        String name,
+        String color
+    ) {
+        public static TagResponse from(MemberTagsInfo.TagSimpleInfo tag) {
+            return new TagResponse(tag.id(), tag.name(), tag.color());
+        }
+    }
+
+    /**
+     * MemberTagsInfo를 Response로 변환합니다.
+     *
+     * @param info MemberTagsInfo
+     * @return ModifyMemberTagsResponse
+     */
+    public static ModifyMemberTagsResponse from(MemberTagsInfo info) {
+        List<TagResponse> tagResponses = info.tags().stream()
+            .map(TagResponse::from)
+            .toList();
+        return new ModifyMemberTagsResponse(info.memberId(), info.memberName(), tagResponses);
+    }
+}
