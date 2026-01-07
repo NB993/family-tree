@@ -2,14 +2,14 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMyFamilies, useFamilyMembers } from '../hooks/queries/useFamilyQueries';
 import { FamilyMemberWithRelationship } from '../api/services/familyService';
-import { Search, Plus, UserPlus, LogOut, ChevronRight } from 'lucide-react';
+import { Search, Plus, UserPlus, LogOut, ChevronRight, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreateFamilyMemberModal from '@/components/family/CreateFamilyMemberModal';
 import { getKoreanAge, getWesternAge } from '../utils/age';
-import { formatBirthday } from '../utils/lunar';
+import { formatBirthday, formatThisYearSolarBirthday } from '../utils/lunar';
 
 // 멤버 카드 스켈레톤 컴포넌트 (1줄 레이아웃으로 수정)
 const MemberCardSkeleton: React.FC = () => (
@@ -35,9 +35,6 @@ const HomePage: React.FC = () => {
 
   // 나이 표시 모드: 'korean' (한국나이) 또는 'western' (만나이)
   const [ageDisplayMode, setAgeDisplayMode] = useState<'korean' | 'western'>('korean');
-
-  // 생일 토글 상태: 멤버별로 관리 (true면 변환된 날짜 표시)
-  const [birthdayToggledMembers, setBirthdayToggledMembers] = useState<Set<number>>(new Set());
 
   const { data: membersData, isLoading: membersLoading } = useFamilyMembers(selectedFamilyId || 0);
 
@@ -67,20 +64,6 @@ const HomePage: React.FC = () => {
   const handleAgeToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setAgeDisplayMode(prev => prev === 'korean' ? 'western' : 'korean');
-  };
-
-  // 생일 토글 핸들러
-  const handleBirthdayToggle = (e: React.MouseEvent, memberId: number) => {
-    e.stopPropagation();
-    setBirthdayToggledMembers(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(memberId)) {
-        newSet.delete(memberId);
-      } else {
-        newSet.add(memberId);
-      }
-      return newSet;
-    });
   };
 
   // 나이 표시 문자열 생성
@@ -173,14 +156,13 @@ const HomePage: React.FC = () => {
 
                 {/* 생일 */}
                 {member.memberBirthday && (
-                  <span
-                    className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground transition-colors flex-shrink-0"
-                    onClick={(e) => handleBirthdayToggle(e, member.memberId)}
-                  >
-                    {formatBirthday(
-                      member.memberBirthday,
-                      member.memberBirthdayType ?? null,
-                      birthdayToggledMembers.has(member.memberId)
+                  <span className="text-[10px] text-muted-foreground flex-shrink-0 flex items-center gap-0.5">
+                    {formatBirthday(member.memberBirthday, member.memberBirthdayType ?? null)}
+                    {member.memberBirthdayType === 'LUNAR' && (
+                      <>
+                        <ArrowRight className="w-2.5 h-2.5" strokeWidth={1.5} />
+                        <span>{formatThisYearSolarBirthday(member.memberBirthday)}</span>
+                      </>
                     )}
                   </span>
                 )}

@@ -36,30 +36,21 @@ export const formatMonthDay = (date: Date | string): string => {
 };
 
 /**
- * 양력 → 음력 변환
- * @param date 양력 날짜
- * @returns 음력 날짜 정보
+ * 음력 월/일을 받아서 특정 연도의 양력 날짜를 반환
+ * 어르신들의 음력 생일이 올해 양력으로 며칠인지 계산할 때 사용
+ * @param lunarMonth 음력 월
+ * @param lunarDay 음력 일
+ * @param targetYear 대상 연도 (기본: 올해)
+ * @returns 양력 Date 객체
  */
-export const solarToLunar = (date: Date): { year: number; month: number; day: number; intercalation: boolean } => {
-  calendar.setSolarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
-  const lunar = calendar.getLunarCalendar();
-  return {
-    year: lunar.year,
-    month: lunar.month,
-    day: lunar.day,
-    intercalation: lunar.intercalation
-  };
-};
-
-/**
- * 음력 날짜를 YYYY.MM.DD 형식으로 포맷
- * @param lunar 음력 날짜 정보
- * @returns 포맷된 날짜 문자열
- */
-export const formatLunarDate = (lunar: { year: number; month: number; day: number }): string => {
-  const month = String(lunar.month).padStart(2, '0');
-  const day = String(lunar.day).padStart(2, '0');
-  return `${lunar.year}.${month}.${day}`;
+export const getThisYearSolarDate = (
+  lunarMonth: number,
+  lunarDay: number,
+  targetYear: number = new Date().getFullYear()
+): Date => {
+  calendar.setLunarDate(targetYear, lunarMonth, lunarDay, false);
+  const solar = calendar.getSolarCalendar();
+  return new Date(solar.year, solar.month - 1, solar.day);
 };
 
 /**
@@ -80,36 +71,39 @@ export const lunarToSolar = (year: number, month: number, day: number, intercala
  * 생일 표시 문자열 생성
  * @param birthday 생년월일 (ISO string)
  * @param birthdayType 생일 유형 (SOLAR/LUNAR)
- * @param showConverted 변환된 날짜 표시 여부
  * @returns 포맷된 생일 문자열
  */
 export const formatBirthday = (
   birthday: string,
-  birthdayType: BirthdayType,
-  showConverted: boolean = false
+  birthdayType: BirthdayType
 ): string => {
   const date = new Date(birthday);
+  const formattedDate = formatDate(date);
 
-  // 기본 표시: 원본 날짜와 유형 라벨
-  if (!showConverted) {
-    const formattedDate = formatDate(date);
-    if (birthdayType === 'LUNAR') {
-      return `(음) ${formattedDate}`;
-    }
-    return formattedDate;
-  }
-
-  // 토글된 경우: 반대 유형으로 변환 표시
   if (birthdayType === 'LUNAR') {
-    // 원본이 음력 -> 양력으로 변환
-    // 생일 문자열을 음력으로 해석하여 양력으로 변환
-    const solarDate = lunarToSolar(date.getFullYear(), date.getMonth() + 1, date.getDate());
-    return formatDate(solarDate);
+    return `(음)${formattedDate}`;
   }
+  return formattedDate;
+};
 
-  // 원본이 양력 -> 음력으로 변환
-  const lunar = solarToLunar(date);
-  return `(음) ${formatLunarDate(lunar)}`;
+/**
+ * 음력 생일의 올해 양력 날짜를 M.DD 형식으로 반환
+ * birthdayType이 LUNAR인 경우에만 사용
+ * @param birthday 생년월일 (ISO string)
+ * @returns 올해 양력 날짜 (M.DD 형식) 또는 null
+ */
+export const formatThisYearSolarBirthday = (
+  birthday: string
+): string => {
+  const date = new Date(birthday);
+  const lunarMonth = date.getMonth() + 1;
+  const lunarDay = date.getDate();
+
+  const thisYearSolar = getThisYearSolarDate(lunarMonth, lunarDay);
+  const month = thisYearSolar.getMonth() + 1;
+  const day = thisYearSolar.getDate();
+
+  return `${month}.${day}`;
 };
 
 /**
