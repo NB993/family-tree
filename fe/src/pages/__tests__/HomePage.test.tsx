@@ -313,7 +313,7 @@ describe('HomePage', () => {
       });
     });
 
-    it('생일 클릭 시 양력/음력 토글된다', async () => {
+    it('양력 생일은 날짜만 표시된다', async () => {
       mockUseFamilyMembers.mockReturnValue({
         data: [memberWithBirthday],
         isLoading: false,
@@ -324,17 +324,9 @@ describe('HomePage', () => {
       await waitFor(() => {
         expect(screen.getByText('1990.12.25')).toBeInTheDocument();
       });
-
-      // 생일 클릭 (양력 -> 음력)
-      fireEvent.click(screen.getByText('1990.12.25'));
-
-      // 음력으로 변환됨
-      await waitFor(() => {
-        expect(screen.getByText('(음) 1990.11.09')).toBeInTheDocument();
-      });
     });
 
-    it('음력 생일은 (음) 라벨과 함께 표시된다', async () => {
+    it('음력 생일은 (음)라벨과 올해 양력 날짜가 함께 표시된다', async () => {
       const lunarMember = {
         ...memberWithBirthday,
         memberBirthdayType: 'LUNAR' as const,
@@ -346,8 +338,18 @@ describe('HomePage', () => {
 
       render(<HomePage />, { wrapper: createWrapper() });
 
+      // 음력 생일 표시: (음)1990.12.25
       await waitFor(() => {
-        expect(screen.getByText('(음) 1990.12.25')).toBeInTheDocument();
+        expect(screen.getByText('(음)1990.12.25')).toBeInTheDocument();
+      });
+
+      // 올해 양력 날짜도 표시됨 (ArrowRight 아이콘과 함께)
+      // 올해 양력 날짜는 매년 달라지므로 M.DD 형식 패턴으로 확인
+      await waitFor(() => {
+        const birthdaySpan = screen.getByText('(음)1990.12.25').parentElement;
+        expect(birthdaySpan).toBeInTheDocument();
+        // ArrowRight 아이콘이 있는지 확인
+        expect(birthdaySpan?.querySelector('svg')).toBeInTheDocument();
       });
     });
 

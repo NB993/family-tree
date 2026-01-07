@@ -3,7 +3,7 @@
  * PRD-005: 멤버 목록 생일/나이 표시 기능
  */
 
-import { formatDate, formatMonthDay, solarToLunar, lunarToSolar, formatBirthday, formatBirthdayShort } from '../lunar';
+import { formatDate, formatMonthDay, getThisYearSolarDate, lunarToSolar, formatBirthday, formatThisYearSolarBirthday, formatBirthdayShort } from '../lunar';
 
 describe('lunar utilities', () => {
   describe('formatDate', () => {
@@ -33,23 +33,29 @@ describe('lunar utilities', () => {
     });
   });
 
-  describe('solarToLunar', () => {
-    it('양력 1990년 12월 25일을 음력으로 변환', () => {
-      const date = new Date('1990-12-25');
-      const lunar = solarToLunar(date);
+  describe('getThisYearSolarDate', () => {
+    it('음력 1월 1일(설날)을 2024년 양력으로 변환', () => {
+      const solar = getThisYearSolarDate(1, 1, 2024);
 
-      expect(lunar.year).toBe(1990);
-      expect(lunar.month).toBe(11); // 음력 11월
-      expect(lunar.day).toBe(9);    // 음력 9일
+      expect(solar.getFullYear()).toBe(2024);
+      expect(solar.getMonth()).toBe(1);  // 2월 (0-indexed)
+      expect(solar.getDate()).toBe(10);  // 2024년 설날은 2월 10일
     });
 
-    it('양력 2024년 2월 10일 (설날)을 음력으로 변환', () => {
-      const date = new Date('2024-02-10');
-      const lunar = solarToLunar(date);
+    it('음력 1월 1일(설날)을 2025년 양력으로 변환', () => {
+      const solar = getThisYearSolarDate(1, 1, 2025);
 
-      expect(lunar.year).toBe(2024);
-      expect(lunar.month).toBe(1);  // 음력 1월
-      expect(lunar.day).toBe(1);    // 음력 1일 (설날)
+      expect(solar.getFullYear()).toBe(2025);
+      expect(solar.getMonth()).toBe(0);  // 1월 (0-indexed)
+      expect(solar.getDate()).toBe(29);  // 2025년 설날은 1월 29일
+    });
+
+    it('같은 음력 날짜도 매년 양력 날짜가 다름', () => {
+      const solar2024 = getThisYearSolarDate(12, 25, 2024);
+      const solar2025 = getThisYearSolarDate(12, 25, 2025);
+
+      // 같은 음력 날짜여도 양력으로 변환하면 다른 날짜
+      expect(solar2024.getTime()).not.toBe(solar2025.getTime());
     });
   });
 
@@ -72,36 +78,39 @@ describe('lunar utilities', () => {
   });
 
   describe('formatBirthday', () => {
-    describe('기본 표시 (showConverted = false)', () => {
-      it('양력 생일은 날짜만 표시', () => {
-        const result = formatBirthday('1990-12-25', 'SOLAR', false);
-        expect(result).toBe('1990.12.25');
-      });
-
-      it('음력 생일은 (음) 라벨과 함께 표시', () => {
-        const result = formatBirthday('1990-12-25', 'LUNAR', false);
-        expect(result).toBe('(음) 1990.12.25');
-      });
-
-      it('birthdayType이 null이면 양력으로 표시', () => {
-        const result = formatBirthday('1990-12-25', null, false);
-        expect(result).toBe('1990.12.25');
-      });
+    it('양력 생일은 날짜만 표시', () => {
+      const result = formatBirthday('1990-12-25', 'SOLAR');
+      expect(result).toBe('1990.12.25');
     });
 
-    describe('변환 표시 (showConverted = true)', () => {
-      it('양력 생일 토글 시 음력으로 변환 표시', () => {
-        const result = formatBirthday('1990-12-25', 'SOLAR', true);
-        // 1990.12.25 양력 -> 음력 1990.11.09
-        expect(result).toBe('(음) 1990.11.09');
-      });
+    it('음력 생일은 (음) 라벨과 함께 표시 (공백 없음)', () => {
+      const result = formatBirthday('1990-12-25', 'LUNAR');
+      expect(result).toBe('(음)1990.12.25');
+    });
 
-      it('음력 생일 토글 시 양력으로 변환 표시', () => {
-        // 음력 1990.12.25를 양력으로 변환
-        const result = formatBirthday('1990-12-25', 'LUNAR', true);
-        // 음력 1990.12.25 -> 양력 1991.02.09
-        expect(result).toBe('1991.02.09');
-      });
+    it('birthdayType이 null이면 양력으로 표시', () => {
+      const result = formatBirthday('1990-12-25', null);
+      expect(result).toBe('1990.12.25');
+    });
+  });
+
+  describe('formatThisYearSolarBirthday', () => {
+    it('음력 1월 1일 생일의 2025년 양력 날짜를 반환', () => {
+      // 2025년 설날은 양력 1월 29일
+      const result = formatThisYearSolarBirthday('1990-01-01', 2025);
+      expect(result).toBe('01.29');
+    });
+
+    it('음력 1월 1일 생일의 2024년 양력 날짜를 반환', () => {
+      // 2024년 설날은 양력 2월 10일
+      const result = formatThisYearSolarBirthday('1990-01-01', 2024);
+      expect(result).toBe('02.10');
+    });
+
+    it('같은 음력 생일도 매년 양력 날짜가 다름', () => {
+      const result2024 = formatThisYearSolarBirthday('1990-01-01', 2024);
+      const result2025 = formatThisYearSolarBirthday('1990-01-01', 2025);
+      expect(result2024).not.toBe(result2025);
     });
   });
 
