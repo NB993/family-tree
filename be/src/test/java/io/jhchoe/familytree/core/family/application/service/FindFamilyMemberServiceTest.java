@@ -6,18 +6,25 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import io.jhchoe.familytree.common.exception.FTException;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberWithTagsInfo;
 import io.jhchoe.familytree.core.family.application.port.in.FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberByIdQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMembersWithTagsQuery;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
+import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberTagMappingPort;
+import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberTagPort;
 import io.jhchoe.familytree.core.family.application.validation.FamilyValidationService;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRole;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberStatus;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberTag;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberTagMapping;
 import io.jhchoe.familytree.test.fixture.FamilyMemberFixture;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,9 +43,15 @@ class FindFamilyMemberServiceTest {
 
     @Mock
     private FindFamilyMemberPort findFamilyMemberPort;
-    
+
     @Mock
     private FamilyValidationService familyValidationService;
+
+    @Mock
+    private FindFamilyMemberTagPort findFamilyMemberTagPort;
+
+    @Mock
+    private FindFamilyMemberTagMappingPort findFamilyMemberTagMappingPort;
 
     @Test
     @DisplayName("일반 구성원이 조회할 때 ACTIVE 상태 구성원만 나이순으로 반환합니다")
@@ -205,7 +218,7 @@ class FindFamilyMemberServiceTest {
     @DisplayName("query가 null일 때 NullPointerException이 발생합니다")
     void throw_exception_when_query_is_null() {
         // when & then
-        assertThatThrownBy(() -> findFamilyMemberService.findAll(null))
+        assertThatThrownBy(() -> findFamilyMemberService.findAll((FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery) null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("query must not be null");
     }
@@ -376,5 +389,101 @@ class FindFamilyMemberServiceTest {
         assertThatThrownBy(() -> findFamilyMemberService.find(null))
             .isInstanceOf(NullPointerException.class)
             .hasMessage("query must not be null");
+    }
+
+    @Nested
+    @DisplayName("findAll(FindFamilyMembersWithTagsQuery) 메서드")
+    class FindAllWithTagsTest {
+
+        @Test
+        @DisplayName("구성원 목록과 태그 정보를 함께 반환합니다")
+        void return_members_with_tags() {
+            // given
+            Long familyId = 1L;
+            Long currentUserId = 2L;
+            FindFamilyMembersWithTagsQuery query = new FindFamilyMembersWithTagsQuery(familyId, currentUserId);
+
+            FamilyMember currentMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+                2L, familyId, currentUserId, FamilyMemberRole.MEMBER, "현재사용자",
+                LocalDateTime.of(1990, 5, 15, 0, 0)
+            );
+
+            FamilyMember otherMember = FamilyMemberFixture.withIdRoleNameAndBirthday(
+                3L, familyId, 3L, FamilyMemberRole.MEMBER, "다른구성원",
+                LocalDateTime.of(1995, 8, 20, 0, 0)
+            );
+
+            // 태그 데이터
+            FamilyMemberTag tag1 = FamilyMemberTag.withId(1L, familyId, "가족", "#FF0000",
+                currentUserId, LocalDateTime.now(), currentUserId, LocalDateTime.now());
+            FamilyMemberTag tag2 = FamilyMemberTag.withId(2L, familyId, "친척", "#00FF00",
+                currentUserId, LocalDateTime.now(), currentUserId, LocalDateTime.now());
+
+            // 태그 매핑 데이터 (otherMember에 tag1, tag2 할당)
+            FamilyMemberTagMapping mapping1 = FamilyMemberTagMapping.withId(1L, 1L, 3L, LocalDateTime.now());
+            FamilyMemberTagMapping mapping2 = FamilyMemberTagMapping.withId(2L, 2L, 3L, LocalDateTime.now());
+
+            List<FamilyMember> allMembers = List.of(currentMember, otherMember);
+
+            // Mocking: 현재 사용자 조회
+            when(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
+                .thenReturn(Optional.of(currentMember));
+
+            // Mocking: 전체 구성원 조회
+            when(findFamilyMemberPort.findAllByFamilyId(familyId))
+                .thenReturn(allMembers);
+
+            // Mocking: Family의 모든 태그 조회
+            when(findFamilyMemberTagPort.findAllByFamilyId(familyId))
+                .thenReturn(List.of(tag1, tag2));
+
+            // Mocking: 각 멤버의 태그 매핑 조회
+            when(findFamilyMemberTagMappingPort.findAllByMemberId(2L))
+                .thenReturn(List.of()); // 현재 사용자는 태그 없음
+            when(findFamilyMemberTagMappingPort.findAllByMemberId(3L))
+                .thenReturn(List.of(mapping1, mapping2)); // 다른 구성원은 태그 2개
+
+            // when
+            List<FamilyMemberWithTagsInfo> result = findFamilyMemberService.findAll(query);
+
+            // then
+            assertThat(result).hasSize(2);
+
+            // 다른구성원(어린 순)이 먼저
+            FamilyMemberWithTagsInfo first = result.get(0);
+            assertThat(first.member().getName()).isEqualTo("다른구성원");
+            assertThat(first.tags()).hasSize(2);
+
+            // 현재사용자는 태그 없음
+            FamilyMemberWithTagsInfo second = result.get(1);
+            assertThat(second.member().getName()).isEqualTo("현재사용자");
+            assertThat(second.tags()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("query가 null일 때 NullPointerException이 발생합니다")
+        void throw_exception_when_query_is_null() {
+            // when & then
+            assertThatThrownBy(() -> findFamilyMemberService.findAll((FindFamilyMembersWithTagsQuery) null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessageContaining("query");
+        }
+
+        @Test
+        @DisplayName("현재 사용자가 Family 구성원이 아닐 때 FTException이 발생합니다")
+        void throw_exception_when_user_is_not_family_member() {
+            // given
+            Long familyId = 1L;
+            Long currentUserId = 999L;
+            FindFamilyMembersWithTagsQuery query = new FindFamilyMembersWithTagsQuery(familyId, currentUserId);
+
+            // Mocking: 현재 사용자가 Family 구성원이 아님
+            when(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
+                .thenReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> findFamilyMemberService.findAll(query))
+                .isInstanceOf(FTException.class);
+        }
     }
 }
