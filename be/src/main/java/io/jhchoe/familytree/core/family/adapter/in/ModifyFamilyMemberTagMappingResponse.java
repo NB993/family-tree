@@ -1,6 +1,6 @@
 package io.jhchoe.familytree.core.family.adapter.in;
 
-import io.jhchoe.familytree.core.family.application.port.in.MemberTagsInfo;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagMappingInfo;
 import java.util.List;
 
 /**
@@ -10,7 +10,7 @@ import java.util.List;
  * @param memberName 멤버 이름
  * @param tags       할당된 태그 목록
  */
-public record ModifyMemberTagsResponse(
+public record ModifyFamilyMemberTagMappingResponse(
     Long memberId,
     String memberName,
     List<TagResponse> tags
@@ -27,21 +27,21 @@ public record ModifyMemberTagsResponse(
         String name,
         String color
     ) {
-        public static TagResponse from(MemberTagsInfo.TagSimpleInfo tag) {
+        public static TagResponse from(FamilyMemberTagMappingInfo.TagSimpleInfo tag) {
             return new TagResponse(tag.id(), tag.name(), tag.color());
         }
     }
 
     /**
-     * MemberTagsInfo를 Response로 변환합니다.
+     * FamilyMemberTagMappingInfo를 Response로 변환합니다.
      *
-     * @param info MemberTagsInfo
-     * @return ModifyMemberTagsResponse
+     * @param info FamilyMemberTagMappingInfo
+     * @return ModifyFamilyMemberTagMappingResponse
      */
-    public static ModifyMemberTagsResponse from(MemberTagsInfo info) {
+    public static ModifyFamilyMemberTagMappingResponse from(FamilyMemberTagMappingInfo info) {
         List<TagResponse> tagResponses = info.tags().stream()
             .map(TagResponse::from)
             .toList();
-        return new ModifyMemberTagsResponse(info.memberId(), info.memberName(), tagResponses);
+        return new ModifyFamilyMemberTagMappingResponse(info.memberId(), info.memberName(), tagResponses);
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
  * @param memberId 멤버 ID (필수)
  * @param tagIds   할당할 태그 ID 목록 (빈 목록이면 모든 태그 해제, 최대 10개)
  */
-public record ModifyMemberTagsCommand(Long familyId, Long memberId, List<Long> tagIds) {
+public record ModifyFamilyMemberTagMappingCommand(Long familyId, Long memberId, List<Long> tagIds) {
 
     private static final int MAX_TAG_COUNT = 10;
 
@@ -24,7 +24,7 @@ public record ModifyMemberTagsCommand(Long familyId, Long memberId, List<Long> t
      * @param tagIds   할당할 태그 ID 목록
      * @throws IllegalArgumentException 유효성 검증 실패 시
      */
-    public ModifyMemberTagsCommand {
+    public ModifyFamilyMemberTagMappingCommand {
         validateFamilyId(familyId);
         validateMemberId(memberId);
         tagIds = normalizeTagIds(tagIds);

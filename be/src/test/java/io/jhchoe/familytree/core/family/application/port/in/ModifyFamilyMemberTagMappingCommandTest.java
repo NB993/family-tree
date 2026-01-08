@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * ModifyMemberTagsCommand 단위 테스트.
+ * ModifyFamilyMemberTagMappingCommand 단위 테스트.
  */
-@DisplayName("[Unit Test] ModifyMemberTagsCommandTest")
-class ModifyMemberTagsCommandTest {
+@DisplayName("[Unit Test] ModifyFamilyMemberTagMappingCommandTest")
+class ModifyFamilyMemberTagMappingCommandTest {
 
     @Nested
     @DisplayName("생성 테스트")
@@ -28,7 +28,7 @@ class ModifyMemberTagsCommandTest {
             List<Long> tagIds = List.of(1L, 2L, 3L);
 
             // when
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             // then
             assertThat(command.familyId()).isEqualTo(familyId);
@@ -45,7 +45,7 @@ class ModifyMemberTagsCommandTest {
             List<Long> tagIds = Collections.emptyList();
 
             // when
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             // then
             assertThat(command.familyId()).isEqualTo(familyId);
@@ -62,7 +62,7 @@ class ModifyMemberTagsCommandTest {
             List<Long> tagIds = null;
 
             // when
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             // then
             assertThat(command.tagIds()).isNotNull();
@@ -83,7 +83,7 @@ class ModifyMemberTagsCommandTest {
             List<Long> tagIds = List.of(1L);
 
             // when & then
-            assertThatThrownBy(() -> new ModifyMemberTagsCommand(familyId, memberId, tagIds))
+            assertThatThrownBy(() -> new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("가족 ID");
         }
@@ -97,7 +97,7 @@ class ModifyMemberTagsCommandTest {
             List<Long> tagIds = List.of(1L);
 
             // when & then
-            assertThatThrownBy(() -> new ModifyMemberTagsCommand(familyId, memberId, tagIds))
+            assertThatThrownBy(() -> new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("가족 ID");
         }
@@ -111,7 +111,7 @@ class ModifyMemberTagsCommandTest {
             List<Long> tagIds = List.of(1L);
 
             // when & then
-            assertThatThrownBy(() -> new ModifyMemberTagsCommand(familyId, memberId, tagIds))
+            assertThatThrownBy(() -> new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("멤버 ID");
         }
@@ -125,7 +125,7 @@ class ModifyMemberTagsCommandTest {
             List<Long> tagIds = List.of(1L);
 
             // when & then
-            assertThatThrownBy(() -> new ModifyMemberTagsCommand(familyId, memberId, tagIds))
+            assertThatThrownBy(() -> new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("멤버 ID");
         }
@@ -139,7 +139,7 @@ class ModifyMemberTagsCommandTest {
             List<Long> tagIds = List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L);
 
             // when & then
-            assertThatThrownBy(() -> new ModifyMemberTagsCommand(familyId, memberId, tagIds))
+            assertThatThrownBy(() -> new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("10개");
         }

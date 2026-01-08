@@ -9,7 +9,7 @@ import java.util.List;
  * @param memberName 멤버 이름
  * @param tags       할당된 태그 목록
  */
-public record MemberTagsInfo(
+public record FamilyMemberTagMappingInfo(
     Long memberId,
     String memberName,
     List<TagSimpleInfo> tags
@@ -26,13 +26,13 @@ public record MemberTagsInfo(
     }
 
     /**
-     * 빈 태그 목록을 가진 MemberTagsInfo를 생성합니다.
+     * 빈 태그 목록을 가진 FamilyMemberTagMappingInfo를 생성합니다.
      *
      * @param memberId   멤버 ID
      * @param memberName 멤버 이름
-     * @return MemberTagsInfo 인스턴스
+     * @return FamilyMemberTagMappingInfo 인스턴스
      */
-    public static MemberTagsInfo empty(final Long memberId, final String memberName) {
-        return new MemberTagsInfo(memberId, memberName, List.of());
+    public static FamilyMemberTagMappingInfo empty(final Long memberId, final String memberName) {
+        return new FamilyMemberTagMappingInfo(memberId, memberName, List.of());
     }
 }

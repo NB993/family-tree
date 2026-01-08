@@ -23,14 +23,17 @@ import io.jhchoe.familytree.docs.AcceptanceTestBase;
 import io.jhchoe.familytree.test.fixture.FamilyFixture;
 import io.restassured.http.ContentType;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
-@DisplayName("[Acceptance Test] ModifyMemberTagsController")
-class ModifyMemberTagsAcceptanceTest extends AcceptanceTestBase {
+@DisplayName("[Acceptance Test] ModifyFamilyMemberTagMappingController")
+class ModifyFamilyMemberTagMappingAcceptanceTest extends AcceptanceTestBase {
 
     @Autowired
     private FamilyJpaRepository familyJpaRepository;
@@ -178,11 +181,13 @@ class ModifyMemberTagsAcceptanceTest extends AcceptanceTestBase {
         Long memberId = createMember(familyId, 2L, "김철수");
 
         // 11개의 태그 생성
-        String tagIdsJson = "";
-        for (int i = 1; i <= 11; i++) {
-            Long tagId = createTag(familyId, "태그" + i, userId);
-            tagIdsJson += (tagIdsJson.isEmpty() ? "" : ", ") + tagId;
-        }
+        List<Long> tagIds = IntStream.rangeClosed(1, 11)
+            .mapToObj(i -> createTag(familyId, "태그" + i, userId))
+            .toList();
+
+        String tagIdsJson = tagIds.stream()
+            .map(String::valueOf)
+            .collect(Collectors.joining(", "));
 
         String requestBody = """
             {

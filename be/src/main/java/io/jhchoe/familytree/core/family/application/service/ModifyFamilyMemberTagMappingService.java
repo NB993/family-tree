@@ -1,10 +1,10 @@
 package io.jhchoe.familytree.core.family.application.service;
 
 import io.jhchoe.familytree.common.exception.FTException;
-import io.jhchoe.familytree.core.family.application.port.in.MemberTagsInfo;
-import io.jhchoe.familytree.core.family.application.port.in.MemberTagsInfo.TagSimpleInfo;
-import io.jhchoe.familytree.core.family.application.port.in.ModifyMemberTagsCommand;
-import io.jhchoe.familytree.core.family.application.port.in.ModifyMemberTagsUseCase;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagMappingInfo;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagMappingInfo.TagSimpleInfo;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberTagMappingCommand;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberTagMappingUseCase;
 import io.jhchoe.familytree.core.family.application.port.out.DeleteFamilyMemberTagMappingPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberTagPort;
@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class ModifyMemberTagsService implements ModifyMemberTagsUseCase {
+public class ModifyFamilyMemberTagMappingService implements ModifyFamilyMemberTagMappingUseCase {
 
     private final FindFamilyPort findFamilyPort;
     private final FindFamilyMemberPort findFamilyMemberPort;
@@ -39,7 +39,7 @@ public class ModifyMemberTagsService implements ModifyMemberTagsUseCase {
      */
     @Override
     @Transactional
-    public MemberTagsInfo modify(final ModifyMemberTagsCommand command, final Long currentUserId) {
+    public FamilyMemberTagMappingInfo modify(final ModifyFamilyMemberTagMappingCommand command, final Long currentUserId) {
         Objects.requireNonNull(command, "command는 null일 수 없습니다");
         Objects.requireNonNull(currentUserId, "currentUserId는 null일 수 없습니다");
 
@@ -84,21 +84,47 @@ public class ModifyMemberTagsService implements ModifyMemberTagsUseCase {
             .map(tag -> new TagSimpleInfo(tag.getId(), tag.getName(), tag.getColor()))
             .toList();
 
-        return new MemberTagsInfo(memberId, targetMember.getName(), tagInfos);
+        return new FamilyMemberTagMappingInfo(memberId, targetMember.getName(), tagInfos);
     }
 
+    /**
+     * Family가 존재하는지 검증합니다.
+     *
+     * @param familyId 검증할 Family ID
+     * @throws FTException Family가 존재하지 않는 경우
+     */
     private void validateFamilyExists(final Long familyId) {
         if (!findFamilyPort.existsById(familyId)) {
             throw new FTException(FamilyExceptionCode.FAMILY_NOT_FOUND);
         }
     }
 
+    /**
+     * 멤버가 OWNER 권한을 가지고 있는지 검증합니다.
+     *
+     * @param member 검증할 멤버
+     * @throws FTException OWNER 권한이 없는 경우
+     */
     private void validateOwnerRole(final FamilyMember member) {
         if (!member.hasRoleAtLeast(FamilyMemberRole.OWNER)) {
             throw new FTException(FamilyExceptionCode.NOT_AUTHORIZED);
         }
     }
 
+    /**
+     * 태그 ID 목록을 검증하고 유효한 태그 목록을 반환합니다.
+     * <p>
+     * 검증 내용:
+     * <ul>
+     *   <li>모든 태그가 존재하는지 확인</li>
+     *   <li>모든 태그가 해당 Family의 것인지 확인</li>
+     * </ul>
+     *
+     * @param tagIds   검증할 태그 ID 목록
+     * @param familyId Family ID
+     * @return 검증된 태그 목록
+     * @throws FTException 태그가 존재하지 않거나 다른 Family의 태그인 경우
+     */
     private List<FamilyMemberTag> validateAndGetTags(final List<Long> tagIds, final Long familyId) {
         if (tagIds.isEmpty()) {
             return List.of();

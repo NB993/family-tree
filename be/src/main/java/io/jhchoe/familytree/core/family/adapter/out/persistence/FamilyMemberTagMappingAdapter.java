@@ -71,4 +71,20 @@ public class FamilyMemberTagMappingAdapter implements
 
         return familyMemberTagMappingJpaRepository.countByTagId(tagId);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FamilyMemberTagMapping> findAllByMemberIds(final List<Long> memberIds) {
+        Objects.requireNonNull(memberIds, "memberIds must not be null");
+
+        if (memberIds.isEmpty()) {
+            return List.of();
+        }
+
+        return familyMemberTagMappingJpaRepository.findAllByMemberIds(memberIds).stream()
+            .map(FamilyMemberTagMappingJpaEntity::toFamilyMemberTagMapping)
+            .toList();
+    }
 }

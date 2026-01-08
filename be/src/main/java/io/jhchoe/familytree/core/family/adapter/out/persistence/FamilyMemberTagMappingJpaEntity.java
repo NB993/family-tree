@@ -36,6 +36,16 @@ public class FamilyMemberTagMappingJpaEntity {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    /**
+     * FamilyMemberTagMappingJpaEntity 전체 필드 생성자입니다.
+     * <p>
+     * {@link #from(FamilyMemberTagMapping)} 정적 팩토리 메서드에서만 호출됩니다.
+     *
+     * @param id        매핑 ID (새로 생성 시 null)
+     * @param tagId     태그 ID
+     * @param memberId  멤버 ID
+     * @param createdAt 생성 일시
+     */
     private FamilyMemberTagMappingJpaEntity(
         final Long id,
         final Long tagId,

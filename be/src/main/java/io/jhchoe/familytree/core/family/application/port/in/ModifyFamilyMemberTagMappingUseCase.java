@@ -5,7 +5,7 @@ import io.jhchoe.familytree.common.exception.FTException;
 /**
  * 멤버에 태그를 할당/해제하기 위한 유스케이스 인터페이스입니다.
  */
-public interface ModifyMemberTagsUseCase {
+public interface ModifyFamilyMemberTagMappingUseCase {
 
     /**
      * 멤버에 태그를 할당합니다.
@@ -17,5 +17,5 @@ public interface ModifyMemberTagsUseCase {
      * @return 수정된 멤버 태그 정보
      * @throws FTException 권한이 없거나, 멤버/태그가 존재하지 않는 경우
      */
-    MemberTagsInfo modify(final ModifyMemberTagsCommand command, final Long currentUserId);
+    FamilyMemberTagMappingInfo modify(final ModifyFamilyMemberTagMappingCommand command, final Long currentUserId);
 }

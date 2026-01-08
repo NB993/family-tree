@@ -437,11 +437,9 @@ class FindFamilyMemberServiceTest {
             when(findFamilyMemberTagPort.findAllByFamilyId(familyId))
                 .thenReturn(List.of(tag1, tag2));
 
-            // Mocking: 각 멤버의 태그 매핑 조회
-            when(findFamilyMemberTagMappingPort.findAllByMemberId(2L))
-                .thenReturn(List.of()); // 현재 사용자는 태그 없음
-            when(findFamilyMemberTagMappingPort.findAllByMemberId(3L))
-                .thenReturn(List.of(mapping1, mapping2)); // 다른 구성원은 태그 2개
+            // Mocking: 배치 조회로 모든 멤버의 태그 매핑 한번에 조회
+            when(findFamilyMemberTagMappingPort.findAllByMemberIds(List.of(3L, 2L)))
+                .thenReturn(List.of(mapping1, mapping2)); // 다른 구성원(3L)에만 태그 2개
 
             // when
             List<FamilyMemberWithTagsInfo> result = findFamilyMemberService.findAll(query);

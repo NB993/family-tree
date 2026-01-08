@@ -7,7 +7,7 @@ import io.jhchoe.familytree.core.family.adapter.in.response.FamilyMemberWithRela
 import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberWithTagsInfo;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberUseCase;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMembersWithTagsQuery;
-import io.jhchoe.familytree.core.family.application.port.in.MemberTagsInfo.TagSimpleInfo;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagMappingInfo.TagSimpleInfo;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

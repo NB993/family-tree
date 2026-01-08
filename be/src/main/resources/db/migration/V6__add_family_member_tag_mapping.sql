@@ -15,7 +15,7 @@ CREATE TABLE family_member_tag_mapping (
 );
 
 -- 인덱스 생성
-CREATE INDEX idx_mapping_tag_id ON family_member_tag_mapping(tag_id);
+-- UK(tag_id, member_id)가 tag_id 검색을 커버하므로 idx_mapping_tag_id 인덱스는 생략
 CREATE INDEX idx_mapping_member_id ON family_member_tag_mapping(member_id);
 
 -- 테이블 및 컬럼 코멘트

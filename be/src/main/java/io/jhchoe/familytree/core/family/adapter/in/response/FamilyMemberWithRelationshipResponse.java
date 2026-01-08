@@ -56,7 +56,7 @@ public class FamilyMemberWithRelationshipResponse {
      * @param member 가족 구성원 정보 (null 불허)
      * @param relationship 현재 사용자와의 관계 정보 (Optional)
      */
-    public FamilyMemberWithRelationshipResponse(FamilyMember member, Optional<FamilyMemberRelationship> relationship) {
+    public FamilyMemberWithRelationshipResponse(final FamilyMember member, final Optional<FamilyMemberRelationship> relationship) {
         this(member, relationship, Collections.emptyList());
     }
 
@@ -68,9 +68,9 @@ public class FamilyMemberWithRelationshipResponse {
      * @param tags 멤버에 할당된 태그 목록
      */
     public FamilyMemberWithRelationshipResponse(
-        FamilyMember member,
-        Optional<FamilyMemberRelationship> relationship,
-        List<TagInfo> tags
+        final FamilyMember member,
+        final Optional<FamilyMemberRelationship> relationship,
+        final List<TagInfo> tags
     ) {
         Objects.requireNonNull(member, "member must not be null");
         Objects.requireNonNull(relationship, "relationship must not be null (use Optional.empty() for no relationship)");

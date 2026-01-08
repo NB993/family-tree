@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public record FamilyMemberWithTagsInfo(
     FamilyMember member,
-    List<MemberTagsInfo.TagSimpleInfo> tags
+    List<FamilyMemberTagMappingInfo.TagSimpleInfo> tags
 ) {
 
     public FamilyMemberWithTagsInfo {
@@ -26,7 +26,7 @@ public record FamilyMemberWithTagsInfo(
      * @param member 멤버 정보
      * @return FamilyMemberWithTagsInfo 인스턴스
      */
-    public static FamilyMemberWithTagsInfo withoutTags(final FamilyMember member) {
+    public static FamilyMemberWithTagsInfo newWithoutTags(final FamilyMember member) {
         return new FamilyMemberWithTagsInfo(member, List.of());
     }
 }

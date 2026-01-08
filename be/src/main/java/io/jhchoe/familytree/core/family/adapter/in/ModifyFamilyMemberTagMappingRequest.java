@@ -7,10 +7,10 @@ import java.util.List;
  *
  * @param tagIds 할당할 태그 ID 목록
  */
-public record ModifyMemberTagsRequest(
+public record ModifyFamilyMemberTagMappingRequest(
     List<Long> tagIds
 ) {
-    public ModifyMemberTagsRequest {
+    public ModifyFamilyMemberTagMappingRequest {
         if (tagIds == null) {
             tagIds = List.of();
         }

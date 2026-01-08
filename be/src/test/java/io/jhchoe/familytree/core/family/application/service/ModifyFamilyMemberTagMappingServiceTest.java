@@ -1,18 +1,15 @@
 package io.jhchoe.familytree.core.family.application.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.jhchoe.familytree.common.exception.FTException;
-import io.jhchoe.familytree.core.family.application.port.in.MemberTagsInfo;
-import io.jhchoe.familytree.core.family.application.port.in.ModifyMemberTagsCommand;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagMappingInfo;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberTagMappingCommand;
 import io.jhchoe.familytree.core.family.application.port.out.DeleteFamilyMemberTagMappingPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberTagPort;
@@ -36,14 +33,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * ModifyMemberTagsService 단위 테스트.
+ * ModifyFamilyMemberTagMappingService 단위 테스트.
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("[Unit Test] ModifyMemberTagsServiceTest")
-class ModifyMemberTagsServiceTest {
+@DisplayName("[Unit Test] ModifyFamilyMemberTagMappingServiceTest")
+class ModifyFamilyMemberTagMappingServiceTest {
 
     @InjectMocks
-    private ModifyMemberTagsService sut;
+    private ModifyFamilyMemberTagMappingService sut;
 
     @Mock
     private FindFamilyPort findFamilyPort;
@@ -73,7 +70,7 @@ class ModifyMemberTagsServiceTest {
             Long currentUserId = 100L;
             List<Long> tagIds = List.of(1L, 2L);
 
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             FamilyMember targetMember = createMember(memberId, familyId, 200L, "홍길동");
             FamilyMember currentMember = createOwnerMember(familyId, currentUserId);
@@ -88,7 +85,7 @@ class ModifyMemberTagsServiceTest {
             when(findFamilyMemberTagPort.findAllByIds(tagIds)).thenReturn(List.of(tag1, tag2));
 
             // when
-            MemberTagsInfo result = sut.modify(command, currentUserId);
+            FamilyMemberTagMappingInfo result = sut.modify(command, currentUserId);
 
             // then
             assertThat(result.memberId()).isEqualTo(memberId);
@@ -108,7 +105,7 @@ class ModifyMemberTagsServiceTest {
             Long currentUserId = 100L;
             List<Long> tagIds = Collections.emptyList();
 
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             FamilyMember targetMember = createMember(memberId, familyId, 200L, "홍길동");
             FamilyMember currentMember = createOwnerMember(familyId, currentUserId);
@@ -120,7 +117,7 @@ class ModifyMemberTagsServiceTest {
             when(findFamilyMemberPort.findById(memberId)).thenReturn(Optional.of(targetMember));
 
             // when
-            MemberTagsInfo result = sut.modify(command, currentUserId);
+            FamilyMemberTagMappingInfo result = sut.modify(command, currentUserId);
 
             // then
             assertThat(result.memberId()).isEqualTo(memberId);
@@ -139,7 +136,7 @@ class ModifyMemberTagsServiceTest {
             Long currentUserId = 100L;
             List<Long> tagIds = List.of(3L); // 새 태그만
 
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             FamilyMember targetMember = createMember(memberId, familyId, 200L, "홍길동");
             FamilyMember currentMember = createOwnerMember(familyId, currentUserId);
@@ -153,7 +150,7 @@ class ModifyMemberTagsServiceTest {
             when(findFamilyMemberTagPort.findAllByIds(tagIds)).thenReturn(List.of(tag3));
 
             // when
-            MemberTagsInfo result = sut.modify(command, currentUserId);
+            FamilyMemberTagMappingInfo result = sut.modify(command, currentUserId);
 
             // then
             assertThat(result.tags()).hasSize(1);
@@ -178,7 +175,7 @@ class ModifyMemberTagsServiceTest {
             Long currentUserId = 100L;
             List<Long> tagIds = List.of(1L);
 
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             FamilyMember memberOnly = createMemberOnly(familyId, currentUserId);
 
@@ -205,7 +202,7 @@ class ModifyMemberTagsServiceTest {
             Long currentUserId = 100L;
             List<Long> tagIds = List.of(1L);
 
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             // Mocking
             when(findFamilyPort.existsById(familyId)).thenReturn(true);
@@ -235,7 +232,7 @@ class ModifyMemberTagsServiceTest {
             Long currentUserId = 100L;
             List<Long> tagIds = List.of(1L);
 
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             FamilyMember currentMember = createOwnerMember(familyId, currentUserId);
 
@@ -264,7 +261,7 @@ class ModifyMemberTagsServiceTest {
             Long currentUserId = 100L;
             List<Long> tagIds = List.of(1L);
 
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             FamilyMember currentMember = createOwnerMember(familyId, currentUserId);
             FamilyMember memberInOtherFamily = createMember(memberId, otherFamilyId, 200L, "홍길동");
@@ -298,7 +295,7 @@ class ModifyMemberTagsServiceTest {
             Long currentUserId = 100L;
             List<Long> tagIds = List.of(1L, 999L); // 999L은 존재하지 않음
 
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             FamilyMember targetMember = createMember(memberId, familyId, 200L, "홍길동");
             FamilyMember currentMember = createOwnerMember(familyId, currentUserId);
@@ -330,7 +327,7 @@ class ModifyMemberTagsServiceTest {
             Long currentUserId = 100L;
             List<Long> tagIds = List.of(1L, 2L);
 
-            ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(familyId, memberId, tagIds);
+            ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(familyId, memberId, tagIds);
 
             FamilyMember targetMember = createMember(memberId, familyId, 200L, "홍길동");
             FamilyMember currentMember = createOwnerMember(familyId, currentUserId);

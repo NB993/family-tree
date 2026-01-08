@@ -6,7 +6,7 @@ import io.jhchoe.familytree.core.family.application.port.in.FindActiveFamilyMemb
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberByIdQuery;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberUseCase;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMembersWithTagsQuery;
-import io.jhchoe.familytree.core.family.application.port.in.MemberTagsInfo.TagSimpleInfo;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagMappingInfo.TagSimpleInfo;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberTagMappingPort;
 import io.jhchoe.familytree.core.family.application.port.out.FindFamilyMemberTagPort;
@@ -22,8 +22,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Family 구성원 조회 서비스입니다.
  * 기존 구현된 FindFamilyMemberPort를 활용하여 구성원을 조회하고 정렬합니다.
  */
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class FindFamilyMemberService implements FindFamilyMemberUseCase {
@@ -194,7 +197,6 @@ public class FindFamilyMemberService implements FindFamilyMemberUseCase {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
     public List<FamilyMemberWithTagsInfo> findAll(FindFamilyMembersWithTagsQuery query) {
         Objects.requireNonNull(query, "query must not be null");
 
@@ -215,13 +217,33 @@ public class FindFamilyMemberService implements FindFamilyMemberUseCase {
         Map<Long, FamilyMemberTag> tagMap = allTags.stream()
             .collect(Collectors.toMap(FamilyMemberTag::getId, Function.identity()));
 
-        // 5. 각 멤버에 태그 정보 매핑
+        // 5. 배치 조회로 N+1 문제 해결
+        List<Long> memberIds = filteredMembers.stream()
+            .map(FamilyMember::getId)
+            .toList();
+
+        List<FamilyMemberTagMapping> allMappings = findFamilyMemberTagMappingPort.findAllByMemberIds(memberIds);
+
+        // 매핑을 memberId별로 그룹화
+        Map<Long, List<FamilyMemberTagMapping>> mappingsByMemberId = allMappings.stream()
+            .collect(Collectors.groupingBy(FamilyMemberTagMapping::getMemberId));
+
+        // orphan 태그 확인 및 로깅
+        Set<Long> existingTagIds = tagMap.keySet();
+        allMappings.stream()
+            .filter(mapping -> !existingTagIds.contains(mapping.getTagId()))
+            .forEach(mapping -> log.warn(
+                "Orphan tag mapping detected: memberId={}, tagId={}",
+                mapping.getMemberId(), mapping.getTagId()
+            ));
+
+        // 6. 각 멤버에 태그 정보 매핑
         return filteredMembers.stream()
             .map(member -> {
-                List<FamilyMemberTagMapping> mappings =
-                    findFamilyMemberTagMappingPort.findAllByMemberId(member.getId());
+                List<FamilyMemberTagMapping> memberMappings =
+                    mappingsByMemberId.getOrDefault(member.getId(), List.of());
 
-                List<TagSimpleInfo> tags = mappings.stream()
+                List<TagSimpleInfo> tags = memberMappings.stream()
                     .map(mapping -> tagMap.get(mapping.getTagId()))
                     .filter(tag -> tag != null)
                     .map(tag -> new TagSimpleInfo(tag.getId(), tag.getName(), tag.getColor()))

@@ -23,4 +23,14 @@ public interface FindFamilyMemberTagMappingPort {
      * @return 멤버 수
      */
     int countByTagId(final Long tagId);
+
+    /**
+     * 여러 멤버의 모든 태그 매핑을 일괄 조회합니다.
+     * <p>
+     * N+1 문제 해결을 위한 배치 조회 메서드입니다.
+     *
+     * @param memberIds 멤버 ID 목록
+     * @return 태그 매핑 목록
+     */
+    List<FamilyMemberTagMapping> findAllByMemberIds(final List<Long> memberIds);
 }

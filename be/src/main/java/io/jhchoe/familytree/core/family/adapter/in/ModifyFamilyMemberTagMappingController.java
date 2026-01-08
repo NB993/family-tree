@@ -2,9 +2,9 @@ package io.jhchoe.familytree.core.family.adapter.in;
 
 import io.jhchoe.familytree.common.auth.domain.AuthFTUser;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
-import io.jhchoe.familytree.core.family.application.port.in.MemberTagsInfo;
-import io.jhchoe.familytree.core.family.application.port.in.ModifyMemberTagsCommand;
-import io.jhchoe.familytree.core.family.application.port.in.ModifyMemberTagsUseCase;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagMappingInfo;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberTagMappingCommand;
+import io.jhchoe.familytree.core.family.application.port.in.ModifyFamilyMemberTagMappingUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/families")
 @RestController
-public class ModifyMemberTagsController {
+public class ModifyFamilyMemberTagMappingController {
 
-    private final ModifyMemberTagsUseCase modifyMemberTagsUseCase;
+    private final ModifyFamilyMemberTagMappingUseCase modifyFamilyMemberTagMappingUseCase;
 
     /**
      * 멤버에게 태그를 할당합니다.
@@ -34,20 +34,20 @@ public class ModifyMemberTagsController {
      * @return 할당된 태그 정보
      */
     @PutMapping("/{familyId}/members/{memberId}/tags")
-    public ResponseEntity<ModifyMemberTagsResponse> modify(
-        @RequestBody @Valid final ModifyMemberTagsRequest request,
-        @AuthFTUser final FTUser user,
+    public ResponseEntity<ModifyFamilyMemberTagMappingResponse> modify(
         @PathVariable final Long familyId,
-        @PathVariable final Long memberId
+        @PathVariable final Long memberId,
+        @RequestBody @Valid final ModifyFamilyMemberTagMappingRequest request,
+        @AuthFTUser final FTUser user
     ) {
-        ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(
+        ModifyFamilyMemberTagMappingCommand command = new ModifyFamilyMemberTagMappingCommand(
             familyId,
             memberId,
             request.tagIds()
         );
 
-        MemberTagsInfo result = modifyMemberTagsUseCase.modify(command, user.getId());
-        ModifyMemberTagsResponse response = ModifyMemberTagsResponse.from(result);
+        FamilyMemberTagMappingInfo result = modifyFamilyMemberTagMappingUseCase.modify(command, user.getId());
+        ModifyFamilyMemberTagMappingResponse response = ModifyFamilyMemberTagMappingResponse.from(result);
 
         return ResponseEntity.ok(response);
     }
