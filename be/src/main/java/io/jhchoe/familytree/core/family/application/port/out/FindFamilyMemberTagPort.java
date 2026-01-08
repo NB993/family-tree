@@ -41,4 +41,12 @@ public interface FindFamilyMemberTagPort {
      * @return 태그 수
      */
     int countByFamilyId(Long familyId);
+
+    /**
+     * ID 목록으로 태그들을 조회합니다.
+     *
+     * @param ids 태그 ID 목록
+     * @return 조회된 태그 목록
+     */
+    List<FamilyMemberTag> findAllByIds(List<Long> ids);
 }

@@ -1182,12 +1182,13 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 | 7 | DB 마이그레이션 (family_member_tag_mapping) | 수동 |
 
 **체크리스트**:
-- [ ] 매핑 도메인 테스트 통과
-- [ ] 멤버 태그 할당 서비스 테스트 통과
-- [ ] 멤버 조회 시 태그 포함 확인
-- [ ] 멤버당 10개 태그 제한 테스트
-- [ ] `./gradlew test` 전체 통과
-- [ ] PR 생성 (`create-pr` 스킬)
+- [x] 매핑 도메인 테스트 통과
+- [x] 멤버 태그 할당 서비스 테스트 통과
+- [x] 멤버 조회 시 태그 포함 확인
+- [x] 멤버당 10개 태그 제한 테스트
+- [x] `./gradlew test` 전체 통과
+- [x] Controller Port 의존 제거 리팩토링 완료
+- [x] PR 생성 (`create-pr` 스킬) - PR #29
 
 ---
 
@@ -1278,10 +1279,10 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/domain/FamilyMemberTagMapping.java`
 
-- [ ] 필드 정의 (id, tagId, memberId, createdAt)
-- [ ] `newMapping(tagId, memberId)` 팩토리 메서드
-- [ ] `withId(...)` 팩토리 메서드
-- [ ] 단위 테스트: `FamilyMemberTagMappingTest.java`
+- [x] 필드 정의 (id, tagId, memberId, createdAt)
+- [x] `newMapping(tagId, memberId)` 팩토리 메서드
+- [x] `withId(...)` 팩토리 메서드
+- [x] 단위 테스트: `FamilyMemberTagMappingTest.java`
 
 ---
 
@@ -1302,10 +1303,10 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/out/persistence/FamilyMemberTagMappingJpaEntity.java`
 
-- [ ] `@Entity`, `@Table(name = "family_member_tag_mapping")` 설정
-- [ ] 컬럼 매핑 (id, tag_id, member_id, created_at)
-- [ ] `from(FamilyMemberTagMapping)` 변환 메서드
-- [ ] `toFamilyMemberTagMapping()` 변환 메서드
+- [x] `@Entity`, `@Table(name = "family_member_tag_mapping")` 설정
+- [x] 컬럼 매핑 (id, tag_id, member_id, created_at)
+- [x] `from(FamilyMemberTagMapping)` 변환 메서드
+- [x] `toFamilyMemberTagMapping()` 변환 메서드
 
 #### 2.2 JPA Repository
 
@@ -1319,10 +1320,10 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 **파일**: `be/src/main/java/io/jhchoe/familytree/core/family/adapter/out/persistence/FamilyMemberTagMappingJpaRepository.java`
 
 - [ ] `findAllByTagId(Long tagId)` - 태그에 할당된 멤버 조회
-- [ ] `findAllByMemberId(Long memberId)` - 멤버에 할당된 태그 조회
+- [x] `findAllByMemberId(Long memberId)` - 멤버에 할당된 태그 조회
 - [ ] `deleteAllByTagId(Long tagId)` - 태그 삭제 시 매핑 삭제
-- [ ] `deleteAllByMemberId(Long memberId)` - 멤버 삭제 시 매핑 삭제
-- [ ] `countByTagId(Long tagId)` - 태그별 멤버 수 카운트
+- [x] `deleteAllByMemberId(Long memberId)` - 멤버 삭제 시 매핑 삭제
+- [x] `countByTagId(Long tagId)` - 태그별 멤버 수 카운트
 
 #### 2.3 Adapter (Port 구현)
 
@@ -1335,10 +1336,10 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 - [x] `FindFamilyMemberTagPort.findByFamilyIdAndName(Long, String)` → 이름 중복 체크
 - [x] `FindFamilyMemberTagPort.countByFamilyId(Long)` → 태그 수 카운트
 - [x] `DeleteFamilyMemberTagPort.deleteById(Long)` → 삭제
-- [ ] `SaveFamilyMemberTagMappingPort.saveAll(List<FamilyMemberTagMapping>)` → 매핑 저장
-- [ ] `DeleteFamilyMemberTagMappingPort.deleteAllByMemberId(Long)` → 멤버 매핑 삭제
-- [ ] `FindFamilyMemberTagMappingPort.findAllByMemberId(Long)` → 멤버별 태그 조회
-- [ ] `FindFamilyMemberTagMappingPort.countByTagId(Long)` → 태그별 멤버 수
+- [x] `SaveFamilyMemberTagMappingPort.saveAll(List<FamilyMemberTagMapping>)` → 매핑 저장
+- [x] `DeleteFamilyMemberTagMappingPort.deleteAllByMemberId(Long)` → 멤버 매핑 삭제
+- [x] `FindFamilyMemberTagMappingPort.findAllByMemberId(Long)` → 멤버별 태그 조회
+- [x] `FindFamilyMemberTagMappingPort.countByTagId(Long)` → 태그별 멤버 수
 
 - [x] 통합 테스트: `FamilyMemberTagAdapterTest.java`
 
@@ -1347,7 +1348,7 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 **파일**: `be/src/main/resources/db/migration/V{N}__add_family_member_tag.sql`
 
 - [x] `family_member_tag` 테이블 생성
-- [ ] `family_member_tag_mapping` 테이블 생성
+- [x] `family_member_tag_mapping` 테이블 생성
 - [x] 인덱스 생성
 - [x] FK 제약조건 (CASCADE DELETE)
 - [x] UNIQUE 제약조건
@@ -1423,20 +1424,20 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 #### 3.5 멤버 태그 할당
 
 **Command**: `ModifyMemberTagsCommand.java`
-- [ ] familyId, memberId, tagIds 필드
+- [x] familyId, memberId, tagIds 필드
 
 **UseCase**: `ModifyMemberTagsUseCase.java`
-- [ ] `MemberTagsInfo modify(Long currentUserId, ModifyMemberTagsCommand command)`
+- [x] `MemberTagsInfo modify(Long currentUserId, ModifyMemberTagsCommand command)`
 
 **Service**: `ModifyMemberTagsService.java`
-- [ ] OWNER 권한 검증
-- [ ] 멤버 존재 및 Family 일치 검증
-- [ ] tagIds 전체 유효성 검증 (존재 여부, Family 일치)
-- [ ] 기존 매핑 삭제 후 새 매핑 저장 (전체 교체 방식)
-- [ ] 단위 테스트: `ModifyMemberTagsServiceTest.java`
+- [x] OWNER 권한 검증
+- [x] 멤버 존재 및 Family 일치 검증
+- [x] tagIds 전체 유효성 검증 (존재 여부, Family 일치)
+- [x] 기존 매핑 삭제 후 새 매핑 저장 (전체 교체 방식)
+- [x] 단위 테스트: `ModifyMemberTagsServiceTest.java`
 
 **DTO**: `MemberTagsInfo.java`
-- [ ] memberId, memberName, tags (id, name 리스트)
+- [x] memberId, memberName, tags (id, name 리스트)
 
 ---
 
@@ -1460,7 +1461,7 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 | POST | `/api/families/{familyId}/tags` | `SaveFamilyMemberTagController` | ✅ |
 | PUT | `/api/families/{familyId}/tags/{tagId}` | `ModifyFamilyMemberTagController` | ✅ |
 | DELETE | `/api/families/{familyId}/tags/{tagId}` | `DeleteFamilyMemberTagController` | ✅ |
-| PUT | `/api/families/{familyId}/members/{memberId}/tags` | (Sprint 2) | ⏳ |
+| PUT | `/api/families/{familyId}/members/{memberId}/tags` | `ModifyMemberTagsController` | ✅ |
 
 #### 4.2 Request DTO
 
@@ -1468,7 +1469,7 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 
 - [x] `SaveFamilyMemberTagRequest.java` - name (color는 서버에서 랜덤 배정)
 - [x] `ModifyFamilyMemberTagRequest.java` - name, **color** (선택)
-- [ ] `ModifyMemberTagsRequest.java` - tagIds
+- [x] `ModifyMemberTagsRequest.java` - tagIds
 
 #### 4.3 Response DTO
 
@@ -1476,16 +1477,16 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 
 - [x] `FamilyMemberTagResponse.java` - id, name, **color**, memberCount, createdAt
 - [x] `FamilyMemberTagListResponse.java` - tags, totalCount, maxCount
-- [ ] `MemberTagsResponse.java` - memberId, memberName, tags (id, name, **color**)
-- [ ] `TagSimpleResponse.java` - id, name, **color** (멤버 조회 시 태그 정보용)
+- [x] `ModifyMemberTagsResponse.java` - memberId, memberName, tags (id, name, **color**)
+- [x] `TagInfo` record - id, name, **color** (멤버 조회 시 태그 정보용, FamilyMemberWithRelationshipResponse 내부)
 
 #### 4.4 기존 API 수정
 
 **파일 수정**: `FamilyMemberWithRelationshipResponse.java`
-- [ ] `tags` 필드 추가 (List<TagSimpleResponse>)
+- [x] `tags` 필드 추가 (List<TagInfo>)
 
-**파일 수정**: `FindFamilyHomeMemberService.java`
-- [ ] 멤버 조회 시 태그 정보 함께 조회
+**파일 수정**: `FindFamilyHomeMemberController.java`
+- [x] 멤버 조회 시 태그 정보 함께 조회
 
 #### 4.5 REST Docs 테스트
 

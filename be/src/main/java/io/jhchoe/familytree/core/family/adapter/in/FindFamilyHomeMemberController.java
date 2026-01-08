@@ -3,19 +3,19 @@ package io.jhchoe.familytree.core.family.adapter.in;
 import io.jhchoe.familytree.common.auth.domain.AuthFTUser;
 import io.jhchoe.familytree.common.auth.domain.FTUser;
 import io.jhchoe.familytree.core.family.adapter.in.response.FamilyMemberWithRelationshipResponse;
-import io.jhchoe.familytree.core.family.adapter.in.response.FamilyMembersWithRelationshipsResponse;
-import io.jhchoe.familytree.core.family.application.port.in.FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery;
+import io.jhchoe.familytree.core.family.adapter.in.response.FamilyMemberWithRelationshipResponse.TagInfo;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberWithTagsInfo;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberUseCase;
-import io.jhchoe.familytree.core.family.domain.FamilyMember;
+import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMembersWithTagsQuery;
+import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagMappingInfo.TagSimpleInfo;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Family 홈 구성원 목록 조회를 위한 REST 컨트롤러입니다.
@@ -31,7 +31,7 @@ public class FindFamilyHomeMemberController {
      * Family 홈용 구성원 목록을 조회합니다.
      *
      * @param familyId 조회할 Family ID
-     * @param ftUser 인증된 사용자 정보
+     * @param ftUser   인증된 사용자 정보
      * @return Family 홈 구성원 목록
      */
     @GetMapping("/{familyId}/home/members")
@@ -39,26 +39,23 @@ public class FindFamilyHomeMemberController {
         @PathVariable Long familyId,
         @AuthFTUser FTUser ftUser
     ) {
-        Long currentUserId = ftUser.getId();
+        // 1. Query 생성
+        FindFamilyMembersWithTagsQuery query =
+            new FindFamilyMembersWithTagsQuery(familyId, ftUser.getId());
 
-        // 1. 전체 구성원 조회 (내부에서 권한 검증 포함)
-        FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery memberQuery =
-            new FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery(familyId, currentUserId);
-        List<FamilyMember> members = findFamilyMemberUseCase.findAll(memberQuery);
+        // 2. UseCase 호출 (태그 포함 조회)
+        List<FamilyMemberWithTagsInfo> membersWithTags = findFamilyMemberUseCase.findAll(query);
 
-        // 2. 현재 사용자의 memberId 찾기
-        Long currentMemberId = members.stream()
-            .filter(m -> m.getUserId().equals(currentUserId))
-            .findFirst()
-            .map(FamilyMember::getId)
-            .orElseThrow(() -> new IllegalStateException("현재 사용자의 구성원 정보를 찾을 수 없습니다."));
-
-        // 3. 응답 변환 (관계 정보 없이)
-        FamilyMembersWithRelationshipsResponse responseDTO =
-            new FamilyMembersWithRelationshipsResponse(members, Collections.emptyList());
-
-        List<FamilyMemberWithRelationshipResponse> response =
-            responseDTO.toMemberWithRelationships(currentMemberId);
+        // 3. Response DTO 변환
+        List<FamilyMemberWithRelationshipResponse> response = membersWithTags.stream()
+            .map(info -> new FamilyMemberWithRelationshipResponse(
+                info.member(),
+                Optional.empty(),
+                info.tags().stream()
+                    .map(tag -> new TagInfo(tag.id(), tag.name(), tag.color()))
+                    .toList()
+            ))
+            .toList();
 
         return ResponseEntity.ok(response);
     }

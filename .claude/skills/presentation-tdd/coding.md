@@ -94,6 +94,12 @@ public ResponseEntity<FindFamilyResponse> find(@PathVariable Long id) {
 @Autowired
 private FamilyJpaRepository familyRepository;  // 금지
 
+// ❌ 직접 Port(아웃바운드 포트) 호출 금지 - UseCase만 의존해야 함
+@Autowired
+private FindFamilyMemberTagPort findFamilyMemberTagPort;  // 금지
+@Autowired
+private SaveFamilyPort saveFamilyPort;  // 금지
+
 // ❌ 트랜잭션 관리 금지
 @Transactional  // Controller에서 금지
 public ResponseEntity<Long> save(...) { }

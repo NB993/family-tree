@@ -88,6 +88,7 @@ public record FindFamilyResponse(
 - 비즈니스 로직 처리
 - 예외 발생 (검증 제외)
 - 직접 Repository 호출
+- 직접 Port(아웃바운드 포트) 호출 ← **UseCase만 의존**
 - 트랜잭션 관리
 
 ## 어노테이션 사용

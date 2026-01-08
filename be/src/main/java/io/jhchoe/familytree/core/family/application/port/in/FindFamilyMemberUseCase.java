@@ -29,4 +29,14 @@ public interface FindFamilyMemberUseCase {
      * @throws IllegalArgumentException query가 null이거나 유효하지 않은 경우
      */
     List<FamilyMember> findAll(FindActiveFamilyMembersByFamilyIdAndCurrentUserQuery query);
+
+    /**
+     * Family 구성원 목록을 태그 정보와 함께 조회합니다.
+     * 각 멤버에 할당된 태그 목록이 함께 반환됩니다.
+     *
+     * @param query 태그 포함 복수 조회 조건을 담은 쿼리 객체
+     * @return 태그 정보가 포함된 Family 구성원 목록
+     * @throws IllegalArgumentException query가 null이거나 유효하지 않은 경우
+     */
+    List<FamilyMemberWithTagsInfo> findAll(FindFamilyMembersWithTagsQuery query);
 }

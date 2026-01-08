@@ -4,57 +4,91 @@ import io.jhchoe.familytree.core.family.domain.BirthdayType;
 import io.jhchoe.familytree.core.family.domain.FamilyMember;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationship;
 import io.jhchoe.familytree.core.family.domain.FamilyMemberRelationshipType;
+import io.jhchoe.familytree.core.family.domain.FamilyMemberTag;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * Family 홈 API용 구성원과 관계 정보를 담는 응답 DTO입니다.
  * 구성원의 기본 정보와 현재 사용자와의 관계 정보를 포함합니다.
- * 
+ *
  * <p>포함 정보:</p>
  * <ul>
  *   <li>구성원 기본 정보 (이름, 나이, 생년월일, 연락처 등)</li>
  *   <li>현재 사용자와의 관계 정보 (있는 경우)</li>
  *   <li>관계 표시명 (설정된 관계가 있는 경우)</li>
+ *   <li>태그 정보 목록</li>
  * </ul>
  */
 public class FamilyMemberWithRelationshipResponse {
-    
+
     /**
      * 가족 구성원 정보
      */
     private final FamilyMember member;
-    
+
     /**
      * 현재 사용자와의 관계 정보 (없을 수 있음)
      */
     private final Optional<FamilyMemberRelationship> relationship;
-    
+
     /**
      * 관계 표시명 (관계가 설정된 경우 표시할 한글명)
      */
     private final String relationshipDisplayName;
-    
+
     /**
      * 관계 설정 여부
      */
     private final boolean hasRelationship;
-    
+
+    /**
+     * 멤버에 할당된 태그 목록
+     */
+    private final List<TagInfo> tags;
+
     /**
      * FamilyMemberWithRelationshipResponse 생성자입니다.
-     * 
+     *
      * @param member 가족 구성원 정보 (null 불허)
      * @param relationship 현재 사용자와의 관계 정보 (Optional)
      */
-    public FamilyMemberWithRelationshipResponse(FamilyMember member, Optional<FamilyMemberRelationship> relationship) {
+    public FamilyMemberWithRelationshipResponse(final FamilyMember member, final Optional<FamilyMemberRelationship> relationship) {
+        this(member, relationship, Collections.emptyList());
+    }
+
+    /**
+     * FamilyMemberWithRelationshipResponse 생성자입니다.
+     *
+     * @param member 가족 구성원 정보 (null 불허)
+     * @param relationship 현재 사용자와의 관계 정보 (Optional)
+     * @param tags 멤버에 할당된 태그 목록
+     */
+    public FamilyMemberWithRelationshipResponse(
+        final FamilyMember member,
+        final Optional<FamilyMemberRelationship> relationship,
+        final List<TagInfo> tags
+    ) {
         Objects.requireNonNull(member, "member must not be null");
         Objects.requireNonNull(relationship, "relationship must not be null (use Optional.empty() for no relationship)");
-        
+
         this.member = member;
         this.relationship = relationship;
         this.hasRelationship = relationship.isPresent();
         this.relationshipDisplayName = calculateRelationshipDisplayName(relationship);
+        this.tags = tags != null ? tags : Collections.emptyList();
+    }
+
+    /**
+     * 태그 간단 정보 DTO입니다.
+     */
+    public record TagInfo(Long id, String name, String color) {
+        public static TagInfo from(FamilyMemberTag tag) {
+            return new TagInfo(tag.getId(), tag.getName(), tag.getColor());
+        }
     }
     
     /**
@@ -86,13 +120,22 @@ public class FamilyMemberWithRelationshipResponse {
     
     /**
      * 관계 설정 여부를 반환합니다.
-     * 
+     *
      * @return 관계 설정 여부
      */
     public boolean hasRelationship() {
         return hasRelationship;
     }
-    
+
+    /**
+     * 멤버에 할당된 태그 목록을 반환합니다.
+     *
+     * @return 태그 목록
+     */
+    public List<TagInfo> getTags() {
+        return tags;
+    }
+
     /**
      * 구성원 ID를 반환합니다.
      * 
