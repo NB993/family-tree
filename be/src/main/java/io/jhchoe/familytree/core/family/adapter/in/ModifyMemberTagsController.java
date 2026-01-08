@@ -7,6 +7,7 @@ import io.jhchoe.familytree.core.family.application.port.in.ModifyMemberTagsComm
 import io.jhchoe.familytree.core.family.application.port.in.ModifyMemberTagsUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,10 +35,10 @@ public class ModifyMemberTagsController {
      */
     @PutMapping("/{familyId}/members/{memberId}/tags")
     public ResponseEntity<ModifyMemberTagsResponse> modify(
+        @RequestBody @Valid final ModifyMemberTagsRequest request,
+        @AuthFTUser final FTUser user,
         @PathVariable final Long familyId,
-        @PathVariable final Long memberId,
-        @RequestBody final ModifyMemberTagsRequest request,
-        @AuthFTUser final FTUser user
+        @PathVariable final Long memberId
     ) {
         ModifyMemberTagsCommand command = new ModifyMemberTagsCommand(
             familyId,

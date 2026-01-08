@@ -14,7 +14,7 @@ public interface FindFamilyMemberTagMappingPort {
      * @param memberId 멤버 ID
      * @return 태그 매핑 목록
      */
-    List<FamilyMemberTagMapping> findAllByMemberId(Long memberId);
+    List<FamilyMemberTagMapping> findAllByMemberId(final Long memberId);
 
     /**
      * 특정 태그에 매핑된 멤버 수를 조회합니다.
@@ -22,5 +22,5 @@ public interface FindFamilyMemberTagMappingPort {
      * @param tagId 태그 ID
      * @return 멤버 수
      */
-    int countByTagId(Long tagId);
+    int countByTagId(final Long tagId);
 }

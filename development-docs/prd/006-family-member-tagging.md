@@ -1187,7 +1187,8 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 - [x] 멤버 조회 시 태그 포함 확인
 - [x] 멤버당 10개 태그 제한 테스트
 - [x] `./gradlew test` 전체 통과
-- [ ] PR 생성 (`create-pr` 스킬)
+- [x] Controller Port 의존 제거 리팩토링 완료
+- [x] PR 생성 (`create-pr` 스킬) - PR #29
 
 ---
 

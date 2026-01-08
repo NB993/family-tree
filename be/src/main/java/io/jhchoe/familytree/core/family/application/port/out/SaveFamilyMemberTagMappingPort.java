@@ -13,5 +13,5 @@ public interface SaveFamilyMemberTagMappingPort {
      *
      * @param mappings 저장할 매핑 목록
      */
-    void saveAll(List<FamilyMemberTagMapping> mappings);
+    void saveAll(final List<FamilyMemberTagMapping> mappings);
 }

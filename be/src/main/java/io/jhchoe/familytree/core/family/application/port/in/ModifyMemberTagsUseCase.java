@@ -17,5 +17,5 @@ public interface ModifyMemberTagsUseCase {
      * @return 수정된 멤버 태그 정보
      * @throws FTException 권한이 없거나, 멤버/태그가 존재하지 않는 경우
      */
-    MemberTagsInfo modify(ModifyMemberTagsCommand command, Long currentUserId);
+    MemberTagsInfo modify(final ModifyMemberTagsCommand command, final Long currentUserId);
 }

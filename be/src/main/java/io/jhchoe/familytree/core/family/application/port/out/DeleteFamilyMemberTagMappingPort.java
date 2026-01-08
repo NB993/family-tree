@@ -10,5 +10,5 @@ public interface DeleteFamilyMemberTagMappingPort {
      *
      * @param memberId 멤버 ID
      */
-    void deleteAllByMemberId(Long memberId);
+    void deleteAllByMemberId(final Long memberId);
 }
