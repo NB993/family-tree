@@ -1,117 +1,71 @@
 # 커밋 가이드라인
 
-## 커밋 메시지 제목 형식
+## 커밋 메시지 형식
 
 ```
-{타입} {구현내용}
+{타입} {간결한 설명}
+
+{본문}
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 ```
 
-### 타입
+## 타입
+
 - `feat`: 기능 구현
-- `test`: 테스트만 작성/수정
 - `fix`: 버그 수정
+- `refactor`: 리팩토링
+- `test`: 테스트 작성/수정
 - `docs`: 문서 작성/수정
-- `refactor`: 코드 리팩토링
+- `chore`: 기타 (빌드, 설정 등)
 
-### 예시
+## 본문 작성 가이드
+
+### feat (기능 구현)
+구현한 내용을 간결하게 나열:
 ```
-feat 디자인 시스템 v1.0 완성 - 모바일 퍼스트 따뜻한 계열
-docs XX 방식 변경 문서화
-test 사용자 인증 - 단위 테스트 작성
-fix 가족트리 데이터 구조 설계 - 순환 참조 버그 수정
-```
+feat 태그 관리 기능 구현
 
-## 커밋 메시지 본문 형식
-
-```markdown
-- 작업 요약 (3줄 이내)
-
-## 구현된 주요 컴포넌트
-
-### 도메인 객체 (해당시)
-- 구현한 Entity, ValueObject, DomainEvent 클래스들 나열
-
-### 애플리케이션 계층 (해당시)
-- UseCase, Service, Command/Query, Port 인터페이스 등 나열
-
-### 인프라 계층 (해당시)
-- Adapter, Repository, Configuration 등 나열
-
-### 프레젠테이션 계층 (해당시)
-- Controller, Request/Response DTO 등 나열
-
-## 테스트 구현 (해당시)
-- 작성한 테스트 클래스들
-- 테스트 커버리지 정보
-
-## 해결된 이슈 (해당시)
-- 해결한 기술적 문제들 나열
-
-## 다음 단계
-- 향후 작업 계획
+- 노션 스타일 인라인 태그 관리 UX 적용
+- 멤버 상세 바텀 시트에서 태그 CRUD 가능
+- React Query로 서버 상태 관리
 ```
 
-## AI 커밋 작업 절차
+### fix, refactor (수정/개선)
+**왜 변경했는지를 먼저** 작성:
+```
+fix 태그 API 응답 형식 불일치 수정
 
-### Step 1: VCS 상태 확인
+FE에서 { tags: [], totalCount } 형식을 기대했으나
+BE는 Tag[] 배열을 직접 반환하고 있었음
+
+- FE 타입 정의를 BE 응답 형식에 맞게 수정
+- TagSelector, TagManagement 컴포넌트 수정
+```
+
+```
+refactor API 서비스 계층 간소화
+
+중복된 에러 핸들링 로직이 각 서비스에 산재해 있어
+유지보수가 어려웠음
+
+- 공통 에러 핸들링을 ApiClient로 통합
+- 각 서비스에서 중복 코드 제거
+```
+
+## 테스트 확인
+
+커밋 전 반드시 테스트 통과 확인:
 ```bash
-git status           # 변경된 파일 확인
-git diff             # 변경 내용 확인
-git log -5 --oneline # 최근 커밋 확인
-```
+# 백엔드
+cd be && ./gradlew test
 
-### Step 2: 테스트 통과 확인
-```bash
-./gradlew test
-```
-
-### Step 3: 커밋 메시지 작성
-- 위 양식에 따라 상세한 커밋 메시지 작성
-- 본문에는 구현된 컴포넌트와 테스트 정보 포함
-
-### Step 4: 커밋 실행
-```bash
-git add .
-git commit -m "$(cat <<'EOF'
-feat Family 도메인 구현
-
-- Family 도메인 객체 및 관련 계층 구현 완료
-
-## 구현된 주요 컴포넌트
-
-### 도메인 객체
-- Family.java
-
-### 애플리케이션 계층
-- FindFamilyUseCase.java
-- FindFamilyService.java
-- FindFamilyByIdQuery.java
-
-### 인프라 계층
-- FamilyJpaEntity.java
-- FamilyAdapter.java
-- FamilyJpaRepository.java
-
-## 테스트 구현
-- FindFamilyServiceTest.java
-- FamilyAdapterTest.java
-EOF
-)"
+# 프론트엔드
+cd fe && npm test
 ```
 
 ## 금지사항
 
-### 절대 금지
-- `git reset --hard` - **데이터 손실 위험**
-- `git push --force` - 협업 히스토리 파괴
-
-### 주의사항
+- `git reset --hard` **절대 금지**
+- `git push --force` 사용 금지
 - 테스트 실패 상태에서 커밋 금지
-- 의미 있는 단위로 커밋 (너무 작거나 크지 않게)
-
-## 커밋 전 체크리스트
-
-- [ ] `./gradlew test` 통과
-- [ ] 커밋 메시지 형식 준수
-- [ ] 본문에 구현된 컴포넌트 나열
-- [ ] 테스트 구현 정보 포함

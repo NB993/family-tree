@@ -1,13 +1,13 @@
 ---
 name: create-pr
-description: CodeRabbit 최적화 PR 생성. 효과적인 AI 리뷰를 위한 구조화된 PR 작성.
+description: Claude AI 최적화 PR 생성. 효과적인 AI 리뷰를 위한 구조화된 PR 작성.
 ---
 
 # PR 생성 지침
 
 ## 개요
 
-CodeRabbit이 효과적으로 리뷰할 수 있도록 구조화된 PR을 생성합니다.
+Claude AI가 효과적으로 리뷰할 수 있도록 구조화된 PR을 생성합니다.
 
 ## 금지사항
 
