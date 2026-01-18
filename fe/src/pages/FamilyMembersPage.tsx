@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useFamilyMembers, useFamilyDetail } from '../hooks/queries/useFamilyQueries';
 import { FamilyMemberWithRelationship } from '../api/services/familyService';
+import { MemberDetailSheet } from '../components/family/MemberDetailSheet';
+import { TagBadge } from '../components/family/TagBadge';
 import { ArrowLeft, Users, Plus, Phone, ChevronRight, Settings } from 'lucide-react';
 
 const FamilyMembersPage: React.FC = () => {
@@ -12,8 +14,21 @@ const FamilyMembersPage: React.FC = () => {
   const { data: familyData, isLoading: familyLoading } = useFamilyDetail(familyIdNumber!);
   const { data: membersData, isLoading: membersLoading, isError } = useFamilyMembers(familyIdNumber!);
 
+  // 멤버 상세 시트 상태
+  const [selectedMember, setSelectedMember] = useState<FamilyMemberWithRelationship | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
   const isLoading = familyLoading || membersLoading;
   const members = membersData || [];
+
+  const handleMemberClick = (member: FamilyMemberWithRelationship) => {
+    setSelectedMember(member);
+    setIsSheetOpen(true);
+  };
+
+  const handleMemberUpdate = (updatedMember: FamilyMemberWithRelationship) => {
+    setSelectedMember(updatedMember);
+  };
 
   if (!familyId) {
     return (
@@ -84,7 +99,7 @@ const FamilyMembersPage: React.FC = () => {
               <div
                 key={member.memberId}
                 className="flex items-center gap-2 px-3 py-2 hover:bg-secondary/50 cursor-pointer"
-                onClick={() => navigate(`/families/${familyId}/members/${member.memberId}`)}
+                onClick={() => handleMemberClick(member)}
               >
                 <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <span className="text-[10px] font-medium text-primary">
@@ -92,7 +107,27 @@ const FamilyMembersPage: React.FC = () => {
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-foreground truncate">{member.memberName}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-medium text-foreground truncate">{member.memberName}</p>
+                    {/* 태그 뱃지 (최대 2개 + 더보기) */}
+                    {member.tags && member.tags.length > 0 && (
+                      <div className="flex items-center gap-0.5">
+                        {member.tags.slice(0, 2).map((tag) => (
+                          <TagBadge
+                            key={tag.id}
+                            name={tag.name}
+                            color={tag.color}
+                            size="sm"
+                          />
+                        ))}
+                        {member.tags.length > 2 && (
+                          <span className="text-[9px] text-muted-foreground">
+                            +{member.tags.length - 2}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                   <p className="text-[10px] text-muted-foreground truncate">
                     {member.relationshipGuideMessage || '-'}
                   </p>
@@ -130,6 +165,15 @@ const FamilyMembersPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* 멤버 상세 시트 */}
+      <MemberDetailSheet
+        familyId={familyId!}
+        member={selectedMember}
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+        onMemberUpdate={handleMemberUpdate}
+      />
     </div>
   );
 };

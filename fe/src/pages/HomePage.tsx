@@ -8,19 +8,27 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreateFamilyMemberModal from '@/components/family/CreateFamilyMemberModal';
+import { MemberDetailSheet } from '@/components/family/MemberDetailSheet';
+import { TagBadge } from '@/components/family/TagBadge';
 import { getKoreanAge, getWesternAge } from '../utils/age';
 import { formatBirthday, formatThisYearSolarBirthday } from '../utils/lunar';
 
-// 멤버 카드 스켈레톤 컴포넌트 (1줄 레이아웃으로 수정)
+// 멤버 카드 스켈레톤 컴포넌트 (2줄 레이아웃)
 const MemberCardSkeleton: React.FC = () => (
-  <div className="flex items-center gap-2 px-3 py-1.5">
-    <Skeleton className="w-6 h-6 rounded-full flex-shrink-0" />
-    <div className="flex items-center gap-1 flex-1 min-w-0">
-      <Skeleton className="h-3 w-16" />
-      <Skeleton className="h-3 w-8" />
+  <div className="flex items-start gap-2 px-3 py-2">
+    <Skeleton className="w-7 h-7 rounded-full flex-shrink-0 mt-0.5" />
+    <div className="flex-1 min-w-0">
+      <div className="flex items-center gap-1.5">
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-3 w-8" />
+      </div>
+      <div className="flex items-center gap-1 mt-1">
+        <Skeleton className="h-4 w-12 rounded-full" />
+        <Skeleton className="h-4 w-14 rounded-full" />
+      </div>
     </div>
-    <Skeleton className="h-3 w-20 flex-shrink-0" />
-    <Skeleton className="w-3 h-3 flex-shrink-0" />
+    <Skeleton className="h-3 w-20 flex-shrink-0 mt-0.5" />
+    <Skeleton className="w-4 h-4 flex-shrink-0 mt-0.5" />
   </div>
 );
 
@@ -32,6 +40,10 @@ const HomePage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFamilyId, setSelectedFamilyId] = useState<number | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // 멤버 상세 시트 상태
+  const [selectedMember, setSelectedMember] = useState<FamilyMemberWithRelationship | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   // 나이 표시 모드: 'korean' (한국나이) 또는 'western' (만나이)
   const [ageDisplayMode, setAgeDisplayMode] = useState<'korean' | 'western'>('korean');
@@ -72,6 +84,17 @@ const HomePage: React.FC = () => {
       return `(${getKoreanAge(birthday)})`;
     }
     return `(만 ${getWesternAge(birthday)})`;
+  };
+
+  // 멤버 클릭 핸들러
+  const handleMemberClick = (member: FamilyMemberWithRelationship) => {
+    setSelectedMember(member);
+    setIsSheetOpen(true);
+  };
+
+  // 멤버 업데이트 핸들러 (태그 변경 등)
+  const handleMemberUpdate = (updatedMember: FamilyMemberWithRelationship) => {
+    setSelectedMember(updatedMember);
   };
 
   return (
@@ -129,45 +152,61 @@ const HomePage: React.FC = () => {
             {filteredMembers.map((member: FamilyMemberWithRelationship) => (
               <div
                 key={member.memberId}
-                className="flex items-center gap-2 px-3 py-1.5 hover:bg-secondary/50 cursor-pointer"
-                onClick={() => navigate(`/families/${selectedFamilyId}/members/${member.memberId}`)}
+                className="flex items-start gap-2 px-3 py-2 hover:bg-secondary/50 cursor-pointer"
+                onClick={() => handleMemberClick(member)}
               >
                 {/* 아바타 */}
-                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <span className="text-[9px] font-medium text-primary">
+                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-[10px] font-medium text-primary">
                     {member.memberName.charAt(0)}
                   </span>
                 </div>
 
-                {/* 이름 + 나이 */}
-                <div className="flex items-center gap-1 min-w-0 flex-1">
-                  <span className="text-xs font-medium text-foreground truncate">
-                    {member.memberName}
-                  </span>
-                  {member.memberBirthday && (
-                    <span
-                      className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
-                      onClick={handleAgeToggle}
-                    >
-                      {getAgeDisplay(member.memberBirthday)}
+                {/* 이름 + 태그 (2줄) */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-medium text-foreground">
+                      {member.memberName}
                     </span>
+                    {member.memberBirthday && (
+                      <span
+                        className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+                        onClick={handleAgeToggle}
+                      >
+                        {getAgeDisplay(member.memberBirthday)}
+                      </span>
+                    )}
+                  </div>
+                  {/* 태그 (2번째 줄) - 가로 나열, 줄바꿈 금지 */}
+                  {member.tags && member.tags.length > 0 && (
+                    <div className="flex items-center gap-1 mt-1 flex-nowrap">
+                      {member.tags.map((tag) => (
+                        <TagBadge
+                          key={tag.id}
+                          name={tag.name}
+                          color={tag.color}
+                          size="sm"
+                          className="flex-shrink-0 whitespace-nowrap"
+                        />
+                      ))}
+                    </div>
                   )}
                 </div>
 
                 {/* 생일 */}
                 {member.memberBirthday && (
-                  <span className="text-[10px] text-muted-foreground flex-shrink-0 flex items-center gap-0.5">
+                  <span className="text-xs text-muted-foreground flex-shrink-0 flex items-center gap-0.5 mt-0.5">
                     {formatBirthday(member.memberBirthday, member.memberBirthdayType ?? null)}
                     {member.memberBirthdayType === 'LUNAR' && (
                       <>
-                        <ArrowRight className="w-2.5 h-2.5" strokeWidth={1.5} />
+                        <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
                         <span>{formatThisYearSolarBirthday(member.memberBirthday)}</span>
                       </>
                     )}
                   </span>
                 )}
 
-                <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" strokeWidth={1.5} />
+                <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" strokeWidth={1.5} />
               </div>
             ))}
           </div>
@@ -191,6 +230,17 @@ const HomePage: React.FC = () => {
           open={isCreateModalOpen}
           onOpenChange={setIsCreateModalOpen}
           familyId={selectedFamilyId}
+        />
+      )}
+
+      {/* 멤버 상세 시트 */}
+      {selectedFamilyId && (
+        <MemberDetailSheet
+          familyId={selectedFamilyId}
+          member={selectedMember}
+          open={isSheetOpen}
+          onOpenChange={setIsSheetOpen}
+          onMemberUpdate={handleMemberUpdate}
         />
       )}
     </div>
