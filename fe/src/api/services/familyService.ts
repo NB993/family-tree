@@ -10,7 +10,6 @@ import {
   FamilyMemberRole,
   FamilyMemberStatus,
   FamilyMemberRelationship,
-  FamilyJoinRequest,
   Announcement
 } from '../../types/family';
 import { TagSimple } from '../../types/tag';
