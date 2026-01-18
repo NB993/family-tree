@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Avatar from '@radix-ui/react-avatar';
-import { FindFamilyJoinRequestResponse, FamilyJoinRequestStatus } from '../../../api/services/familyService';
+import { FindFamilyJoinRequestResponse } from '../../../api/services/familyService';
 
 interface FamilyJoinRequestCardProps {
   request: FindFamilyJoinRequestResponse;

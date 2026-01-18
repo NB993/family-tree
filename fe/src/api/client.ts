@@ -1,6 +1,6 @@
 import axios from "axios";
 import type {AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError} from "axios";
-import {ApiError, FieldError, ErrorResponse} from "../types/error";
+import {ApiError, ErrorResponse} from "../types/error";
 import {logger} from "../utils/logger";
 
 

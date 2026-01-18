@@ -10,9 +10,9 @@ import {
   FamilyMemberRole,
   FamilyMemberStatus,
   FamilyMemberRelationship,
-  FamilyJoinRequest,
   Announcement
 } from '../../types/family';
+import { TagSimple } from '../../types/tag';
 import { CursorPageResponse } from '../../types/api';
 
 // Request Types
@@ -88,6 +88,9 @@ export interface FamilyMemberWithRelationship {
   relationshipSetupRequired: boolean;
   relationshipGuideMessage: string;
   phoneNumberDisplay: string;
+
+  // 태그 정보 (PRD-006)
+  tags?: TagSimple[];
 
   // 편의 접근자 (백엔드 응답에서 flatten된 형태)
   member: FamilyMember;
