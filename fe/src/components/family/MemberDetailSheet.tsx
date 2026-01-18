@@ -172,7 +172,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
                 </div>
                 <div className="flex-1 min-w-0">
                   <a
-                    href={`tel:${member.memberPhoneNumber}`}
+                    href={`tel:${member.memberPhoneNumber.replace(/\D/g, '')}`}
                     className="text-sm text-foreground hover:underline"
                   >
                     {formatPhoneNumber(member.memberPhoneNumber)}

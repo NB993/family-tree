@@ -48,16 +48,28 @@ export const TagBadge: React.FC<TagBadgeProps> = ({
     md: 'px-2 py-1 text-xs',
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <span
       className={cn(
         'inline-flex items-center gap-1 rounded-full font-medium transition-opacity',
         sizeClasses[size],
-        onClick && 'cursor-pointer hover:opacity-80',
+        onClick && 'cursor-pointer hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary',
         className
       )}
       style={{ backgroundColor: color, color: textColor }}
       onClick={onClick}
+      {...(onClick && {
+        role: 'button',
+        tabIndex: 0,
+        onKeyDown: handleKeyDown,
+      })}
     >
       {name}
       {onRemove && (
@@ -69,8 +81,9 @@ export const TagBadge: React.FC<TagBadgeProps> = ({
           }}
           className="ml-0.5 hover:opacity-70"
           style={{ color: textColor }}
+          aria-label={`${name} 태그 제거`}
         >
-          <X className="h-3 w-3" />
+          <X className="h-3 w-3" aria-hidden="true" />
         </button>
       )}
     </span>

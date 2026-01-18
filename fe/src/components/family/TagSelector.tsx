@@ -67,16 +67,38 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
   // 삭제 확인
   const [deletingTag, setDeletingTag] = useState<Tag | null>(null);
 
+  // 로컬 상태로 optimistic update 관리
+  const [localSelectedIds, setLocalSelectedIds] = useState<Set<number>>(
+    () => new Set(memberTags.map(t => t.id))
+  );
+
+  // memberTags가 변경되면 로컬 상태 동기화
+  React.useEffect(() => {
+    setLocalSelectedIds(new Set(memberTags.map(t => t.id)));
+  }, [memberTags]);
+
   const allTags = tagData ?? [];
   const totalCount = allTags.length;
   const maxCount = 10; // 백엔드에서 정의한 최대 태그 수
-  const selectedTagIds = new Set(memberTags.map(t => t.id));
 
   // 태그 선택/해제 토글
   const handleToggleTag = async (tag: Tag) => {
-    const newTagIds = selectedTagIds.has(tag.id)
-      ? memberTags.filter(t => t.id !== tag.id).map(t => t.id)
-      : [...memberTags.map(t => t.id), tag.id];
+    // 이미 요청 중이면 무시
+    if (modifyMemberTagsMutation.isPending) return;
+
+    const prevSelectedIds = new Set(localSelectedIds);
+    const isSelected = localSelectedIds.has(tag.id);
+
+    // Optimistic update
+    const newSelectedIds = new Set(localSelectedIds);
+    if (isSelected) {
+      newSelectedIds.delete(tag.id);
+    } else {
+      newSelectedIds.add(tag.id);
+    }
+    setLocalSelectedIds(newSelectedIds);
+
+    const newTagIds = Array.from(newSelectedIds);
 
     try {
       const result = await modifyMemberTagsMutation.mutateAsync({
@@ -84,8 +106,12 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         memberId,
         tagIds: newTagIds,
       });
+      // 서버 응답으로 동기화
+      setLocalSelectedIds(new Set(result.tags.map(t => t.id)));
       onTagsChange?.(result.tags);
     } catch (error: any) {
+      // 실패 시 롤백
+      setLocalSelectedIds(prevSelectedIds);
       const message = error?.response?.data?.message || '태그 변경에 실패했습니다.';
       toast({ title: message, variant: 'destructive' });
     }
@@ -161,7 +187,10 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
       setDeletingTag(null);
 
       // 삭제된 태그가 선택되어 있었다면 제거
-      if (selectedTagIds.has(deletingTag.id)) {
+      if (localSelectedIds.has(deletingTag.id)) {
+        const newIds = new Set(localSelectedIds);
+        newIds.delete(deletingTag.id);
+        setLocalSelectedIds(newIds);
         const newTags = memberTags.filter(t => t.id !== deletingTag.id);
         onTagsChange?.(newTags);
       }
@@ -221,7 +250,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                           style={{ backgroundColor: tag.color }}
                         />
                         <span className="text-sm truncate flex-1">{tag.name}</span>
-                        {selectedTagIds.has(tag.id) && (
+                        {localSelectedIds.has(tag.id) && (
                           <Check className="h-4 w-4 text-primary flex-shrink-0" />
                         )}
                       </button>
