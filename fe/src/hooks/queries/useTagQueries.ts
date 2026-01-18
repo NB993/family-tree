@@ -7,7 +7,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { TagService } from '../../api/services/tagService';
 import {
   Tag,
-  TagListResponse,
   SaveTagRequest,
   ModifyTagRequest,
   MemberTagsResponse,

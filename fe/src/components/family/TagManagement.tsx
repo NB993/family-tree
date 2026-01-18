@@ -62,9 +62,9 @@ export const TagManagement: React.FC<TagManagementProps> = ({ familyId }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingTag, setDeletingTag] = useState<Tag | null>(null);
 
-  const tags = tagData?.tags ?? [];
-  const totalCount = tagData?.totalCount ?? 0;
-  const maxCount = tagData?.maxCount ?? 10;
+  const tags = tagData ?? [];
+  const totalCount = tags.length;
+  const maxCount = 10;
 
   // 태그 생성
   const handleCreate = async () => {
@@ -185,9 +185,6 @@ export const TagManagement: React.FC<TagManagementProps> = ({ familyId }) => {
                   style={{ backgroundColor: tag.color }}
                 />
                 <span className="font-medium">{tag.name}</span>
-                <span className="text-sm text-muted-foreground">
-                  {tag.memberCount}명
-                </span>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

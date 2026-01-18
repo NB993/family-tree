@@ -67,9 +67,9 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
   // 삭제 확인
   const [deletingTag, setDeletingTag] = useState<Tag | null>(null);
 
-  const allTags = tagData?.tags ?? [];
-  const totalCount = tagData?.totalCount ?? 0;
-  const maxCount = tagData?.maxCount ?? 10;
+  const allTags = tagData ?? [];
+  const totalCount = allTags.length;
+  const maxCount = 10; // 백엔드에서 정의한 최대 태그 수
   const selectedTagIds = new Set(memberTags.map(t => t.id));
 
   // 태그 선택/해제 토글

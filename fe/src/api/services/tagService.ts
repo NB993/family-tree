@@ -6,7 +6,6 @@
 import { ApiClient } from '../client';
 import {
   Tag,
-  TagListResponse,
   SaveTagRequest,
   ModifyTagRequest,
   MemberTagsResponse,
@@ -30,8 +29,8 @@ export class TagService {
   /**
    * 태그 목록을 조회합니다.
    */
-  public async findTags(familyId: number | string): Promise<TagListResponse> {
-    return this.apiClient.get<TagListResponse>(`/api/families/${familyId}/tags`);
+  public async findTags(familyId: number | string): Promise<Tag[]> {
+    return this.apiClient.get<Tag[]>(`/api/families/${familyId}/tags`);
   }
 
   /**

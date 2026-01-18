@@ -25,8 +25,8 @@ export interface Tag {
   id: number;
   name: string;
   color: string;
-  memberCount: number;
   createdAt: string;
+  modifiedAt?: string;
 }
 
 /**
@@ -36,15 +36,6 @@ export interface TagSimple {
   id: number;
   name: string;
   color: string;
-}
-
-/**
- * 태그 목록 조회 응답
- */
-export interface TagListResponse {
-  tags: Tag[];
-  totalCount: number;
-  maxCount: number;
 }
 
 /**
