@@ -4,30 +4,19 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-  FamilyService, 
-  FindFamilyResponse, 
-  SaveFamilyRequest, 
-  SaveFamilyResponse,
+import {
+  FamilyService,
+  SaveFamilyRequest,
   ModifyFamilyRequest,
-  PublicFamilyResponse,
-  FamilyNameAvailabilityResponse,
   CreateFamilyMemberForm,
   UpdateFamilyMemberForm,
-  FamilyMemberWithRelationship,
-  FindFamilyJoinRequestResponse,
-  SaveFamilyJoinRequestResponse,
-  ProcessFamilyJoinRequestResponse,
   FamilyJoinRequestStatus
 } from '../../api/services/familyService';
 import {
-  FamilyMember,
   FamilyMemberRole,
   FamilyMemberStatus,
   FamilyMemberRelationship,
-  FamilyJoinRequest
 } from '../../types/family';
-import { CursorPageResponse } from '../../types/api';
 
 // Type alias for backward compatibility
 type CreateFamilyForm = SaveFamilyRequest;
