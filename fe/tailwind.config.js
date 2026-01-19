@@ -40,19 +40,19 @@ module.exports = {
         ],
       },
       spacing: {
-        // 8px grid system
-        "1": "8px",
-        "2": "16px",
-        "3": "24px",
-        "4": "32px",
-        "5": "40px",
-        "6": "48px",
-        "7": "56px",
-        "8": "64px",
-        "9": "72px",
-        "10": "80px",
-        "11": "88px",
-        "12": "96px",
+        // 8px grid system (CSS 변수 참조)
+        "1": "var(--spacing-1)",
+        "2": "var(--spacing-2)",
+        "3": "var(--spacing-3)",
+        "4": "var(--spacing-4)",
+        "5": "var(--spacing-5)",
+        "6": "var(--spacing-6)",
+        "7": "var(--spacing-7)",
+        "8": "var(--spacing-8)",
+        "9": "var(--spacing-9)",
+        "10": "var(--spacing-10)",
+        "11": "var(--spacing-11)",
+        "12": "var(--spacing-12)",
       },
       fontSize: {
         // Extra small sizes for compact UI
