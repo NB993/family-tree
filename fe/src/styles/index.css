@@ -60,6 +60,11 @@
     --font-size-2xl: 1.5rem;      /* 24px */
     --font-size-3xl: 1.875rem;    /* 30px */
 
+    /* Font Sizes - Headings */
+    --font-size-h5: 1.375rem;     /* 22px */
+    --font-size-h3: 1.625rem;     /* 26px */
+    --font-size-h2: 1.75rem;      /* 28px */
+
     /* Font Weights */
     --font-weight-light: 300;
     --font-weight-regular: 400;
@@ -67,11 +72,26 @@
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
 
-    /* Line Heights */
+    /* Line Heights - Generic */
     --line-height-tight: 1.25;
     --line-height-snug: 1.375;
     --line-height-normal: 1.5;
     --line-height-relaxed: 1.625;
+
+    /* Line Heights - Per Font Size */
+    --line-height-2xs: 12px;
+    --line-height-xs-sm: 14px;
+    --line-height-xs-md: 16px;
+    --line-height-caption: 16px;
+    --line-height-body2: 20px;
+    --line-height-body1: 24px;
+    --line-height-subtitle: 28px;
+    --line-height-h6: 28px;
+    --line-height-h5: 32px;
+    --line-height-h4: 32px;
+    --line-height-h3: 36px;
+    --line-height-h2: 36px;
+    --line-height-h1: 40px;
 
     /* ================================
        Spacing Tokens (4px base)

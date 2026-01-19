@@ -56,20 +56,20 @@ module.exports = {
       },
       fontSize: {
         // Extra small sizes for compact UI
-        "2xs": ["9px", { lineHeight: "12px", fontWeight: "400" }],
-        "xs-sm": ["10px", { lineHeight: "14px", fontWeight: "400" }],
-        "xs-md": ["11px", { lineHeight: "16px", fontWeight: "400" }],
+        "2xs": ["var(--font-size-2xs)", { lineHeight: "var(--line-height-2xs)", fontWeight: "var(--font-weight-regular)" }],
+        "xs-sm": ["var(--font-size-xs-sm)", { lineHeight: "var(--line-height-xs-sm)", fontWeight: "var(--font-weight-regular)" }],
+        "xs-md": ["var(--font-size-xs-md)", { lineHeight: "var(--line-height-xs-md)", fontWeight: "var(--font-weight-regular)" }],
         // Mobile-optimized typography scale
-        caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
-        body2: ["14px", { lineHeight: "20px", fontWeight: "400" }],
-        body1: ["16px", { lineHeight: "24px", fontWeight: "400" }],
-        subtitle: ["18px", { lineHeight: "28px", fontWeight: "500" }],
-        h6: ["20px", { lineHeight: "28px", fontWeight: "600" }],
-        h5: ["22px", { lineHeight: "32px", fontWeight: "600" }],
-        h4: ["24px", { lineHeight: "32px", fontWeight: "600" }],
-        h3: ["26px", { lineHeight: "36px", fontWeight: "700" }],
-        h2: ["28px", { lineHeight: "36px", fontWeight: "700" }],
-        h1: ["32px", { lineHeight: "40px", fontWeight: "700" }],
+        caption: ["var(--font-size-xs)", { lineHeight: "var(--line-height-caption)", fontWeight: "var(--font-weight-regular)" }],
+        body2: ["var(--font-size-sm)", { lineHeight: "var(--line-height-body2)", fontWeight: "var(--font-weight-regular)" }],
+        body1: ["var(--font-size-base)", { lineHeight: "var(--line-height-body1)", fontWeight: "var(--font-weight-regular)" }],
+        subtitle: ["var(--font-size-lg)", { lineHeight: "var(--line-height-subtitle)", fontWeight: "var(--font-weight-medium)" }],
+        h6: ["var(--font-size-xl)", { lineHeight: "var(--line-height-h6)", fontWeight: "var(--font-weight-semibold)" }],
+        h5: ["var(--font-size-h5)", { lineHeight: "var(--line-height-h5)", fontWeight: "var(--font-weight-semibold)" }],
+        h4: ["var(--font-size-2xl)", { lineHeight: "var(--line-height-h4)", fontWeight: "var(--font-weight-semibold)" }],
+        h3: ["var(--font-size-h3)", { lineHeight: "var(--line-height-h3)", fontWeight: "var(--font-weight-bold)" }],
+        h2: ["var(--font-size-h2)", { lineHeight: "var(--line-height-h2)", fontWeight: "var(--font-weight-bold)" }],
+        h1: ["var(--font-size-3xl)", { lineHeight: "var(--line-height-h1)", fontWeight: "var(--font-weight-bold)" }],
       },
       colors: {
         // Family Tree Brand Colors
