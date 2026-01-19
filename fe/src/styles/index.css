@@ -97,3 +97,13 @@
     @apply w-full max-w-[400px] mx-auto bg-card overflow-hidden h-full;
   }
 }
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

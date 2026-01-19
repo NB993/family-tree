@@ -162,24 +162,41 @@ const HomePage: React.FC = () => {
                   </span>
                 </div>
 
-                {/* 이름 + 태그 (2줄) */}
+                {/* 콘텐츠 영역 */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-medium text-foreground">
-                      {member.memberName}
-                    </span>
-                    {member.memberBirthday && (
-                      <span
-                        className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
-                        onClick={handleAgeToggle}
-                      >
-                        {getAgeDisplay(member.memberBirthday)}
+                  {/* 1줄: 이름 + 생일 + 화살표 */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-medium text-foreground">
+                        {member.memberName}
                       </span>
-                    )}
+                      {member.memberBirthday && (
+                        <span
+                          className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+                          onClick={handleAgeToggle}
+                        >
+                          {getAgeDisplay(member.memberBirthday)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      {member.memberBirthday && (
+                        <span className="text-xs text-muted-foreground flex items-center gap-0.5">
+                          {formatBirthday(member.memberBirthday, member.memberBirthdayType ?? null)}
+                          {member.memberBirthdayType === 'LUNAR' && (
+                            <>
+                              <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+                              <span>{formatThisYearSolarBirthday(member.memberBirthday)}</span>
+                            </>
+                          )}
+                        </span>
+                      )}
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                    </div>
                   </div>
-                  {/* 태그 (2번째 줄) - 가로 나열, 줄바꿈 금지 */}
+                  {/* 2줄: 태그 - 가로 스크롤 */}
                   {member.tags && member.tags.length > 0 && (
-                    <div className="flex items-center gap-1 mt-1 flex-nowrap">
+                    <div className="flex items-center gap-1 flex-nowrap overflow-x-auto scrollbar-hide mt-1">
                       {member.tags.map((tag) => (
                         <TagBadge
                           key={tag.id}
@@ -192,21 +209,6 @@ const HomePage: React.FC = () => {
                     </div>
                   )}
                 </div>
-
-                {/* 생일 */}
-                {member.memberBirthday && (
-                  <span className="text-xs text-muted-foreground flex-shrink-0 flex items-center gap-0.5 mt-0.5">
-                    {formatBirthday(member.memberBirthday, member.memberBirthdayType ?? null)}
-                    {member.memberBirthdayType === 'LUNAR' && (
-                      <>
-                        <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-                        <span>{formatThisYearSolarBirthday(member.memberBirthday)}</span>
-                      </>
-                    )}
-                  </span>
-                )}
-
-                <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" strokeWidth={1.5} />
               </div>
             ))}
           </div>
