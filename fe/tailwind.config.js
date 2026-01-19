@@ -55,6 +55,10 @@ module.exports = {
         "12": "96px",
       },
       fontSize: {
+        // Extra small sizes for compact UI
+        "2xs": ["9px", { lineHeight: "12px", fontWeight: "400" }],
+        "xs-sm": ["10px", { lineHeight: "14px", fontWeight: "400" }],
+        "xs-md": ["11px", { lineHeight: "16px", fontWeight: "400" }],
         // Mobile-optimized typography scale
         caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
         body2: ["14px", { lineHeight: "20px", fontWeight: "400" }],
@@ -119,6 +123,12 @@ module.exports = {
           50: "#eff6ff",
           500: "#3b82f6",
           600: "#2563eb",
+        },
+        // External Brand Colors
+        kakao: {
+          DEFAULT: "hsl(var(--kakao))",
+          hover: "hsl(var(--kakao-hover))",
+          text: "hsl(var(--kakao-text))",
         },
         // Updated neutral grays for better readability
         border: "hsl(var(--border))",
@@ -211,6 +221,27 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "family-bounce": "family-bounce 1s infinite",
+      },
+      zIndex: {
+        base: "var(--z-base)",
+        dropdown: "var(--z-dropdown)",
+        sticky: "var(--z-sticky)",
+        fixed: "var(--z-fixed)",
+        "modal-backdrop": "var(--z-modal-backdrop)",
+        modal: "var(--z-modal)",
+        popover: "var(--z-popover)",
+        tooltip: "var(--z-tooltip)",
+        notification: "var(--z-notification)",
+      },
+      transitionDuration: {
+        fast: "var(--duration-fast)",
+        normal: "var(--duration-normal)",
+        slow: "var(--duration-slow)",
+      },
+      transitionTimingFunction: {
+        "ease-in": "var(--ease-in)",
+        "ease-out": "var(--ease-out)",
+        "ease-in-out": "var(--ease-in-out)",
       },
     },
   },

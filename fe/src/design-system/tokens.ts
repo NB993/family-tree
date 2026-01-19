@@ -69,6 +69,13 @@ export const colors = {
   warning: '#F59E0B',
   error: '#EF4444',
   info: '#3B82F6',
+
+  // External Brand Colors
+  kakao: {
+    DEFAULT: '#FEE500',
+    hover: '#FDD835',
+    text: '#191919',
+  },
 } as const;
 
 export const typography = {
@@ -80,6 +87,9 @@ export const typography = {
   
   // Mobile-first font sizes
   fontSize: {
+    '2xs': '0.5625rem', // 9px - 최소 폰트 크기
+    'xs-sm': '0.625rem', // 10px - 보조 텍스트
+    'xs-md': '0.6875rem', // 11px
     xs: '0.75rem',    // 12px
     sm: '0.875rem',   // 14px
     base: '1rem',     // 16px
