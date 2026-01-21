@@ -6,7 +6,9 @@
 
 @layer base {
   :root {
-    /* SAP UI5 inspired - Clean, Compact, Business */
+    /* ================================
+       Color Tokens (HSL)
+       ================================ */
     --background: 0 0% 97%;
     --foreground: 210 10% 23%;
 
@@ -16,7 +18,6 @@
     --popover: 0 0% 100%;
     --popover-foreground: 210 10% 23%;
 
-    /* SAP Blue-ish Primary with Orange accent */
     --primary: 25 90% 48%;
     --primary-foreground: 0 0% 100%;
 
@@ -36,7 +37,128 @@
     --input: 210 10% 88%;
     --ring: 25 90% 48%;
 
+    /* External Brand Colors */
+    --kakao: 51 100% 50%;
+    --kakao-hover: 49 98% 60%;
+    --kakao-text: 60 7% 10%;
+
+    /* ================================
+       Typography Tokens
+       ================================ */
+    --font-family-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    --font-family-mono: "JetBrains Mono", Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+
+    /* Font Sizes */
+    --font-size-2xs: 0.5625rem;   /* 9px */
+    --font-size-xs-sm: 0.625rem;  /* 10px */
+    --font-size-xs-md: 0.6875rem; /* 11px */
+    --font-size-xs: 0.75rem;      /* 12px */
+    --font-size-sm: 0.875rem;     /* 14px */
+    --font-size-base: 1rem;       /* 16px */
+    --font-size-lg: 1.125rem;     /* 18px */
+    --font-size-xl: 1.25rem;      /* 20px */
+    --font-size-2xl: 1.5rem;      /* 24px */
+    --font-size-3xl: 1.875rem;    /* 30px */
+
+    /* Font Sizes - Headings */
+    --font-size-h5: 1.375rem;     /* 22px */
+    --font-size-h3: 1.625rem;     /* 26px */
+    --font-size-h2: 1.75rem;      /* 28px */
+
+    /* Font Weights */
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* Line Heights - Generic */
+    --line-height-tight: 1.25;
+    --line-height-snug: 1.375;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.625;
+
+    /* Line Heights - Per Font Size */
+    --line-height-2xs: 12px;
+    --line-height-xs-sm: 14px;
+    --line-height-xs-md: 16px;
+    --line-height-caption: 16px;
+    --line-height-body2: 20px;
+    --line-height-body1: 24px;
+    --line-height-subtitle: 28px;
+    --line-height-h6: 28px;
+    --line-height-h5: 32px;
+    --line-height-h4: 32px;
+    --line-height-h3: 36px;
+    --line-height-h2: 36px;
+    --line-height-h1: 40px;
+
+    /* ================================
+       Spacing Tokens (8px grid)
+       ================================ */
+    --spacing-1: 8px;
+    --spacing-2: 16px;
+    --spacing-3: 24px;
+    --spacing-4: 32px;
+    --spacing-5: 40px;
+    --spacing-6: 48px;
+    --spacing-7: 56px;
+    --spacing-8: 64px;
+    --spacing-9: 72px;
+    --spacing-10: 80px;
+    --spacing-11: 88px;
+    --spacing-12: 96px;
+
+    /* ================================
+       Border Radius Tokens
+       ================================ */
     --radius: 0.5rem;
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-full: 9999px;
+
+    /* ================================
+       Shadow Tokens
+       ================================ */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    /* ================================
+       Z-Index Tokens
+       ================================ */
+    --z-base: 0;
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-fixed: 30;
+    --z-modal-backdrop: 40;
+    --z-modal: 50;
+    --z-popover: 60;
+    --z-tooltip: 70;
+    --z-notification: 80;
+
+    /* ================================
+       Transition Tokens
+       ================================ */
+    --duration-fast: 100ms;
+    --duration-normal: 200ms;
+    --duration-slow: 400ms;
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ================================
+       Component Tokens
+       ================================ */
+    --button-height-sm: 36px;
+    --button-height-md: 44px;
+    --button-height-lg: 52px;
+    --input-height-sm: 36px;
+    --input-height-md: 44px;
+    --input-height-lg: 52px;
   }
 
   .dark {
@@ -67,6 +189,11 @@
     --border: 210 10% 25%;
     --input: 210 10% 25%;
     --ring: 25 90% 55%;
+
+    /* External Brand Colors - Dark mode */
+    --kakao: 51 100% 50%;
+    --kakao-hover: 49 98% 55%;
+    --kakao-text: 60 7% 10%;
   }
 }
 
