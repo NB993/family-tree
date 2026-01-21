@@ -1159,11 +1159,11 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 | 7 | 설정 페이지에 태그 관리 링크 추가 | `pages/SettingsPage.tsx` |
 
 **체크리스트**:
-- [ ] 태그 생성 동작 확인
-- [ ] 태그 수정 (이름, 색상) 동작 확인
-- [ ] 태그 삭제 동작 확인
-- [ ] 태그 10개 제한 에러 처리
-- [ ] PR 생성 (`create-pr` 스킬)
+- [x] 태그 생성 동작 확인
+- [x] 태그 수정 (이름, 색상) 동작 확인
+- [x] 태그 삭제 동작 확인
+- [x] 태그 10개 제한 에러 처리
+- [x] PR 생성 - PR #35 (Sprint 2-FE와 통합)
 
 ---
 
@@ -1206,12 +1206,12 @@ Sprint 2-BE → Sprint 2-FE → Sprint 3
 | 6 | 멤버 클릭 시 MemberDetailModal 표시 | `pages/HomePage.tsx` |
 
 **체크리스트**:
-- [ ] 멤버 클릭 → 모달 표시 (404 수정)
-- [ ] 모달에서 태그 뱃지 표시
-- [ ] "태그 수정" → TagSelectModal 연결
-- [ ] 태그 선택/해제 동작 확인
-- [ ] 멤버 카드에 태그 뱃지 표시
-- [ ] PR 생성 (`create-pr` 스킬)
+- [x] 멤버 클릭 → 바텀시트 표시 (MemberDetailSheet)
+- [x] 바텀시트에서 태그 뱃지 표시
+- [x] 태그 클릭 → TagSelector 팝오버 연결
+- [x] 태그 선택/해제 동작 확인 (optimistic update)
+- [x] 멤버 카드에 태그 뱃지 표시
+- [x] PR 생성 - PR #35
 
 ---
 
@@ -1551,60 +1551,62 @@ export type TagColor = typeof TAG_COLOR_PALETTE[number];
 
 **파일**: `fe/src/api/services/tagService.ts`
 
-- [ ] `findTags(familyId)` - GET /api/families/{familyId}/tags
-- [ ] `saveTag(familyId, name)` - POST /api/families/{familyId}/tags
-- [ ] `modifyTag(familyId, tagId, name)` - PUT /api/families/{familyId}/tags/{tagId}
-- [ ] `deleteTag(familyId, tagId)` - DELETE /api/families/{familyId}/tags/{tagId}
-- [ ] `modifyMemberTags(familyId, memberId, tagIds)` - PUT /api/families/{familyId}/members/{memberId}/tags
+- [x] `findTags(familyId)` - GET /api/families/{familyId}/tags
+- [x] `saveTag(familyId, name)` - POST /api/families/{familyId}/tags
+- [x] `modifyTag(familyId, tagId, name, color)` - PUT /api/families/{familyId}/tags/{tagId}
+- [x] `deleteTag(familyId, tagId)` - DELETE /api/families/{familyId}/tags/{tagId}
+- [x] `modifyMemberTags(familyId, memberId, tagIds)` - PUT /api/families/{familyId}/members/{memberId}/tags
 
 #### 5.3 React Query 훅
 
 **파일**: `fe/src/hooks/queries/useTagQueries.ts`
 
-- [ ] `useTagsQuery(familyId)` - 태그 목록 조회
-- [ ] `useSaveTagMutation()` - 태그 생성
-- [ ] `useModifyTagMutation()` - 태그 수정
-- [ ] `useDeleteTagMutation()` - 태그 삭제
-- [ ] `useModifyMemberTagsMutation()` - 멤버 태그 할당
+- [x] `useTags(familyId)` - 태그 목록 조회
+- [x] `useSaveTag()` - 태그 생성
+- [x] `useModifyTag()` - 태그 수정
+- [x] `useDeleteTag()` - 태그 삭제
+- [x] `useModifyMemberTags()` - 멤버 태그 할당
 
 #### 5.4 컴포넌트
 
 **파일**: `fe/src/components/family/TagBadge.tsx`
 
-- [ ] 태그 뱃지 UI (**색상 배경**, 작은 글씨)
-- [ ] 색상에 따른 텍스트 색상 조정 (contrast)
-- [ ] 선택적 삭제 버튼 (X)
+- [x] 태그 뱃지 UI (**색상 배경**, 작은 글씨)
+- [x] 색상에 따른 텍스트 색상 조정 (YIQ contrast 알고리즘)
+- [x] 선택적 삭제 버튼 (X)
+- [x] 키보드 접근성 (role, tabIndex, onKeyDown)
 
-**파일**: `fe/src/components/family/TagSelectModal.tsx`
+**파일**: `fe/src/components/family/TagSelector.tsx` (팝오버 방식으로 구현)
 
-- [ ] 태그 목록 (체크박스 + **색상 아이콘**)
-- [ ] 새 태그 만들기 입력
-- [ ] 선택/해제 토글
-- [ ] 확인/취소 버튼
-- [ ] 가나다순 정렬
+- [x] 태그 목록 (체크박스 + **색상 아이콘**)
+- [x] 새 태그 만들기 입력
+- [x] 선택/해제 토글 (optimistic update)
+- [x] 태그 수정/삭제 드롭다운 메뉴
+- [x] Race condition 방지
 
 **파일**: `fe/src/components/family/TagManagement.tsx`
 
-- [ ] 태그 목록 (이름, **색상**, 멤버 수)
-- [ ] 태그 수정/삭제 메뉴
-- [ ] **색상 변경** (ColorPicker 연결)
-- [ ] 새 태그 만들기
-- [ ] 사용량 표시 (n/10개)
-- [ ] 가나다순 정렬
+- [x] 태그 목록 (이름, **색상**, 멤버 수)
+- [x] 태그 수정/삭제 드롭다운 메뉴
+- [x] **색상 변경** (ColorPicker 연결)
+- [x] 새 태그 만들기 (Dialog)
+- [x] 사용량 표시 (n/10개)
+- [x] 삭제 확인 AlertDialog
 
-**파일**: `fe/src/components/family/ColorPicker.tsx` (신규)
+**파일**: `fe/src/components/family/ColorPicker.tsx`
 
-- [ ] 9가지 색상 팔레트 표시
-- [ ] 현재 선택된 색상 표시
-- [ ] 색상 클릭 시 선택 이벤트
+- [x] 9가지 색상 팔레트 표시
+- [x] 현재 선택된 색상 표시 (ring 스타일)
+- [x] 색상 클릭 시 선택 이벤트
+- [x] 접근성 (aria-label, radiogroup role)
 
-**파일**: `fe/src/components/family/MemberDetailModal.tsx` (신규)
+**파일**: `fe/src/components/family/MemberDetailSheet.tsx` (바텀시트 방식)
 
-- [ ] 멤버 기본 정보 표시 (이름, 생일, 관계)
-- [ ] 아바타 크게 표시
-- [ ] 태그 뱃지 목록 (색상 적용)
-- [ ] OWNER일 때만 "태그 수정" 버튼 표시
-- [ ] TagSelectModal 연결
+- [x] 멤버 기본 정보 표시 (이름, 생일, 관계, 연락처)
+- [x] 아바타 크게 표시
+- [x] 태그 뱃지 목록 (색상 적용)
+- [x] 태그 클릭 시 TagSelector 연결
+- [x] 태그 추가 버튼
 
 **파일**: `fe/src/components/family/TagFilter.tsx` (신규)
 
@@ -1625,15 +1627,13 @@ export type TagColor = typeof TAG_COLOR_PALETTE[number];
 
 **파일 수정**: `fe/src/pages/HomePage.tsx`
 
-- [ ] 멤버 카드에 스와이프 적용
-- [ ] 스와이프 시 "태그 추가" 액션 버튼 노출
-- [ ] 태그 선택 모달 연결
-- [ ] 멤버 카드에 태그 뱃지 표시 (색상 적용)
-- [ ] **멤버 클릭 시 MemberDetailModal 표시** (기존 404 수정)
-- [ ] 가나다순 정렬된 태그 표시
-- [ ] **TagFilter 컴포넌트 추가** (멤버 목록 상단)
-- [ ] **필터 상태 관리** (selectedTagIds: number[])
-- [ ] **필터링 로직** (OR 조건 - 선택된 태그 중 하나라도 포함된 멤버)
+- [ ] 멤버 카드에 스와이프 적용 (Sprint 3)
+- [ ] 스와이프 시 "태그 추가" 액션 버튼 노출 (Sprint 3)
+- [x] 멤버 카드에 태그 뱃지 표시 (색상 적용)
+- [x] **멤버 클릭 시 MemberDetailSheet 표시** (기존 404 수정)
+- [ ] **TagFilter 컴포넌트 추가** (Sprint 4)
+- [ ] **필터 상태 관리** (Sprint 4)
+- [ ] **필터링 로직** (Sprint 4)
 
 ---
 
