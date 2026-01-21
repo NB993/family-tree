@@ -19,7 +19,7 @@ interface TagBadgeProps {
 /**
  * 배경색의 밝기를 계산하여 텍스트 색상 결정
  */
-function getContrastTextColor(hexColor: string): string {
+export function getContrastTextColor(hexColor: string): string {
   // HEX를 RGB로 변환
   const hex = hexColor.replace('#', '');
   const r = parseInt(hex.substring(0, 2), 16);

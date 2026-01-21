@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import CreateFamilyMemberModal from '@/components/family/CreateFamilyMemberModal';
 import { MemberDetailSheet } from '@/components/family/MemberDetailSheet';
 import { TagBadge } from '@/components/family/TagBadge';
+import { TagFilter } from '@/components/family/TagFilter';
 import { getKoreanAge, getWesternAge } from '../utils/age';
 import { formatBirthday, formatThisYearSolarBirthday } from '../utils/lunar';
 
@@ -40,6 +41,7 @@ const HomePage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFamilyId, setSelectedFamilyId] = useState<number | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
 
   // 멤버 상세 시트 상태
   const [selectedMember, setSelectedMember] = useState<FamilyMemberWithRelationship | null>(null);
@@ -62,12 +64,26 @@ const HomePage: React.FC = () => {
     (selectedFamilyId && membersLoading);
 
   const filteredMembers = useMemo(() => {
-    if (!membersData || !searchTerm) return membersData || [];
+    if (!membersData) return [];
 
-    return membersData.filter((member: FamilyMemberWithRelationship) =>
-      member.memberName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [membersData, searchTerm]);
+    let result = membersData;
+
+    // 1. 검색어 필터링
+    if (searchTerm) {
+      result = result.filter((member: FamilyMemberWithRelationship) =>
+        member.memberName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // 2. 태그 필터링 (OR 조건)
+    if (selectedTagIds.length > 0) {
+      result = result.filter((member: FamilyMemberWithRelationship) =>
+        member.tags?.some((tag) => selectedTagIds.includes(tag.id))
+      );
+    }
+
+    return result;
+  }, [membersData, searchTerm, selectedTagIds]);
 
   const families = familiesData || [];
   const hasData = families.length > 0 && membersData && membersData.length > 0;
@@ -119,17 +135,29 @@ const HomePage: React.FC = () => {
         </Button>
       </header>
 
-      {/* Search */}
+      {/* Search + Filter */}
       <div className="shrink-0 px-3 py-1.5 border-b border-border bg-secondary/30">
-        <div className="relative">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" strokeWidth={1.5} />
-          <Input
-            type="text"
-            placeholder="검색"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-6"
-          />
+        <div className="flex items-center gap-2">
+          {/* Tag Filter */}
+          {selectedFamilyId && (
+            <TagFilter
+              familyId={selectedFamilyId}
+              selectedTagIds={selectedTagIds}
+              onSelectionChange={setSelectedTagIds}
+              filteredCount={filteredMembers.length}
+            />
+          )}
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" strokeWidth={1.5} />
+            <Input
+              type="text"
+              placeholder="검색"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-6"
+            />
+          </div>
         </div>
       </div>
 
