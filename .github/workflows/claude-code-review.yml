@@ -24,6 +24,9 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          use_sticky_comment: true
+          claude_args: |
+            --allowedTools "mcp__github__create_or_update_file,mcp__github__create_pull_request_review,mcp__github__add_pull_request_review_comment,Bash(gh pr comment:*),Bash(gh pr review:*)"
           prompt: |
             이 PR을 다음 전문가 관점에서 리뷰해주세요:
             - 시니어 백엔드 개발자
