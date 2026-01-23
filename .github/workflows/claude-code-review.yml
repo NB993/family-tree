@@ -1,0 +1,48 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code Review
+        id: claude-review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          use_sticky_comment: true
+          claude_args: |
+            --allowedTools "mcp__github__create_or_update_file,mcp__github__create_pull_request_review,mcp__github__add_pull_request_review_comment,Bash(gh pr comment:*),Bash(gh pr review:*)"
+          prompt: |
+            이 PR을 다음 전문가 관점에서 리뷰해주세요:
+            - 시니어 백엔드 개발자
+            - 시니어 프론트엔드 개발자
+            - 시니어 UI/UX 디자이너
+            - 시니어 DevOps 엔지니어
+            - 비용 최적화 전문가
+
+            피드백에는 우선순위 라벨을 붙여주세요:
+            - [P0-CRITICAL]: 반드시 수정 필요
+            - [P1-MAJOR]: 수정 강력 권장
+            - [P2-MINOR]: 개선 제안
+            - [P3-NITPICK]: 사소한 제안
+
+            리뷰 마지막에 다음을 포함해주세요:
+            1. 전체 평가 (상/중/하)
+            2. 주요 개선 사항 요약
+            3. 칭찬할 점
+            4. 이 PR에서 학습할 키워드
