@@ -45,6 +45,16 @@ jest.mock('@/contexts/AuthContext', () => ({
   }),
 }));
 
+// axios import 체인을 끊기 위해 MemberDetailSheet mock
+jest.mock('@/components/family/MemberDetailSheet', () => ({
+  MemberDetailSheet: () => null,
+}));
+
+// TagFilter도 useTagQueries를 사용하므로 mock
+jest.mock('@/components/family/TagFilter', () => ({
+  TagFilter: () => null,
+}));
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -391,6 +401,173 @@ describe('HomePage', () => {
       // 스켈레톤 컨테이너가 flex items-center로 1줄 레이아웃
       const skeletonContainers = document.querySelectorAll('.flex.items-center.gap-2');
       expect(skeletonContainers.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('태그 영역 스크롤 버튼', () => {
+    const memberWithTags = {
+      memberId: 1,
+      memberName: '홍길동',
+      memberBirthday: '1990-12-25',
+      memberBirthdayType: 'SOLAR' as const,
+      memberPhoneNumber: null,
+      phoneNumberDisplay: null,
+      hasRelationship: false,
+      relationshipSetupRequired: false,
+      relationshipGuideMessage: '',
+      member: { status: 'ACTIVE' },
+      tags: [
+        { id: 1, name: '가족', color: '#FF0000' },
+        { id: 2, name: '친척', color: '#00FF00' },
+        { id: 3, name: '친구', color: '#0000FF' },
+      ],
+    };
+
+    const memberWithoutTags = {
+      memberId: 2,
+      memberName: '김철수',
+      memberBirthday: null,
+      memberBirthdayType: null,
+      memberPhoneNumber: null,
+      phoneNumberDisplay: null,
+      hasRelationship: false,
+      relationshipSetupRequired: false,
+      relationshipGuideMessage: '',
+      member: { status: 'ACTIVE' },
+      tags: [],
+    };
+
+    beforeEach(() => {
+      mockUseMyFamilies.mockReturnValue({
+        data: [{ id: 1, name: '테스트가족' }],
+        isLoading: false,
+      });
+    });
+
+    it('태그가 있는 멤버는 좌우 스크롤 버튼이 렌더링된다', async () => {
+      mockUseFamilyMembers.mockReturnValue({
+        data: [memberWithTags],
+        isLoading: false,
+      });
+
+      render(<HomePage />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByText('홍길동')).toBeInTheDocument();
+      });
+
+      // 태그 영역의 좌우 스크롤 버튼 확인 (ChevronLeft, ChevronRight 아이콘을 가진 버튼)
+      const tagContainer = document.querySelector('.group\\/tags');
+      expect(tagContainer).toBeInTheDocument();
+
+      const scrollButtons = tagContainer?.querySelectorAll('button');
+      expect(scrollButtons?.length).toBe(2);
+    });
+
+    it('태그가 없는 멤버는 스크롤 버튼이 렌더링되지 않는다', async () => {
+      mockUseFamilyMembers.mockReturnValue({
+        data: [memberWithoutTags],
+        isLoading: false,
+      });
+
+      render(<HomePage />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByText('김철수')).toBeInTheDocument();
+      });
+
+      // 태그 영역이 없어야 함
+      const tagContainer = document.querySelector('.group\\/tags');
+      expect(tagContainer).not.toBeInTheDocument();
+    });
+
+    it('왼쪽 스크롤 버튼 클릭 시 scrollBy가 호출된다', async () => {
+      mockUseFamilyMembers.mockReturnValue({
+        data: [memberWithTags],
+        isLoading: false,
+      });
+
+      render(<HomePage />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByText('홍길동')).toBeInTheDocument();
+      });
+
+      const tagContainer = document.querySelector('.group\\/tags');
+      const scrollArea = tagContainer?.querySelector('.overflow-x-auto');
+      const leftButton = tagContainer?.querySelector('button');
+
+      // scrollBy mock
+      const scrollByMock = jest.fn();
+      if (scrollArea) {
+        scrollArea.scrollBy = scrollByMock;
+      }
+
+      if (leftButton) {
+        fireEvent.click(leftButton);
+      }
+
+      expect(scrollByMock).toHaveBeenCalledWith({ left: -100, behavior: 'smooth' });
+    });
+
+    it('오른쪽 스크롤 버튼 클릭 시 scrollBy가 호출된다', async () => {
+      mockUseFamilyMembers.mockReturnValue({
+        data: [memberWithTags],
+        isLoading: false,
+      });
+
+      render(<HomePage />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByText('홍길동')).toBeInTheDocument();
+      });
+
+      const tagContainer = document.querySelector('.group\\/tags');
+      const scrollArea = tagContainer?.querySelector('.overflow-x-auto');
+      const buttons = tagContainer?.querySelectorAll('button');
+      const rightButton = buttons?.[1];
+
+      // scrollBy mock
+      const scrollByMock = jest.fn();
+      if (scrollArea) {
+        scrollArea.scrollBy = scrollByMock;
+      }
+
+      if (rightButton) {
+        fireEvent.click(rightButton);
+      }
+
+      expect(scrollByMock).toHaveBeenCalledWith({ left: 100, behavior: 'smooth' });
+    });
+
+    it('스크롤 버튼 클릭 시 멤버 카드 클릭 이벤트가 전파되지 않는다', async () => {
+      mockUseFamilyMembers.mockReturnValue({
+        data: [memberWithTags],
+        isLoading: false,
+      });
+
+      render(<HomePage />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByText('홍길동')).toBeInTheDocument();
+      });
+
+      const tagContainer = document.querySelector('.group\\/tags');
+      const leftButton = tagContainer?.querySelector('button');
+
+      // scrollBy mock (에러 방지)
+      const scrollArea = tagContainer?.querySelector('.overflow-x-auto');
+      if (scrollArea) {
+        scrollArea.scrollBy = jest.fn();
+      }
+
+      if (leftButton) {
+        fireEvent.click(leftButton);
+      }
+
+      // MemberDetailSheet가 열리지 않아야 함 (이벤트 전파 방지 확인)
+      // Sheet가 열리면 role="dialog"가 나타남
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
   });
 });

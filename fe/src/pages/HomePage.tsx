@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMyFamilies, useFamilyMembers } from '../hooks/queries/useFamilyQueries';
 import { FamilyMemberWithRelationship } from '../api/services/familyService';
-import { Search, Plus, UserPlus, LogOut, ChevronRight, ArrowRight } from 'lucide-react';
+import { Search, Plus, UserPlus, LogOut, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -222,18 +222,53 @@ const HomePage: React.FC = () => {
                       <ChevronRight className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
                     </div>
                   </div>
-                  {/* 2줄: 태그 - 가로 스크롤 */}
+                  {/* 2줄: 태그 - 가로 스크롤 with 좌우 버튼 */}
                   {member.tags && member.tags.length > 0 && (
-                    <div className="flex items-center gap-1 flex-nowrap overflow-x-auto scrollbar-hide mt-1">
-                      {member.tags.map((tag) => (
-                        <TagBadge
-                          key={tag.id}
-                          name={tag.name}
-                          color={tag.color}
-                          size="sm"
-                          className="flex-shrink-0 whitespace-nowrap"
-                        />
-                      ))}
+                    <div className="relative group/tags mt-1">
+                      {/* 왼쪽 스크롤 버튼 */}
+                      <button
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10
+                                   h-5 w-5 bg-background/80 rounded-full shadow-sm border border-border/50
+                                   flex items-center justify-center
+                                   opacity-0 group-hover/tags:opacity-100 transition-opacity
+                                   hover:bg-background"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const container = e.currentTarget.nextElementSibling as HTMLElement;
+                          container?.scrollBy({ left: -100, behavior: 'smooth' });
+                        }}
+                      >
+                        <ChevronLeft className="h-3 w-3 text-muted-foreground" />
+                      </button>
+
+                      {/* 태그 스크롤 영역 */}
+                      <div className="flex items-center gap-1 flex-nowrap overflow-x-auto scrollbar-hide px-6">
+                        {member.tags.map((tag) => (
+                          <TagBadge
+                            key={tag.id}
+                            name={tag.name}
+                            color={tag.color}
+                            size="sm"
+                            className="flex-shrink-0 whitespace-nowrap"
+                          />
+                        ))}
+                      </div>
+
+                      {/* 오른쪽 스크롤 버튼 */}
+                      <button
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10
+                                   h-5 w-5 bg-background/80 rounded-full shadow-sm border border-border/50
+                                   flex items-center justify-center
+                                   opacity-0 group-hover/tags:opacity-100 transition-opacity
+                                   hover:bg-background"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const container = e.currentTarget.previousElementSibling as HTMLElement;
+                          container?.scrollBy({ left: 100, behavior: 'smooth' });
+                        }}
+                      >
+                        <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                      </button>
                     </div>
                   )}
                 </div>
