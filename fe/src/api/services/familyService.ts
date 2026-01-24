@@ -9,7 +9,6 @@ import {
   FamilyMember,
   FamilyMemberRole,
   FamilyMemberStatus,
-  FamilyMemberRelationship,
   Announcement
 } from '../../types/family';
 import { TagSimple } from '../../types/tag';
@@ -314,39 +313,20 @@ export class FamilyService {
     );
   }
 
-  // 가족 관계 관련 API
-
   /**
-   * 가족 구성원 간의 관계를 조회합니다.
+   * 가족 구성원의 관계를 변경합니다.
    */
-  public async findFamilyRelationships(familyId: number | string): Promise<FamilyMemberRelationship[]> {
-    return this.apiClient.get<FamilyMemberRelationship[]>(`/api/families/${familyId}/relationships`);
-  }
-
-  /**
-   * 새로운 가족 관계를 설정합니다.
-   */
-  public async createFamilyRelationship(
+  public async modifyMemberRelationship(
     familyId: number | string,
-    relationship: Omit<FamilyMemberRelationship, 'id' | 'createdAt' | 'modifiedAt'>
-  ): Promise<FamilyMemberRelationship> {
-    return this.apiClient.post<FamilyMemberRelationship>(
-      `/api/families/${familyId}/relationships`,
-      relationship
-    );
-  }
-
-  /**
-   * 가족 관계를 수정합니다.
-   */
-  public async updateFamilyRelationship(
-    familyId: number | string,
-    relationshipId: number | string,
-    relationship: Partial<Pick<FamilyMemberRelationship, 'relationshipType' | 'customRelationship'>>
-  ): Promise<FamilyMemberRelationship> {
-    return this.apiClient.put<FamilyMemberRelationship>(
-      `/api/families/${familyId}/relationships/${relationshipId}`,
-      relationship
+    memberId: number | string,
+    request: {
+      relationshipType: FamilyMemberRelationshipType;
+      customRelationship?: string;
+    }
+  ): Promise<{ id: number }> {
+    return this.apiClient.patch<{ id: number }>(
+      `/api/families/${familyId}/members/${memberId}/relationship`,
+      request
     );
   }
 

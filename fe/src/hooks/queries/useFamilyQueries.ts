@@ -13,9 +13,9 @@ import {
   FamilyJoinRequestStatus
 } from '../../api/services/familyService';
 import {
+  FamilyMemberRelationshipType,
   FamilyMemberRole,
   FamilyMemberStatus,
-  FamilyMemberRelationship,
 } from '../../types/family';
 
 // Type alias for backward compatibility
@@ -35,10 +35,7 @@ export const familyQueryKeys = {
   members: (familyId: number | string) => [...familyQueryKeys.detail(familyId), 'members'] as const,
   member: (familyId: number | string, memberId: number | string) => [...familyQueryKeys.members(familyId), memberId.toString()] as const,
   activeMembers: (familyId: number | string) => [...familyQueryKeys.detail(familyId), 'active'] as const,
-  
-  // 관계 관련
-  relationships: (familyId: number | string) => [...familyQueryKeys.detail(familyId), 'relationships'] as const,
-  
+
   // 가입 요청 관련
   joinRequests: (familyId: number | string) => [...familyQueryKeys.detail(familyId), 'join-requests'] as const,
   
@@ -135,20 +132,6 @@ export const useFamilyMemberDetail = (familyId: number | string, memberId: numbe
     queryKey: familyQueryKeys.member(familyId, memberId),
     queryFn: () => familyService.findFamilyMemberById(familyId.toString(), memberId.toString()),
     enabled: !!familyId && !!memberId,
-    staleTime: 5 * 60 * 1000, // 5분
-  });
-};
-
-// 가족 관계 조회 훅들
-
-/**
- * 가족 구성원 간의 관계를 조회합니다.
- */
-export const useFamilyRelationships = (familyId: number | string) => {
-  return useQuery({
-    queryKey: familyQueryKeys.relationships(familyId),
-    queryFn: () => familyService.findFamilyRelationships(familyId.toString()),
-    enabled: !!familyId,
     staleTime: 5 * 60 * 1000, // 5분
   });
 };
@@ -316,25 +299,32 @@ export const useUpdateMemberStatus = () => {
 };
 
 /**
- * 새로운 가족 관계를 설정합니다.
+ * 가족 구성원의 관계를 변경합니다.
  */
-export const useCreateFamilyRelationship = () => {
+export const useModifyMemberRelationship = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ 
-      familyId, 
-      relationship 
-    }: { 
-      familyId: number | string; 
-      relationship: Omit<FamilyMemberRelationship, 'id' | 'createdAt' | 'modifiedAt'> 
-    }) => familyService.createFamilyRelationship(familyId.toString(), relationship),
-    onSuccess: (_, { familyId }) => {
-      // 가족 관계 목록 무효화
+    mutationFn: ({
+      familyId,
+      memberId,
+      relationshipType,
+      customRelationship,
+    }: {
+      familyId: number | string;
+      memberId: number | string;
+      relationshipType: FamilyMemberRelationshipType;
+      customRelationship?: string;
+    }) => familyService.modifyMemberRelationship(familyId.toString(), memberId.toString(), {
+      relationshipType,
+      customRelationship,
+    }),
+    onSuccess: (_, { familyId, memberId }) => {
+      // 해당 구성원 정보 무효화
       queryClient.invalidateQueries({
-        queryKey: familyQueryKeys.relationships(familyId),
+        queryKey: familyQueryKeys.member(familyId, memberId),
       });
-      // 구성원 목록도 업데이트 (관계 정보 포함)
+      // 가족 구성원 목록 무효화
       queryClient.invalidateQueries({
         queryKey: familyQueryKeys.members(familyId),
       });

@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { TagBadge } from './TagBadge';
 import { TagSelector } from './TagSelector';
+import { SetRelationshipModal } from './SetRelationshipModal';
 import { FamilyMemberWithRelationship } from '../../api/services/familyService';
 import { TagSimple } from '../../types/tag';
 import { cn } from '../../lib/utils';
@@ -34,6 +35,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
   onMemberUpdate,
 }) => {
   const [localTags, setLocalTags] = useState<TagSimple[]>([]);
+  const [isRelationshipModalOpen, setIsRelationshipModalOpen] = useState(false);
 
   // member가 변경되면 localTags 초기화
   React.useEffect(() => {
@@ -191,7 +193,11 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
             )}
 
             {/* 관계 정보 */}
-            <div className="flex items-center gap-3">
+            <button
+              type="button"
+              className="flex items-center gap-3 w-full text-left hover:bg-secondary/50 rounded-lg p-1 -m-1 transition-colors"
+              onClick={() => setIsRelationshipModalOpen(true)}
+            >
               <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
                 <User className="h-4 w-4 text-muted-foreground" />
               </div>
@@ -205,9 +211,20 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
                     : '관계를 설정해주세요'}
                 </p>
               </div>
-            </div>
+            </button>
           </div>
         </div>
+
+        {/* 관계 설정 모달 */}
+        <SetRelationshipModal
+          open={isRelationshipModalOpen}
+          onOpenChange={setIsRelationshipModalOpen}
+          familyId={familyId}
+          memberId={member.memberId}
+          memberName={member.memberName}
+          currentRelationshipType={member.relationshipType}
+          currentCustomRelationship={member.customRelationshipName}
+        />
       </SheetContent>
     </Sheet>
   );
