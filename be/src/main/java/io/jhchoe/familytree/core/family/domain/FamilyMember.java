@@ -345,4 +345,51 @@ public class FamilyMember {
         }
         return relationshipType.getDisplayName();
     }
+
+    /**
+     * 구성원의 관계 정보를 변경합니다.
+     *
+     * @param relationshipType   새로운 관계 타입 (null 불허)
+     * @param customRelationship CUSTOM 타입일 때 사용자 정의 관계명 (CUSTOM이 아닌 경우 무시됨)
+     * @return 관계 정보가 변경된 새로운 FamilyMember 객체
+     * @throws NullPointerException     relationshipType이 null인 경우
+     * @throws IllegalArgumentException CUSTOM 타입이지만 customRelationship이 없거나 50자를 초과하는 경우
+     */
+    public FamilyMember updateRelationship(
+        FamilyMemberRelationshipType relationshipType,
+        String customRelationship
+    ) {
+        validateRelationshipType(relationshipType, customRelationship);
+
+        return new FamilyMember(
+            this.id, this.familyId, this.userId, this.name,
+            relationshipType, customRelationship,
+            this.profileUrl, this.birthday, this.birthdayType,
+            this.status, this.role,
+            this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
+        );
+    }
+
+    /**
+     * 관계 타입과 커스텀 관계명의 유효성을 검증합니다.
+     *
+     * @param relationshipType   관계 타입
+     * @param customRelationship 커스텀 관계명
+     * @throws NullPointerException     relationshipType이 null인 경우
+     * @throws IllegalArgumentException CUSTOM 타입이지만 customRelationship이 없거나 50자를 초과하는 경우
+     */
+    private static void validateRelationshipType(
+        FamilyMemberRelationshipType relationshipType,
+        String customRelationship
+    ) {
+        Objects.requireNonNull(relationshipType, "relationshipType must not be null");
+        if (relationshipType == FamilyMemberRelationshipType.CUSTOM) {
+            if (customRelationship == null || customRelationship.isBlank()) {
+                throw new IllegalArgumentException("CUSTOM 관계 타입 선택 시 customRelationship 필수");
+            }
+            if (customRelationship.length() > 50) {
+                throw new IllegalArgumentException("customRelationship은 50자 이내");
+            }
+        }
+    }
 }

@@ -7,9 +7,7 @@ import io.jhchoe.familytree.core.family.adapter.in.response.FamilyMemberWithRela
 import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberWithTagsInfo;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMemberUseCase;
 import io.jhchoe.familytree.core.family.application.port.in.FindFamilyMembersWithTagsQuery;
-import io.jhchoe.familytree.core.family.application.port.in.FamilyMemberTagMappingInfo.TagSimpleInfo;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +48,6 @@ public class FindFamilyHomeMemberController {
         List<FamilyMemberWithRelationshipResponse> response = membersWithTags.stream()
             .map(info -> new FamilyMemberWithRelationshipResponse(
                 info.member(),
-                Optional.empty(),
                 info.tags().stream()
                     .map(tag -> new TagInfo(tag.id(), tag.name(), tag.color()))
                     .toList()

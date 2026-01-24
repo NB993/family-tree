@@ -2,14 +2,15 @@
  * 가족 트리 시각화 관련 타입 정의
  */
 
-import { FamilyMember, FamilyMemberRelationship } from './family';
+import { FamilyMember, FamilyMemberRelationshipType } from './family';
 
 export interface FamilyTreeNode {
   id: string;
   member: FamilyMember;
   children: FamilyTreeNode[];
   parents: FamilyTreeNode[];
-  relationships: FamilyMemberRelationship[];
+  relationshipType?: FamilyMemberRelationshipType;
+  customRelationship?: string;
   level: number;
   generation: number;
 }

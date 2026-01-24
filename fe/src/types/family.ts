@@ -91,16 +91,6 @@ export interface Family {
   updatedAt: string;
 }
 
-export interface FamilyMemberRelationship {
-  id: number;
-  fromMemberId: number;
-  toMemberId: number;
-  relationshipType: FamilyMemberRelationshipType;
-  customRelationship?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface RelationshipSuggestion {
   relationship: FamilyMemberRelationshipType;
   confidence: number;
@@ -166,10 +156,6 @@ export interface UpdateFamilyMemberForm extends Partial<CreateFamilyMemberForm> 
 }
 
 // 유틸리티 타입
-export type FamilyMemberWithRelationships = FamilyMember & {
-  relationships: FamilyMemberRelationship[];
-};
-
 export type FamilyWithMembers = Family & {
   members: FamilyMember[];
   owner: FamilyMember;
