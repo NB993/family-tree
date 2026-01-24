@@ -242,7 +242,7 @@ const HomePage: React.FC = () => {
                       </button>
 
                       {/* 태그 스크롤 영역 */}
-                      <div className="flex items-center gap-1 flex-nowrap overflow-x-auto scrollbar-hide px-6">
+                      <div className="flex items-center gap-1 flex-nowrap overflow-x-auto scrollbar-hide">
                         {member.tags.map((tag) => (
                           <TagBadge
                             key={tag.id}
