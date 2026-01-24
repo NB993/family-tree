@@ -280,4 +280,126 @@ class FamilyMemberTest {
         assertThat(suspendedMember.isActive()).isFalse();
         assertThat(bannedMember.isActive()).isFalse();
     }
+
+    @Nested
+    @DisplayName("updateRelationship 메서드")
+    class UpdateRelationship {
+
+        @Test
+        @DisplayName("관계 타입을 변경할 수 있다")
+        void should_update_relationship_type() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), null,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+
+            // when
+            FamilyMember updatedMember = member.updateRelationship(
+                FamilyMemberRelationshipType.FATHER, null
+            );
+
+            // then
+            assertThat(updatedMember.getRelationshipType()).isEqualTo(FamilyMemberRelationshipType.FATHER);
+            assertThat(updatedMember.getCustomRelationship()).isNull();
+            // 다른 필드는 변경되지 않아야 함
+            assertThat(updatedMember.getId()).isEqualTo(member.getId());
+            assertThat(updatedMember.getFamilyId()).isEqualTo(member.getFamilyId());
+            assertThat(updatedMember.getName()).isEqualTo(member.getName());
+            assertThat(updatedMember.getStatus()).isEqualTo(member.getStatus());
+            assertThat(updatedMember.getRole()).isEqualTo(member.getRole());
+        }
+
+        @Test
+        @DisplayName("CUSTOM 타입일 때 customRelationship을 설정할 수 있다")
+        void should_set_custom_relationship_when_custom_type() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), null,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+
+            // when
+            FamilyMember updatedMember = member.updateRelationship(
+                FamilyMemberRelationshipType.CUSTOM, "의붓아버지"
+            );
+
+            // then
+            assertThat(updatedMember.getRelationshipType()).isEqualTo(FamilyMemberRelationshipType.CUSTOM);
+            assertThat(updatedMember.getCustomRelationship()).isEqualTo("의붓아버지");
+        }
+
+        @Test
+        @DisplayName("relationshipType이 null이면 예외가 발생한다")
+        void should_throw_exception_when_relationship_type_is_null() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), null,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+
+            // when & then
+            assertThatThrownBy(() -> member.updateRelationship(null, null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("relationshipType must not be null");
+        }
+
+        @Test
+        @DisplayName("CUSTOM 타입일 때 customRelationship이 없으면 예외가 발생한다")
+        void should_throw_exception_when_custom_type_without_custom_relationship() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), null,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+
+            // when & then
+            assertThatThrownBy(() -> member.updateRelationship(FamilyMemberRelationshipType.CUSTOM, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("CUSTOM 관계 타입 선택 시 customRelationship 필수");
+        }
+
+        @Test
+        @DisplayName("CUSTOM 타입일 때 customRelationship이 빈 문자열이면 예외가 발생한다")
+        void should_throw_exception_when_custom_type_with_blank_custom_relationship() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), null,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+
+            // when & then
+            assertThatThrownBy(() -> member.updateRelationship(FamilyMemberRelationshipType.CUSTOM, "   "))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("CUSTOM 관계 타입 선택 시 customRelationship 필수");
+        }
+
+        @Test
+        @DisplayName("customRelationship이 50자를 초과하면 예외가 발생한다")
+        void should_throw_exception_when_custom_relationship_exceeds_50_chars() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), null,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+            String longCustomRelationship = "가".repeat(51);
+
+            // when & then
+            assertThatThrownBy(() -> member.updateRelationship(FamilyMemberRelationshipType.CUSTOM, longCustomRelationship))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("customRelationship은 50자 이내");
+        }
+    }
 }
