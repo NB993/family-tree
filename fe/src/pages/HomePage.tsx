@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMyFamilies, useFamilyMembers } from '../hooks/queries/useFamilyQueries';
 import { FamilyMemberWithRelationship } from '../api/services/familyService';
-import { Search, Plus, UserPlus, LogOut, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { Search, Plus, UserPlus, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -210,13 +210,12 @@ const HomePage: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
                       {member.memberBirthday && (
-                        <span className="text-xs text-muted-foreground flex items-center gap-0.5">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
                           {formatBirthday(member.memberBirthday, member.memberBirthdayType ?? null)}
                           {member.memberBirthdayType === 'LUNAR' && (
-                            <>
-                              <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-                              <span>{formatThisYearSolarBirthday(member.memberBirthday)}</span>
-                            </>
+                            <span className="text-muted-foreground/70">
+                              (올해 양력: {formatThisYearSolarBirthday(member.memberBirthday)})
+                            </span>
                           )}
                         </span>
                       )}

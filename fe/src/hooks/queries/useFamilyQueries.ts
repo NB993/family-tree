@@ -10,7 +10,8 @@ import {
   ModifyFamilyRequest,
   CreateFamilyMemberForm,
   UpdateFamilyMemberForm,
-  FamilyJoinRequestStatus
+  FamilyJoinRequestStatus,
+  ModifyFamilyMemberInfoRequest
 } from '../../api/services/familyService';
 import {
   FamilyMemberRelationshipType,
@@ -319,6 +320,35 @@ export const useModifyMemberRelationship = () => {
       relationshipType,
       customRelationship,
     }),
+    onSuccess: (_, { familyId, memberId }) => {
+      // 해당 구성원 정보 무효화
+      queryClient.invalidateQueries({
+        queryKey: familyQueryKeys.member(familyId, memberId),
+      });
+      // 가족 구성원 목록 무효화
+      queryClient.invalidateQueries({
+        queryKey: familyQueryKeys.members(familyId),
+      });
+    },
+  });
+};
+
+/**
+ * 가족 구성원의 기본 정보(이름, 생일, 생일타입)를 수정합니다.
+ */
+export const useModifyMemberInfo = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      familyId,
+      memberId,
+      request,
+    }: {
+      familyId: number | string;
+      memberId: number | string;
+      request: ModifyFamilyMemberInfoRequest;
+    }) => familyService.modifyMemberInfo(familyId.toString(), memberId.toString(), request),
     onSuccess: (_, { familyId, memberId }) => {
       // 해당 구성원 정보 무효화
       queryClient.invalidateQueries({
