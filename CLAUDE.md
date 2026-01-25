@@ -29,7 +29,7 @@ cd be && ./gradlew build     # 빌드 (API 문서 포함)
 2. 스킬을 사용한다면 **스킬 지침을 먼저 읽고** 작업 진행
 3. CLAUDE.md의 규칙은 **요약**이며, 상세 규칙은 각 스킬 지침에 정의됨
 
-### 사용 가능한 스킬 (8개)
+### 사용 가능한 스킬 (9개)
 
 | 스킬 | 용도 |
 |------|------|
@@ -41,6 +41,7 @@ cd be && ./gradlew build     # 빌드 (API 문서 포함)
 | `refactor` | 리팩토링 전용 |
 | `commit` | 커밋 메시지 작성 |
 | `create-pr` | CodeRabbit 최적화 PR 생성 |
+| `issue-create` | 대화에서 논의한 작업 내용을 GitHub 이슈로 등록 |
 
 ## TDD 워크플로우
 
