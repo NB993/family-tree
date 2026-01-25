@@ -1,6 +1,6 @@
 ---
 name: core-tdd
-description: 코어 계층(Domain, UseCase, Service, Command/Query) TDD 개발 지침. Red-Green-Refactor 사이클을 통해 테스트 주도 개발을 수행합니다. 테스트를 먼저 작성하고, 테스트가 통과하는 최소한의 코드를 구현합니다.
+description: Domain, UseCase, Service, Command, Query 클래스를 구현할 때 반드시 사용. 도메인 로직, 비즈니스 로직, 서비스 구현 시 TDD(Red-Green-Refactor) 방식으로 진행. "도메인 구현", "서비스 구현", "UseCase 구현", "Command 생성", "비즈니스 로직" 작업 시 자동 발동.
 ---
 
 # 코어 계층 TDD 지침

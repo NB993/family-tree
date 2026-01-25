@@ -1,6 +1,6 @@
 ---
 name: infra-tdd
-description: 인프라 계층(JpaEntity, Adapter, Repository) TDD 개발 지침. Red-Green-Refactor 사이클을 통해 테스트 주도 개발을 수행합니다. 실제 DB(Testcontainer)를 사용하며 Mocking하지 않습니다.
+description: JpaEntity, Adapter, Repository 클래스를 구현할 때 반드시 사용. 인프라 계층 구현 시 TDD(Red-Green-Refactor) 방식으로 진행. "JpaEntity 구현", "Adapter 구현", "Repository 구현", "영속성 계층" 작업 시 자동 발동.
 ---
 
 # 인프라 계층 TDD 지침

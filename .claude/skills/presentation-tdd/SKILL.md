@@ -1,13 +1,13 @@
 ---
 name: presentation-tdd
-description: 프레젠테이션 계층(Controller, Request/Response DTO) TDD 개발 지침. Outside-In TDD로 인수 테스트부터 시작하여 Controller와 DTO를 구현합니다. API 문서 테스트로 문서화를 완성합니다.
+description: Controller, Request/Response DTO 클래스를 구현할 때 반드시 사용. 프레젠테이션 계층 구현 시 Outside-In TDD로 인수 테스트부터 시작. "Controller 구현", "API 구현", "엔드포인트 구현", "Request DTO", "Response DTO" 작업 시 자동 발동.
 ---
 
 # 프레젠테이션 계층 TDD 지침
 
 ## TDD 순서
 
-1. **인수 테스트** (실패) → Controller + DTO 구현
+1. **인수 테스트** (≠실패) → Controller + DTO 구현
 2. **API 문서 테스트** → 문서화 완성
 
 ## 특이사항
