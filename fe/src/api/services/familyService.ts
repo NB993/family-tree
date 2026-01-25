@@ -124,6 +124,18 @@ export interface UpdateFamilyMemberForm {
   nationality?: string;
 }
 
+// 구성원 기본 정보 수정 요청
+export interface ModifyFamilyMemberInfoRequest {
+  name: string;
+  birthday?: string;
+  birthdayType?: BirthdayType;
+}
+
+// 구성원 기본 정보 수정 응답
+export interface ModifyFamilyMemberInfoResponse {
+  id: number;
+}
+
 // 가족 관계 관련 타입들 - types/family.ts에서 import
 
 
@@ -326,6 +338,20 @@ export class FamilyService {
   ): Promise<{ id: number }> {
     return this.apiClient.patch<{ id: number }>(
       `/api/families/${familyId}/members/${memberId}/relationship`,
+      request
+    );
+  }
+
+  /**
+   * 가족 구성원의 기본 정보(이름, 생일, 생일타입)를 수정합니다.
+   */
+  public async modifyMemberInfo(
+    familyId: number | string,
+    memberId: number | string,
+    request: ModifyFamilyMemberInfoRequest
+  ): Promise<ModifyFamilyMemberInfoResponse> {
+    return this.apiClient.put<ModifyFamilyMemberInfoResponse>(
+      `/api/families/${familyId}/members/${memberId}/info`,
       request
     );
   }

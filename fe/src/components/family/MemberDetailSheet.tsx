@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from 'react';
-import { Phone, Calendar, User, Plus } from 'lucide-react';
+import { Phone, Calendar, User, Plus, Pencil } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -15,7 +15,9 @@ import { Button } from '../ui/button';
 import { TagBadge } from './TagBadge';
 import { TagSelector } from './TagSelector';
 import { SetRelationshipModal } from './SetRelationshipModal';
+import { MemberEditModal } from './MemberEditModal';
 import { FamilyMemberWithRelationship } from '../../api/services/familyService';
+import { formatThisYearSolarBirthday } from '../../utils/lunar';
 import { TagSimple } from '../../types/tag';
 import { cn } from '../../lib/utils';
 
@@ -34,6 +36,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
 }) => {
   const [localTags, setLocalTags] = useState<TagSimple[]>([]);
   const [isRelationshipModalOpen, setIsRelationshipModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // member가 변경되면 localTags 초기화
   React.useEffect(() => {
@@ -57,6 +60,12 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
     const day = String(date.getDate()).padStart(2, '0');
     const typeLabel = birthdayType === 'LUNAR' ? '음력' : '양력';
     return `${year}.${month}.${day} (${typeLabel})`;
+  };
+
+  // 음력일 때 올해 양력 날짜 표시
+  const getSolarBirthdayDisplay = (birthday?: string, birthdayType?: string | null) => {
+    if (!birthday || birthdayType !== 'LUNAR') return null;
+    return `올해 양력: ${formatThisYearSolarBirthday(birthday)}`;
   };
 
   const formatPhoneNumber = (phone?: string) => {
@@ -89,9 +98,19 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <h2 className="text-lg font-semibold text-foreground truncate">
-                {member.memberName}
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-foreground truncate">
+                  {member.memberName}
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="p-1 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="정보 수정"
+                >
+                  <Pencil className="h-4 w-4" />
+                </button>
+              </div>
               <p className={cn(
                 "text-sm",
                 member.hasRelationship ? "text-muted-foreground" : "text-amber-600"
@@ -155,6 +174,11 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
                     {member.memberAge && member.memberBirthday && ' · '}
                     {formatBirthday(member.memberBirthday, member.memberBirthdayType)}
                   </p>
+                  {getSolarBirthdayDisplay(member.memberBirthday, member.memberBirthdayType) && (
+                    <p className="text-sm text-muted-foreground">
+                      {getSolarBirthdayDisplay(member.memberBirthday, member.memberBirthdayType)}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
@@ -217,6 +241,17 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
           memberName={member.memberName}
           currentRelationshipType={member.relationshipType}
           currentCustomRelationship={member.customRelationshipName}
+        />
+
+        {/* 정보 수정 모달 */}
+        <MemberEditModal
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          familyId={familyId}
+          memberId={member.memberId}
+          currentName={member.memberName}
+          currentBirthday={member.memberBirthday}
+          currentBirthdayType={member.memberBirthdayType}
         />
       </SheetContent>
     </Sheet>
