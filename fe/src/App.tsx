@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AppLayout } from './components/layout/AppLayout';
 import { ProtectedRoute, RootRedirect } from './components/Auth';
 import { AuthProvider } from './contexts/AuthContext';
+import { Toaster } from './components/ui/toaster';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -80,6 +81,7 @@ function App() {
             </AppLayout>
           </div>
         </AuthProvider>
+        <Toaster />
       </Router>
     </QueryClientProvider>
   );

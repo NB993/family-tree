@@ -23,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FamilyMemberRelationshipType, FamilyMemberRelationshipLabels } from '@/types/family';
 import { useModifyMemberRelationship } from '@/hooks/queries/useFamilyQueries';
+import { useToast } from '@/hooks/use-toast';
 
 interface SetRelationshipModalProps {
   open: boolean;
@@ -32,7 +33,7 @@ interface SetRelationshipModalProps {
   memberName: string;
   currentRelationshipType?: FamilyMemberRelationshipType;
   currentCustomRelationship?: string;
-  onSuccess?: () => void;
+  onSuccess?: (relationshipType: FamilyMemberRelationshipType, customRelationship?: string) => void;
 }
 
 const relationshipOptions = Object.values(FamilyMemberRelationshipType).map(
@@ -55,6 +56,7 @@ export const SetRelationshipModal: React.FC<SetRelationshipModalProps> = ({
   const [relationshipType, setRelationshipType] = useState(currentRelationshipType || '');
   const [customRelationship, setCustomRelationship] = useState(currentCustomRelationship || '');
 
+  const { toast } = useToast();
   const modifyRelationshipMutation = useModifyMemberRelationship();
 
   const isCustomRelationship = relationshipType === FamilyMemberRelationshipType.CUSTOM;
@@ -81,10 +83,11 @@ export const SetRelationshipModal: React.FC<SetRelationshipModalProps> = ({
         customRelationship: isCustomRelationship ? customRelationship.trim() : undefined,
       });
 
+      toast({ title: '관계가 설정되었습니다.' });
       onOpenChange(false);
-      onSuccess?.();
+      onSuccess?.(relationshipType as FamilyMemberRelationshipType, isCustomRelationship ? customRelationship.trim() : undefined);
     } catch {
-      console.error('관계 설정 실패');
+      toast({ title: '관계 설정에 실패했습니다.', variant: 'destructive' });
     }
   };
 

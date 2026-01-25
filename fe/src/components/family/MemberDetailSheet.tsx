@@ -18,6 +18,7 @@ import { SetRelationshipModal } from './SetRelationshipModal';
 import { FamilyMemberWithRelationship } from '../../api/services/familyService';
 import { TagSimple } from '../../types/tag';
 import { cn } from '../../lib/utils';
+import { FamilyMemberRelationshipType, FamilyMemberRelationshipLabels } from '../../types/family';
 
 interface MemberDetailSheetProps {
   familyId: number | string;
@@ -52,6 +53,27 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
       onMemberUpdate({
         ...member,
         tags: newTags,
+      });
+    }
+  };
+
+  const handleRelationshipSuccess = (
+    relationshipType: FamilyMemberRelationshipType,
+    customRelationship?: string
+  ) => {
+    if (onMemberUpdate && member) {
+      const isCustom = relationshipType === FamilyMemberRelationshipType.CUSTOM;
+      const displayName = isCustom
+        ? customRelationship
+        : FamilyMemberRelationshipLabels[relationshipType];
+
+      onMemberUpdate({
+        ...member,
+        hasRelationship: true,
+        relationshipType,
+        relationshipDisplayName: isCustom ? undefined : displayName,
+        customRelationshipName: isCustom ? customRelationship : undefined,
+        relationshipGuideMessage: displayName || '',
       });
     }
   };
@@ -224,6 +246,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
           memberName={member.memberName}
           currentRelationshipType={member.relationshipType}
           currentCustomRelationship={member.customRelationshipName}
+          onSuccess={handleRelationshipSuccess}
         />
       </SheetContent>
     </Sheet>

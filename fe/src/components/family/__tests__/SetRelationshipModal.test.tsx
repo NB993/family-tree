@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SetRelationshipModal } from '../SetRelationshipModal';
@@ -10,6 +10,14 @@ jest.mock('@/hooks/queries/useFamilyQueries', () => ({
   useModifyMemberRelationship: () => ({
     mutateAsync: mockMutateAsync,
     isPending: false,
+  }),
+}));
+
+// Mock useToast hook
+const mockToast = jest.fn();
+jest.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({
+    toast: mockToast,
   }),
 }));
 
@@ -185,6 +193,54 @@ describe('SetRelationshipModal', () => {
       });
 
       expect(screen.queryByText('홍길동님과의 관계 설정')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('제출 및 토스트', () => {
+    it('관계 설정 성공 시 성공 토스트가 표시된다', async () => {
+      mockMutateAsync.mockResolvedValueOnce({});
+      const onSuccess = jest.fn();
+
+      render(
+        <SetRelationshipModal
+          {...defaultProps}
+          currentRelationshipType={FamilyMemberRelationshipType.FATHER}
+          onSuccess={onSuccess}
+        />,
+        { wrapper: createWrapper() }
+      );
+
+      const submitButton = screen.getByRole('button', { name: '설정' });
+      await userEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalled();
+        expect(mockToast).toHaveBeenCalledWith({ title: '관계가 설정되었습니다.' });
+        expect(onSuccess).toHaveBeenCalled();
+      });
+    });
+
+    it('관계 설정 실패 시 에러 토스트가 표시된다', async () => {
+      mockMutateAsync.mockRejectedValueOnce(new Error('API Error'));
+
+      render(
+        <SetRelationshipModal
+          {...defaultProps}
+          currentRelationshipType={FamilyMemberRelationshipType.FATHER}
+        />,
+        { wrapper: createWrapper() }
+      );
+
+      const submitButton = screen.getByRole('button', { name: '설정' });
+      await userEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalled();
+        expect(mockToast).toHaveBeenCalledWith({
+          title: '관계 설정에 실패했습니다.',
+          variant: 'destructive',
+        });
+      });
     });
   });
 });
