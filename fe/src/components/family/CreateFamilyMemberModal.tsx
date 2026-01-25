@@ -16,7 +16,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { FamilyMemberRelationshipType } from '@/types/family';
+import { FamilyMemberRelationshipType, FamilyMemberRelationshipLabels } from '@/types/family';
 import { useCreateFamilyMember } from '@/hooks/queries/useFamilyQueries';
 
 interface CreateFamilyMemberModalProps {
@@ -29,10 +29,10 @@ interface CreateFamilyMemberModalProps {
 // TODO: 기본 프로필 이미지 경로 - 추후 실제 이미지로 교체
 // const DEFAULT_PROFILE_IMAGE = '/images/default-profile.png';
 
-const relationshipOptions = Object.entries(FamilyMemberRelationshipType).map(
-  ([key, value]) => ({
-    key,
-    label: value,
+const relationshipOptions = Object.values(FamilyMemberRelationshipType).map(
+  (value) => ({
+    value,
+    label: FamilyMemberRelationshipLabels[value],
   })
 );
 
@@ -49,7 +49,7 @@ const CreateFamilyMemberModal: React.FC<CreateFamilyMemberModalProps> = ({
 
   const createMemberMutation = useCreateFamilyMember();
 
-  const isCustomRelationship = relationship === 'CUSTOM';
+  const isCustomRelationship = relationship === FamilyMemberRelationshipType.CUSTOM;
   const isSubmitDisabled = !name.trim() || createMemberMutation.isPending;
 
   const resetForm = () => {
@@ -120,7 +120,7 @@ const CreateFamilyMemberModal: React.FC<CreateFamilyMemberModalProps> = ({
               </SelectTrigger>
               <SelectContent>
                 {relationshipOptions.map((option) => (
-                  <SelectItem key={option.key} value={option.key}>
+                  <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>
                 ))}

@@ -14,20 +14,22 @@ const FamilyMembersPage: React.FC = () => {
   const { data: familyData, isLoading: familyLoading } = useFamilyDetail(familyIdNumber!);
   const { data: membersData, isLoading: membersLoading, isError } = useFamilyMembers(familyIdNumber!);
 
-  // 멤버 상세 시트 상태
-  const [selectedMember, setSelectedMember] = useState<FamilyMemberWithRelationship | null>(null);
+  // 멤버 상세 시트 상태 - ID만 저장하고 membersData에서 파생
+  const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const isLoading = familyLoading || membersLoading;
   const members = membersData || [];
 
-  const handleMemberClick = (member: FamilyMemberWithRelationship) => {
-    setSelectedMember(member);
-    setIsSheetOpen(true);
-  };
+  // React Query 캐시에서 선택된 멤버 파생 (캐시 무효화 시 자동 업데이트)
+  const selectedMember = React.useMemo(() => {
+    if (!selectedMemberId || !membersData) return null;
+    return membersData.find((m: FamilyMemberWithRelationship) => m.memberId === selectedMemberId) || null;
+  }, [selectedMemberId, membersData]);
 
-  const handleMemberUpdate = (updatedMember: FamilyMemberWithRelationship) => {
-    setSelectedMember(updatedMember);
+  const handleMemberClick = (member: FamilyMemberWithRelationship) => {
+    setSelectedMemberId(member.memberId);
+    setIsSheetOpen(true);
   };
 
   if (!familyId) {
@@ -172,7 +174,6 @@ const FamilyMembersPage: React.FC = () => {
         member={selectedMember}
         open={isSheetOpen}
         onOpenChange={setIsSheetOpen}
-        onMemberUpdate={handleMemberUpdate}
       />
     </div>
   );

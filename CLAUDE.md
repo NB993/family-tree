@@ -80,6 +80,13 @@ PRD 작성               PRD 기반으로      테스트 케이스   Red→Green
 - 복원: `withId()`
 - 금지: `of()`, `create()`, `from()` (from은 JpaEntity 전용)
 
+### Frontend 접근성 (WCAG)
+- **WCAG 2.1 AA 기준 우선 충족** 필수
+- 최소 폰트 크기: 12px (`text-xs`)
+- 타이밍 조절 가능: 자동 닫힘 UI에 수동 닫기 옵션 제공 (2.2.1)
+- 색상 대비: 최소 4.5:1 (1.4.3)
+- 키보드 접근성: 모든 인터랙티브 요소 키보드로 조작 가능 (2.1.1)
+
 ## Code Review Guidelines
 
 PR 리뷰 시 `/code-review` 플러그인이 이 가이드라인을 참조합니다.

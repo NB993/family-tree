@@ -5,45 +5,75 @@
 
 export enum FamilyMemberRelationshipType {
   // 직계 가족 (Direct Family)
-  FATHER = '아버지',
-  MOTHER = '어머니',
-  SON = '아들',
-  DAUGHTER = '딸',
+  FATHER = 'FATHER',
+  MOTHER = 'MOTHER',
+  SON = 'SON',
+  DAUGHTER = 'DAUGHTER',
 
   // 조부모/손자 (Grandparents/Grandchildren)
-  GRANDFATHER = '할아버지',
-  GRANDMOTHER = '할머니',
-  GRANDSON = '손자',
-  GRANDDAUGHTER = '손녀',
+  GRANDFATHER = 'GRANDFATHER',
+  GRANDMOTHER = 'GRANDMOTHER',
+  GRANDSON = 'GRANDSON',
+  GRANDDAUGHTER = 'GRANDDAUGHTER',
 
   // 형제자매 (Siblings)
-  ELDER_BROTHER = '형',
-  ELDER_SISTER = '누나/언니',
-  YOUNGER_BROTHER = '남동생',
-  YOUNGER_SISTER = '여동생',
+  ELDER_BROTHER = 'ELDER_BROTHER',
+  ELDER_SISTER = 'ELDER_SISTER',
+  YOUNGER_BROTHER = 'YOUNGER_BROTHER',
+  YOUNGER_SISTER = 'YOUNGER_SISTER',
 
   // 배우자 (Spouse)
-  HUSBAND = '남편',
-  WIFE = '아내',
+  HUSBAND = 'HUSBAND',
+  WIFE = 'WIFE',
 
   // 친척 (Relatives)
-  UNCLE = '삼촌/외삼촌',
-  AUNT = '고모/이모',
-  NEPHEW = '조카',
-  NIECE = '조카딸',
-  COUSIN = '사촌',
+  UNCLE = 'UNCLE',
+  AUNT = 'AUNT',
+  NEPHEW = 'NEPHEW',
+  NIECE = 'NIECE',
+  COUSIN = 'COUSIN',
 
   // 확장된 관계 (Extended Relations)
-  FATHER_IN_LAW = '시아버지/장인',
-  MOTHER_IN_LAW = '시어머니/장모',
-  SON_IN_LAW = '사위',
-  DAUGHTER_IN_LAW = '며느리',
-  BROTHER_IN_LAW = '처남/형부/시숙/매형',
-  SISTER_IN_LAW = '처제/형수/시누이/올케',
+  FATHER_IN_LAW = 'FATHER_IN_LAW',
+  MOTHER_IN_LAW = 'MOTHER_IN_LAW',
+  SON_IN_LAW = 'SON_IN_LAW',
+  DAUGHTER_IN_LAW = 'DAUGHTER_IN_LAW',
+  BROTHER_IN_LAW = 'BROTHER_IN_LAW',
+  SISTER_IN_LAW = 'SISTER_IN_LAW',
 
   // 사용자 정의 (Custom)
-  CUSTOM = '직접 입력',
+  CUSTOM = 'CUSTOM',
 }
+
+// UI 표시용 라벨 매핑
+export const FamilyMemberRelationshipLabels: Record<FamilyMemberRelationshipType, string> = {
+  [FamilyMemberRelationshipType.FATHER]: '아버지',
+  [FamilyMemberRelationshipType.MOTHER]: '어머니',
+  [FamilyMemberRelationshipType.SON]: '아들',
+  [FamilyMemberRelationshipType.DAUGHTER]: '딸',
+  [FamilyMemberRelationshipType.GRANDFATHER]: '할아버지',
+  [FamilyMemberRelationshipType.GRANDMOTHER]: '할머니',
+  [FamilyMemberRelationshipType.GRANDSON]: '손자',
+  [FamilyMemberRelationshipType.GRANDDAUGHTER]: '손녀',
+  [FamilyMemberRelationshipType.ELDER_BROTHER]: '형',
+  [FamilyMemberRelationshipType.ELDER_SISTER]: '누나/언니',
+  [FamilyMemberRelationshipType.YOUNGER_BROTHER]: '남동생',
+  [FamilyMemberRelationshipType.YOUNGER_SISTER]: '여동생',
+  [FamilyMemberRelationshipType.HUSBAND]: '남편',
+  [FamilyMemberRelationshipType.WIFE]: '아내',
+  [FamilyMemberRelationshipType.UNCLE]: '삼촌/외삼촌',
+  [FamilyMemberRelationshipType.AUNT]: '고모/이모',
+  [FamilyMemberRelationshipType.NEPHEW]: '조카',
+  [FamilyMemberRelationshipType.NIECE]: '조카딸',
+  [FamilyMemberRelationshipType.COUSIN]: '사촌',
+  [FamilyMemberRelationshipType.FATHER_IN_LAW]: '시아버지/장인',
+  [FamilyMemberRelationshipType.MOTHER_IN_LAW]: '시어머니/장모',
+  [FamilyMemberRelationshipType.SON_IN_LAW]: '사위',
+  [FamilyMemberRelationshipType.DAUGHTER_IN_LAW]: '며느리',
+  [FamilyMemberRelationshipType.BROTHER_IN_LAW]: '처남/형부/시숙/매형',
+  [FamilyMemberRelationshipType.SISTER_IN_LAW]: '처제/형수/시누이/올케',
+  [FamilyMemberRelationshipType.CUSTOM]: '직접 입력',
+};
 
 export enum FamilyMemberRole {
   OWNER = 'OWNER',
