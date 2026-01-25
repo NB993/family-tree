@@ -18,14 +18,12 @@ import { SetRelationshipModal } from './SetRelationshipModal';
 import { FamilyMemberWithRelationship } from '../../api/services/familyService';
 import { TagSimple } from '../../types/tag';
 import { cn } from '../../lib/utils';
-import { FamilyMemberRelationshipType, FamilyMemberRelationshipLabels } from '../../types/family';
 
 interface MemberDetailSheetProps {
   familyId: number | string;
   member: FamilyMemberWithRelationship | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onMemberUpdate?: (member: FamilyMemberWithRelationship) => void;
 }
 
 export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
@@ -33,7 +31,6 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
   member,
   open,
   onOpenChange,
-  onMemberUpdate,
 }) => {
   const [localTags, setLocalTags] = useState<TagSimple[]>([]);
   const [isRelationshipModalOpen, setIsRelationshipModalOpen] = useState(false);
@@ -47,35 +44,9 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
 
   if (!member) return null;
 
+  // 태그 변경 시 로컬 상태만 업데이트 (React Query 캐시 무효화가 서버 동기화 처리)
   const handleTagsChange = (newTags: TagSimple[]) => {
     setLocalTags(newTags);
-    if (onMemberUpdate && member) {
-      onMemberUpdate({
-        ...member,
-        tags: newTags,
-      });
-    }
-  };
-
-  const handleRelationshipSuccess = (
-    relationshipType: FamilyMemberRelationshipType,
-    customRelationship?: string
-  ) => {
-    if (onMemberUpdate && member) {
-      const isCustom = relationshipType === FamilyMemberRelationshipType.CUSTOM;
-      const displayName = isCustom
-        ? customRelationship
-        : FamilyMemberRelationshipLabels[relationshipType];
-
-      onMemberUpdate({
-        ...member,
-        hasRelationship: true,
-        relationshipType,
-        relationshipDisplayName: isCustom ? undefined : displayName,
-        customRelationshipName: isCustom ? customRelationship : undefined,
-        relationshipGuideMessage: displayName || '',
-      });
-    }
   };
 
   const formatBirthday = (birthday?: string, birthdayType?: string | null) => {
@@ -246,7 +217,6 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
           memberName={member.memberName}
           currentRelationshipType={member.relationshipType}
           currentCustomRelationship={member.customRelationshipName}
-          onSuccess={handleRelationshipSuccess}
         />
       </SheetContent>
     </Sheet>

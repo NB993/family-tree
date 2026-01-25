@@ -43,8 +43,8 @@ const HomePage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
 
-  // 멤버 상세 시트 상태
-  const [selectedMember, setSelectedMember] = useState<FamilyMemberWithRelationship | null>(null);
+  // 멤버 상세 시트 상태 - ID만 저장하고 membersData에서 파생
+  const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   // 나이 표시 모드: 'korean' (한국나이) 또는 'western' (만나이)
@@ -62,6 +62,12 @@ const HomePage: React.FC = () => {
   const isInitialLoading = familiesLoading ||
     (familiesData && familiesData.length > 0 && !selectedFamilyId) ||
     (selectedFamilyId && membersLoading);
+
+  // React Query 캐시에서 선택된 멤버 파생 (캐시 무효화 시 자동 업데이트)
+  const selectedMember = useMemo(() => {
+    if (!selectedMemberId || !membersData) return null;
+    return membersData.find((m: FamilyMemberWithRelationship) => m.memberId === selectedMemberId) || null;
+  }, [selectedMemberId, membersData]);
 
   const filteredMembers = useMemo(() => {
     if (!membersData) return [];
@@ -104,13 +110,8 @@ const HomePage: React.FC = () => {
 
   // 멤버 클릭 핸들러
   const handleMemberClick = (member: FamilyMemberWithRelationship) => {
-    setSelectedMember(member);
+    setSelectedMemberId(member.memberId);
     setIsSheetOpen(true);
-  };
-
-  // 멤버 업데이트 핸들러 (태그 변경 등)
-  const handleMemberUpdate = (updatedMember: FamilyMemberWithRelationship) => {
-    setSelectedMember(updatedMember);
   };
 
   return (
@@ -305,7 +306,6 @@ const HomePage: React.FC = () => {
           member={selectedMember}
           open={isSheetOpen}
           onOpenChange={setIsSheetOpen}
-          onMemberUpdate={handleMemberUpdate}
         />
       )}
     </div>
