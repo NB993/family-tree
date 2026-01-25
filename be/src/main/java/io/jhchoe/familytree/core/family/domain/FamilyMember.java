@@ -392,4 +392,33 @@ public class FamilyMember {
             }
         }
     }
+
+    /**
+     * 구성원의 기본 정보(이름, 생일, 생일타입)를 변경합니다.
+     *
+     * @param name         새 이름 (필수)
+     * @param birthday     새 생일 (nullable)
+     * @param birthdayType 새 생일 유형 (nullable)
+     * @return 정보가 변경된 새로운 FamilyMember 객체
+     * @throws NullPointerException     name이 null인 경우
+     * @throws IllegalArgumentException name이 빈 문자열인 경우
+     */
+    public FamilyMember modifyInfo(
+        String name,
+        LocalDateTime birthday,
+        BirthdayType birthdayType
+    ) {
+        Objects.requireNonNull(name, "name must not be null");
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("name must not be blank");
+        }
+
+        return new FamilyMember(
+            this.id, this.familyId, this.userId, name,
+            this.relationshipType, this.customRelationship,
+            this.profileUrl, birthday, birthdayType,
+            this.status, this.role,
+            this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
+        );
+    }
 }

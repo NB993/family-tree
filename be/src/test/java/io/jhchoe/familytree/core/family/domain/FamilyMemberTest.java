@@ -282,6 +282,97 @@ class FamilyMemberTest {
     }
 
     @Nested
+    @DisplayName("modifyInfo 메서드")
+    class ModifyInfo {
+
+        @Test
+        @DisplayName("이름, 생일, 생일타입을 변경할 수 있다")
+        void should_modify_name_birthday_and_birthday_type() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), BirthdayType.SOLAR,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+
+            // when
+            FamilyMember modifiedMember = member.modifyInfo(
+                "김철수",
+                LocalDateTime.of(1985, 3, 15, 0, 0),
+                BirthdayType.LUNAR
+            );
+
+            // then
+            assertThat(modifiedMember.getName()).isEqualTo("김철수");
+            assertThat(modifiedMember.getBirthday()).isEqualTo(LocalDateTime.of(1985, 3, 15, 0, 0));
+            assertThat(modifiedMember.getBirthdayType()).isEqualTo(BirthdayType.LUNAR);
+            // 다른 필드는 변경되지 않아야 함
+            assertThat(modifiedMember.getId()).isEqualTo(member.getId());
+            assertThat(modifiedMember.getFamilyId()).isEqualTo(member.getFamilyId());
+            assertThat(modifiedMember.getUserId()).isEqualTo(member.getUserId());
+            assertThat(modifiedMember.getProfileUrl()).isEqualTo(member.getProfileUrl());
+            assertThat(modifiedMember.getRelationshipType()).isEqualTo(member.getRelationshipType());
+            assertThat(modifiedMember.getStatus()).isEqualTo(member.getStatus());
+            assertThat(modifiedMember.getRole()).isEqualTo(member.getRole());
+        }
+
+        @Test
+        @DisplayName("이름이 null이면 예외가 발생한다")
+        void should_throw_exception_when_name_is_null() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), BirthdayType.SOLAR,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+
+            // when & then
+            assertThatThrownBy(() -> member.modifyInfo(null, LocalDateTime.of(1985, 3, 15, 0, 0), BirthdayType.SOLAR))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessageContaining("name");
+        }
+
+        @Test
+        @DisplayName("이름이 빈 문자열이면 예외가 발생한다")
+        void should_throw_exception_when_name_is_blank() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), BirthdayType.SOLAR,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+
+            // when & then
+            assertThatThrownBy(() -> member.modifyInfo("   ", LocalDateTime.of(1985, 3, 15, 0, 0), BirthdayType.SOLAR))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("name");
+        }
+
+        @Test
+        @DisplayName("생일과 생일타입이 null이어도 정상 동작한다")
+        void should_modify_with_null_birthday_and_birthday_type() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), BirthdayType.SOLAR,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+
+            // when
+            FamilyMember modifiedMember = member.modifyInfo("김철수", null, null);
+
+            // then
+            assertThat(modifiedMember.getName()).isEqualTo("김철수");
+            assertThat(modifiedMember.getBirthday()).isNull();
+            assertThat(modifiedMember.getBirthdayType()).isNull();
+        }
+    }
+
+    @Nested
     @DisplayName("updateRelationship 메서드")
     class UpdateRelationship {
 
