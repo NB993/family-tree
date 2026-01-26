@@ -1,6 +1,7 @@
 package io.jhchoe.familytree.core.user.adapter.in.request;
 
 import io.jhchoe.familytree.core.family.domain.BirthdayType;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
  * @param birthdayType 생년월일 유형 (nullable)
  */
 public record ModifyUserRequest(
+    @NotBlank(message = "이름은 필수입니다.")
     String name,
     LocalDateTime birthday,
     BirthdayType birthdayType

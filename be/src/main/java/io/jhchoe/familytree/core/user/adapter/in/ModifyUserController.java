@@ -7,6 +7,7 @@ import io.jhchoe.familytree.core.user.adapter.in.response.ModifyUserResponse;
 import io.jhchoe.familytree.core.user.application.port.in.ModifyUserCommand;
 import io.jhchoe.familytree.core.user.application.port.in.ModifyUserUseCase;
 import io.jhchoe.familytree.core.user.domain.User;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,7 +34,7 @@ public class ModifyUserController {
      */
     @PatchMapping("/me")
     public ResponseEntity<ModifyUserResponse> modify(
-        @RequestBody ModifyUserRequest request,
+        @Valid @RequestBody ModifyUserRequest request,
         @AuthFTUser FTUser user
     ) {
         Long userId = user.getId();
