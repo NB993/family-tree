@@ -15,7 +15,7 @@
 | 항목 | 상태 | 설명 |
 |------|------|------|
 | BE 프로필 수정 API | ✅ 완료 | `PATCH /api/users/me` |
-| BE 사용자 조회 API 수정 | ❌ 필요 | `FindUserResponse`에 `birthday`, `birthdayType` 필드 추가 필요 |
+| BE 사용자 조회 API | ✅ 완료 | `FindUserResponse`에 `birthday`, `birthdayType` 필드 추가됨 |
 
 ## 유스케이스
 
@@ -111,7 +111,7 @@
 | birthday | string (ISO 8601) | N | 생년월일 | YYYY-MM-DDTHH:mm:ss |
 | birthdayType | 'SOLAR' \| 'LUNAR' | N* | 생일 유형 | *birthday 입력 시 필수 |
 
-### 출력 (현재 사용자 정보 - FindUserResponse 수정 필요)
+### 출력 (FindUserResponse)
 
 | 필드명 | 타입 | 설명 |
 |-------|------|------|
@@ -119,8 +119,10 @@
 | email | string | 이메일 |
 | name | string | 이름 |
 | profileUrl | string | 프로필 이미지 URL |
-| birthday | string | 생년월일 (추가 필요) |
-| birthdayType | string | 생일 유형 (추가 필요) |
+| birthday | string | 생년월일 |
+| birthdayType | 'SOLAR' \| 'LUNAR' | 생일 유형 |
+| createdAt | string | 생성일시 |
+| modifiedAt | string | 수정일시 |
 
 ## 구현 파일 목록
 
@@ -139,12 +141,6 @@
 | `fe/src/pages/HomePage.tsx` | 헤더에 설정 드롭다운 메뉴 추가 |
 | `fe/src/api/services/user.ts` | `modifyUser()` 메서드 추가 |
 | `fe/src/types/user.ts` | `ModifyUserRequest` 타입 추가 |
-
-### BE 수정 필요 (별도 이슈)
-
-| 파일 | 설명 |
-|------|------|
-| `FindUserResponse.java` | birthday, birthdayType 필드 추가 |
 
 ## 예외 케이스
 
