@@ -39,7 +39,7 @@ class ModifyFamilyMemberInfoServiceTest {
     private ModifyFamilyMemberPort modifyFamilyMemberPort;
 
     @Test
-    @DisplayName("OWNER가 구성원의 기본 정보를 변경할 수 있습니다")
+    @DisplayName("OWNER가 수동 등록된 구성원의 기본 정보를 변경할 수 있습니다")
     void modify_info_by_owner_should_succeed() {
         // given
         Long familyId = 1L;
@@ -54,8 +54,8 @@ class ModifyFamilyMemberInfoServiceTest {
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
 
-        // 대상 구성원
-        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, 4L, FamilyMemberRole.MEMBER);
+        // 수동 등록된 대상 구성원 (userId == null)
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndNullUserId(targetMemberId, familyId, FamilyMemberRole.MEMBER);
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.of(targetMember));
 
@@ -79,7 +79,7 @@ class ModifyFamilyMemberInfoServiceTest {
     }
 
     @Test
-    @DisplayName("ADMIN이 일반 구성원의 기본 정보를 변경할 수 있습니다")
+    @DisplayName("ADMIN이 수동 등록된 구성원의 기본 정보를 변경할 수 있습니다")
     void modify_info_by_admin_should_succeed() {
         // given
         Long familyId = 1L;
@@ -94,8 +94,8 @@ class ModifyFamilyMemberInfoServiceTest {
         given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
             .willReturn(Optional.of(currentMember));
 
-        // 대상 구성원 (일반 구성원)
-        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, 4L, FamilyMemberRole.MEMBER);
+        // 수동 등록된 대상 구성원 (userId == null)
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndNullUserId(targetMemberId, familyId, FamilyMemberRole.MEMBER);
         given(findFamilyMemberPort.findById(targetMemberId))
             .willReturn(Optional.of(targetMember));
 
@@ -298,6 +298,147 @@ class ModifyFamilyMemberInfoServiceTest {
             member.getName().equals(newName) &&
             member.getBirthday() == null &&
             member.getBirthdayType() == null
+        ));
+    }
+
+    @Test
+    @DisplayName("초대된 멤버(userId 있음)의 생일을 수정하려고 하면 예외가 발생합니다")
+    void throw_exception_when_modifying_birthday_of_invited_member() {
+        // given
+        Long familyId = 1L;
+        Long targetMemberId = 2L;
+        Long currentUserId = 3L;
+        Long targetUserId = 4L; // 초대된 멤버는 userId가 있음
+        String newName = "김철수";
+        LocalDateTime newBirthday = LocalDateTime.of(1985, 3, 15, 0, 0);
+
+        // OWNER 권한을 가진 현재 사용자
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
+            .willReturn(Optional.of(currentMember));
+
+        // 초대된 대상 구성원 (userId != null)
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, targetUserId, FamilyMemberRole.MEMBER);
+        given(findFamilyMemberPort.findById(targetMemberId))
+            .willReturn(Optional.of(targetMember));
+
+        ModifyFamilyMemberInfoCommand command = new ModifyFamilyMemberInfoCommand(
+            familyId, targetMemberId, currentUserId, newName, newBirthday, null
+        );
+
+        // when & then
+        assertThatThrownBy(() -> sut.modifyInfo(command))
+            .isInstanceOf(FTException.class)
+            .extracting("exceptionCodeType")
+            .isEqualTo(FamilyExceptionCode.INVITED_MEMBER_BIRTHDAY_MODIFICATION_NOT_ALLOWED);
+    }
+
+    @Test
+    @DisplayName("초대된 멤버(userId 있음)의 생일타입을 수정하려고 하면 예외가 발생합니다")
+    void throw_exception_when_modifying_birthday_type_of_invited_member() {
+        // given
+        Long familyId = 1L;
+        Long targetMemberId = 2L;
+        Long currentUserId = 3L;
+        Long targetUserId = 4L; // 초대된 멤버는 userId가 있음
+        String newName = "김철수";
+        BirthdayType newBirthdayType = BirthdayType.LUNAR;
+
+        // OWNER 권한을 가진 현재 사용자
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
+            .willReturn(Optional.of(currentMember));
+
+        // 초대된 대상 구성원 (userId != null)
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, targetUserId, FamilyMemberRole.MEMBER);
+        given(findFamilyMemberPort.findById(targetMemberId))
+            .willReturn(Optional.of(targetMember));
+
+        ModifyFamilyMemberInfoCommand command = new ModifyFamilyMemberInfoCommand(
+            familyId, targetMemberId, currentUserId, newName, null, newBirthdayType
+        );
+
+        // when & then
+        assertThatThrownBy(() -> sut.modifyInfo(command))
+            .isInstanceOf(FTException.class)
+            .extracting("exceptionCodeType")
+            .isEqualTo(FamilyExceptionCode.INVITED_MEMBER_BIRTHDAY_MODIFICATION_NOT_ALLOWED);
+    }
+
+    @Test
+    @DisplayName("수동 등록된 멤버(userId 없음)의 생일 수정은 성공합니다")
+    void modify_birthday_of_manually_registered_member_should_succeed() {
+        // given
+        Long familyId = 1L;
+        Long targetMemberId = 2L;
+        Long currentUserId = 3L;
+        String newName = "김철수";
+        LocalDateTime newBirthday = LocalDateTime.of(1985, 3, 15, 0, 0);
+        BirthdayType newBirthdayType = BirthdayType.LUNAR;
+
+        // OWNER 권한을 가진 현재 사용자
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
+            .willReturn(Optional.of(currentMember));
+
+        // 수동 등록된 대상 구성원 (userId == null)
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndNullUserId(targetMemberId, familyId, FamilyMemberRole.MEMBER);
+        given(findFamilyMemberPort.findById(targetMemberId))
+            .willReturn(Optional.of(targetMember));
+
+        // Mock 설정
+        given(modifyFamilyMemberPort.modify(any(FamilyMember.class))).willReturn(targetMemberId);
+
+        ModifyFamilyMemberInfoCommand command = new ModifyFamilyMemberInfoCommand(
+            familyId, targetMemberId, currentUserId, newName, newBirthday, newBirthdayType
+        );
+
+        // when
+        Long result = sut.modifyInfo(command);
+
+        // then
+        assertThat(result).isEqualTo(targetMemberId);
+        then(modifyFamilyMemberPort).should().modify(argThat(member ->
+            member.getName().equals(newName) &&
+            member.getBirthday().equals(newBirthday) &&
+            member.getBirthdayType() == newBirthdayType
+        ));
+    }
+
+    @Test
+    @DisplayName("초대된 멤버(userId 있음)의 이름만 수정하는 것은 성공합니다")
+    void modify_name_only_of_invited_member_should_succeed() {
+        // given
+        Long familyId = 1L;
+        Long targetMemberId = 2L;
+        Long currentUserId = 3L;
+        Long targetUserId = 4L; // 초대된 멤버는 userId가 있음
+        String newName = "김철수";
+
+        // OWNER 권한을 가진 현재 사용자
+        FamilyMember currentMember = FamilyMemberFixture.withIdAndRole(3L, familyId, currentUserId, FamilyMemberRole.OWNER);
+        given(findFamilyMemberPort.findByFamilyIdAndUserId(familyId, currentUserId))
+            .willReturn(Optional.of(currentMember));
+
+        // 초대된 대상 구성원 (userId != null)
+        FamilyMember targetMember = FamilyMemberFixture.withIdAndRole(targetMemberId, familyId, targetUserId, FamilyMemberRole.MEMBER);
+        given(findFamilyMemberPort.findById(targetMemberId))
+            .willReturn(Optional.of(targetMember));
+
+        // Mock 설정
+        given(modifyFamilyMemberPort.modify(any(FamilyMember.class))).willReturn(targetMemberId);
+
+        ModifyFamilyMemberInfoCommand command = new ModifyFamilyMemberInfoCommand(
+            familyId, targetMemberId, currentUserId, newName, null, null
+        );
+
+        // when
+        Long result = sut.modifyInfo(command);
+
+        // then
+        assertThat(result).isEqualTo(targetMemberId);
+        then(modifyFamilyMemberPort).should().modify(argThat(member ->
+            member.getName().equals(newName)
         ));
     }
 }

@@ -252,6 +252,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
           currentName={member.memberName}
           currentBirthday={member.memberBirthday}
           currentBirthdayType={member.memberBirthdayType}
+          isInvitedMember={member.member?.userId != null}
         />
       </SheetContent>
     </Sheet>

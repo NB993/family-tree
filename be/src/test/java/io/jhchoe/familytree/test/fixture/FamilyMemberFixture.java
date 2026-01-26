@@ -177,4 +177,17 @@ public final class FamilyMemberFixture {
             status, role,
             1L, LocalDateTime.now(), 1L, LocalDateTime.now());
     }
+
+    // ==================== 수동 등록 멤버 (userId null) ====================
+
+    /**
+     * userId가 null인 수동 등록 멤버를 생성합니다.
+     * OWNER가 직접 등록한 멤버로, 초대장을 통해 가입하지 않은 멤버를 나타냅니다.
+     */
+    public static FamilyMember withIdAndNullUserId(Long id, Long familyId, FamilyMemberRole role) {
+        return FamilyMember.withId(id, familyId, null, DEFAULT_NAME, null, null, DEFAULT_PROFILE_URL,
+            DEFAULT_BIRTHDAY, DEFAULT_BIRTHDAY_TYPE,
+            FamilyMemberStatus.ACTIVE, role,
+            1L, LocalDateTime.now(), 1L, LocalDateTime.now());
+    }
 }
