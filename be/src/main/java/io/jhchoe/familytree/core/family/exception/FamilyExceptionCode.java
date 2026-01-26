@@ -22,6 +22,7 @@ public enum FamilyExceptionCode implements ExceptionCodeType {
     CANNOT_CHANGE_OWNER_ROLE("F012", "Family 소유자의 역할은 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
     CANNOT_CHANGE_OWNER_STATUS("F013", "Family 소유자의 상태는 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
     SELF_MODIFICATION_NOT_ALLOWED("F014", "자신의 역할이나 상태는 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    INVITED_MEMBER_BIRTHDAY_MODIFICATION_NOT_ALLOWED("F021", "초대된 멤버의 생일은 본인만 수정할 수 있습니다.", HttpStatus.FORBIDDEN),
     ADMIN_MODIFICATION_NOT_ALLOWED("F015", "관리자는 다른 관리자의 상태를 변경할 수 없습니다.", HttpStatus.FORBIDDEN),
     ANNOUNCEMENT_NOT_FOUND("F016", "존재하지 않는 공지사항입니다.", HttpStatus.NOT_FOUND),
     INVALID_ANNOUNCEMENT_REQUEST("F017", "잘못된 공지사항 요청입니다.", HttpStatus.BAD_REQUEST),

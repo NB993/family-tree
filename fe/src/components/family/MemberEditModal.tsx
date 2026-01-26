@@ -34,6 +34,8 @@ interface MemberEditModalProps {
   currentName: string;
   currentBirthday?: string;
   currentBirthdayType?: BirthdayType;
+  /** 초대장으로 가입한 멤버인지 여부 (true: 생일 수정 불가) */
+  isInvitedMember?: boolean;
   onSuccess?: () => void;
 }
 
@@ -50,6 +52,7 @@ export const MemberEditModal: React.FC<MemberEditModalProps> = ({
   currentName,
   currentBirthday,
   currentBirthdayType,
+  isInvitedMember = false,
   onSuccess,
 }) => {
   const [name, setName] = useState(currentName);
@@ -78,13 +81,15 @@ export const MemberEditModal: React.FC<MemberEditModalProps> = ({
     if (!name.trim()) return;
 
     try {
+      // 초대된 멤버인 경우 생일/생일타입은 전송하지 않음
+      const shouldIncludeBirthday = !isInvitedMember && birthday;
       await modifyInfoMutation.mutateAsync({
         familyId,
         memberId,
         request: {
           name: name.trim(),
-          birthday: birthday ? `${birthday}T00:00:00` : undefined,
-          birthdayType: birthday ? birthdayType : undefined,
+          birthday: shouldIncludeBirthday ? `${birthday}T00:00:00` : undefined,
+          birthdayType: shouldIncludeBirthday ? birthdayType : undefined,
         },
       });
 
@@ -140,7 +145,13 @@ export const MemberEditModal: React.FC<MemberEditModalProps> = ({
               type="date"
               value={birthday}
               onChange={(e) => setBirthday(e.target.value)}
+              disabled={isInvitedMember}
             />
+            {isInvitedMember && (
+              <p className="text-sm text-muted-foreground">
+                초대된 멤버의 생일은 본인만 수정할 수 있습니다.
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -148,8 +159,9 @@ export const MemberEditModal: React.FC<MemberEditModalProps> = ({
             <Select
               value={birthdayType || 'SOLAR'}
               onValueChange={(value) => setBirthdayType(value as BirthdayType)}
+              disabled={isInvitedMember}
             >
-              <SelectTrigger id="birthdayType">
+              <SelectTrigger id="birthdayType" disabled={isInvitedMember}>
                 <SelectValue placeholder="생일 유형 선택" />
               </SelectTrigger>
               <SelectContent>
@@ -160,7 +172,7 @@ export const MemberEditModal: React.FC<MemberEditModalProps> = ({
                 ))}
               </SelectContent>
             </Select>
-            {solarBirthdayDisplay && (
+            {solarBirthdayDisplay && !isInvitedMember && (
               <p className="text-sm text-muted-foreground">
                 올해 양력: {solarBirthdayDisplay}
               </p>

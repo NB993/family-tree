@@ -55,14 +55,19 @@ public class ModifyFamilyMemberInfoService implements ModifyFamilyMemberInfoUseC
             throw new FTException(FamilyExceptionCode.SELF_MODIFICATION_NOT_ALLOWED);
         }
 
-        // 6. 정보 변경
+        // 6. 초대된 멤버(userId 있음)의 생일/생일타입은 본인만 수정 가능
+        if (targetMember.getUserId() != null && (command.birthday() != null || command.birthdayType() != null)) {
+            throw new FTException(FamilyExceptionCode.INVITED_MEMBER_BIRTHDAY_MODIFICATION_NOT_ALLOWED);
+        }
+
+        // 7. 정보 변경
         FamilyMember updatedMember = targetMember.modifyInfo(
             command.name(),
             command.birthday(),
             command.birthdayType()
         );
 
-        // 7. 저장
+        // 8. 저장
         return modifyFamilyMemberPort.modify(updatedMember);
     }
 }

@@ -40,8 +40,64 @@ class ModifyFamilyMemberInfoAcceptanceTest extends AcceptanceTestBase {
 
     @Test
     @WithMockOAuth2User
-    @DisplayName("OWNER가 구성원 정보 수정 시 200 OK와 수정된 구성원 ID를 반환합니다")
-    void modify_returns_200_when_owner_modifies_member_info() {
+    @DisplayName("OWNER가 수동 등록된 구성원의 전체 정보(이름, 생일) 수정 시 200 OK를 반환합니다")
+    void modify_returns_200_when_owner_modifies_manually_registered_member_info() {
+        // given
+        Long userId = 1L;
+        Long familyId = createFamilyWithOwner(userId);
+        Long targetMemberId = createManuallyRegisteredMember(familyId, "홍길동", FamilyMemberRole.MEMBER);
+
+        String requestBody = """
+            {
+                "name": "김철수",
+                "birthday": "1985-03-15T00:00:00",
+                "birthdayType": "LUNAR"
+            }
+            """;
+
+        // when & then
+        given()
+            .postProcessors(csrf())
+            .contentType(ContentType.JSON)
+            .body(requestBody)
+        .when()
+            .put("/api/families/{familyId}/members/{memberId}/info", familyId, targetMemberId)
+        .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("id", equalTo(targetMemberId.intValue()));
+    }
+
+    @Test
+    @WithMockOAuth2User
+    @DisplayName("OWNER가 초대된 구성원의 이름만 수정 시 200 OK를 반환합니다")
+    void modify_returns_200_when_owner_modifies_invited_member_name_only() {
+        // given
+        Long userId = 1L;
+        Long familyId = createFamilyWithOwner(userId);
+        Long targetMemberId = createMember(familyId, 2L, "홍길동", FamilyMemberRole.MEMBER);
+
+        String requestBody = """
+            {
+                "name": "김철수"
+            }
+            """;
+
+        // when & then
+        given()
+            .postProcessors(csrf())
+            .contentType(ContentType.JSON)
+            .body(requestBody)
+        .when()
+            .put("/api/families/{familyId}/members/{memberId}/info", familyId, targetMemberId)
+        .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("id", equalTo(targetMemberId.intValue()));
+    }
+
+    @Test
+    @WithMockOAuth2User
+    @DisplayName("OWNER가 초대된 구성원의 생일 수정 시도 시 403 Forbidden을 반환합니다")
+    void modify_returns_403_when_owner_tries_to_modify_invited_member_birthday() {
         // given
         Long userId = 1L;
         Long familyId = createFamilyWithOwner(userId);
@@ -63,8 +119,7 @@ class ModifyFamilyMemberInfoAcceptanceTest extends AcceptanceTestBase {
         .when()
             .put("/api/families/{familyId}/members/{memberId}/info", familyId, targetMemberId)
         .then()
-            .statusCode(HttpStatus.OK.value())
-            .body("id", equalTo(targetMemberId.intValue()));
+            .statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -222,6 +277,20 @@ class ModifyFamilyMemberInfoAcceptanceTest extends AcceptanceTestBase {
         FamilyMember member = FamilyMember.withRole(
             familyId, userId, name, "profile.jpg",
             now.minusYears(25), BirthdayType.SOLAR, role
+        );
+        FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member));
+        return savedEntity.getId();
+    }
+
+    /**
+     * 수동 등록 멤버 생성 (userId = null).
+     * OWNER가 직접 등록한 멤버로, 애완동물이나 아이 등을 나타냅니다.
+     */
+    private Long createManuallyRegisteredMember(Long familyId, String name, FamilyMemberRole role) {
+        LocalDateTime now = LocalDateTime.now();
+        FamilyMember member = FamilyMember.newManualMember(
+            familyId, name, null, null,
+            now.minusYears(25), BirthdayType.SOLAR
         );
         FamilyMemberJpaEntity savedEntity = familyMemberJpaRepository.save(FamilyMemberJpaEntity.from(member));
         return savedEntity.getId();
