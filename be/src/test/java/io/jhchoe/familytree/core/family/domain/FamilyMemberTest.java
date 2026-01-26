@@ -493,4 +493,71 @@ class FamilyMemberTest {
                 .hasMessage("customRelationship은 50자 이내");
         }
     }
+
+    @Nested
+    @DisplayName("syncBirthday 테스트")
+    class SyncBirthdayTest {
+
+        @Test
+        @DisplayName("동기화 가능한 상태이면 생일이 동기화된 FamilyMember를 Optional로 반환한다")
+        void return_modified_member_when_syncable() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), BirthdayType.SOLAR,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+            LocalDateTime newBirthday = LocalDateTime.of(1995, 5, 15, 0, 0);
+            BirthdayType newBirthdayType = BirthdayType.LUNAR;
+
+            // when
+            var result = member.syncBirthday(newBirthday, newBirthdayType);
+
+            // then
+            assertThat(result).isPresent();
+            assertThat(result.get().getBirthday()).isEqualTo(newBirthday);
+            assertThat(result.get().getBirthdayType()).isEqualTo(newBirthdayType);
+            assertThat(result.get().getName()).isEqualTo("홍길동"); // 이름은 변경되지 않음
+        }
+
+        @Test
+        @DisplayName("동기화 불가능한 상태이면 Optional.empty를 반환한다")
+        void return_empty_when_not_syncable() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), BirthdayType.SOLAR,
+                FamilyMemberStatus.BANNED, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+            LocalDateTime newBirthday = LocalDateTime.of(1995, 5, 15, 0, 0);
+
+            // when
+            var result = member.syncBirthday(newBirthday, BirthdayType.LUNAR);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("생일을 null로 동기화할 수 있다")
+        void sync_birthday_to_null() {
+            // given
+            FamilyMember member = FamilyMember.withId(
+                1L, 2L, 3L, "홍길동", null, null, "http://example.com/profile.jpg",
+                LocalDateTime.of(1990, 1, 1, 0, 0), BirthdayType.SOLAR,
+                FamilyMemberStatus.ACTIVE, FamilyMemberRole.MEMBER,
+                4L, LocalDateTime.now().minusDays(1), 5L, LocalDateTime.now()
+            );
+
+            // when
+            var result = member.syncBirthday(null, null);
+
+            // then
+            assertThat(result).isPresent();
+            assertThat(result.get().getBirthday()).isNull();
+            assertThat(result.get().getBirthdayType()).isNull();
+        }
+    }
 }

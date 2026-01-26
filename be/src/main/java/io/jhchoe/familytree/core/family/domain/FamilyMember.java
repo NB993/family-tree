@@ -2,6 +2,7 @@ package io.jhchoe.familytree.core.family.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.Getter;
 
 
@@ -420,5 +421,24 @@ public class FamilyMember {
             this.status, this.role,
             this.createdBy, this.createdAt, this.modifiedBy, this.modifiedAt
         );
+    }
+
+    /**
+     * 생일을 동기화합니다.
+     * 동기화 가능 여부는 객체 스스로 판단합니다.
+     * 이름은 동기화하지 않고 생일만 동기화합니다.
+     *
+     * @param birthday     새 생일 (nullable)
+     * @param birthdayType 새 생일 유형 (nullable)
+     * @return 동기화된 FamilyMember를 포함한 Optional, 동기화 불가능한 경우 Optional.empty()
+     */
+    public Optional<FamilyMember> syncBirthday(
+        LocalDateTime birthday,
+        BirthdayType birthdayType
+    ) {
+        if (!this.isActive()) {
+            return Optional.empty();
+        }
+        return Optional.of(this.modifyInfo(this.name, birthday, birthdayType));
     }
 }

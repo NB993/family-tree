@@ -171,4 +171,49 @@ public class User {
         return Objects.requireNonNullElse(this.name, "")
                 .contains(Objects.requireNonNullElse(nameToCompare, ""));
     }
+
+    /**
+     * 사용자 프로필을 수정합니다.
+     * 불변 객체이므로 새로운 User 객체를 반환합니다.
+     *
+     * @param name         새 이름 (필수)
+     * @param birthday     새 생일 (nullable)
+     * @param birthdayType 새 생일 유형 (nullable, birthday가 있으면 필수)
+     * @return 수정된 User 객체
+     * @throws NullPointerException     name이 null인 경우
+     * @throws IllegalArgumentException name이 비어있거나, birthday와 birthdayType이 쌍으로 제공되지 않은 경우
+     */
+    public User modifyProfile(
+        String name,
+        LocalDateTime birthday,
+        BirthdayType birthdayType
+    ) {
+        Objects.requireNonNull(name, "name은 null일 수 없습니다");
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("name은 비어있을 수 없습니다");
+        }
+        if (birthday != null && birthdayType == null) {
+            throw new IllegalArgumentException("생일이 있으면 생일 유형도 필수입니다");
+        }
+        if (birthday == null && birthdayType != null) {
+            throw new IllegalArgumentException("생일 유형이 있으면 생일도 필수입니다");
+        }
+
+        return new User(
+            this.id,
+            this.email,
+            name,
+            this.profileUrl,
+            this.kakaoId,
+            this.oAuth2Provider,
+            this.role,
+            this.deleted,
+            this.createdBy,
+            this.createdAt,
+            this.modifiedBy,
+            this.modifiedAt,
+            birthday,
+            birthdayType
+        );
+    }
 }

@@ -3,6 +3,7 @@ package io.jhchoe.familytree.core.user.adapter.out.persistence;
 import io.jhchoe.familytree.common.auth.UserJpaEntity;
 import io.jhchoe.familytree.common.auth.UserJpaRepository;
 import io.jhchoe.familytree.core.user.application.port.out.FindUserPort;
+import io.jhchoe.familytree.core.user.application.port.out.ModifyUserPort;
 import io.jhchoe.familytree.core.user.domain.User;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @RequiredArgsConstructor
-public class UserPersistenceAdapter implements FindUserPort {
+public class UserPersistenceAdapter implements FindUserPort, ModifyUserPort {
 
     private final UserJpaRepository userJpaRepository;
 
@@ -61,5 +62,16 @@ public class UserPersistenceAdapter implements FindUserPort {
 
         return userJpaRepository.findByKakaoId(kakaoId)
             .map(UserJpaEntity::toUser);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long modify(User user) {
+        Objects.requireNonNull(user, "user must not be null");
+
+        UserJpaEntity savedEntity = userJpaRepository.save(UserJpaEntity.ofOAuth2User(user));
+        return savedEntity.getId();
     }
 }
