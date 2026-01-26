@@ -14,7 +14,7 @@ const LoginPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="app-shell flex items-center justify-center">
+      <div className="app-shell h-dvh flex items-center justify-center">
         <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent" />
       </div>
     );
@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="app-shell flex flex-col">
+    <div className="app-shell h-dvh flex flex-col">
       {/* Header */}
       <div className="flex-1 flex flex-col justify-center px-4">
         <h1 className="text-xl font-semibold text-foreground">오래오래</h1>
