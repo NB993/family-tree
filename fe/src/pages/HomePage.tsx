@@ -2,11 +2,17 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMyFamilies, useFamilyMembers } from '../hooks/queries/useFamilyQueries';
 import { FamilyMemberWithRelationship } from '../api/services/familyService';
-import { Search, Plus, UserPlus, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Plus, UserPlus, LogOut, ChevronLeft, ChevronRight, Settings, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import CreateFamilyMemberModal from '@/components/family/CreateFamilyMemberModal';
 import { MemberDetailSheet } from '@/components/family/MemberDetailSheet';
 import { TagBadge } from '@/components/family/TagBadge';
@@ -131,9 +137,23 @@ const HomePage: React.FC = () => {
             </span>
           )}
         </div>
-        <Button variant="ghost" size="icon" onClick={logout}>
-          <LogOut className="h-3.5 w-3.5" strokeWidth={1.5} />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label="설정 메뉴">
+              <Settings className="h-3.5 w-3.5" strokeWidth={1.5} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => navigate('/settings')}>
+              <User className="h-4 w-4 mr-2" />
+              프로필 설정
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={logout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              로그아웃
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
 
       {/* Search + Filter */}

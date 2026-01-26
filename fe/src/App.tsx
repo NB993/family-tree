@@ -18,6 +18,7 @@ import OAuth2CallbackPage from './pages/OAuth2CallbackPage';
 import { CreateInvitePage } from './pages/CreateInvitePage';
 import { InviteResponsePage } from './pages/InviteResponsePage';
 import { InviteCallbackPage } from './pages/InviteCallbackPage';
+import SettingsPage from './pages/SettingsPage';
 
 // Styles
 import './styles/App.css';
@@ -53,6 +54,11 @@ function App() {
                 <Route path="/home" element={
                   <ProtectedRoute>
                     <HomePage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <SettingsPage />
                   </ProtectedRoute>
                 } />
                 <Route path="/families/create" element={
