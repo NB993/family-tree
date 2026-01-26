@@ -521,4 +521,183 @@ class UserTest {
         assertThat(user.getBirthday()).isEqualTo(birthday);
         assertThat(user.getBirthdayType()).isEqualTo(BirthdayType.LUNAR);
     }
+
+    // ===== PRD-063: User 프로필 수정 테스트 =====
+
+    @Test
+    @DisplayName("modifyProfile로 이름을 수정할 수 있다")
+    void modify_name_successfully() {
+        // given
+        User user = User.withId(
+            1L,
+            "test@example.com",
+            "기존이름",
+            null,
+            null,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
+            false,
+            1L,
+            LocalDateTime.now(),
+            1L,
+            LocalDateTime.now(),
+            null,
+            null
+        );
+        String newName = "새이름";
+
+        // when
+        User modified = user.modifyProfile(newName, null, null);
+
+        // then
+        assertThat(modified.getName()).isEqualTo(newName);
+        assertThat(modified.getId()).isEqualTo(user.getId());
+        assertThat(modified.getEmail()).isEqualTo(user.getEmail());
+    }
+
+    @Test
+    @DisplayName("modifyProfile로 생일과 생일유형을 수정할 수 있다")
+    void modify_birthday_successfully() {
+        // given
+        User user = User.withId(
+            1L,
+            "test@example.com",
+            "테스트사용자",
+            null,
+            null,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
+            false,
+            1L,
+            LocalDateTime.now(),
+            1L,
+            LocalDateTime.now(),
+            LocalDateTime.of(1990, 1, 1, 0, 0),
+            BirthdayType.SOLAR
+        );
+        LocalDateTime newBirthday = LocalDateTime.of(1995, 5, 15, 0, 0);
+        BirthdayType newBirthdayType = BirthdayType.LUNAR;
+
+        // when
+        User modified = user.modifyProfile(user.getName(), newBirthday, newBirthdayType);
+
+        // then
+        assertThat(modified.getBirthday()).isEqualTo(newBirthday);
+        assertThat(modified.getBirthdayType()).isEqualTo(newBirthdayType);
+    }
+
+    @Test
+    @DisplayName("modifyProfile로 생일을 null로 수정하면 생일유형도 null이 된다")
+    void modify_birthday_to_null_successfully() {
+        // given
+        User user = User.withId(
+            1L,
+            "test@example.com",
+            "테스트사용자",
+            null,
+            null,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
+            false,
+            1L,
+            LocalDateTime.now(),
+            1L,
+            LocalDateTime.now(),
+            LocalDateTime.of(1990, 1, 1, 0, 0),
+            BirthdayType.SOLAR
+        );
+
+        // when
+        User modified = user.modifyProfile(user.getName(), null, null);
+
+        // then
+        assertThat(modified.getBirthday()).isNull();
+        assertThat(modified.getBirthdayType()).isNull();
+    }
+
+    @Test
+    @DisplayName("modifyProfile에서 이름이 null이면 NullPointerException이 발생한다")
+    void throw_when_modify_name_is_null() {
+        // given
+        User user = User.withId(
+            1L,
+            "test@example.com",
+            "테스트사용자",
+            null,
+            null,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
+            false,
+            1L,
+            LocalDateTime.now(),
+            1L,
+            LocalDateTime.now(),
+            null,
+            null
+        );
+
+        // when & then
+        assertThatThrownBy(() -> user.modifyProfile(null, null, null))
+            .isInstanceOf(NullPointerException.class)
+            .hasMessageContaining("name은 null일 수 없습니다");
+    }
+
+    @Test
+    @DisplayName("modifyProfile에서 이름이 공백만이면 IllegalArgumentException이 발생한다")
+    void throw_when_modify_name_is_blank() {
+        // given
+        User user = User.withId(
+            1L,
+            "test@example.com",
+            "테스트사용자",
+            null,
+            null,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
+            false,
+            1L,
+            LocalDateTime.now(),
+            1L,
+            LocalDateTime.now(),
+            null,
+            null
+        );
+
+        // when & then
+        assertThatThrownBy(() -> user.modifyProfile("", null, null))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("name은 비어있을 수 없습니다");
+
+        assertThatThrownBy(() -> user.modifyProfile("   ", null, null))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("name은 비어있을 수 없습니다");
+    }
+
+    @Test
+    @DisplayName("modifyProfile에서 생일만 있고 생일유형이 없으면 IllegalArgumentException이 발생한다")
+    void throw_when_birthday_exists_but_type_is_null() {
+        // given
+        User user = User.withId(
+            1L,
+            "test@example.com",
+            "테스트사용자",
+            null,
+            null,
+            OAuth2Provider.GOOGLE,
+            UserRole.USER,
+            false,
+            1L,
+            LocalDateTime.now(),
+            1L,
+            LocalDateTime.now(),
+            null,
+            null
+        );
+        LocalDateTime birthday = LocalDateTime.of(1990, 1, 1, 0, 0);
+
+        // when & then
+        assertThatThrownBy(() -> user.modifyProfile("테스트사용자", birthday, null))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("생일이 있으면 생일 유형도 필수입니다");
+    }
 }
