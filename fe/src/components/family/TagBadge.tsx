@@ -83,7 +83,7 @@ export const TagBadge: React.FC<TagBadgeProps> = ({
           style={{ color: textColor }}
           aria-label={`${name} 태그 제거`}
         >
-          <X className="h-3 w-3" aria-hidden="true" />
+          <X className="h-3 w-3" strokeWidth={1.5} aria-hidden="true" />
         </button>
       )}
     </span>

@@ -108,7 +108,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
                   className="p-1 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
                   aria-label="정보 수정"
                 >
-                  <Pencil className="h-4 w-4" />
+                  <Pencil className="h-4 w-4" strokeWidth={1.5} />
                 </button>
               </div>
               <p className={cn(
@@ -153,7 +153,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
                   size="sm"
                   className="h-6 px-2 text-xs text-muted-foreground"
                 >
-                  <Plus className="h-3 w-3 mr-1" />
+                  <Plus className="h-3 w-3 mr-1" strokeWidth={1.5} />
                   {localTags.length === 0 ? '태그 추가' : '추가'}
                 </Button>
               </TagSelector>
@@ -166,7 +166,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
             {(member.memberAge || member.memberBirthday) && (
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <Calendar className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-foreground">
@@ -187,7 +187,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
             {member.memberPhoneNumber ? (
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
-                  <Phone className="h-4 w-4 text-green-600" />
+                  <Phone className="h-4 w-4 text-green-600" strokeWidth={1.5} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <a
@@ -201,7 +201,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
             ) : (
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <Phone className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-muted-foreground">연락처 없음</p>
@@ -216,7 +216,7 @@ export const MemberDetailSheet: React.FC<MemberDetailSheetProps> = ({
               onClick={() => setIsRelationshipModalOpen(true)}
             >
               <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                <User className="h-4 w-4 text-muted-foreground" />
+                <User className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className={cn(

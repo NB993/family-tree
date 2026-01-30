@@ -2,11 +2,17 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMyFamilies, useFamilyMembers } from '../hooks/queries/useFamilyQueries';
 import { FamilyMemberWithRelationship } from '../api/services/familyService';
-import { Search, Plus, UserPlus, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Plus, UserPlus, LogOut, ChevronLeft, ChevronRight, Settings, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import CreateFamilyMemberModal from '@/components/family/CreateFamilyMemberModal';
 import { MemberDetailSheet } from '@/components/family/MemberDetailSheet';
 import { TagBadge } from '@/components/family/TagBadge';
@@ -131,9 +137,23 @@ const HomePage: React.FC = () => {
             </span>
           )}
         </div>
-        <Button variant="ghost" size="icon" onClick={logout}>
-          <LogOut className="h-3.5 w-3.5" strokeWidth={1.5} />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="[&_svg]:size-5" aria-label="설정 메뉴">
+              <Settings strokeWidth={1.25} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => navigate('/settings')} className="py-1 text-xs">
+              <User className="h-3 w-3 mr-2" strokeWidth={1.5} />
+              프로필 설정
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={logout} className="py-1 text-xs">
+              <LogOut className="h-3 w-3 mr-2" strokeWidth={1.5} />
+              로그아웃
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
 
       {/* Search + Filter */}
@@ -172,7 +192,7 @@ const HomePage: React.FC = () => {
           </div>
         ) : !hasData ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <UserPlus className="h-8 w-8 text-muted-foreground/50 mb-2" strokeWidth={1} />
+            <UserPlus className="h-8 w-8 text-muted-foreground/50 mb-2" strokeWidth={1.5} />
             <p className="text-xs text-muted-foreground">등록된 멤버가 없습니다</p>
             <p className="text-[10px] text-muted-foreground mt-0.5">초대링크를 전달하거나 직접 등록하세요</p>
           </div>
@@ -238,7 +258,7 @@ const HomePage: React.FC = () => {
                           container?.scrollBy({ left: -100, behavior: 'smooth' });
                         }}
                       >
-                        <ChevronLeft className="h-3 w-3 text-muted-foreground" />
+                        <ChevronLeft className="h-3 w-3 text-muted-foreground" strokeWidth={1.5} />
                       </button>
 
                       {/* 태그 스크롤 영역 */}
@@ -267,7 +287,7 @@ const HomePage: React.FC = () => {
                           container?.scrollBy({ left: 100, behavior: 'smooth' });
                         }}
                       >
-                        <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                        <ChevronRight className="h-3 w-3 text-muted-foreground" strokeWidth={1.5} />
                       </button>
                     </div>
                   )}

@@ -57,7 +57,7 @@ const FamilyPage: React.FC = () => {
         </div>
         {isAuthenticated ? (
           <Button variant="ghost" size="icon">
-            <Settings className="h-3.5 w-3.5" strokeWidth={1.5} />
+            <Settings className="h-3.5 w-3.5" strokeWidth={1.25} />
           </Button>
         ) : (
           <Button variant="outline" size="sm" onClick={() => navigate('/login')}>로그인</Button>
@@ -99,7 +99,7 @@ const FamilyPage: React.FC = () => {
             </div>
           ) : (
             <div className="px-3 py-4 text-center">
-              <Users className="w-6 h-6 text-muted-foreground/50 mx-auto mb-1" strokeWidth={1} />
+              <Users className="w-6 h-6 text-muted-foreground/50 mx-auto mb-1" strokeWidth={1.5} />
               <p className="text-[10px] text-muted-foreground">멤버가 없습니다</p>
             </div>
           )}

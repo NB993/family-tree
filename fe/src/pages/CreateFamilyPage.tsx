@@ -82,7 +82,7 @@ const CreateFamilyPage: React.FC = () => {
       <div className="flex-1 overflow-auto">
         <div className="p-3">
           <div className="flex flex-col items-center text-center py-3 mb-3">
-            <Users className="w-8 h-8 text-primary mb-2" strokeWidth={1} />
+            <Users className="w-8 h-8 text-primary mb-2" strokeWidth={1.5} />
             <p className="text-[10px] text-muted-foreground">
               새로운 그룹을 만들어 멤버들과 연결하세요
             </p>

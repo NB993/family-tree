@@ -48,7 +48,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
           style={{ backgroundColor: color }}
         >
           {selectedColor === color && (
-            <Check className="h-3 w-3 text-gray-600" aria-hidden="true" />
+            <Check className="h-3 w-3 text-gray-600" strokeWidth={1.5} aria-hidden="true" />
           )}
         </button>
       ))}

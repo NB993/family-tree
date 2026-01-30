@@ -39,11 +39,11 @@ export const InviteResponsePage: React.FC = () => {
     return (
       <div className="app-shell flex flex-col items-center justify-center p-4 text-center">
         {isCompleted ? (
-          <CheckCircle className="w-8 h-8 text-green-600 mb-2" strokeWidth={1} />
+          <CheckCircle className="w-8 h-8 text-green-600 mb-2" strokeWidth={1.5} />
         ) : isExpired ? (
-          <Clock className="w-8 h-8 text-muted-foreground mb-2" strokeWidth={1} />
+          <Clock className="w-8 h-8 text-muted-foreground mb-2" strokeWidth={1.5} />
         ) : (
-          <AlertCircle className="w-8 h-8 text-destructive mb-2" strokeWidth={1} />
+          <AlertCircle className="w-8 h-8 text-destructive mb-2" strokeWidth={1.5} />
         )}
         <h2 className="text-sm font-medium text-foreground">
           {isCompleted ? '응답 완료' : isExpired ? '만료된 링크' : '유효하지 않은 링크'}
@@ -62,7 +62,7 @@ export const InviteResponsePage: React.FC = () => {
   return (
     <div className="app-shell flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-        <UserCheck className="w-8 h-8 text-primary mb-2" strokeWidth={1} />
+        <UserCheck className="w-8 h-8 text-primary mb-2" strokeWidth={1.5} />
         <h2 className="text-sm font-medium text-foreground">정보 제공 요청</h2>
         <p className="text-[10px] text-muted-foreground mt-0.5">연락처 수집을 위한 초대입니다</p>
         <ul className="text-[10px] text-muted-foreground mt-3 space-y-0.5">
