@@ -219,7 +219,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         <PopoverContent className="w-64 p-0" align="start">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" strokeWidth={1.5} />
             </div>
           ) : mode === 'select' ? (
             // 태그 선택 모드
@@ -251,7 +251,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                         />
                         <span className="text-sm truncate flex-1">{tag.name}</span>
                         {localSelectedIds.has(tag.id) && (
-                          <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                          <Check className="h-4 w-4 text-primary flex-shrink-0" strokeWidth={1.5} />
                         )}
                       </button>
                       <DropdownMenu>
@@ -261,19 +261,19 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                             size="sm"
                             className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
                           >
-                            <MoreHorizontal className="h-3 w-3" />
+                            <MoreHorizontal className="h-3 w-3" strokeWidth={1.5} />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => openEditMode(tag)}>
-                            <Pencil className="h-3 w-3 mr-2" />
+                            <Pencil className="h-3 w-3 mr-2" strokeWidth={1.5} />
                             수정
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => setDeletingTag(tag)}
                             className="text-destructive"
                           >
-                            <Trash2 className="h-3 w-3 mr-2" />
+                            <Trash2 className="h-3 w-3 mr-2" strokeWidth={1.5} />
                             삭제
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -289,7 +289,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:bg-secondary/50"
                     onClick={() => setMode('create')}
                   >
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-4 w-4" strokeWidth={1.5} />
                     새 태그 만들기
                   </button>
                 </div>
@@ -328,7 +328,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                 disabled={!newTagName.trim() || saveTagMutation.isPending}
               >
                 {saveTagMutation.isPending && (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" strokeWidth={1.5} />
                 )}
                 만들기
               </Button>
@@ -380,7 +380,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                 disabled={!editTagName.trim() || modifyTagMutation.isPending}
               >
                 {modifyTagMutation.isPending && (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" strokeWidth={1.5} />
                 )}
                 저장
               </Button>
@@ -406,7 +406,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {deleteTagMutation.isPending && (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" strokeWidth={1.5} />
               )}
               삭제
             </AlertDialogAction>

@@ -161,12 +161,12 @@ export const MemberEditModal: React.FC<MemberEditModalProps> = ({
               onValueChange={(value) => setBirthdayType(value as BirthdayType)}
               disabled={isInvitedMember}
             >
-              <SelectTrigger id="birthdayType" disabled={isInvitedMember}>
+              <SelectTrigger id="birthdayType" className="h-6 text-xs" disabled={isInvitedMember}>
                 <SelectValue placeholder="생일 유형 선택" />
               </SelectTrigger>
               <SelectContent>
                 {birthdayTypeOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
+                  <SelectItem key={option.value} value={option.value} className="py-1 text-xs">
                     {option.label}
                   </SelectItem>
                 ))}

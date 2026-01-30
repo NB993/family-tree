@@ -48,7 +48,7 @@ export const CreateInvitePage: React.FC = () => {
       {!inviteData ? (
         <div className="flex-1 flex flex-col p-3">
           <div className="flex-1 flex flex-col items-center justify-center text-center">
-            <Link className="w-8 h-8 text-primary mb-2" strokeWidth={1} />
+            <Link className="w-8 h-8 text-primary mb-2" strokeWidth={1.5} />
             <h2 className="text-sm font-medium text-foreground">멤버 정보 수집</h2>
             <p className="text-[10px] text-muted-foreground mt-0.5">
               초대 링크로 멤버들의 연락처를 수집합니다
@@ -69,7 +69,7 @@ export const CreateInvitePage: React.FC = () => {
       ) : (
         <div className="flex-1 flex flex-col p-3">
           <div className="flex-1 flex flex-col items-center justify-center text-center">
-            <Check className="w-8 h-8 text-green-600 mb-2" strokeWidth={1} />
+            <Check className="w-8 h-8 text-green-600 mb-2" strokeWidth={1.5} />
             <h2 className="text-sm font-medium text-foreground">생성 완료</h2>
             <p className="text-[10px] text-muted-foreground mt-0.5">링크를 복사하여 공유하세요</p>
           </div>

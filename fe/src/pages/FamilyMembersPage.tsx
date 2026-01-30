@@ -76,7 +76,7 @@ const FamilyMembersPage: React.FC = () => {
         </div>
         <div className="flex gap-1">
           <Button variant="ghost" size="icon">
-            <Settings className="h-3.5 w-3.5" strokeWidth={1.5} />
+            <Settings className="h-3.5 w-3.5" strokeWidth={1.25} />
           </Button>
           <Button size="sm">
             <Plus className="h-3.5 w-3.5" strokeWidth={1.5} /> 추가
@@ -88,7 +88,7 @@ const FamilyMembersPage: React.FC = () => {
       <div className="flex-1 overflow-auto">
         {members.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <Users className="h-8 w-8 text-muted-foreground/50 mb-2" strokeWidth={1} />
+            <Users className="h-8 w-8 text-muted-foreground/50 mb-2" strokeWidth={1.5} />
             <h3 className="text-xs font-medium text-foreground">아직 멤버가 없습니다</h3>
             <p className="text-[10px] text-muted-foreground mt-0.5 mb-3">첫 번째 멤버를 추가해보세요</p>
             <Button size="sm">

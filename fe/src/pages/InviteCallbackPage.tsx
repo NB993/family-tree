@@ -54,7 +54,7 @@ export const InviteCallbackPage: React.FC = () => {
   if (state === 'success') {
     return (
       <div className="app-shell flex flex-col items-center justify-center p-4 text-center">
-        <CheckCircle className="w-8 h-8 text-green-600 mb-2" strokeWidth={1} />
+        <CheckCircle className="w-8 h-8 text-green-600 mb-2" strokeWidth={1.5} />
         <h2 className="text-sm font-medium text-foreground">정보 제공 완료</h2>
         <p className="text-[10px] text-muted-foreground mt-0.5 mb-3">
           멤버로 등록되었습니다. 감사합니다!
@@ -76,7 +76,7 @@ export const InviteCallbackPage: React.FC = () => {
 
   return (
     <div className="app-shell flex flex-col items-center justify-center p-4 text-center">
-      <XCircle className="w-8 h-8 text-destructive mb-2" strokeWidth={1} />
+      <XCircle className="w-8 h-8 text-destructive mb-2" strokeWidth={1.5} />
       <h2 className="text-sm font-medium text-foreground">초대 수락 실패</h2>
 
       <div className="w-full my-3 p-2 bg-destructive/10 border border-destructive/20 rounded">

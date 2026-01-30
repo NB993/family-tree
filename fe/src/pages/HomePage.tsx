@@ -139,17 +139,17 @@ const HomePage: React.FC = () => {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="설정 메뉴">
-              <Settings className="h-3.5 w-3.5" strokeWidth={1.5} />
+            <Button variant="ghost" size="icon" className="[&_svg]:size-5" aria-label="설정 메뉴">
+              <Settings strokeWidth={1.25} />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => navigate('/settings')}>
-              <User className="h-4 w-4 mr-2" />
+            <DropdownMenuItem onClick={() => navigate('/settings')} className="py-1 text-xs">
+              <User className="h-3 w-3 mr-2" strokeWidth={1.5} />
               프로필 설정
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={logout}>
-              <LogOut className="h-4 w-4 mr-2" />
+            <DropdownMenuItem onClick={logout} className="py-1 text-xs">
+              <LogOut className="h-3 w-3 mr-2" strokeWidth={1.5} />
               로그아웃
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -192,7 +192,7 @@ const HomePage: React.FC = () => {
           </div>
         ) : !hasData ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <UserPlus className="h-8 w-8 text-muted-foreground/50 mb-2" strokeWidth={1} />
+            <UserPlus className="h-8 w-8 text-muted-foreground/50 mb-2" strokeWidth={1.5} />
             <p className="text-xs text-muted-foreground">등록된 멤버가 없습니다</p>
             <p className="text-[10px] text-muted-foreground mt-0.5">초대링크를 전달하거나 직접 등록하세요</p>
           </div>
@@ -258,7 +258,7 @@ const HomePage: React.FC = () => {
                           container?.scrollBy({ left: -100, behavior: 'smooth' });
                         }}
                       >
-                        <ChevronLeft className="h-3 w-3 text-muted-foreground" />
+                        <ChevronLeft className="h-3 w-3 text-muted-foreground" strokeWidth={1.5} />
                       </button>
 
                       {/* 태그 스크롤 영역 */}
@@ -287,7 +287,7 @@ const HomePage: React.FC = () => {
                           container?.scrollBy({ left: 100, behavior: 'smooth' });
                         }}
                       >
-                        <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                        <ChevronRight className="h-3 w-3 text-muted-foreground" strokeWidth={1.5} />
                       </button>
                     </div>
                   )}

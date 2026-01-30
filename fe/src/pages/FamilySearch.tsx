@@ -56,7 +56,7 @@ export const FamilySearchPage: React.FC = () => {
             onClick={() => navigate('/home')}
             className="rounded-xl"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-5 w-5" strokeWidth={1.5} />
           </Button>
         )}
         <div>

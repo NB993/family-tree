@@ -84,129 +84,132 @@ const SettingsPage: React.FC = () => {
 
   if (isUserLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="app-shell h-screen flex flex-col overflow-hidden">
         {/* Header Skeleton */}
-        <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card">
-          <Skeleton className="w-8 h-8" />
-          <Skeleton className="h-5 w-24" />
+        <header className="shrink-0 flex items-center gap-3 px-3 py-1.5 border-b border-border bg-card">
+          <Skeleton className="w-6 h-6" />
+          <Skeleton className="h-4 w-20" />
         </header>
 
         {/* Form Skeleton */}
-        <div className="p-4 space-y-6">
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-12" />
-            <Skeleton className="h-10 w-full" />
+        <div className="flex-1 overflow-auto p-3 space-y-4">
+          <div className="space-y-1.5">
+            <Skeleton className="h-3 w-10" />
+            <Skeleton className="h-6 w-full" />
           </div>
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-8" />
-            <Skeleton className="h-10 w-full" />
+          <div className="space-y-1.5">
+            <Skeleton className="h-3 w-8" />
+            <Skeleton className="h-6 w-full" />
           </div>
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-16" />
-            <Skeleton className="h-10 w-full" />
+          <div className="space-y-1.5">
+            <Skeleton className="h-3 w-14" />
+            <Skeleton className="h-6 w-full" />
           </div>
-          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-6 w-full" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="app-shell h-screen flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card">
+      <header className="shrink-0 flex items-center gap-2 px-3 py-1.5 border-b border-border bg-card">
         <Button
           variant="ghost"
           size="icon"
           onClick={handleBack}
           aria-label="뒤로 가기"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
         </Button>
-        <h1 className="text-lg font-semibold">프로필 설정</h1>
+        <h1 className="text-sm font-semibold">프로필 설정</h1>
       </header>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="p-4 space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="name">
-            이름 <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="이름을 입력하세요"
-            maxLength={50}
-            aria-required="true"
-          />
-          {!name.trim() && (
-            <p className="text-sm text-destructive">이름을 입력해주세요</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit} className="flex-1 overflow-auto p-3 space-y-6">
+        {/* 회원정보 수정 섹션 */}
+        <section className="bg-card border border-border rounded-lg p-4 space-y-4">
+          <h2 className="text-sm font-semibold text-foreground">회원정보 수정</h2>
 
-        <div className="space-y-2">
-          <Label htmlFor="birthday">생일</Label>
-          <Input
-            id="birthday"
-            type="date"
-            value={birthday}
-            onChange={(e) => setBirthday(e.target.value)}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="birthdayType">생일 유형</Label>
-          <Select
-            value={birthdayType || 'SOLAR'}
-            onValueChange={(value) => setBirthdayType(value as BirthdayType)}
-          >
-            <SelectTrigger id="birthdayType">
-              <SelectValue placeholder="생일 유형 선택" />
-            </SelectTrigger>
-            <SelectContent>
-              {birthdayTypeOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {solarBirthdayDisplay && (
-            <p className="text-sm text-muted-foreground">
-              올해 양력: {solarBirthdayDisplay}
-            </p>
-          )}
-        </div>
-
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isSubmitDisabled}
-        >
-          {modifyUserMutation.isPending ? '저장 중...' : '저장'}
-        </Button>
-
-        {/* Danger Zone */}
-        <div className="mt-12 pt-6 border-t border-border">
-          <h2 className="text-sm font-medium text-destructive mb-3">위험 영역</h2>
-          <div className="p-4 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground mb-4">
-              계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다.
-            </p>
-            <Button
-              type="button"
-              variant="destructive"
-              className="w-full"
-              disabled
-            >
-              회원 탈퇴
-            </Button>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              (준비 중)
-            </p>
+          <div className="space-y-1">
+            <Label htmlFor="name" className="text-xs text-left block">
+              이름 <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="이름을 입력하세요"
+              maxLength={50}
+              aria-required="true"
+            />
+            {!name.trim() && (
+              <p className="text-xs text-destructive">이름을 입력해주세요</p>
+            )}
           </div>
-        </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="birthday" className="text-xs text-left block">생일</Label>
+            <Input
+              id="birthday"
+              type="date"
+              value={birthday}
+              onChange={(e) => setBirthday(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="birthdayType" className="text-xs text-left block">생일 유형</Label>
+            <Select
+              value={birthdayType || 'SOLAR'}
+              onValueChange={(value) => setBirthdayType(value as BirthdayType)}
+            >
+              <SelectTrigger id="birthdayType" className="h-6 text-xs">
+                <SelectValue placeholder="생일 유형 선택" />
+              </SelectTrigger>
+              <SelectContent>
+                {birthdayTypeOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value} className="py-1 text-xs">
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {solarBirthdayDisplay && (
+              <p className="text-xs text-muted-foreground">
+                올해 양력: {solarBirthdayDisplay}
+              </p>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full h-10"
+            disabled={isSubmitDisabled}
+          >
+            {modifyUserMutation.isPending ? '저장 중...' : '저장'}
+          </Button>
+        </section>
+
+        {/* 회원 탈퇴 섹션 */}
+        <section className="border border-destructive/30 rounded-lg p-4 space-y-3">
+          <h2 className="text-sm font-semibold text-destructive">회원 탈퇴</h2>
+          <p className="text-xs text-muted-foreground">
+            계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다.
+          </p>
+          <Button
+            type="button"
+            variant="destructive"
+            className="w-full h-10"
+            disabled
+          >
+            회원 탈퇴
+          </Button>
+          <p className="text-xs text-muted-foreground text-center">
+            (준비 중)
+          </p>
+        </section>
       </form>
     </div>
   );
